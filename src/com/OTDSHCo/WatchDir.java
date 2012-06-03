@@ -1,6 +1,4 @@
 package com.OTDSHCo;
-import java.nio.channels.AsynchronousFileChannel;
-import java.nio.channels.FileLock;
 import java.nio.file.*;
 import static java.nio.file.StandardWatchEventKinds.*;
 import static java.nio.file.LinkOption.*;
@@ -10,6 +8,9 @@ import java.util.*;
 
 public class WatchDir
 {
+	private long						included		=0;
+	private long						replaced		=0;
+	private long						director		=0;
 	private static String				databaseName	="OTDSHCo_UnDupeKeeper_Database.dbn";
 	private String						state			=null;
 	private final WatchService			watcher;
@@ -35,7 +36,10 @@ public class WatchDir
 			Path prev=keys.get(key);
 			if(prev==null)
 			{
-				log("Register "+
+				director++;
+				log("["+
+					director+
+					"]\tRegister "+
 					dir);
 			}
 			else
@@ -78,7 +82,8 @@ public class WatchDir
 		if(recursive)
 		{
 			log("Scanning "+
-				dir);
+				dir+
+				"...");
 			registerAll(dir);
 		}
 		else
@@ -179,6 +184,7 @@ public class WatchDir
 
 	void waitFile(Path child)
 	{
+		boolean first=true;
 		for(;;)
 		{
 			try
@@ -197,6 +203,11 @@ public class WatchDir
 				log("!CATCH "+
 					e);
 			}
+			if(first)
+			{
+				log("Waiting for file...");
+			}
+			first=false;
 		}
 	}
 
@@ -228,21 +239,30 @@ public class WatchDir
 								.startsWith("Code")))
 					{
 						String md5=line.substring(line.lastIndexOf(" ")+1);
-						log("Generation DONE "+
-							md5+
-							" "+
-							child.toString());
+						// log("Generation DONE "+ md5+ " "+ child.toString());
 						if(!productMap.containsKey(md5))
 						{
-							log("Including "+
-								child.toString());
+							included++;
+							log("["+
+								included+
+								"]\tIncluding "+
+								child.toString()+
+								"\t\t["+
+								md5+
+								"]");
 							productMap.put(	md5,
 											child.toString());
 						}
 						else
 						{
-							log("Replacing "+
-								child.toString());
+							replaced++;
+							log("["+
+								replaced+
+								"]\tReplacing "+
+								child.toString()+
+								"\t\t["+
+								md5+
+								"]");
 							File f2=new File(child.toString());
 							Writer output=new BufferedWriter(new FileWriter(f2));
 							output.write(productMap.get(md5)+
@@ -268,20 +288,24 @@ public class WatchDir
 	{
 		if(productMap.containsValue(child.toString()))
 		{
-			log("Removing "+
+			log("["+
+				included+
+				"]\tRemoving "+
 				child.toString());
+			included--;
 			productMap.values()
 						.remove(child.toString());
 		}
 	}
 
-	static void saveMap(HashMap<String,String> map)
+	static void saveMap()
 	{
 		try
 		{
 			ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream(databaseName));
-			objOut.writeObject(map);
+			objOut.writeObject(productMap);
 			objOut.close();
+			log("Database Saved!");
 		}
 		catch(IOException e)
 		{
@@ -290,35 +314,21 @@ public class WatchDir
 		}
 	}
 
-	static HashMap<String,String> loadMap()
+	static void loadMap()
 	{
 		if(new File(databaseName).exists())
 		{
-			HashMap<String,String> actual=null;
-			ObjectInputStream objIn;
 			try
 			{
-				objIn=new ObjectInputStream(new FileInputStream(databaseName));
-				actual=(HashMap<String,String>)objIn.readObject();
+				ObjectInputStream objIn=new ObjectInputStream(new FileInputStream(databaseName));
+				productMap=(HashMap<String,String>)objIn.readObject();
 			}
-			catch(FileNotFoundException e)
+			catch(ClassNotFoundException|IOException e)
 			{
 				log("! CATCH "+
 					e);
 			}
-			catch(ClassNotFoundException e)
-			{
-				log("! CATCH "+
-					e);
-			}
-			catch(IOException e)
-			{
-				log("! CATCH "+
-					e);
-			}
-			return actual;
 		}
-		return null;
 	}
 
 	static void usage()
@@ -435,7 +445,7 @@ public class WatchDir
 		if((new File(dir.toString()).exists())&&
 			(new File(dir.toString()).isDirectory()))
 		{
-			productMap=loadMap();
+			loadMap();
 			if(null==productMap)
 			{
 				log("WARNING: DATABASE IS NEW!");
@@ -444,7 +454,7 @@ public class WatchDir
 			new WatchDir(	dir,
 							recursive).processEvents();
 			log("SAVING DATABASE FOR LATER USE");
-			saveMap(productMap);
+			saveMap();
 		}
 		else
 		{
