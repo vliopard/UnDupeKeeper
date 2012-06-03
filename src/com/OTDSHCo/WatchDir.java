@@ -4,20 +4,68 @@ import static java.nio.file.StandardWatchEventKinds.*;
 import static java.nio.file.LinkOption.*;
 import java.nio.file.attribute.*;
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class WatchDir
 {
-	private long						included		=0;
-	private long						replaced		=0;
-	private long						director		=0;
-	private static String				databaseName	="OTDSHCo_UnDupeKeeper_Database.dbn";
-	private String						state			=null;
-	private final WatchService			watcher;
-	private final Map<WatchKey,Path>	keys;
-	private final boolean				recursive;
-	private boolean						trace			=false;
-	static HashMap<String,String>		productMap		=new HashMap<String,String>();
+	private final WatchService				watcher;
+	private final Map<WatchKey,Path>		keys;
+	private final boolean					recursive;
+	private long							included		=0;
+	private long							replaced		=0;
+	private long							director		=0;
+	private String							state			=null;
+	private boolean							trace			=false;
+	private static String					databaseName	="OTDSHCo_UnDupeKeeper_Database.dbn";
+	private static HashMap<String,String>	productMap		=new HashMap<String,String>();
+	private static final String				HEXES			="0123456789ABCDEF";
+
+	public static byte[] createChecksum(String filename)
+	{
+		InputStream fis;
+		try
+		{
+			fis=new FileInputStream(filename);
+			byte[] buffer=new byte[1024];
+			MessageDigest complete=MessageDigest.getInstance("SHA1");
+			int numRead;
+			do
+			{
+				numRead=fis.read(buffer);
+				if(numRead>0)
+				{
+					complete.update(buffer,
+									0,
+									numRead);
+				}
+			}
+			while(numRead!=-1);
+			fis.close();
+			return complete.digest();
+		}
+		catch(IOException|NoSuchAlgorithmException e)
+		{
+			log("!CATCH "+
+				e);
+			return null;
+		}
+	}
+
+	public static String getChecksum(String filename)
+	{
+		waitFile(filename);
+		byte[] raw=createChecksum(filename);
+		final StringBuilder hex=new StringBuilder(2*raw.length);
+		for(final byte b : raw)
+		{
+			hex.append(HEXES.charAt((b&0xF0)>>4))
+				.append(HEXES.charAt((b&0x0F)));
+		}
+		return hex.toString()
+					.toUpperCase();
+	}
 
 	@SuppressWarnings("unchecked")
 	static <T> WatchEvent<T> cast(WatchEvent<?> event)
@@ -123,7 +171,6 @@ public class WatchDir
 				WatchEvent<Path> ev=cast(event);
 				Path name=ev.context();
 				Path child=dir.resolve(name);
-				/* =============== */
 				if(event.kind()
 						.name()
 						.equals("ENTRY_CREATE"))
@@ -135,6 +182,7 @@ public class WatchDir
 						break;
 					}
 					state="ENTRY_CREATE";
+					manage_file_new(child);
 				}
 				if(event.kind()
 						.name()
@@ -144,7 +192,8 @@ public class WatchDir
 						state.equals("ENTRY_CREATE"))
 					{
 						state="ENTRY_MODIFY";
-						manage_file_new(child);
+						//log("Modified: "+child);
+						// manage_file_new(child);
 					}
 				}
 				if(event.kind()
@@ -153,7 +202,6 @@ public class WatchDir
 				{
 					manage_file_old(child);
 				}
-				/* =============== */
 				if(recursive&&
 					(kind==ENTRY_CREATE))
 				{
@@ -182,14 +230,14 @@ public class WatchDir
 		}
 	}
 
-	void waitFile(Path child)
+	static void waitFile(String child)
 	{
 		boolean first=true;
 		for(;;)
 		{
 			try
 			{
-				FileInputStream fi=new FileInputStream(new File(child.toString()));
+				FileInputStream fi=new FileInputStream(new File(child));
 				if(fi.available()>0)
 				{
 					fi.close();
@@ -215,68 +263,40 @@ public class WatchDir
 	{
 		if(new File(child.toString()).isFile())
 		{
-			Process p;
 			try
 			{
-				waitFile(child);
-				p=Runtime.getRuntime()
-							.exec("fsum.exe \""+
-									child+
-									"\"");
-				p.waitFor();
-				BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
-				String line=null;
-				do
+				String md5=getChecksum(child.toString());
+				if(!productMap.containsKey(md5))
 				{
-					line=reader.readLine();
-					String auxLine=child.toString()
-										.substring(child.toString()
-														.lastIndexOf("\\")+1);
-					if(line!=null&&
-						line.trim()
-							.contains(auxLine)&&
-						(!line.trim()
-								.startsWith("Code")))
-					{
-						String md5=line.substring(line.lastIndexOf(" ")+1);
-						// log("Generation DONE "+ md5+ " "+ child.toString());
-						if(!productMap.containsKey(md5))
-						{
-							included++;
-							log("["+
-								included+
-								"]\tIncluding "+
-								child.toString()+
-								"\t\t["+
-								md5+
-								"]");
-							productMap.put(	md5,
-											child.toString());
-						}
-						else
-						{
-							replaced++;
-							log("["+
-								replaced+
-								"]\tReplacing "+
-								child.toString()+
-								"\t\t["+
-								md5+
-								"]");
-							File f2=new File(child.toString());
-							Writer output=new BufferedWriter(new FileWriter(f2));
-							output.write(productMap.get(md5)+
-											" repeeKepuDnU{.-::![|MD5|]!::-.}UnDupeKeeper ["+
-											md5+
-											"]"); // +" ::!MD5!:: "+md5);
-							output.close();
-						}
-						line=null;
-					}
+					included++;
+					log("["+
+						included+
+						"]\t["+
+						md5+
+						"]\tIncluding "+
+						child.toString());
+					productMap.put(	md5,
+									child.toString());
 				}
-				while(line!=null);
+				else
+				{
+					replaced++;
+					log("["+
+						replaced+
+						"]\t["+
+						md5+
+						"]\tReplacing "+
+						child.toString());
+					File f2=new File(child.toString());
+					Writer output=new BufferedWriter(new FileWriter(f2));
+					output.write(productMap.get(md5)+
+									" repeeKepuDnU{.-::![|MD5|]!::-.}UnDupeKeeper ["+
+									md5+
+									"]");
+					output.close();
+				}
 			}
-			catch(IOException|InterruptedException e)
+			catch(IOException e)
 			{
 				log("! CATCH "+
 					e);
@@ -335,96 +355,6 @@ public class WatchDir
 	{
 		System.err.println("usage: java WatchDir [-r] dir");
 		System.exit(-1);
-	}
-
-	private void otherWay(Path myDir)
-	{
-		try
-		{
-			WatchService watcher=myDir.getFileSystem()
-										.newWatchService();
-			myDir.register(	watcher,
-							ENTRY_CREATE,
-							ENTRY_DELETE,
-							ENTRY_MODIFY);
-			for(;;)
-			{
-				WatchKey watckKey=watcher.take();
-				List<WatchEvent<?>> events=watckKey.pollEvents();
-				for(WatchEvent<?> event : events)
-				{
-					if(event.kind()==ENTRY_CREATE)
-					{
-						log("Created: "+
-							event.context()
-									.toString());
-					}
-					if(event.kind()==ENTRY_DELETE)
-					{
-						log("Delete: "+
-							event.context()
-									.toString());
-					}
-					if(event.kind()==ENTRY_MODIFY)
-					{
-						log("Modify: "+
-							event.context()
-									.toString());
-					}
-				}
-			}
-		}
-		catch(Exception e)
-		{
-			log("Error: "+
-				e.toString());
-		}
-	}
-
-	public void detectLockFile(String lockFilePath) throws IOException
-	{
-		WatchService watcher=FileSystems.getDefault()
-										.newWatchService();
-		Path lockFile=Paths.get(lockFilePath);
-		Path lockFileDir=lockFile.getParent();
-		lockFileDir.register(	watcher,
-								ENTRY_CREATE);
-		WatchKey watchKey;
-		_watchLoop:
-		while(!Thread.currentThread()
-						.isInterrupted())
-		{
-			try
-			{
-				watchKey=watcher.take();
-				if(!watchKey.isValid())
-				{
-					continue;
-				}
-			}
-			catch(InterruptedException e)
-			{
-				Thread.currentThread()
-						.interrupt();
-				break;
-			}
-			final List<WatchEvent<?>> watchEvents=watchKey.pollEvents();
-			for(WatchEvent<?> event : watchEvents)
-			{
-				if(event.kind()
-						.equals(ENTRY_CREATE))
-				{
-					Path createdFileRelativePath=(Path)event.context();
-					Path createdFileAbsolultePath=lockFileDir.resolve(createdFileRelativePath);
-					if(createdFileAbsolultePath.equals(lockFile))
-					{
-						System.out.println("Lock file detected !");
-					}
-				}
-			}
-			watchKey.reset();
-		}
-		watcher.close();
 	}
 
 	public static void main(String[] args) throws IOException
