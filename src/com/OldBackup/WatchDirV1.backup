@@ -1,0 +1,385 @@
+package com.OTDSHCo;
+
+/*
+ * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *   - Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *   - Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ *   - Neither the name of Oracle nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/*						 
+DataOutputStream outputStream = new DataOutputStream(
+p.getOutputStream());
+outputStream.writeBytes("exit\n");
+outputStream.flush(); outputStream.close();
+outputStream = null;
+Creates a symbolic link.
+
+MKLINK [[/D] | [/H] | [/J]] Link Target
+
+/D      Creates a directory symbolic link.  Default is a file
+symbolic link.
+/H      Creates a hard link instead of a symbolic link.
+/J      Creates a Directory Junction.
+Link    specifies the new symbolic link name.
+Target  specifies the path (relative or absolute) that the new link
+refers to. 
+*/
+
+import java.nio.file.*;
+import static java.nio.file.StandardWatchEventKinds.*;
+import static java.nio.file.LinkOption.*;
+import java.nio.file.attribute.*;
+import java.io.*;
+import java.util.*;
+
+/**
+ * Example to watch a directory (or tree) for changes to files.
+ */
+
+public class WatchDir {
+
+	private String state=null;
+	private final WatchService watcher;
+	private final Map<WatchKey, Path> keys;
+	private final boolean recursive;
+	private boolean trace = false;
+	static HashMap<String, String> productMap = new HashMap<String, String>();
+
+	@SuppressWarnings("unchecked")
+	static <T> WatchEvent<T> cast(WatchEvent<?> event) {
+		return (WatchEvent<T>) event;
+	}
+
+	/**
+	 * Register the given directory with the WatchService
+	 */
+	private void register(Path dir) throws IOException {
+
+		WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE,
+				ENTRY_MODIFY);
+		if (trace) {
+	
+			Path prev = keys.get(key);
+			if (prev == null) {
+			
+		
+			} else {
+			
+				if (!dir.equals(prev)) {
+		
+					log("Updating " + prev + " -> " + dir);
+				}
+			}
+		}
+		keys.put(key, dir);
+	
+	}
+
+	/**
+	 * Register the given directory, and all its sub-directories, with the
+	 * WatchService.
+	 */
+	private void registerAll(final Path start) throws IOException {
+	
+		// register directory and sub-directories
+		Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult preVisitDirectory(Path dir,
+					BasicFileAttributes attrs) throws IOException {
+				register(dir);
+				return FileVisitResult.CONTINUE;
+			}
+		});
+	
+	}
+
+	/**
+	 * Creates a WatchService and registers the given directory
+	 */
+	WatchDir(Path dir, boolean recursive) throws IOException {
+	
+		this.watcher = FileSystems.getDefault().newWatchService();
+		this.keys = new HashMap<WatchKey, Path>();
+		this.recursive = recursive;
+
+		if (recursive) {
+			
+			log("Scanning " + dir);
+			registerAll(dir);
+			
+		} else {
+			
+			register(dir);
+		}
+
+		// enable trace after initial registration
+		this.trace = true;
+}
+		
+	/**
+	 * Process all events for keys queued to the watcher
+	 */
+	void processEvents() {
+	
+		for (int i = 0; i < 1;) {
+
+			// wait for key to be signalled
+			WatchKey key;
+			try {
+				key = watcher.take();
+			} catch (InterruptedException x) {
+				return;
+			}
+
+			Path dir = keys.get(key);
+			if (dir == null) {
+				
+				System.err.println("WatchKey not recognized!!");
+				continue;
+			}
+
+			for (WatchEvent<?> event : key.pollEvents()) {
+				WatchEvent.Kind kind = event.kind();
+
+				// TBD - provide example of how OVERFLOW event is handled
+				if (kind == OVERFLOW) {
+					log("!OVERFLOW");
+					continue;
+				}
+
+				// Context for directory entry event is the file name of entry
+				WatchEvent<Path> ev = cast(event);
+				Path name = ev.context();
+				Path child = dir.resolve(name);
+
+				// print out event
+				// System.out.format("%s: %s\n", event.kind().name(), child);
+				
+				if (event.kind().name().equals("ENTRY_CREATE")) {
+				
+					if (child.toString().endsWith("stopUnDupeKeeperRightNow")) {
+						
+						i = 1;
+						break;
+					}
+					state="ENTRY_CREATE";
+				}
+
+				if (event.kind().name().equals("ENTRY_MODIFY")) {
+				
+					
+					if(state!=null&&state.equals("ENTRY_CREATE"))
+					{
+			state="ENTRY_MODIFY";
+						manage_file_new(child);
+						
+					}
+				}
+				
+				if (event.kind().name().equals("ENTRY_DELETE")) {
+			
+					manage_file_old(child);
+				}
+				// if directory is created, and watching recursively, then
+				// register it and its sub-directories
+				if (recursive && (kind == ENTRY_CREATE)) {
+					try {
+						if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
+														
+							registerAll(child);
+						}
+					} catch (IOException x) {
+						// ignore to keep sample readbale
+					}
+				}
+			}
+
+			// reset key and remove from set if directory no longer accessible
+			boolean valid = key.reset();
+			if (!valid) {
+			
+				keys.remove(key);
+
+				// all directories are inaccessible
+				if (keys.isEmpty()) {
+					
+					break;
+				}
+			}
+		}
+
+		
+	}
+
+
+
+	
+
+	void manage_file_new(Path child) {
+	
+		if (new File(child.toString()).isFile()) {
+			
+			Process p;
+			try {
+				log("Generating MD5 for "+child.toString());
+				p = Runtime.getRuntime().exec("fsum.exe \"" + child + "\"");
+				p.waitFor();
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(p.getInputStream()));
+				String line = null;
+				do
+				{
+					line = reader.readLine();
+					log("["+line+"]");
+					if (line!=null&&line.trim().startsWith(child.toString())) {
+					
+						String md5 = line
+								.substring(child.toString().length() + 1);
+						log("Generation DONE "+md5);
+						if (!productMap.containsKey(md5)) {
+							
+							log("Including " + child.toString());
+							productMap.put(md5, child.toString());
+							
+						} else {
+							
+							log("Replacing " + child.toString());
+							File f2 = new File(child.toString());
+							Writer output = new BufferedWriter(new FileWriter(
+									f2));
+							output.write(productMap.get(md5)); // +" ::!MD5!:: "+md5);
+							output.close();
+						}
+					
+						line=null;
+					
+					}			
+				
+				}
+				while(line!=null);
+				
+
+			} catch (IOException | InterruptedException e) {
+				log("! CATCH "+e);				
+			}
+		}
+	
+		
+	}
+
+	void manage_file_old(Path child) {
+		
+		if (productMap.containsValue(child.toString())) {
+		
+			log("Removing " + child.toString());
+			productMap.values().remove(child.toString());
+		}
+	}
+
+	static void saveMap(HashMap<String, String> map) {
+		try {
+			// ObjectOutputStream objOut = new ObjectOutputStream(new
+			// ByteArrayOutputStream());
+			ObjectOutputStream objOut = new ObjectOutputStream(
+					new FileOutputStream("c:\\vliopard\\Blip3.out"));
+			objOut.writeObject(map);
+			objOut.close();
+		} catch (IOException e) {
+			log("! CATCH "+e);
+		}
+	
+	}
+
+	static HashMap<String, String> loadMap() {
+		
+		if (new File("Blip3.out").exists()) {
+
+			HashMap<String, String> actual = null;
+			try {
+				// ObjectInputStream objIn = new ObjectInputStream(new
+				// ByteArrayInputStream(new
+				// ByteArrayOutputStream().toByteArray()));
+				ObjectInputStream objIn = new ObjectInputStream(
+						new FileInputStream("c:\\vliopard\\Blip3.out"));
+				actual = (HashMap<String, String>) objIn.readObject();
+			} catch (IOException | ClassNotFoundException e) {
+				log("! CATCH "+e);
+			}
+			
+			return actual;
+		}
+	
+		return null;
+	}
+
+	static void usage() {
+		System.err.println("usage: java WatchDir [-r] dir");
+		System.exit(-1);
+	}
+	public static void main(String[] args) throws IOException {
+		if (args.length == 0 || args.length > 2)
+			usage();
+		boolean recursive = false;
+		int dirArg = 0;
+		if (args[0].equals("-r")) {
+			if (args.length < 2)
+				usage();
+			recursive = true;
+			dirArg++;
+		}
+		Path dir = Paths.get(args[dirArg]);
+		if((new File(dir.toString()).exists())&&(new File(dir.toString()).isDirectory()))
+		{
+		productMap = loadMap();
+		if (null == productMap) {
+			productMap = new HashMap<String, String>();
+		}
+		new WatchDir(dir, recursive).processEvents();
+		saveMap(productMap);
+		}
+		else
+		{
+			log("Directory does not exist!");
+		}
+	}
+
+static void log(String logMessage) {
+		if (logMessage.startsWith(" ") || logMessage.startsWith("!")) {
+			String clazz = Thread.currentThread().getStackTrace()[2]
+					.getClassName();
+			String metho = Thread.currentThread().getStackTrace()[2]
+					.getMethodName();
+			logMessage = logMessage + " ["
+					+ clazz.substring(clazz.lastIndexOf(".") + 1) + "." + metho
+					+ "]";
+		}
+		if(!logMessage.startsWith("!")) {		
+		System.out.println(logMessage);
+		}
+	}
+}

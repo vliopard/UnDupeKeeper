@@ -3,10 +3,10 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
-        <jar destfile="C:/vliopard/Dropbox/UnDupeKeeper/UnDupeKeeper.jar">
+        <jar destfile="c:/vliopard/Dropbox/UnDupeKeeper/UnDupeKeeper.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
-                <attribute name="Rsrc-Main-Class" value="com.OTDSHCo.WatchDir"/>
+                <attribute name="Rsrc-Main-Class" value="com.OTDSHCo.UnDupeKeeper"/>
                 <attribute name="Class-Path" value="."/>
                 <attribute name="Rsrc-Class-Path" value="./"/>
             </manifest>
