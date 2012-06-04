@@ -10,13 +10,12 @@ public class UnDupeKeeper
 
 	static void usage()
 	{
-		System.err.println("usage: java WatchDir [-r] dir");
+		System.err.println("usage: java UnDupeKeeper [-r] <DIRECTORY>");
 		System.exit(-1);
 	}
 
 	public static void main(String[] args) throws IOException
 	{
-		msg("Initializing UnDupeKeeper...");
 		if(args.length==0||
 			args.length>2)
 		{
@@ -46,11 +45,11 @@ public class UnDupeKeeper
 				log(" Consumer Started...");
 				new Thread(c).start();
 				log(" Producer Started...");
-				msg("Initialized...");
+				msg("UnDupeKeeper is working...");
 				DiscMonitor dm=new DiscMonitor(	dir.toString(),
 												q,
 												recursive);
-				//dm.stop();
+				// dm.stop();
 			}
 			catch(Exception e)
 			{

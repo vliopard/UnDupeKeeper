@@ -33,6 +33,7 @@ public class Logger
 	{
 		System.out.println(msg);
 	}
+
 	public static void log(	Thread type,
 							String logMessage)
 	{

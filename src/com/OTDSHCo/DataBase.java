@@ -49,14 +49,14 @@ public class DataBase
 		return new HashMap<String,String>();
 	}
 
-	static void log(String logMessage)
+	private static void log(String logMessage)
 	{
 		Logger.log(	Thread.currentThread(),
 					logMessage,
 					Logger.TOOLS_PACKAGE);
 	}
 
-	static void msg(String msg)
+	private static void msg(String msg)
 	{
 		Logger.msg(msg);
 	}

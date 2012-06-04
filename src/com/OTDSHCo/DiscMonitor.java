@@ -120,14 +120,14 @@ public class DiscMonitor
 		}
 	}
 
-	static void log(String logMessage)
+	private static void log(String logMessage)
 	{
 		Logger.log(	Thread.currentThread(),
 					logMessage,
 					Logger.TOOLS_UTIL);
 	}
 
-	static void msg(String msg)
+	private static void msg(String msg)
 	{
 		Logger.msg(msg);
 	}

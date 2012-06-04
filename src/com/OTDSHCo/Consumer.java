@@ -83,7 +83,9 @@ class Consumer	implements
 					log(" Including new file...");
 					included++;
 					msg("["+
-						included+
+						zero(included)+
+						"]["+
+						zero(replaced)+
 						"]\t["+
 						md5+
 						"]\tIncluding "+
@@ -96,7 +98,9 @@ class Consumer	implements
 					log(" Replacing file...");
 					replaced++;
 					msg("["+
-						replaced+
+						zero(included)+
+						"]["+
+						zero(replaced)+
 						"]\t["+
 						md5+
 						"]\tReplacing "+
@@ -125,7 +129,9 @@ class Consumer	implements
 		{
 			log(" Removing file.");
 			msg("["+
-				included+
+				zero(included)+
+				"]["+
+				zero(replaced)+
 				"]\tRemoving "+
 				child);
 			included--;
@@ -135,14 +141,20 @@ class Consumer	implements
 		}
 	}
 
-	static void log(String logMessage)
+	private String zero(long msg)
+	{
+		return String.format(	"%04d",
+								msg);
+	}
+
+	private static void log(String logMessage)
 	{
 		Logger.log(	Thread.currentThread(),
 					logMessage,
 					Logger.TOOLS_SUPERUSER);
 	}
 
-	static void msg(String msg)
+	private static void msg(String msg)
 	{
 		Logger.msg(msg);
 	}
