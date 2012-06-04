@@ -58,6 +58,10 @@ class Consumer	implements
 				manage_file_old(fq.getPath());
 			break;
 			case 4:
+				log(" Renaming Included File...");
+			// TODO: Rename
+			break;
+			case 5:
 				log(" OVERFLOW!");
 			// TODO: Overflow
 			break;
@@ -70,34 +74,34 @@ class Consumer	implements
 	{
 		if(new File(child).isFile())
 		{
-			log("Start managing file.");
+			log(" Start managing file.");
 			try
 			{
-				String md5=CheckSum.getChecksum(child.toString());
+				String md5=CheckSum.getChecksum(child);
 				if(!productMap.containsKey(md5))
 				{
 					log(" Including new file...");
 					included++;
-					log("["+
+					msg("["+
 						included+
 						"]\t["+
 						md5+
 						"]\tIncluding "+
-						child.toString());
+						child);
 					productMap.put(	md5,
-									child.toString());
+									child);
 				}
 				else
 				{
 					log(" Replacing file...");
 					replaced++;
-					log("["+
+					msg("["+
 						replaced+
 						"]\t["+
 						md5+
 						"]\tReplacing "+
-						child.toString());
-					File f2=new File(child.toString());
+						child);
+					File f2=new File(child);
 					Writer output=new BufferedWriter(new FileWriter(f2));
 					output.write(productMap.get(md5)+
 									" repeeKepuDnU{.-::![|@|]!::-.}UnDupeKeeper ["+
@@ -111,7 +115,7 @@ class Consumer	implements
 				log("!Problem Including New File: "+
 					e);
 			}
-			log("File Managed.");
+			log(" File Managed.");
 		}
 	}
 
@@ -120,13 +124,13 @@ class Consumer	implements
 		if(productMap.containsValue(child))
 		{
 			log(" Removing file.");
-			log("["+
+			msg("["+
 				included+
 				"]\tRemoving "+
-				child.toString());
+				child);
 			included--;
 			productMap.values()
-						.remove(child.toString());
+						.remove(child);
 			log(" File Removed.");
 		}
 	}
@@ -136,5 +140,10 @@ class Consumer	implements
 		Logger.log(	Thread.currentThread(),
 					logMessage,
 					Logger.TOOLS_SUPERUSER);
+	}
+
+	static void msg(String msg)
+	{
+		Logger.msg(msg);
 	}
 }

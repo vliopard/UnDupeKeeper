@@ -86,7 +86,7 @@ public class CheckSum
 			}
 			if(first)
 			{
-				log("Waiting for file...");
+				msg("Waiting for file...");
 			}
 			first=false;
 		}
@@ -97,5 +97,10 @@ public class CheckSum
 		Logger.log(	Thread.currentThread(),
 					logMessage,
 					Logger.TOOLS_CONVERT);
+	}
+
+	static void msg(String msg)
+	{
+		Logger.msg(msg);
 	}
 }

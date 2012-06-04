@@ -4,7 +4,7 @@ public class FileQueue
 	private int		kind;
 	private String	path;
 
-	FileQueue()
+	public FileQueue()
 	{
 	}
 

@@ -13,20 +13,20 @@ public class DataBase
 
 	static void saveMap(HashMap<String,String> productMap)
 	{
-		log("Start Saving Map.");
+		msg("Start Saving Map.");
 		try
 		{
 			ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream(databaseName));
 			objOut.writeObject(productMap);
 			objOut.close();
-			log("Database Saved!");
+			msg("Database Saved!");
 		}
 		catch(IOException e)
 		{
 			log("!Problems To Save Map: "+
 				e);
 		}
-		log("Finished Saving Map.");
+		msg("Finished Saving Map.");
 	}
 
 	static HashMap<String,String> loadMap()
@@ -45,7 +45,7 @@ public class DataBase
 					e);
 			}
 		}
-		log("WARINIG: New Database Created!");
+		msg("WARINIG: New Database Created!");
 		return new HashMap<String,String>();
 	}
 
@@ -54,5 +54,10 @@ public class DataBase
 		Logger.log(	Thread.currentThread(),
 					logMessage,
 					Logger.TOOLS_PACKAGE);
+	}
+
+	static void msg(String msg)
+	{
+		Logger.msg(msg);
 	}
 }

@@ -7,7 +7,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class UnDupeKeeper
 {
 	private static BlockingQueue<FileQueue>	q;
-	private static Monitor					m;
 
 	static void usage()
 	{
@@ -17,7 +16,7 @@ public class UnDupeKeeper
 
 	public static void main(String[] args) throws IOException
 	{
-		log(" Initializing UnDupeKeeper");
+		msg("Initializing UnDupeKeeper...");
 		if(args.length==0||
 			args.length>2)
 		{
@@ -40,19 +39,30 @@ public class UnDupeKeeper
 		{
 			log(" Initializing Threads...");
 			q=new LinkedBlockingQueue<FileQueue>();
-			Producer p=new Producer(dir,
-									recursive,
-									q);
-			Consumer c=new Consumer(q);
 			log(" Producer Started...");
-			new Thread(p).start();
-			log(" Consumer Started...");
-			new Thread(c).start();
+			try
+			{
+				Consumer c=new Consumer(q);
+				log(" Consumer Started...");
+				new Thread(c).start();
+				log(" Producer Started...");
+				msg("Initialized...");
+				DiscMonitor dm=new DiscMonitor(	dir.toString(),
+												q,
+												recursive);
+				//dm.stop();
+			}
+			catch(Exception e)
+			{
+				log("!Problem While Starting Producer: "+
+					e);
+			}
 		}
 		else
 		{
-			log("Directory does not exist!");
+			msg("Directory does not exist!");
 		}
+		msg("UnDupeKeeper Normal Shutdown");
 	}
 
 	static void log(String logMessage)
@@ -60,5 +70,10 @@ public class UnDupeKeeper
 		Logger.log(	Thread.currentThread(),
 					logMessage,
 					Logger.MAIN_SOFTWARE);
+	}
+
+	static void msg(String msg)
+	{
+		Logger.msg(msg);
 	}
 }

@@ -15,7 +15,7 @@ public class Logger
 	/* ========================================================= */
 	private static boolean	COMPLETE_DISABLED		=false;
 	/* ========================================================= */
-	private static boolean	ALL_SOFTWARE_ENABLED	=true;
+	private static boolean	ALL_SOFTWARE_ENABLED	=false;
 	/* ========================================================= */
 	private static boolean	MAIN_SOFTWARE_ENABLED	=false;
 	private static boolean	MAIN_THREAD_ENABLED		=false;
@@ -29,6 +29,10 @@ public class Logger
 	private static boolean	TOOLS_DIALOG_ENABLED	=false;
 	private static boolean	undo					=false;
 
+	public static void msg(String msg)
+	{
+		System.out.println(msg);
+	}
 	public static void log(	Thread type,
 							String logMessage)
 	{
@@ -71,7 +75,7 @@ public class Logger
 			}
 			else
 			{
-				type="[ ]\t";
+				type="[___________]\t";
 			}
 			switch(module)
 			{
