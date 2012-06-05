@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
@@ -112,6 +114,13 @@ class Consumer	implements
 									md5+
 									"]");
 					output.close();
+					// CheckSum.waitFile(child);
+					// f2.renameTo(new File(child + ".(Dup3K33p)"));
+					Path dir=Paths.get(child);
+					java.nio.file.Files.move(	dir,
+												dir.resolveSibling(dir.getFileName()
+																		.toString()+
+																	".(Dup3K33p)"));
 				}
 			}
 			catch(IOException e)

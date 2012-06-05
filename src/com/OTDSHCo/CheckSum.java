@@ -64,7 +64,7 @@ public class CheckSum
 					.toUpperCase();
 	}
 
-	static void waitFile(String child)
+	public static void waitFile(String child)
 	{
 		boolean first=true;
 		for(;;)
