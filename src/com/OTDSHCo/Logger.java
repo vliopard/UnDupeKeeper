@@ -34,6 +34,11 @@ public class Logger
 		System.out.println(msg);
 	}
 
+	public static void err(String msg)
+	{
+		System.err.println(msg);
+	}
+
 	public static void log(	Thread type,
 							String logMessage)
 	{

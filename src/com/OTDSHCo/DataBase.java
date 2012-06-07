@@ -1,43 +1,59 @@
 package com.OTDSHCo;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 public class DataBase
 {
 	private static String	databaseName	="OTDSHCo_UnDupeKeeper_Database.dbn";
 
-	static void saveMap(HashMap<String,String> productMap)
+	public static void clear()
 	{
-		msg("Start Saving Map.");
+		msg("Erasing database...");
+		HashMap<String,String> pm=new HashMap<String,String>();
+		saveMap(pm);
+	}
+
+	public static void saveMap(HashMap<String,String> productMap)
+	{
+		msg("Saving database...");
 		try
 		{
 			ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream(databaseName));
+			msg("Database contains "+
+				productMap.size()+
+				" items.");
 			objOut.writeObject(productMap);
 			objOut.close();
-			msg("Database Saved!");
+			objOut=null;
+			msg("Database saved...");
 		}
 		catch(IOException e)
 		{
 			log("!Problems To Save Map: "+
 				e);
 		}
-		msg("Finished Saving Map.");
 	}
 
-	static HashMap<String,String> loadMap()
+	public static HashMap<String,String> loadMap()
 	{
 		if(new File(databaseName).exists())
 		{
-			log(" Creating Database...");
+			msg("Loading database...");
 			try
 			{
-				ObjectInputStream objIn=new ObjectInputStream(new FileInputStream(databaseName));
-				return (HashMap<String,String>)objIn.readObject();
+				HashMap<String,String> hm=(HashMap<String,String>)new ObjectInputStream(new FileInputStream(databaseName)).readObject();
+				msg("Database contains "+
+					hm.size()+
+					" items.");
+				return hm;
 			}
 			catch(ClassNotFoundException|IOException e)
 			{
@@ -45,7 +61,7 @@ public class DataBase
 					e);
 			}
 		}
-		msg("WARINIG: New Database Created!");
+		msg("WARNING: New database created!");
 		return new HashMap<String,String>();
 	}
 
@@ -59,5 +75,10 @@ public class DataBase
 	private static void msg(String msg)
 	{
 		Logger.msg(msg);
+	}
+
+	private static void err(String msg)
+	{
+		Logger.err(msg);
 	}
 }

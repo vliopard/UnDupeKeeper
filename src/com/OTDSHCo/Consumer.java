@@ -12,26 +12,32 @@ import java.util.concurrent.BlockingQueue;
 class Consumer	implements
 				Runnable
 {
-	private final BlockingQueue<?>			queue;
+	private final BlockingQueue<Integer>	stopSignal;
+	private final BlockingQueue<FileQueue>	transferQueue;
 	private long							included	=0;
 	private long							replaced	=0;
 	private static HashMap<String,String>	productMap	=new HashMap<String,String>();
 
-	Consumer(BlockingQueue<?> q)
+	Consumer(	BlockingQueue<FileQueue> q,
+				BlockingQueue<Integer> r)
 	{
 		log(" Constructing Consumer...");
-		queue=q;
+		transferQueue=q;
+		stopSignal=r;
 	}
 
 	public void run()
 	{
+		productMap=DataBase.loadMap();
+		msg("Worker startup...");
 		log(" Starting Consumer.");
 		try
 		{
-			while(true)
+			do
 			{
-				consume(queue.take());
+				consume(transferQueue.take());
 			}
+			while(!stopSignal.contains(1));
 		}
 		catch(InterruptedException ex)
 		{
@@ -39,9 +45,43 @@ class Consumer	implements
 				ex);
 		}
 		log(" Ending Consumer.");
+		save();
+		msg("Worker shutdown...");
+		try
+		{
+			stopSignal.put(2);
+		}
+		catch(InterruptedException e)
+		{
+			err("Cannot Send Exit Message.");
+		}
 	}
 
-	void consume(Object x)
+	public synchronized void save()
+	{
+		synchronized(this)
+		{
+			DataBase.saveMap(productMap);
+		}
+	}
+
+	public synchronized void clear()
+	{
+		synchronized(this)
+		{
+			DataBase.clear();
+		}
+	}
+
+	public synchronized void load()
+	{
+		synchronized(this)
+		{
+			productMap=DataBase.loadMap();
+		}
+	}
+
+	private void consume(Object x)
 	{
 		log(" Consuming...");
 		FileQueue fq=(FileQueue)x;
@@ -166,5 +206,10 @@ class Consumer	implements
 	private static void msg(String msg)
 	{
 		Logger.msg(msg);
+	}
+
+	private static void err(String msg)
+	{
+		Logger.err(msg);
 	}
 }

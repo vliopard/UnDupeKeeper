@@ -1,19 +1,24 @@
 package com.OTDSHCo;
 import java.util.concurrent.BlockingQueue;
 import net.contentobjects.jnotify.JNotify;
+import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
 
 public class DiscMonitor
 {
-	private boolean							stopSignal	=false;
 	private FileQueue						fq;
+	private final BlockingQueue<Integer>	stopSignal;
 	private final BlockingQueue<FileQueue>	queue;
 
 	DiscMonitor(String path,
 				BlockingQueue<FileQueue> q,
-				boolean recursive) throws Exception
+				BlockingQueue<Integer> s,
+				boolean recursive)	throws JNotifyException,
+									InterruptedException
 	{
+		msg("Monitor startup...");
 		queue=q;
+		stopSignal=s;
 		int mask=JNotify.FILE_CREATED|
 					JNotify.FILE_DELETED|
 					JNotify.FILE_MODIFIED|
@@ -27,18 +32,17 @@ public class DiscMonitor
 		{
 			Thread.sleep(5000);
 		}
-		while(!stopSignal);
+		while(!stopSignal.contains(1));
 		boolean res=JNotify.removeWatch(watchID);
 		if(!res)
 		{
 			log("!Invalid Watci ID Specified");
 		}
-		msg("Producer Thread Stoped!");
-	}
-
-	public void stop()
-	{
-		stopSignal=true;
+		fq=new FileQueue();
+		fq.set(	0,
+				"ExitSignal");
+		queue.put(fq);
+		msg("Monitor shutdown...");
 	}
 
 	class Listener	implements
