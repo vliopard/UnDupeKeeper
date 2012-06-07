@@ -1,2 +1,1 @@
-@echo off
-java -jar UnDupeKeeper.jar -r %1
+@start /b javaw -jar UnDupeKeeper.jar > UnDupeKeeper.log

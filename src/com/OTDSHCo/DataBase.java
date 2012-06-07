@@ -12,7 +12,8 @@ import java.util.HashMap;
 
 public class DataBase
 {
-	private static String	databaseName	="OTDSHCo_UnDupeKeeper_Database.dbn";
+	private static String	directoryName	="UnDupeKeeper.dir";
+	private static String	databaseName	="UnDupeKeeper.hdb";
 
 	public static void clear()
 	{
@@ -63,6 +64,40 @@ public class DataBase
 		}
 		msg("WARNING: New database created!");
 		return new HashMap<String,String>();
+	}
+
+	public static void saveDir(String dir)
+	{
+		try
+		{
+			ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream(directoryName));
+			objOut.writeObject(dir);
+			objOut.close();
+			objOut=null;
+		}
+		catch(IOException e)
+		{
+			log("!Problems To Save Dir: "+
+				e);
+		}
+	}
+
+	public static String loadDir()
+	{
+		if(new File(directoryName).exists())
+		{
+			try
+			{
+				String hm=(String)new ObjectInputStream(new FileInputStream(directoryName)).readObject();
+				return hm;
+			}
+			catch(ClassNotFoundException|IOException e)
+			{
+				log("!Problems During Settings Storage: "+
+					e);
+			}
+		}
+		return null;
 	}
 
 	private static void log(String logMessage)

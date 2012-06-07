@@ -14,6 +14,8 @@ import java.io.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -54,119 +56,161 @@ public class UnDupeKeeper
 					size+
 					".jpg"
 														};
+	private static boolean					recursive	=false;
 	private static Consumer					c;
 	private static BlockingQueue<Integer>	stopSignal;
 	private static BlockingQueue<FileQueue>	transferQueue;
 
-	static void usage()
+	private static void usage()
 	{
 		err("usage: java UnDupeKeeper [-r] <DIRECTORY>");
 		System.exit(-1);
 	}
 
-	public static void main(String[] args) throws IOException
+	private static boolean isDir(Path dirName)
 	{
+		if(null==dirName)
+		{
+			return false;
+		}
+		return (new File(dirName.toString()).exists())&&
+				(new File(dirName.toString()).isDirectory());
+	}
+
+	private static String chooseDir()
+	{
+		JFrame frame=new JFrame();
+		JFileChooser chooser;
+		chooser=new JFileChooser();
+		String d=DataBase.loadDir();
+		if(null==d)
+		{
+			d="/";
+		}
+		chooser.setCurrentDirectory(new java.io.File(d));
+		chooser.setDialogTitle("Select a folder to keep unduplicated");
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		if(chooser.showOpenDialog(frame)==JFileChooser.APPROVE_OPTION)
+		{
+			d=chooser.getSelectedFile()
+						.toString();
+			DataBase.saveDir(d);
+			return d;
+		}
+		return null;
+	}
+
+	private static Path checkArgs(String[] args)
+	{
+		int dirArg=0;
 		if(args.length==0||
 			args.length>2)
 		{
 			usage();
 		}
-		boolean recursive=false;
-		int dirArg=0;
 		if(args[0].equals("-r"))
 		{
+			recursive=true;
 			if(args.length<2)
 			{
 				usage();
 			}
-			recursive=true;
 			dirArg++;
 		}
-		Path dir=Paths.get(args[dirArg]);
-		if((new File(dir.toString()).exists())&&
-			(new File(dir.toString()).isDirectory()))
+		return Paths.get(args[dirArg]);
+	}
+
+	public static void main(String[] args) throws IOException
+	{
+		Path dir=null;
+		if(args.length>0)
 		{
-			try
+			dir=checkArgs(args);
+		}
+		while(!isDir(dir))
+		{
+			recursive=true;
+			String dirName=chooseDir();
+			if(null==dirName)
 			{
-				int val=3;
-				switch(val)
-				{
-					case 1:
-						UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-					break;
-					case 2:
-						UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-					break;
-					case 3:
-						UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-					break;
-					case 4:
-						UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-					break;
-					case 5:
-						UIManager.setLookAndFeel("javax.swing.plaf.basic.BasicLookAndFeel");
-					break;
-					case 6:
-						UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-					break;
-					case 7:
-						UIManager.setLookAndFeel("javax.swing.plaf.multi.MultiLookAndFeel");
-					break;
-					case 8:
-						UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-					break;
-					case 9:
-						UIManager.setLookAndFeel("javax.swing.plaf.synth.SynthLookAndFeel");
-				}
+				usage();
 			}
-			catch(UnsupportedLookAndFeelException|IllegalAccessException
-					|InstantiationException|ClassNotFoundException ex)
+			dir=Paths.get(dirName);
+		}
+		try
+		{
+			int val=3;
+			switch(val)
 			{
-				ex.printStackTrace();
-			}
-			/* Turn off metal's use of bold fonts */
-			UIManager.put(	"swing.boldMetal",
-							Boolean.FALSE);
-			// Schedule a job for the event-dispatching thread:
-			// adding TrayIcon.
-			SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						createAndShowGUI();
-					}
-				});
-			log(" Initializing Threads...");
-			stopSignal=new LinkedBlockingQueue<Integer>();
-			transferQueue=new LinkedBlockingQueue<FileQueue>();
-			log(" Producer Started...");
-			try
-			{
-				stopSignal.put(0);
-				c=new Consumer(	transferQueue,
-								stopSignal);
-				log(" Consumer Started...");
-				new Thread(c).start();
-				log(" Producer Started...");
-				msg("UnDupeKeeper is working...");
-				DiscMonitor dm=new DiscMonitor(	dir.toString(),
-												transferQueue,
-												stopSignal,
-												recursive);
-				while(!stopSignal.contains(2))
-				{
-					Thread.sleep(100);
-				}
-			}
-			catch(InterruptedException e)
-			{
-				err("Problem While Starting Producer: "+
-					e);
+				case 1:
+					UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+				break;
+				case 2:
+					UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+				break;
+				case 3:
+					UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+				break;
+				case 4:
+					UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+				break;
+				case 5:
+					UIManager.setLookAndFeel("javax.swing.plaf.basic.BasicLookAndFeel");
+				break;
+				case 6:
+					UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+				break;
+				case 7:
+					UIManager.setLookAndFeel("javax.swing.plaf.multi.MultiLookAndFeel");
+				break;
+				case 8:
+					UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+				break;
+				case 9:
+					UIManager.setLookAndFeel("javax.swing.plaf.synth.SynthLookAndFeel");
 			}
 		}
-		else
+		catch(UnsupportedLookAndFeelException|IllegalAccessException
+				|InstantiationException|ClassNotFoundException ex)
 		{
-			err("Directory does not exist!");
+			err("Error loading look and feel.");
+		}
+		UIManager.put(	"swing.boldMetal",
+						Boolean.FALSE);
+		SwingUtilities.invokeLater(new Runnable()
+			{
+				public void run()
+				{
+					createAndShowGUI();
+				}
+			});
+		log(" Initializing Threads...");
+		stopSignal=new LinkedBlockingQueue<Integer>();
+		transferQueue=new LinkedBlockingQueue<FileQueue>();
+		log(" Producer Started...");
+		try
+		{
+			stopSignal.put(0);
+			c=new Consumer(	transferQueue,
+							stopSignal);
+			log(" Consumer Started...");
+			new Thread(c).start();
+			log(" Producer Started...");
+			msg("UnDupeKeeper is working...");
+			DiscMonitor dm=new DiscMonitor(	dir.toString(),
+											transferQueue,
+											stopSignal,
+											recursive);
+			while(!stopSignal.contains(2))
+			{
+				Thread.sleep(100);
+			}
+		}
+		catch(InterruptedException e)
+		{
+			err("Problem While Starting Producer: "+
+				e);
 		}
 		msg("UnDupeKeeper Normal Shutdown.\nExit.");
 	}
