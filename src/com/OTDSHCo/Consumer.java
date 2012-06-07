@@ -16,19 +16,19 @@ class Consumer	implements
 	private final BlockingQueue<FileQueue>	transferQueue;
 	private long							included	=0;
 	private long							replaced	=0;
-	private static HashMap<String,String>	productMap	=new HashMap<String,String>();
+	private static HashMap<String,String>	hashMapTable	=new HashMap<String,String>();
 
-	Consumer(	BlockingQueue<FileQueue> q,
-				BlockingQueue<Integer> r)
+	Consumer(	BlockingQueue<FileQueue> fileQueue,
+				BlockingQueue<Integer> signalQueue)
 	{
 		log(" Constructing Consumer...");
-		transferQueue=q;
-		stopSignal=r;
+		transferQueue=fileQueue;
+		stopSignal=signalQueue;
 	}
 
 	public void run()
 	{
-		productMap=DataBase.loadMap();
+		hashMapTable=DataBase.loadMap();
 		msg("Worker startup...");
 		log(" Starting Consumer.");
 		try
@@ -61,7 +61,7 @@ class Consumer	implements
 	{
 		synchronized(this)
 		{
-			DataBase.saveMap(productMap);
+			DataBase.saveMap(hashMapTable);
 		}
 	}
 
@@ -77,19 +77,19 @@ class Consumer	implements
 	{
 		synchronized(this)
 		{
-			productMap=DataBase.loadMap();
+			hashMapTable=DataBase.loadMap();
 		}
 	}
 
-	private void consume(Object x)
+	private void consume(Object fileQueueObject)
 	{
 		log(" Consuming...");
-		FileQueue fq=(FileQueue)x;
-		switch(fq.getType())
+		FileQueue fileQueue=(FileQueue)fileQueueObject;
+		switch(fileQueue.getType())
 		{
 			case 1:
 				log(" Including New File...");
-				manage_file_new(fq.getPath());
+				includeFileToHashTable(fileQueue.getPath());
 			break;
 			case 2:
 				log(" Modifying Included File...");
@@ -97,7 +97,7 @@ class Consumer	implements
 			break;
 			case 3:
 				log(" Removing Included File...");
-				manage_file_old(fq.getPath());
+				replaceFileFromHashTable(fileQueue.getPath());
 			break;
 			case 4:
 				log(" Renaming Included File...");
@@ -112,53 +112,53 @@ class Consumer	implements
 		log(" Consumed...");
 	}
 
-	private void manage_file_new(String child)
+	private void includeFileToHashTable(String fileName)
 	{
-		if(new File(child).isFile())
+		if(new File(fileName).isFile())
 		{
 			log(" Start managing file.");
 			try
 			{
-				String md5=CheckSum.getChecksum(child);
-				if(!productMap.containsKey(md5))
+				String cypherMethod=CheckSum.getChecksum(fileName);
+				if(!hashMapTable.containsKey(cypherMethod))
 				{
 					log(" Including new file...");
 					included++;
 					msg("["+
-						zero(included)+
+						addLeadingZeros(included)+
 						"]["+
-						zero(replaced)+
+						addLeadingZeros(replaced)+
 						"]\t["+
-						md5+
+						cypherMethod+
 						"]\tIncluding "+
-						child);
-					productMap.put(	md5,
-									child);
+						fileName);
+					hashMapTable.put(	cypherMethod,
+									fileName);
 				}
 				else
 				{
 					log(" Replacing file...");
 					replaced++;
 					msg("["+
-						zero(included)+
+						addLeadingZeros(included)+
 						"]["+
-						zero(replaced)+
+						addLeadingZeros(replaced)+
 						"]\t["+
-						md5+
+						cypherMethod+
 						"]\tReplacing "+
-						child);
-					File f2=new File(child);
-					Writer output=new BufferedWriter(new FileWriter(f2));
-					output.write(productMap.get(md5)+
+						fileName);
+					File fileToRename=new File(fileName);
+					Writer outputFile=new BufferedWriter(new FileWriter(fileToRename));
+					outputFile.write(hashMapTable.get(cypherMethod)+
 									" repeeKepuDnU{.-::![|@|]!::-.}UnDupeKeeper ["+
-									md5+
+									cypherMethod+
 									"]");
-					output.close();
+					outputFile.close();
 					// CheckSum.waitFile(child);
 					// f2.renameTo(new File(child + ".(Dup3K33p)"));
-					Path dir=Paths.get(child);
-					java.nio.file.Files.move(	dir,
-												dir.resolveSibling(dir.getFileName()
+					Path fileNamePath=Paths.get(fileName);
+					java.nio.file.Files.move(	fileNamePath,
+												fileNamePath.resolveSibling(fileNamePath.getFileName()
 																		.toString()+
 																	".(Dup3K33p)"));
 				}
@@ -172,28 +172,28 @@ class Consumer	implements
 		}
 	}
 
-	private void manage_file_old(String child)
+	private void replaceFileFromHashTable(String fileName)
 	{
-		if(productMap.containsValue(child))
+		if(hashMapTable.containsValue(fileName))
 		{
 			log(" Removing file.");
 			msg("["+
-				zero(included)+
+				addLeadingZeros(included)+
 				"]["+
-				zero(replaced)+
+				addLeadingZeros(replaced)+
 				"]\tRemoving "+
-				child);
+				fileName);
 			included--;
-			productMap.values()
-						.remove(child);
+			hashMapTable.values()
+						.remove(fileName);
 			log(" File Removed.");
 		}
 	}
 
-	private String zero(long msg)
+	private String addLeadingZeros(long numberToFormat)
 	{
 		return String.format(	"%04d",
-								msg);
+								numberToFormat);
 	}
 
 	private static void log(String logMessage)
@@ -203,13 +203,13 @@ class Consumer	implements
 					Logger.TOOLS_SUPERUSER);
 	}
 
-	private static void msg(String msg)
+	private static void msg(String message)
 	{
-		Logger.msg(msg);
+		Logger.msg(message);
 	}
 
-	private static void err(String msg)
+	private static void err(String errorMessage)
 	{
-		Logger.err(msg);
+		Logger.err(errorMessage);
 	}
 }

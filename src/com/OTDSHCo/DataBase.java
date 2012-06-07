@@ -18,22 +18,22 @@ public class DataBase
 	public static void clear()
 	{
 		msg("Erasing database...");
-		HashMap<String,String> pm=new HashMap<String,String>();
-		saveMap(pm);
+		HashMap<String,String> hashMapToClear=new HashMap<String,String>();
+		saveMap(hashMapToClear);
 	}
 
-	public static void saveMap(HashMap<String,String> productMap)
+	public static void saveMap(HashMap<String,String> hashMapToSave)
 	{
 		msg("Saving database...");
 		try
 		{
-			ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream(databaseName));
+			ObjectOutputStream hashMapObjectOutput=new ObjectOutputStream(new FileOutputStream(databaseName));
 			msg("Database contains "+
-				productMap.size()+
+				hashMapToSave.size()+
 				" items.");
-			objOut.writeObject(productMap);
-			objOut.close();
-			objOut=null;
+			hashMapObjectOutput.writeObject(hashMapToSave);
+			hashMapObjectOutput.close();
+			hashMapObjectOutput=null;
 			msg("Database saved...");
 		}
 		catch(IOException e)
@@ -50,11 +50,11 @@ public class DataBase
 			msg("Loading database...");
 			try
 			{
-				HashMap<String,String> hm=(HashMap<String,String>)new ObjectInputStream(new FileInputStream(databaseName)).readObject();
+				HashMap<String,String> hashMapToLoad=(HashMap<String,String>)new ObjectInputStream(new FileInputStream(databaseName)).readObject();
 				msg("Database contains "+
-					hm.size()+
+					hashMapToLoad.size()+
 					" items.");
-				return hm;
+				return hashMapToLoad;
 			}
 			catch(ClassNotFoundException|IOException e)
 			{
@@ -66,14 +66,14 @@ public class DataBase
 		return new HashMap<String,String>();
 	}
 
-	public static void saveDir(String dir)
+	public static void saveDir(String folderName)
 	{
 		try
 		{
-			ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream(directoryName));
-			objOut.writeObject(dir);
-			objOut.close();
-			objOut=null;
+			ObjectOutputStream directoryToSaveOutput=new ObjectOutputStream(new FileOutputStream(directoryName));
+			directoryToSaveOutput.writeObject(folderName);
+			directoryToSaveOutput.close();
+			directoryToSaveOutput=null;
 		}
 		catch(IOException e)
 		{
@@ -88,8 +88,7 @@ public class DataBase
 		{
 			try
 			{
-				String hm=(String)new ObjectInputStream(new FileInputStream(directoryName)).readObject();
-				return hm;
+				return (String)new ObjectInputStream(new FileInputStream(directoryName)).readObject();
 			}
 			catch(ClassNotFoundException|IOException e)
 			{
@@ -107,13 +106,13 @@ public class DataBase
 					Logger.TOOLS_PACKAGE);
 	}
 
-	private static void msg(String msg)
+	private static void msg(String message)
 	{
-		Logger.msg(msg);
+		Logger.msg(message);
 	}
 
-	private static void err(String msg)
+	private static void err(String errorMessage)
 	{
-		Logger.err(msg);
+		Logger.err(errorMessage);
 	}
 }

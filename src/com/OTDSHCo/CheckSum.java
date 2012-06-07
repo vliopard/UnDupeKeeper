@@ -10,38 +10,38 @@ import java.util.Formatter;
 
 public class CheckSum
 {
-	private static final String	HEXES	="0123456789ABCDEF";
-	private static String		method	="SHA1";
+	private static final String	hexValues		="0123456789ABCDEF";
+	private static String		cypherMethos	="SHA1";
 
-	public static void setMethod(String newMeth)
+	public static void setMethod(String cypherTypeMethod)
 	{
 		log(" Setting Checksum Method...");
-		method=newMeth;
+		cypherMethos=cypherTypeMethod;
 	}
 
-	public static byte[] createChecksum(String filename)
+	public static byte[] createChecksum(String fileName)
 	{
 		log(" Creating Checksum...");
-		InputStream fis;
+		InputStream fileInputStream;
 		try
 		{
-			fis=new FileInputStream(filename);
-			byte[] buffer=new byte[1024];
-			MessageDigest complete=MessageDigest.getInstance(method);
-			int numRead;
+			fileInputStream=new FileInputStream(fileName);
+			byte[] byteBuffer=new byte[1024];
+			MessageDigest messageDigest=MessageDigest.getInstance(cypherMethos);
+			int numberRead;
 			do
 			{
-				numRead=fis.read(buffer);
-				if(numRead>0)
+				numberRead=fileInputStream.read(byteBuffer);
+				if(numberRead>0)
 				{
-					complete.update(buffer,
-									0,
-									numRead);
+					messageDigest.update(	byteBuffer,
+											0,
+											numberRead);
 				}
 			}
-			while(numRead!=-1);
-			fis.close();
-			return complete.digest();
+			while(numberRead!=-1);
+			fileInputStream.close();
+			return messageDigest.digest();
 		}
 		catch(IOException|NoSuchAlgorithmException e)
 		{
@@ -51,46 +51,43 @@ public class CheckSum
 		}
 	}
 
-	public static String getChecksum(String filename)
+	public static String getChecksum(String fileName)
 	{
 		log(" Getting CheckSum...");
-		waitFile(filename);
-		byte[] raw=createChecksum(filename);
-		final StringBuilder hex=new StringBuilder(2*raw.length);
-		for(final byte b : raw)
+		waitFile(fileName);
+		byte[] rawBytes=createChecksum(fileName);
+		final StringBuilder hexString=new StringBuilder(2*rawBytes.length);
+		for(final byte b : rawBytes)
 		{
-			hex.append(HEXES.charAt((b&0xF0)>>4))
-				.append(HEXES.charAt((b&0x0F)));
+			hexString.append(hexValues.charAt((b&0xF0)>>4))
+						.append(hexValues.charAt((b&0x0F)));
 		}
-		return hex.toString()
-					.toUpperCase();
+		return hexString.toString()
+						.toUpperCase();
 	}
 
 	private static String encryptPassword(String password)
 	{
-		String sha1="";
+		String cypherSha1Method="";
 		try
 		{
-			MessageDigest crypt=MessageDigest.getInstance("SHA-1");
-			crypt.reset();
-			crypt.update(password.getBytes("UTF-8"));
-			sha1=byteToHex(crypt.digest());
+			MessageDigest cryptMessageDigest=MessageDigest.getInstance("SHA-1");
+			cryptMessageDigest.reset();
+			cryptMessageDigest.update(password.getBytes("UTF-8"));
+			cypherSha1Method=byteToHex(cryptMessageDigest.digest());
 		}
-		catch(NoSuchAlgorithmException e)
+		catch(NoSuchAlgorithmException|UnsupportedEncodingException e)
 		{
-			e.printStackTrace();
+			log("!encryptPassword Failed: "+
+				e);
 		}
-		catch(UnsupportedEncodingException e)
-		{
-			e.printStackTrace();
-		}
-		return sha1;
+		return cypherSha1Method;
 	}
 
-	private static String byteToHex(final byte[] hash)
+	private static String byteToHex(final byte[] hashBytes)
 	{
 		Formatter formatter=new Formatter();
-		for(byte b : hash)
+		for(byte b : hashBytes)
 		{
 			formatter.format(	"%02x",
 								b);
@@ -98,14 +95,14 @@ public class CheckSum
 		return formatter.toString();
 	}
 
-	public static void waitFile(String child)
+	public static void waitFile(String fileName)
 	{
-		boolean first=true;
+		boolean reachedFirstTime=true;
 		for(;;)
 		{
 			try
 			{
-				FileInputStream fi=new FileInputStream(new File(child));
+				FileInputStream fi=new FileInputStream(new File(fileName));
 				if(fi.available()>0)
 				{
 					fi.close();
@@ -118,11 +115,11 @@ public class CheckSum
 			{
 				// Waiting for file. Does not need to track here.
 			}
-			if(first)
+			if(reachedFirstTime)
 			{
 				msg("Waiting for file...");
 			}
-			first=false;
+			reachedFirstTime=false;
 		}
 	}
 
@@ -133,8 +130,8 @@ public class CheckSum
 					Logger.TOOLS_CONVERT);
 	}
 
-	private static void msg(String msg)
+	private static void msg(String message)
 	{
-		Logger.msg(msg);
+		Logger.msg(message);
 	}
 }

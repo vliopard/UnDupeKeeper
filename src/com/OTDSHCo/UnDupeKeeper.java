@@ -23,41 +23,53 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class UnDupeKeeper
 {
-	private static String					size		="16";
-	private static String					direc		="images/";
-	private static String[]					iconList	=
-														{
-			direc+
+	private static String					iconSize			="16";
+	private static String					imageDirectory		="images/";
+	private static String[]					iconList			=
+																{
+			imageDirectory+
 					"dnaColor"+
-					size+
+					iconSize+
 					".jpg",
-			direc+
+			imageDirectory+
 					"dnaGray"+
-					size+
+					iconSize+
 					".jpg",
-			direc+
+			imageDirectory+
 					"dnaGreen"+
-					size+
+					iconSize+
 					".jpg",
-			direc+
+			imageDirectory+
 					"dnaRed"+
-					size+
+					iconSize+
 					".jpg",
-			direc+
+			imageDirectory+
 					"dupeArrow"+
-					size+
+					iconSize+
 					".jpg",
-			direc+
+			imageDirectory+
 					"dupeFile"+
-					size+
+					iconSize+
 					".jpg",
-			direc+
+			imageDirectory+
 					"dupeLoupe"+
-					size+
+					iconSize+
 					".jpg"
-														};
-	private static boolean					recursive	=false;
-	private static Consumer					c;
+																};
+	private static String[]					lookAndFeel			=
+																{
+			"com.sun.java.swing.plaf.gtk.GTKLookAndFeel",
+			"com.sun.java.swing.plaf.motif.MotifLookAndFeel",
+			"com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel",
+			"com.sun.java.swing.plaf.windows.WindowsLookAndFeel",
+			"javax.swing.plaf.basic.BasicLookAndFeel",
+			"javax.swing.plaf.metal.MetalLookAndFeel",
+			"javax.swing.plaf.multi.MultiLookAndFeel",
+			"javax.swing.plaf.nimbus.NimbusLookAndFeel",
+			"javax.swing.plaf.synth.SynthLookAndFeel"
+																};
+	private static boolean					recursiveFolderScan	=false;
+	private static Consumer					worker;
 	private static BlockingQueue<Integer>	stopSignal;
 	private static BlockingQueue<FileQueue>	transferQueue;
 
@@ -82,102 +94,72 @@ public class UnDupeKeeper
 		JFrame frame=new JFrame();
 		JFileChooser chooser;
 		chooser=new JFileChooser();
-		String d=DataBase.loadDir();
-		if(null==d)
+		String directoryToLoad=DataBase.loadDir();
+		if(null==directoryToLoad)
 		{
-			d="/";
+			directoryToLoad="/";
 		}
-		chooser.setCurrentDirectory(new java.io.File(d));
+		chooser.setCurrentDirectory(new java.io.File(directoryToLoad));
 		chooser.setDialogTitle("Select a folder to keep unduplicated");
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setAcceptAllFileFilterUsed(false);
 		if(chooser.showOpenDialog(frame)==JFileChooser.APPROVE_OPTION)
 		{
-			d=chooser.getSelectedFile()
-						.toString();
-			DataBase.saveDir(d);
-			return d;
+			directoryToLoad=chooser.getSelectedFile()
+									.toString();
+			DataBase.saveDir(directoryToLoad);
+			return directoryToLoad;
 		}
 		return null;
 	}
 
-	private static Path checkArgs(String[] args)
+	private static Path checkPromptArguments(String[] arguments)
 	{
-		int dirArg=0;
-		if(args.length==0||
-			args.length>2)
+		int argumentIndex=0;
+		if(arguments.length==0||
+			arguments.length>2)
 		{
 			usage();
 		}
-		if(args[0].equals("-r"))
+		if(arguments[0].equals("-r"))
 		{
-			recursive=true;
-			if(args.length<2)
+			recursiveFolderScan=true;
+			if(arguments.length<2)
 			{
 				usage();
 			}
-			dirArg++;
+			argumentIndex++;
 		}
-		return Paths.get(args[dirArg]);
+		return Paths.get(arguments[argumentIndex]);
 	}
 
 	public static void main(String[] args) throws IOException
 	{
-		Path dir=null;
+		Path directoryToWatch=null;
 		if(args.length>0)
 		{
-			dir=checkArgs(args);
+			directoryToWatch=checkPromptArguments(args);
 		}
-		while(!isDir(dir))
+		while(!isDir(directoryToWatch))
 		{
-			recursive=true;
-			String dirName=chooseDir();
-			if(null==dirName)
+			recursiveFolderScan=true;
+			String directoryName=chooseDir();
+			if(null==directoryName)
 			{
 				usage();
 			}
-			dir=Paths.get(dirName);
+			directoryToWatch=Paths.get(directoryName);
 		}
 		try
 		{
-			int val=3;
-			switch(val)
-			{
-				case 1:
-					UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-				break;
-				case 2:
-					UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-				break;
-				case 3:
-					UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-				break;
-				case 4:
-					UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-				break;
-				case 5:
-					UIManager.setLookAndFeel("javax.swing.plaf.basic.BasicLookAndFeel");
-				break;
-				case 6:
-					UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-				break;
-				case 7:
-					UIManager.setLookAndFeel("javax.swing.plaf.multi.MultiLookAndFeel");
-				break;
-				case 8:
-					UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-				break;
-				case 9:
-					UIManager.setLookAndFeel("javax.swing.plaf.synth.SynthLookAndFeel");
-			}
+			UIManager.setLookAndFeel(lookAndFeel[2]);
 		}
 		catch(UnsupportedLookAndFeelException|IllegalAccessException
 				|InstantiationException|ClassNotFoundException ex)
 		{
 			err("Error loading look and feel.");
 		}
-		UIManager.put(	"swing.boldMetal",
-						Boolean.FALSE);
+		// UIManager.put( "swing.boldMetal", Boolean.FALSE);
 		SwingUtilities.invokeLater(new Runnable()
 			{
 				public void run()
@@ -192,16 +174,16 @@ public class UnDupeKeeper
 		try
 		{
 			stopSignal.put(0);
-			c=new Consumer(	transferQueue,
-							stopSignal);
+			worker=new Consumer(transferQueue,
+								stopSignal);
 			log(" Consumer Started...");
-			new Thread(c).start();
+			new Thread(worker).start();
 			log(" Producer Started...");
 			msg("UnDupeKeeper is working...");
-			DiscMonitor dm=new DiscMonitor(	dir.toString(),
+			DiscMonitor dm=new DiscMonitor(	directoryToWatch.toString(),
 											transferQueue,
 											stopSignal,
-											recursive);
+											recursiveFolderScan);
 			while(!stopSignal.contains(2))
 			{
 				Thread.sleep(100);
@@ -282,7 +264,7 @@ public class UnDupeKeeper
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					c.save();
+					worker.save();
 				}
 			});
 		clearDatabase.addActionListener(new ActionListener()
@@ -292,8 +274,8 @@ public class UnDupeKeeper
 					if(JOptionPane.showConfirmDialog(	null,
 														"Database will be empty. Are you sure?")==JOptionPane.YES_OPTION)
 					{
-						c.clear();
-						c.load();
+						worker.clear();
+						worker.load();
 					}
 					else
 					{
@@ -344,13 +326,13 @@ public class UnDupeKeeper
 					Logger.MAIN_SOFTWARE);
 	}
 
-	static void msg(String msg)
+	static void msg(String message)
 	{
-		Logger.msg(msg);
+		Logger.msg(message);
 	}
 
-	static void err(String msg)
+	static void err(String errorMessage)
 	{
-		Logger.err(msg);
+		Logger.err(errorMessage);
 	}
 }

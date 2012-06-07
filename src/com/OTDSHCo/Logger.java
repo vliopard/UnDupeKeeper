@@ -29,14 +29,14 @@ public class Logger
 	private static boolean	TOOLS_DIALOG_ENABLED	=false;
 	private static boolean	undo					=false;
 
-	public static void msg(String msg)
+	public static void msg(String message)
 	{
-		System.out.println(msg);
+		System.out.println(message);
 	}
 
-	public static void err(String msg)
+	public static void err(String errorMessage)
 	{
-		System.err.println(msg);
+		System.err.println(errorMessage);
 	}
 
 	public static void log(	Thread type,

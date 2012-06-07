@@ -6,26 +6,26 @@ import net.contentobjects.jnotify.JNotifyListener;
 
 public class DiscMonitor
 {
-	private FileQueue						fq;
+	private FileQueue						fileQueue;
 	private final BlockingQueue<Integer>	stopSignal;
-	private final BlockingQueue<FileQueue>	queue;
+	private final BlockingQueue<FileQueue>	transferQueue;
 
-	DiscMonitor(String path,
-				BlockingQueue<FileQueue> q,
-				BlockingQueue<Integer> s,
-				boolean recursive)	throws JNotifyException,
-									InterruptedException
+	DiscMonitor(String directoryPath,
+				BlockingQueue<FileQueue> transferData,
+				BlockingQueue<Integer> stopCommand,
+				boolean watchRecursive)	throws JNotifyException,
+										InterruptedException
 	{
 		msg("Monitor startup...");
-		queue=q;
-		stopSignal=s;
-		int mask=JNotify.FILE_CREATED|
-					JNotify.FILE_DELETED|
-					JNotify.FILE_MODIFIED|
-					JNotify.FILE_RENAMED;
-		boolean watchSubtree=recursive;
-		int watchID=JNotify.addWatch(	path,
-										mask,
+		transferQueue=transferData;
+		stopSignal=stopCommand;
+		int jNotifyMask=JNotify.FILE_CREATED|
+						JNotify.FILE_DELETED|
+						JNotify.FILE_MODIFIED|
+						JNotify.FILE_RENAMED;
+		boolean watchSubtree=watchRecursive;
+		int watchID=JNotify.addWatch(	directoryPath,
+										jNotifyMask,
 										watchSubtree,
 										new Listener());
 		do
@@ -33,15 +33,14 @@ public class DiscMonitor
 			Thread.sleep(5000);
 		}
 		while(!stopSignal.contains(1));
-		boolean res=JNotify.removeWatch(watchID);
-		if(!res)
+		if(!JNotify.removeWatch(watchID))
 		{
 			log("!Invalid Watci ID Specified");
 		}
-		fq=new FileQueue();
-		fq.set(	0,
-				"ExitSignal");
-		queue.put(fq);
+		fileQueue=new FileQueue();
+		fileQueue.set(	0,
+						"ExitSignal");
+		transferQueue.put(fileQueue);
 		msg("Monitor shutdown...");
 	}
 
@@ -62,14 +61,14 @@ public class DiscMonitor
 									String name)
 		{
 			log(" MD - Adding To Queue...");
-			fq=new FileQueue();
-			fq.set(	2,
-					rootPath+
-							"\\"+
-							name);
+			fileQueue=new FileQueue();
+			fileQueue.set(	2,
+							rootPath+
+									"\\"+
+									name);
 			try
 			{
-				queue.put(fq);
+				transferQueue.put(fileQueue);
 			}
 			catch(InterruptedException e)
 			{
@@ -84,14 +83,14 @@ public class DiscMonitor
 								String name)
 		{
 			log(" DL - Adding To Queue...");
-			fq=new FileQueue();
-			fq.set(	3,
-					rootPath+
-							"\\"+
-							name);
+			fileQueue=new FileQueue();
+			fileQueue.set(	3,
+							rootPath+
+									"\\"+
+									name);
 			try
 			{
-				queue.put(fq);
+				transferQueue.put(fileQueue);
 			}
 			catch(InterruptedException e)
 			{
@@ -106,14 +105,14 @@ public class DiscMonitor
 								String name)
 		{
 			log(" CR - Adding To Queue...");
-			fq=new FileQueue();
-			fq.set(	1,
-					rootPath+
-							"\\"+
-							name);
+			fileQueue=new FileQueue();
+			fileQueue.set(	1,
+							rootPath+
+									"\\"+
+									name);
 			try
 			{
-				queue.put(fq);
+				transferQueue.put(fileQueue);
 			}
 			catch(InterruptedException e)
 			{
@@ -131,8 +130,8 @@ public class DiscMonitor
 					Logger.TOOLS_UTIL);
 	}
 
-	private static void msg(String msg)
+	private static void msg(String message)
 	{
-		Logger.msg(msg);
+		Logger.msg(message);
 	}
 }
