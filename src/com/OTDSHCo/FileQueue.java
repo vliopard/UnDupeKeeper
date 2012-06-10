@@ -1,27 +1,27 @@
 package com.OTDSHCo;
 public class FileQueue
 {
-	private int		typeOfAction;
-	private String	pathToFile;
+    private int    typeOfAction;
+    private String pathToFile;
 
-	public FileQueue()
-	{
-	}
+    public FileQueue()
+    {
+    }
 
-	public void set(int action,
-					String pathAndFile)
-	{
-		typeOfAction=action;
-		pathToFile=pathAndFile;
-	}
+    public void set(int action,
+                    String pathAndFile)
+    {
+        typeOfAction=action;
+        pathToFile=pathAndFile;
+    }
 
-	public int getType()
-	{
-		return typeOfAction;
-	}
+    public int getType()
+    {
+        return typeOfAction;
+    }
 
-	public String getPath()
-	{
-		return pathToFile;
-	}
+    public String getPath()
+    {
+        return pathToFile;
+    }
 }
