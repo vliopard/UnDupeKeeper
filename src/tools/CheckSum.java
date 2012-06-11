@@ -98,11 +98,12 @@ public class CheckSum
         {
             try
             {
-                FileInputStream fi=new FileInputStream(new File(fileName));
-                if(fi.available()>0)
+                File file=new File(fileName);
+                FileInputStream fileInputStream=new FileInputStream(file);
+                if(fileInputStream.available()==file.length())
                 {
-                    fi.close();
-                    fi=null;
+                    fileInputStream.close();
+                    fileInputStream=null;
                     return;
                 }
                 Thread.sleep(Settings.WaitForFileTimeOut);
@@ -113,7 +114,10 @@ public class CheckSum
             }
             if(reachedFirstTime)
             {
-                log(Strings.csWaitingForFile);
+                log(Strings.csWaitingForFile+
+                    " ["+
+                    fileName+
+                    "]");
             }
             reachedFirstTime=false;
         }
