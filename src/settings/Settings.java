@@ -44,7 +44,7 @@ public class Settings
     public static final String   UnDupeKeeperExtension    =".(Dup3K33p)";
     public static final String   UnDupeKeeperSignature    =" repeeKepuDnU{.-::![|@|]!::-.}UnDupeKeeper ";
     public static final String   SystemTrayIconSize       ="16";
-    public static final String   SystemTrayImageDirectory ="../images/"+
+    public static final String   SystemTrayImageDirectory ="/images/"+
                                                            SystemTrayIconSize+
                                                            "/";
     public static final String   Plaf                     ="com.sun.java.swing.plaf.";
