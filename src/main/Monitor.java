@@ -1,22 +1,26 @@
-package com.OTDSHCo;
+package main;
 import java.util.concurrent.BlockingQueue;
+import settings.Settings;
+import settings.Strings;
+import tools.FileQueue;
+import tools.Logger;
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
 
-public class DiscMonitor
+public class Monitor
 {
     private FileQueue                      fileQueue;
     private final BlockingQueue<Integer>   stopSignal;
     private final BlockingQueue<FileQueue> transferQueue;
 
-    DiscMonitor(String directoryPath,
-                BlockingQueue<FileQueue> transferData,
-                BlockingQueue<Integer> stopCommand,
-                boolean watchRecursive) throws JNotifyException,
-                                       InterruptedException
+    Monitor(String directoryPath,
+            BlockingQueue<FileQueue> transferData,
+            BlockingQueue<Integer> stopCommand,
+            boolean watchRecursive) throws JNotifyException,
+                                   InterruptedException
     {
-        msg("Monitor startup...");
+        msg(Strings.mtMonitorStartup);
         transferQueue=transferData;
         stopSignal=stopCommand;
         int jNotifyMask=JNotify.FILE_CREATED|
@@ -30,39 +34,49 @@ public class DiscMonitor
                                      new Listener());
         do
         {
-            Thread.sleep(5000);
+            Thread.sleep(Settings.ThreadSleepTime);
         }
-        while(!stopSignal.contains(1));
+        while(!stopSignal.contains(Settings.StopWorking));
         if(!JNotify.removeWatch(watchID))
         {
-            log("!Invalid Watci ID Specified");
+            log(Strings.mtInvalidWatchID);
         }
         fileQueue=new FileQueue();
-        fileQueue.set(0,
-                      "ExitSignal");
+        fileQueue.set(Settings.WorkerStopSignal,
+                      Settings.WorkerPrepareToExit);
         transferQueue.put(fileQueue);
-        msg("Monitor shutdown...");
+        msg(Strings.mtMonitorShutdown);
     }
 
     class Listener implements
                   JNotifyListener
     {
-        public void fileRenamed(int wd,
+        public void fileCreated(int wd,
                                 String rootPath,
-                                String oldName,
-                                String newName)
+                                String name)
         {
-            log(" RN - Adding To Queue...");
-            // print("renamed "+rootPath+"\\"+oldName+" -> "+newName);
+            fileQueue=new FileQueue();
+            fileQueue.set(Settings.FileCreated,
+                          rootPath+
+                                  "\\"+
+                                  name);
+            try
+            {
+                transferQueue.put(fileQueue);
+            }
+            catch(InterruptedException e)
+            {
+                log(Strings.mtProblemAddingToCreatingQueue+
+                    e);
+            }
         }
 
         public void fileModified(int wd,
                                  String rootPath,
                                  String name)
         {
-            log(" MD - Adding To Queue...");
             fileQueue=new FileQueue();
-            fileQueue.set(2,
+            fileQueue.set(Settings.FileModified,
                           rootPath+
                                   "\\"+
                                   name);
@@ -72,19 +86,17 @@ public class DiscMonitor
             }
             catch(InterruptedException e)
             {
-                log("!MD - Problem Adding To Queue: "+
+                log(Strings.mtProblemAddingToModifyingQueue+
                     e);
             }
-            log(" MD - Added To Queue...");
         }
 
         public void fileDeleted(int wd,
                                 String rootPath,
                                 String name)
         {
-            log(" DL - Adding To Queue...");
             fileQueue=new FileQueue();
-            fileQueue.set(3,
+            fileQueue.set(Settings.FileDeleted,
                           rootPath+
                                   "\\"+
                                   name);
@@ -94,32 +106,18 @@ public class DiscMonitor
             }
             catch(InterruptedException e)
             {
-                log("!DL - Problem Adding to Queue: "+
+                log(Strings.mtProblemAddingToDeletingQueue+
                     e);
             }
-            log(" DL - Added To Queue...");
         }
 
-        public void fileCreated(int wd,
+        public void fileRenamed(int wd,
                                 String rootPath,
-                                String name)
+                                String oldName,
+                                String newName)
         {
-            log(" CR - Adding To Queue...");
-            fileQueue=new FileQueue();
-            fileQueue.set(1,
-                          rootPath+
-                                  "\\"+
-                                  name);
-            try
-            {
-                transferQueue.put(fileQueue);
-            }
-            catch(InterruptedException e)
-            {
-                log("!CR - Problem Adding To Queue: "+
-                    e);
-            }
-            log(" CR - Added To Queue...");
+            // TODO: Rename
+            // print("renamed "+rootPath+"\\"+oldName+" -> "+newName);
         }
     }
 
@@ -127,7 +125,7 @@ public class DiscMonitor
     {
         Logger.log(Thread.currentThread(),
                    logMessage,
-                   Logger.TOOLS_UTIL);
+                   Logger.MONITOR);
     }
 
     private static void msg(String message)

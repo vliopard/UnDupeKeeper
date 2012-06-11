@@ -1,4 +1,4 @@
-package com.OTDSHCo;
+package main;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -8,20 +8,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
+import settings.Settings;
+import settings.Strings;
+import tools.CheckSum;
+import tools.DataBase;
+import tools.FileQueue;
+import tools.Logger;
 
-class Consumer implements
-              Runnable
+class Worker implements
+            Runnable
 {
+    private long                           filesIncluded =0;
+    private long                           filesReplaced =0;
     private final BlockingQueue<Integer>   stopSignal;
     private final BlockingQueue<FileQueue> transferQueue;
-    private long                           included     =0;
-    private long                           replaced     =0;
-    private static HashMap<String,String>  hashMapTable =new HashMap<String,String>();
+    private static HashMap<String,String>  hashMapTable  =new HashMap<String,String>();
 
-    Consumer(BlockingQueue<FileQueue> fileQueue,
-             BlockingQueue<Integer> signalQueue)
+    Worker(BlockingQueue<FileQueue> fileQueue,
+           BlockingQueue<Integer> signalQueue)
     {
-        log(" Constructing Consumer...");
         transferQueue=fileQueue;
         stopSignal=signalQueue;
     }
@@ -29,32 +34,30 @@ class Consumer implements
     public void run()
     {
         hashMapTable=DataBase.loadMap();
-        msg("Worker startup...");
-        log(" Starting Consumer.");
+        msg(Strings.wkStartup);
         try
         {
             do
             {
                 consume(transferQueue.take());
             }
-            while(!stopSignal.contains(1));
+            while(!stopSignal.contains(Settings.StopWorking));
         }
         catch(InterruptedException ex)
         {
-            log("!Problem Running Consumer: "+
+            log(Strings.wkProblemRunningWorker+
                 ex);
         }
-        log(" Ending Consumer.");
         save();
-        msg("Worker shutdown...");
         try
         {
-            stopSignal.put(2);
+            stopSignal.put(Settings.WorkerStopped);
         }
         catch(InterruptedException e)
         {
-            err("Cannot Send Exit Message.");
+            err(Strings.wkErrorSendingShutdownMessage);
         }
+        msg(Strings.wkWorkerShutdown);
     }
 
     public synchronized void save()
@@ -83,74 +86,64 @@ class Consumer implements
 
     private void consume(Object fileQueueObject)
     {
-        log(" Consuming...");
         FileQueue fileQueue=(FileQueue)fileQueueObject;
         switch(fileQueue.getType())
         {
-            case 1:
-                log(" Including New File...");
+            case Settings.FileCreated:
                 includeFileToHashTable(fileQueue.getPath());
             break;
-            case 2:
-                log(" Modifying Included File...");
+            case Settings.FileModified:
             // TODO: Modify
             break;
-            case 3:
-                log(" Removing Included File...");
+            case Settings.FileDeleted:
                 replaceFileFromHashTable(fileQueue.getPath());
             break;
-            case 4:
-                log(" Renaming Included File...");
+            case Settings.FileRenamed:
             // TODO: Rename
-            break;
-            case 5:
-                log(" OVERFLOW!");
-            // TODO: Overflow
             break;
             default:
         }
-        log(" Consumed...");
     }
 
     private void includeFileToHashTable(String fileName)
     {
         if(new File(fileName).isFile())
         {
-            log(" Start managing file.");
             try
             {
                 String cypherMethod=CheckSum.getChecksum(fileName);
                 if(!hashMapTable.containsKey(cypherMethod))
                 {
-                    log(" Including new file...");
-                    included++;
+                    filesIncluded++;
                     msg("["+
-                        addLeadingZeros(included)+
+                        addLeadingZeros(filesIncluded)+
                         "]["+
-                        addLeadingZeros(replaced)+
+                        addLeadingZeros(filesReplaced)+
                         "]\t["+
                         cypherMethod+
-                        "]\tIncluding "+
+                        "]\t"+
+                        Strings.wkIncluding+
                         fileName);
                     hashMapTable.put(cypherMethod,
                                      fileName);
                 }
                 else
                 {
-                    log(" Replacing file...");
-                    replaced++;
+                    filesReplaced++;
                     msg("["+
-                        addLeadingZeros(included)+
+                        addLeadingZeros(filesIncluded)+
                         "]["+
-                        addLeadingZeros(replaced)+
+                        addLeadingZeros(filesReplaced)+
                         "]\t["+
                         cypherMethod+
-                        "]\tReplacing "+
+                        "]\t"+
+                        Strings.wkReplacing+
                         fileName);
                     File fileToRename=new File(fileName);
                     Writer outputFile=new BufferedWriter(new FileWriter(fileToRename));
                     outputFile.write(hashMapTable.get(cypherMethod)+
-                                     " repeeKepuDnU{.-::![|@|]!::-.}UnDupeKeeper ["+
+                                     Settings.UnDupeKeeperSignature+
+                                     "["+
                                      cypherMethod+
                                      "]");
                     outputFile.close();
@@ -160,15 +153,14 @@ class Consumer implements
                     java.nio.file.Files.move(fileNamePath,
                                              fileNamePath.resolveSibling(fileNamePath.getFileName()
                                                                                      .toString()+
-                                                                         ".(Dup3K33p)"));
+                                                                         Settings.UnDupeKeeperExtension));
                 }
             }
             catch(IOException e)
             {
-                log("!Problem Including New File: "+
+                log(Strings.wkProblemIncludingNewFile+
                     e);
             }
-            log(" File Managed.");
         }
     }
 
@@ -176,23 +168,22 @@ class Consumer implements
     {
         if(hashMapTable.containsValue(fileName))
         {
-            log(" Removing file.");
             msg("["+
-                addLeadingZeros(included)+
+                addLeadingZeros(filesIncluded)+
                 "]["+
-                addLeadingZeros(replaced)+
-                "]\tRemoving "+
+                addLeadingZeros(filesReplaced)+
+                "]\t"+
+                Strings.wkRemoving+
                 fileName);
-            included--;
+            filesIncluded--;
             hashMapTable.values()
                         .remove(fileName);
-            log(" File Removed.");
         }
     }
 
     private String addLeadingZeros(long numberToFormat)
     {
-        return String.format("%04d",
+        return String.format("%06d",
                              numberToFormat);
     }
 
@@ -200,7 +191,7 @@ class Consumer implements
     {
         Logger.log(Thread.currentThread(),
                    logMessage,
-                   Logger.TOOLS_SUPERUSER);
+                   Logger.WORKER);
     }
 
     private static void msg(String message)

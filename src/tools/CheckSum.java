@@ -1,4 +1,4 @@
-package com.OTDSHCo;
+package tools;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,27 +7,24 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
+import settings.Settings;
+import settings.Strings;
 
 public class CheckSum
 {
-    private static final String hexValues    ="0123456789ABCDEF";
-    private static String       cypherMethos ="SHA1";
-
     public static void setMethod(String cypherTypeMethod)
     {
-        log(" Setting Checksum Method...");
-        cypherMethos=cypherTypeMethod;
+        Settings.CypherMethod=cypherTypeMethod;
     }
 
     public static byte[] createChecksum(String fileName)
     {
-        log(" Creating Checksum...");
         InputStream fileInputStream;
         try
         {
             fileInputStream=new FileInputStream(fileName);
             byte[] byteBuffer=new byte[1024];
-            MessageDigest messageDigest=MessageDigest.getInstance(cypherMethos);
+            MessageDigest messageDigest=MessageDigest.getInstance(Settings.CypherMethod);
             int numberRead;
             do
             {
@@ -45,7 +42,7 @@ public class CheckSum
         }
         catch(IOException|NoSuchAlgorithmException e)
         {
-            log("!CheckSum Creation Failed: "+
+            log(Strings.csChecksumCreationFailed+
                 e);
             return null;
         }
@@ -53,22 +50,21 @@ public class CheckSum
 
     public static String getChecksum(String fileName)
     {
-        log(" Getting CheckSum...");
-        waitFile(fileName);
+        waitForFile(fileName);
         byte[] rawBytes=createChecksum(fileName);
         final StringBuilder hexString=new StringBuilder(2*rawBytes.length);
         for(final byte b : rawBytes)
         {
-            hexString.append(hexValues.charAt((b&0xF0)>>4))
-                     .append(hexValues.charAt((b&0x0F)));
+            hexString.append(Settings.HexHashValues.charAt((b&0xF0)>>4))
+                     .append(Settings.HexHashValues.charAt((b&0x0F)));
         }
         return hexString.toString()
                         .toUpperCase();
     }
 
-    private static String encryptPassword(String password)
+    public static String encryptPassword(String password)
     {
-        String cypherSha1Method="";
+        String cypherSha1Method=null;
         try
         {
             MessageDigest cryptMessageDigest=MessageDigest.getInstance("SHA-1");
@@ -78,7 +74,7 @@ public class CheckSum
         }
         catch(NoSuchAlgorithmException|UnsupportedEncodingException e)
         {
-            log("!encryptPassword Failed: "+
+            log(Strings.csPasswordEncryptionFailed+
                 e);
         }
         return cypherSha1Method;
@@ -95,7 +91,7 @@ public class CheckSum
         return formatter.toString();
     }
 
-    public static void waitFile(String fileName)
+    public static void waitForFile(String fileName)
     {
         boolean reachedFirstTime=true;
         for(;;)
@@ -109,7 +105,7 @@ public class CheckSum
                     fi=null;
                     return;
                 }
-                Thread.sleep(50);
+                Thread.sleep(Settings.WaitForFileTimeOut);
             }
             catch(IOException|InterruptedException e)
             {
@@ -117,7 +113,7 @@ public class CheckSum
             }
             if(reachedFirstTime)
             {
-                msg("Waiting for file...");
+                log(Strings.csWaitingForFile);
             }
             reachedFirstTime=false;
         }
@@ -127,11 +123,6 @@ public class CheckSum
     {
         Logger.log(Thread.currentThread(),
                    logMessage,
-                   Logger.TOOLS_CONVERT);
-    }
-
-    private static void msg(String message)
-    {
-        Logger.msg(message);
+                   Logger.CHECKSUM);
     }
 }

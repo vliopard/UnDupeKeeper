@@ -1,1 +1,1 @@
-@start /b javaw -jar UnDupeKeeper.jar > UnDupeKeeper.log
+@start /b javaw -jar UnDupeKeeper.jar > UnDupeKeeper.log 2>&1

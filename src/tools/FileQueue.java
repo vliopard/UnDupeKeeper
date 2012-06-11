@@ -1,4 +1,4 @@
-package com.OTDSHCo;
+package tools;
 public class FileQueue
 {
     private int    typeOfAction;

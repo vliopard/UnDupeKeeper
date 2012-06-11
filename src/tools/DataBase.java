@@ -1,68 +1,65 @@
-package com.OTDSHCo;
+package tools;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
+import settings.Settings;
+import settings.Strings;
 
 public class DataBase
 {
-    private static String directoryName ="UnDupeKeeper.dir";
-    private static String databaseName  ="UnDupeKeeper.hdb";
-
     public static void clear()
     {
-        msg("Erasing database...");
+        msg(Strings.dbEraseDatabase);
         HashMap<String,String> hashMapToClear=new HashMap<String,String>();
         saveMap(hashMapToClear);
     }
 
     public static void saveMap(HashMap<String,String> hashMapToSave)
     {
-        msg("Saving database...");
+        msg(Strings.dbSaveDatabase);
         try
         {
-            ObjectOutputStream hashMapObjectOutput=new ObjectOutputStream(new FileOutputStream(databaseName));
-            msg("Database contains "+
+            ObjectOutputStream hashMapObjectOutput=new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperDatabaseName));
+            msg(Strings.dbDatabaseContains+
                 hashMapToSave.size()+
-                " items.");
+                Strings.dbItems);
             hashMapObjectOutput.writeObject(hashMapToSave);
             hashMapObjectOutput.close();
             hashMapObjectOutput=null;
-            msg("Database saved...");
+            msg(Strings.dbDatabaseSaved);
         }
         catch(IOException e)
         {
-            log("!Problems To Save Map: "+
+            log(Strings.dbProblemToSaveMap+
                 e);
         }
     }
 
     public static HashMap<String,String> loadMap()
     {
-        if(new File(databaseName).exists())
+        if(new File(Settings.UnDupeKeeperDatabaseName).exists())
         {
-            msg("Loading database...");
+            msg(Strings.dbLoadingDatabase);
             try
             {
-                HashMap<String,String> hashMapToLoad=(HashMap<String,String>)new ObjectInputStream(new FileInputStream(databaseName)).readObject();
-                msg("Database contains "+
+                @SuppressWarnings("unchecked")
+                HashMap<String,String> hashMapToLoad=(HashMap<String,String>)new ObjectInputStream(new FileInputStream(Settings.UnDupeKeeperDatabaseName)).readObject();
+                msg(Strings.dbDatabaseContains+
                     hashMapToLoad.size()+
-                    " items.");
+                    Strings.dbItems);
                 return hashMapToLoad;
             }
             catch(ClassNotFoundException|IOException e)
             {
-                log("!Problems During Database Creation: "+
+                log(Strings.dbProblemDatabaseCreation+
                     e);
             }
         }
-        msg("WARNING: New database created!");
+        msg(Strings.dbWarningNewDatabase);
         return new HashMap<String,String>();
     }
 
@@ -70,29 +67,29 @@ public class DataBase
     {
         try
         {
-            ObjectOutputStream directoryToSaveOutput=new ObjectOutputStream(new FileOutputStream(directoryName));
+            ObjectOutputStream directoryToSaveOutput=new ObjectOutputStream(new FileOutputStream(Settings.WatchedDirectoryName));
             directoryToSaveOutput.writeObject(folderName);
             directoryToSaveOutput.close();
             directoryToSaveOutput=null;
         }
         catch(IOException e)
         {
-            log("!Problems To Save Dir: "+
+            log(Strings.dbProblemSavingDir+
                 e);
         }
     }
 
     public static String loadDir()
     {
-        if(new File(directoryName).exists())
+        if(new File(Settings.WatchedDirectoryName).exists())
         {
             try
             {
-                return (String)new ObjectInputStream(new FileInputStream(directoryName)).readObject();
+                return (String)new ObjectInputStream(new FileInputStream(Settings.WatchedDirectoryName)).readObject();
             }
             catch(ClassNotFoundException|IOException e)
             {
-                log("!Problems During Settings Storage: "+
+                log(Strings.dbProblemStoringSettings+
                     e);
             }
         }
@@ -103,16 +100,11 @@ public class DataBase
     {
         Logger.log(Thread.currentThread(),
                    logMessage,
-                   Logger.TOOLS_PACKAGE);
+                   Logger.DATABASE);
     }
 
     private static void msg(String message)
     {
         Logger.msg(message);
-    }
-
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }
