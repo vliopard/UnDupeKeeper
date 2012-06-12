@@ -10,8 +10,6 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -21,6 +19,7 @@ import settings.Strings;
 import tools.DataBase;
 import tools.FileQueue;
 import tools.Logger;
+import tools.SettingsHandler;
 import tools.TrayImage;
 
 public class UnDupeKeeper
@@ -29,6 +28,7 @@ public class UnDupeKeeper
     private static TrayIcon                 trayIcon;
     private static Blinker                  guiThread;
     private static Worker                   workerThread;
+    private static SettingsHandler          settingsHandler;
     private static BlockingQueue<Integer>   stopSignal;
     private static BlockingQueue<FileQueue> transferQueue;
 
@@ -46,30 +46,6 @@ public class UnDupeKeeper
         }
         return (new File(dirName.toString()).exists())&&
                (new File(dirName.toString()).isDirectory());
-    }
-
-    private static String chooseDir()
-    {
-        JFrame frame=new JFrame();
-        JFileChooser chooser;
-        chooser=new JFileChooser();
-        String directoryToLoad=DataBase.loadDir();
-        if(null==directoryToLoad)
-        {
-            directoryToLoad=Settings.RootDir;
-        }
-        chooser.setCurrentDirectory(new java.io.File(directoryToLoad));
-        chooser.setDialogTitle(Strings.ukSelectFolder);
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-        if(chooser.showOpenDialog(frame)==JFileChooser.APPROVE_OPTION)
-        {
-            directoryToLoad=chooser.getSelectedFile()
-                                   .toString();
-            DataBase.saveDir(directoryToLoad);
-            return directoryToLoad;
-        }
-        return null;
     }
 
     private static Path checkPromptArguments(String[] arguments)
@@ -94,6 +70,7 @@ public class UnDupeKeeper
 
     public static void main(String[] args) throws IOException
     {
+        settingsHandler=DataBase.loadSettings();
         Path directoryToWatch=null;
         if(args.length>0)
         {
@@ -101,11 +78,21 @@ public class UnDupeKeeper
         }
         while(!isDir(directoryToWatch))
         {
+            String directoryName=null;
             recursiveFolderScan=true;
-            String directoryName=chooseDir();
-            if(null==directoryName)
+            if(settingsHandler.isDirectoryFirstTime())
             {
-                usage();
+                directoryName=DataBase.chooseDir();
+                if(null==directoryName)
+                {
+                    usage();
+                }
+                settingsHandler.setDirectory(directoryName);
+                DataBase.saveSettings(settingsHandler);
+            }
+            else
+            {
+                directoryName=settingsHandler.getDirectory();
             }
             directoryToWatch=Paths.get(directoryName);
         }
@@ -120,6 +107,8 @@ public class UnDupeKeeper
                                   stopSignal,
                                   trayIcon);
             new Thread(guiThread).start();
+            // TODO: Must check if this settings is really being applied during encryption
+            Settings.CypherMethod=Settings.CypherMethodList[settingsHandler.getEncryptionMethod()];
             workerThread=new Worker(transferQueue,
                                     stopSignal);
             new Thread(workerThread).start();
@@ -160,7 +149,7 @@ public class UnDupeKeeper
     {
         try
         {
-            UIManager.setLookAndFeel(Settings.LookAndFeel[Settings.LookNimbus]);
+            UIManager.setLookAndFeel(Settings.LookAndFeelPackages[settingsHandler.getLookAndFeel()]);
         }
         catch(UnsupportedLookAndFeelException|IllegalAccessException
                 |InstantiationException|ClassNotFoundException ex)
@@ -191,10 +180,12 @@ public class UnDupeKeeper
         final SystemTray systemTray=SystemTray.getSystemTray();
         MenuItem saveDatabase=new MenuItem(Strings.ukSaveDatabase);
         MenuItem clearDatabase=new MenuItem(Strings.ukClearDatabase);
+        MenuItem settingsItem=new MenuItem(Strings.ukSettingsMenu);
         MenuItem aboutItem=new MenuItem(Strings.ukAboutUndupekeeperMenu);
         MenuItem exitItem=new MenuItem(Strings.ukExitUndupekeeper);
         popupMenu.add(saveDatabase);
         popupMenu.add(clearDatabase);
+        popupMenu.add(settingsItem);
         popupMenu.addSeparator();
         popupMenu.add(aboutItem);
         popupMenu.add(exitItem);
@@ -213,7 +204,11 @@ public class UnDupeKeeper
                 public void actionPerformed(ActionEvent event)
                 {
                     JOptionPane.showMessageDialog(null,
-                                                  Strings.ukAboutUndupekeeperDialog);
+                                                  Strings.ukAboutUndupekeeperDialog+
+                                                          "\n"+
+                                                          Settings.CypherMethod+
+                                                          " "+
+                                                          Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]);
                 }
             });
         saveDatabase.addActionListener(new ActionListener()
@@ -245,7 +240,23 @@ public class UnDupeKeeper
                 public void actionPerformed(ActionEvent event)
                 {
                     JOptionPane.showMessageDialog(null,
-                                                  Strings.ukAboutUndupekeeperDialog);
+                                                  Strings.ukAboutUndupekeeperDialog+
+                                                          "\n"+
+                                                          Settings.CypherMethod+
+                                                          " "+
+                                                          Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]);
+                }
+            });
+        settingsItem.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent event)
+                {
+                    DataBase.useWorker(workerThread);
+                    if(DataBase.openSettings())
+                    {
+                        startShutdown();
+                        systemTray.remove(trayIcon);
+                    }
                 }
             });
         exitItem.addActionListener(new ActionListener()

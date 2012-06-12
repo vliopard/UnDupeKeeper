@@ -12,9 +12,9 @@ import settings.Strings;
 
 public class CheckSum
 {
-    public static void setMethod(String cypherTypeMethod)
+    public static void setMethod(int cypherTypeMethod)
     {
-        Settings.CypherMethod=cypherTypeMethod;
+        Settings.CypherMethod=Settings.CypherMethodList[cypherTypeMethod];
     }
 
     public static byte[] createChecksum(String fileName)
@@ -25,18 +25,13 @@ public class CheckSum
             fileInputStream=new FileInputStream(fileName);
             byte[] byteBuffer=new byte[1024];
             MessageDigest messageDigest=MessageDigest.getInstance(Settings.CypherMethod);
-            int numberRead;
-            do
+            int numberRead=0;
+            while((numberRead=fileInputStream.read(byteBuffer))!=-1)
             {
-                numberRead=fileInputStream.read(byteBuffer);
-                if(numberRead>0)
-                {
-                    messageDigest.update(byteBuffer,
-                                         0,
-                                         numberRead);
-                }
+                messageDigest.update(byteBuffer,
+                                     0,
+                                     numberRead);
             }
-            while(numberRead!=-1);
             fileInputStream.close();
             return messageDigest.digest();
         }
@@ -48,7 +43,40 @@ public class CheckSum
         }
     }
 
-    public static String getChecksum(String fileName)
+    public static String getChecksumSimple(String fileName)
+    {
+        waitForFile(fileName);
+        byte[] rawBytes=createChecksum(fileName);
+        // String result="";
+        StringBuffer resultBuffer=new StringBuffer();
+        for(int i=0; i<rawBytes.length; i++)
+        {
+            // result+=Integer.toString((rawBytes[i]&0xff)+0x100,16).substring(1);
+            // resultBuffer.append(Integer.toString((rawBytes[i]&0xff)+0x100,16).substring(1));
+            resultBuffer.append(Integer.toHexString(0xFF&rawBytes[i]));
+        }
+        // return result.toUpperCase();
+        return resultBuffer.toString()
+                           .toUpperCase();
+    }
+
+    public static String getChecksumFaster(String fileName) throws UnsupportedEncodingException
+    {
+        waitForFile(fileName);
+        byte[] rawBytes=createChecksum(fileName);
+        byte[] hex=new byte[2*rawBytes.length];
+        int index=0;
+        for(byte b : rawBytes)
+        {
+            int v=b&0xFF;
+            hex[index++]=Settings.HEX_CHAR_TABLE[v>>>4];
+            hex[index++]=Settings.HEX_CHAR_TABLE[v&0xF];
+        }
+        return new String(hex,
+                          "ASCII").toUpperCase();
+    }
+
+    public static String getChecksumElegant(String fileName)
     {
         waitForFile(fileName);
         byte[] rawBytes=createChecksum(fileName);
@@ -70,7 +98,7 @@ public class CheckSum
             MessageDigest cryptMessageDigest=MessageDigest.getInstance("SHA-1");
             cryptMessageDigest.reset();
             cryptMessageDigest.update(password.getBytes("UTF-8"));
-            cypherSha1Method=byteToHex(cryptMessageDigest.digest());
+            cypherSha1Method=byteToHexFormater(cryptMessageDigest.digest());
         }
         catch(NoSuchAlgorithmException|UnsupportedEncodingException e)
         {
@@ -80,15 +108,30 @@ public class CheckSum
         return cypherSha1Method;
     }
 
-    private static String byteToHex(final byte[] hashBytes)
+    private static String byteToHexFormater(final byte[] hashBytes)
     {
         Formatter formatter=new Formatter();
-        for(byte b : hashBytes)
+        for(byte byteLoop : hashBytes)
         {
             formatter.format("%02x",
-                             b);
+                             byteLoop);
         }
         return formatter.toString();
+    }
+
+    @SuppressWarnings("unused")
+    private static String byteToHex(final byte[] byteData)
+    {
+        StringBuffer hexString=new StringBuffer();
+        for(int i=0; i<byteData.length; i++)
+        {
+            String hex=Integer.toHexString(0xff&byteData[i]);
+            if(hex.length()==1)
+                hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString()
+                        .toUpperCase();
     }
 
     public static void waitForFile(String fileName)

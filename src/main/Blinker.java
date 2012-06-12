@@ -14,6 +14,7 @@ public class Blinker implements
     private boolean                        red   =false;
     private boolean                        gray  =false;
     private boolean                        green =false;
+    private boolean                        color =false;
     private final TrayIcon                 trayIcon;
     private final BlockingQueue<Integer>   stopSignal;
     private final BlockingQueue<FileQueue> transferQueue;
@@ -32,6 +33,7 @@ public class Blinker implements
         red=true;
         gray=false;
         green=false;
+        color=false;
     }
 
     private void setGray()
@@ -39,6 +41,7 @@ public class Blinker implements
         red=false;
         gray=true;
         green=false;
+        color=false;
     }
 
     private void setGreen()
@@ -46,6 +49,15 @@ public class Blinker implements
         red=false;
         gray=false;
         green=true;
+        color=false;
+    }
+
+    private void setColor()
+    {
+        red=false;
+        gray=false;
+        green=false;
+        color=true;
     }
 
     @Override
@@ -81,10 +93,18 @@ public class Blinker implements
                 continue;
             }
             if((size>100)&&
+               (size<=300)&&
                (!red))
             {
                 setRed();
                 changeSystemTrayIcon(Settings.IconDnaRed);
+                continue;
+            }
+            if((size>300)&&
+               (!color))
+            {
+                setColor();
+                changeSystemTrayIcon(Settings.IconDnaColor);
                 continue;
             }
         }

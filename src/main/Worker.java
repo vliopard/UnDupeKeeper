@@ -15,8 +15,8 @@ import tools.DataBase;
 import tools.FileQueue;
 import tools.Logger;
 
-class Worker implements
-            Runnable
+public class Worker implements
+                   Runnable
 {
     private long                           filesIncluded =0;
     private long                           filesReplaced =0;
@@ -93,13 +93,13 @@ class Worker implements
                 includeFileToHashTable(fileQueue.getPath());
             break;
             case Settings.FileModified:
-            // TODO: Modify
+            // TODO: Action to handle modified files
             break;
             case Settings.FileDeleted:
                 replaceFileFromHashTable(fileQueue.getPath());
             break;
             case Settings.FileRenamed:
-            // TODO: Rename
+            // TODO: Action to handle renamed files
             break;
             default:
         }
@@ -111,7 +111,7 @@ class Worker implements
         {
             try
             {
-                String cypherMethod=CheckSum.getChecksum(fileName);
+                String cypherMethod=CheckSum.getChecksumElegant(fileName);
                 if(!hashMapTable.containsKey(cypherMethod))
                 {
                     filesIncluded++;

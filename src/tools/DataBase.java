@@ -6,11 +6,21 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import main.Worker;
 import settings.Settings;
 import settings.Strings;
 
 public class DataBase
 {
+    private static Worker workerThread;
+
+    public static void useWorker(Worker worker)
+    {
+        workerThread=worker;
+    }
+
     public static void clear()
     {
         msg(Strings.dbEraseDatabase);
@@ -92,6 +102,92 @@ public class DataBase
                 log(Strings.dbProblemStoringSettings+
                     e);
             }
+        }
+        return null;
+    }
+
+    public static void saveSettings(SettingsHandler settingsTransfer)
+    {
+        // msg(Strings.dbSaveSettings);
+        try
+        {
+            ObjectOutputStream hashMapObjectOutput=new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperSettings));
+            hashMapObjectOutput.writeObject(settingsTransfer);
+            hashMapObjectOutput.close();
+            hashMapObjectOutput=null;
+            // msg(Strings.dbSettingsSaved);
+        }
+        catch(IOException e)
+        {
+            log(Strings.dbProblemToSaveSettings+
+                e);
+        }
+    }
+
+    public static SettingsHandler loadSettings()
+    {
+        if(new File(Settings.UnDupeKeeperSettings).exists())
+        {
+            // msg(Strings.dbLoadingSettings);
+            try
+            {
+                SettingsHandler settingsTransfer=(SettingsHandler)new ObjectInputStream(new FileInputStream(Settings.UnDupeKeeperSettings)).readObject();
+                return settingsTransfer;
+            }
+            catch(ClassNotFoundException|IOException e)
+            {
+                log(Strings.dbProblemSettingsCreation+
+                    e);
+            }
+        }
+        msg(Strings.dbWarningNewSettings);
+        return new SettingsHandler();
+    }
+
+    public static boolean openSettings()
+    {
+        SettingsHandler transferSettings=loadSettings();
+        Options settingsWindow=new Options(transferSettings);
+        settingsWindow.setTitle(Strings.ssSettingsTitle);
+        settingsWindow.pack();
+        settingsWindow.setModal(true);
+        settingsWindow.setResizable(false);
+        settingsWindow.setVisible(true);
+        if(transferSettings.isChanged())
+        {
+            if(transferSettings.isEncryptionChanged())
+            {
+                transferSettings.resetEncryptionChanged();
+                workerThread.clear();
+                workerThread.load();
+            }
+            transferSettings.setChanged(false);
+            saveSettings(transferSettings);
+            return true;
+        }
+        saveSettings(transferSettings);
+        return false;
+    }
+
+    public static String chooseDir()
+    {
+        JFrame frame=new JFrame();
+        JFileChooser chooser=new JFileChooser();
+        String directoryToLoad=DataBase.loadDir();
+        if(null==directoryToLoad)
+        {
+            directoryToLoad=Settings.RootDir;
+        }
+        chooser.setCurrentDirectory(new java.io.File(directoryToLoad));
+        chooser.setDialogTitle(Strings.ukSelectFolder);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        if(chooser.showOpenDialog(frame)==JFileChooser.APPROVE_OPTION)
+        {
+            directoryToLoad=chooser.getSelectedFile()
+                                   .toString();
+            DataBase.saveDir(directoryToLoad);
+            return directoryToLoad;
         }
         return null;
     }

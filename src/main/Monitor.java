@@ -116,7 +116,7 @@ public class Monitor
                                 String oldName,
                                 String newName)
         {
-            // TODO: Rename
+            // TODO: Feed queue with renamed file information
             // print("renamed "+rootPath+"\\"+oldName+" -> "+newName);
         }
     }
