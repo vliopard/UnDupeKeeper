@@ -1,6 +1,7 @@
 package settings;
 public class Strings
 {
+    public static final String bkTotalItems                    ="Total items: ";
     public static final String csChecksumCreationFailed        ="!Checksum creation failed: ";
     public static final String csPasswordEncryptionFailed      ="!Password encryption failed: ";
     public static final String csWaitingForFile                =" Waiting for file...";

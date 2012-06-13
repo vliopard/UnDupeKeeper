@@ -215,7 +215,7 @@ class UnDupeKeeperSettingsLayout implements
             c.setBounds(insets.left+8,
                         insets.top+83,
                         152,
-                        24);
+                        30);
         }
         c=parent.getComponent(7);
         if(c.isVisible())
@@ -223,13 +223,13 @@ class UnDupeKeeperSettingsLayout implements
             c.setBounds(insets.left+160,
                         insets.top+83,
                         152,
-                        24);
+                        30);
         }
         c=parent.getComponent(8);
         if(c.isVisible())
         {
             c.setBounds(insets.left+8,
-                        insets.top+103,
+                        insets.top+110,
                         300,
                         24);
         }

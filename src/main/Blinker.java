@@ -122,7 +122,7 @@ public class Blinker implements
 
     private void changeSystemTrayTip(long totalItems)
     {
-        trayIcon.setToolTip("Total items: "+
+        trayIcon.setToolTip(Strings.bkTotalItems+
                             String.valueOf(totalItems));
     }
 

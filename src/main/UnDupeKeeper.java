@@ -107,7 +107,6 @@ public class UnDupeKeeper
                                   stopSignal,
                                   trayIcon);
             new Thread(guiThread).start();
-            // TODO: Must check if this settings is really being applied during encryption
             Settings.CypherMethod=Settings.CypherMethodList[settingsHandler.getEncryptionMethod()];
             workerThread=new Worker(transferQueue,
                                     stopSignal);
@@ -156,7 +155,7 @@ public class UnDupeKeeper
         {
             err(Strings.ukErrorLoadingLookAndFeel);
         }
-        // UIManager.put( "swing.boldMetal", Boolean.FALSE);
+        // UIManager.put("swing.boldMetal", Boolean.FALSE);
         SwingUtilities.invokeLater(new Runnable()
             {
                 public void run()
@@ -166,6 +165,16 @@ public class UnDupeKeeper
             });
     }
 
+    private static void showAbout()
+    {
+        JOptionPane.showMessageDialog(null,
+                                      Strings.ukAboutUndupekeeperDialog+
+                                              "\nUsing: "+
+                                              Settings.CypherMethod+
+                                              " | GUI: "+
+                                              Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]);
+    }
+
     private static void createAndShowGUI()
     {
         if(!SystemTray.isSupported())
@@ -173,6 +182,7 @@ public class UnDupeKeeper
             JOptionPane.showMessageDialog(null,
                                           Strings.ukSystemTrayNotSupported);
             err(Strings.ukSystemTrayNotSupported);
+            startShutdown();
             return;
         }
         final PopupMenu popupMenu=new PopupMenu();
@@ -185,6 +195,7 @@ public class UnDupeKeeper
         MenuItem exitItem=new MenuItem(Strings.ukExitUndupekeeper);
         popupMenu.add(saveDatabase);
         popupMenu.add(clearDatabase);
+        popupMenu.addSeparator();
         popupMenu.add(settingsItem);
         popupMenu.addSeparator();
         popupMenu.add(aboutItem);
@@ -203,12 +214,7 @@ public class UnDupeKeeper
             {
                 public void actionPerformed(ActionEvent event)
                 {
-                    JOptionPane.showMessageDialog(null,
-                                                  Strings.ukAboutUndupekeeperDialog+
-                                                          "\n"+
-                                                          Settings.CypherMethod+
-                                                          " "+
-                                                          Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]);
+                    showAbout();
                 }
             });
         saveDatabase.addActionListener(new ActionListener()
@@ -239,12 +245,7 @@ public class UnDupeKeeper
             {
                 public void actionPerformed(ActionEvent event)
                 {
-                    JOptionPane.showMessageDialog(null,
-                                                  Strings.ukAboutUndupekeeperDialog+
-                                                          "\n"+
-                                                          Settings.CypherMethod+
-                                                          " "+
-                                                          Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]);
+                    showAbout();
                 }
             });
         settingsItem.addActionListener(new ActionListener()
