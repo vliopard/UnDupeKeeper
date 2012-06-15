@@ -8,6 +8,7 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javax.swing.JOptionPane;
@@ -22,6 +23,10 @@ import tools.Logger;
 import tools.SettingsHandler;
 import tools.TrayImage;
 
+/**
+ * 
+ * @author vliopard
+ */
 public class UnDupeKeeper
 {
     private static boolean                  recursiveFolderScan =false;
@@ -32,12 +37,22 @@ public class UnDupeKeeper
     private static BlockingQueue<Integer>   stopSignal;
     private static BlockingQueue<FileQueue> transferQueue;
 
+    /**
+     * 
+     */
     private static void usage()
     {
         err(Strings.ukUsage);
         System.exit(-1);
     }
 
+    /**
+     * 
+     * @param dirName
+     * @return Feturn <code>false</code> when dirName is: <code>null</code>, not
+     *         exists and is a Directory. Return <code>true</code> if it is an
+     *         actual file.
+     */
     private static boolean isDir(Path dirName)
     {
         if(null==dirName)
@@ -48,6 +63,12 @@ public class UnDupeKeeper
                (new File(dirName.toString()).isDirectory());
     }
 
+    /**
+     * 
+     * @param arguments
+     * @return Returns a <code>Path</code> containing the directory passed as
+     *         argument. Sets recursive mode 'on'.
+     */
     private static Path checkPromptArguments(String[] arguments)
     {
         int argumentIndex=0;
@@ -68,6 +89,11 @@ public class UnDupeKeeper
         return Paths.get(arguments[argumentIndex]);
     }
 
+    /**
+     * 
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException
     {
         settingsHandler=DataBase.loadSettings();
@@ -118,7 +144,7 @@ public class UnDupeKeeper
                                    stopSignal,
                                    recursiveFolderScan);
             while((!stopSignal.contains(Settings.WorkerStopped))||
-                  (!stopSignal.contains(Settings.BlinkereStopped)))
+                  (!stopSignal.contains(Settings.BlinkerStopped)))
             {
                 Thread.sleep(Settings.ExitSleepTime);
             }
@@ -131,6 +157,9 @@ public class UnDupeKeeper
         msg(Strings.ukNormalShutdonw);
     }
 
+    /**
+     * 
+     */
     private static void startShutdown()
     {
         try
@@ -144,6 +173,9 @@ public class UnDupeKeeper
         }
     }
 
+    /**
+     * 
+     */
     private static void startUI()
     {
         try
@@ -165,6 +197,9 @@ public class UnDupeKeeper
             });
     }
 
+    /**
+     * 
+     */
     private static void showAbout()
     {
         JOptionPane.showMessageDialog(null,
@@ -172,9 +207,14 @@ public class UnDupeKeeper
                                               "\nUsing: "+
                                               Settings.CypherMethod+
                                               " | GUI: "+
-                                              Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]);
+                                              Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]+
+                                              "\nTotal DB items: "+
+                                              new DecimalFormat("##,###,###").format(workerThread.size()));
     }
 
+    /**
+     * 
+     */
     private static void createAndShowGUI()
     {
         if(!SystemTray.isSupported())
@@ -270,11 +310,19 @@ public class UnDupeKeeper
             });
     }
 
+    /**
+     * 
+     * @param message
+     */
     private static void msg(String message)
     {
         Logger.msg(message);
     }
 
+    /**
+     * 
+     * @param errorMessage
+     */
     private static void err(String errorMessage)
     {
         Logger.err(errorMessage);

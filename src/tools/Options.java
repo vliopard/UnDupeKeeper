@@ -5,6 +5,10 @@ import javax.swing.*;
 import settings.Settings;
 import settings.Strings;
 
+/**
+ * 
+ * @author vliopard
+ */
 public class Options extends
         JDialog
 {
@@ -20,6 +24,10 @@ public class Options extends
     private JComboBox<String> comboBoxLookAndFeel;
     private JComboBox<String> comboBoxEncryptionMethod;
 
+    /**
+     * 
+     * @param settingsHandler
+     */
     Options(final SettingsHandler settingsHandler)
     {
         this.setLocation(settingsHandler.getX(),
@@ -120,22 +128,38 @@ public class Options extends
     }
 }
 
+/**
+ * 
+ * @author vliopard
+ */
 class UnDupeKeeperSettingsLayout implements
                                 LayoutManager
 {
+    /**
+     * 
+     */
     public UnDupeKeeperSettingsLayout()
     {
     }
 
+    /**
+     * 
+     */
     public void addLayoutComponent(String name,
                                    Component comp)
     {
     }
 
+    /**
+     * 
+     */
     public void removeLayoutComponent(Component comp)
     {
     }
 
+    /**
+     * 
+     */
     public Dimension preferredLayoutSize(Container parent)
     {
         Dimension dim=new Dimension(0,
@@ -150,6 +174,9 @@ class UnDupeKeeperSettingsLayout implements
         return dim;
     }
 
+    /**
+     * 
+     */
     public Dimension minimumLayoutSize(Container parent)
     {
         Dimension dim=new Dimension(0,
@@ -157,6 +184,9 @@ class UnDupeKeeperSettingsLayout implements
         return dim;
     }
 
+    /**
+     * 
+     */
     public void layoutContainer(Container parent)
     {
         Insets insets=parent.getInsets();

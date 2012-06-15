@@ -15,6 +15,10 @@ import tools.DataBase;
 import tools.FileQueue;
 import tools.Logger;
 
+/**
+ * 
+ * @author vliopard
+ */
 public class Worker implements
                    Runnable
 {
@@ -24,6 +28,11 @@ public class Worker implements
     private final BlockingQueue<FileQueue> transferQueue;
     private static HashMap<String,String>  hashMapTable  =new HashMap<String,String>();
 
+    /**
+     * 
+     * @param fileQueue
+     * @param signalQueue
+     */
     Worker(BlockingQueue<FileQueue> fileQueue,
            BlockingQueue<Integer> signalQueue)
     {
@@ -31,6 +40,9 @@ public class Worker implements
         stopSignal=signalQueue;
     }
 
+    /**
+     * 
+     */
     public void run()
     {
         hashMapTable=DataBase.loadMap();
@@ -60,6 +72,9 @@ public class Worker implements
         msg(Strings.wkWorkerShutdown);
     }
 
+    /**
+     * 
+     */
     public synchronized void save()
     {
         synchronized(this)
@@ -68,6 +83,9 @@ public class Worker implements
         }
     }
 
+    /**
+     * 
+     */
     public synchronized void clear()
     {
         synchronized(this)
@@ -76,6 +94,22 @@ public class Worker implements
         }
     }
 
+    /**
+     * 
+     * @return Returns a <code>long</code> value with the size of the file hash
+     *         database.
+     */
+    public synchronized long size()
+    {
+        synchronized(this)
+        {
+            return hashMapTable.size();
+        }
+    }
+
+    /**
+     * 
+     */
     public synchronized void load()
     {
         synchronized(this)
@@ -84,6 +118,10 @@ public class Worker implements
         }
     }
 
+    /**
+     * 
+     * @param fileQueueObject
+     */
     private void consume(Object fileQueueObject)
     {
         FileQueue fileQueue=(FileQueue)fileQueueObject;
@@ -105,6 +143,10 @@ public class Worker implements
         }
     }
 
+    /**
+     * 
+     * @param fileName
+     */
     private void includeFileToHashTable(String fileName)
     {
         if(new File(fileName).isFile())
@@ -164,6 +206,10 @@ public class Worker implements
         }
     }
 
+    /**
+     * 
+     * @param fileName
+     */
     private void replaceFileFromHashTable(String fileName)
     {
         if(hashMapTable.containsValue(fileName))
@@ -181,12 +227,22 @@ public class Worker implements
         }
     }
 
+    /**
+     * 
+     * @param numberToFormat
+     * @return Returns an <code>String</code> representing a <code>long</code>
+     *         number with leading zeros.
+     */
     private String addLeadingZeros(long numberToFormat)
     {
         return String.format("%06d",
                              numberToFormat);
     }
 
+    /**
+     * 
+     * @param logMessage
+     */
     private static void log(String logMessage)
     {
         Logger.log(Thread.currentThread(),
@@ -194,11 +250,19 @@ public class Worker implements
                    Logger.WORKER);
     }
 
+    /**
+     * 
+     * @param message
+     */
     private static void msg(String message)
     {
         Logger.msg(message);
     }
 
+    /**
+     * 
+     * @param errorMessage
+     */
     private static void err(String errorMessage)
     {
         Logger.err(errorMessage);

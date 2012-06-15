@@ -10,13 +10,28 @@ import java.util.Formatter;
 import settings.Settings;
 import settings.Strings;
 
+/**
+ * 
+ * @author vliopard
+ */
 public class CheckSum
 {
+    /**
+     * 
+     * @param cypherTypeMethod
+     */
     public static void setMethod(int cypherTypeMethod)
     {
         Settings.CypherMethod=Settings.CypherMethodList[cypherTypeMethod];
     }
 
+    /**
+     * 
+     * @param fileName
+     * @return Returns a <code>byte array</code> that contains the encrypted
+     *         representation
+     *         of a file.
+     */
     public static byte[] createChecksum(String fileName)
     {
         InputStream fileInputStream;
@@ -43,6 +58,13 @@ public class CheckSum
         }
     }
 
+    /**
+     * 
+     * @param fileName
+     * @return Returns a <code>String</code> containing the encrypted
+     *         representation of a
+     *         file.
+     */
     public static String getChecksumSimple(String fileName)
     {
         waitForFile(fileName);
@@ -60,6 +82,14 @@ public class CheckSum
                            .toUpperCase();
     }
 
+    /**
+     * 
+     * @param fileName
+     * @return Returns a <code>String</code> containing the encrypted
+     *         representation of a
+     *         file.
+     * @throws UnsupportedEncodingException
+     */
     public static String getChecksumFaster(String fileName) throws UnsupportedEncodingException
     {
         waitForFile(fileName);
@@ -76,6 +106,13 @@ public class CheckSum
                           "ASCII").toUpperCase();
     }
 
+    /**
+     * 
+     * @param fileName
+     * @return Returns a <code>String</code> containing the encrypted
+     *         representation of a
+     *         file.
+     */
     public static String getChecksumElegant(String fileName)
     {
         waitForFile(fileName);
@@ -90,6 +127,13 @@ public class CheckSum
                         .toUpperCase();
     }
 
+    /**
+     * 
+     * @param password
+     * @return Returns a <code>String</code> containing the encrypted
+     *         representation of a
+     *         password.
+     */
     public static String encryptPassword(String password)
     {
         String cypherSha1Method=null;
@@ -108,6 +152,12 @@ public class CheckSum
         return cypherSha1Method;
     }
 
+    /**
+     * 
+     * @param hashBytes
+     * @return Returns a <code>String</code> containing the encrypted
+     *         representation of a <code>byte array</code>.
+     */
     private static String byteToHexFormater(final byte[] hashBytes)
     {
         Formatter formatter=new Formatter();
@@ -119,6 +169,12 @@ public class CheckSum
         return formatter.toString();
     }
 
+    /**
+     * 
+     * @param byteData
+     * @return Returns a <code>String</code> containing the encrypted
+     *         representation of a <code>byte array</code>.
+     */
     @SuppressWarnings("unused")
     private static String byteToHex(final byte[] byteData)
     {
@@ -134,6 +190,10 @@ public class CheckSum
                         .toUpperCase();
     }
 
+    /**
+     * 
+     * @param fileName
+     */
     public static void waitForFile(String fileName)
     {
         boolean reachedFirstTime=true;
@@ -166,6 +226,10 @@ public class CheckSum
         }
     }
 
+    /**
+     * 
+     * @param logMessage
+     */
     private static void log(String logMessage)
     {
         Logger.log(Thread.currentThread(),

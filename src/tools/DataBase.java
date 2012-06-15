@@ -12,15 +12,26 @@ import main.Worker;
 import settings.Settings;
 import settings.Strings;
 
+/**
+ * 
+ * @author vliopard
+ */
 public class DataBase
 {
     private static Worker workerThread;
 
+    /**
+     * 
+     * @param worker
+     */
     public static void useWorker(Worker worker)
     {
         workerThread=worker;
     }
 
+    /**
+     * 
+     */
     public static void clear()
     {
         msg(Strings.dbEraseDatabase);
@@ -28,6 +39,10 @@ public class DataBase
         saveMap(hashMapToClear);
     }
 
+    /**
+     * 
+     * @param hashMapToSave
+     */
     public static void saveMap(HashMap<String,String> hashMapToSave)
     {
         msg(Strings.dbSaveDatabase);
@@ -49,6 +64,11 @@ public class DataBase
         }
     }
 
+    /**
+     * 
+     * @return Returns a <code>HashMap</code> of Strings containing an Encrypted
+     *         representation and its file path location.
+     */
     public static HashMap<String,String> loadMap()
     {
         if(new File(Settings.UnDupeKeeperDatabaseName).exists())
@@ -73,6 +93,10 @@ public class DataBase
         return new HashMap<String,String>();
     }
 
+    /**
+     * 
+     * @param folderName
+     */
     public static void saveDir(String folderName)
     {
         try
@@ -89,6 +113,11 @@ public class DataBase
         }
     }
 
+    /**
+     * 
+     * @return Returns a <code>String</code> that contains the path to a saved
+     *         serialized Directory.
+     */
     public static String loadDir()
     {
         if(new File(Settings.WatchedDirectoryName).exists())
@@ -106,6 +135,10 @@ public class DataBase
         return null;
     }
 
+    /**
+     * 
+     * @param settingsTransfer
+     */
     public static void saveSettings(SettingsHandler settingsTransfer)
     {
         // msg(Strings.dbSaveSettings);
@@ -124,6 +157,11 @@ public class DataBase
         }
     }
 
+    /**
+     * 
+     * @return Returns a <code>SettingsHandler</code> object that contains
+     *         previous serialized saved settings.
+     */
     public static SettingsHandler loadSettings()
     {
         if(new File(Settings.UnDupeKeeperSettings).exists())
@@ -144,6 +182,11 @@ public class DataBase
         return new SettingsHandler();
     }
 
+    /**
+     * 
+     * @return Returns <code>true</code> if settings were changed and confirmed.
+     *         Returns <code>false</code> if dialog is canceled or closed.
+     */
     public static boolean openSettings()
     {
         SettingsHandler transferSettings=loadSettings();
@@ -169,6 +212,12 @@ public class DataBase
         return false;
     }
 
+    /**
+     * 
+     * @return Returns a <code>String</code> that contains the selected
+     *         directory path from dialog box. Returns <code>null</code> if
+     *         dialog box is closed without selecting a Directory.
+     */
     public static String chooseDir()
     {
         JFrame frame=new JFrame();
@@ -192,6 +241,10 @@ public class DataBase
         return null;
     }
 
+    /**
+     * 
+     * @param logMessage
+     */
     private static void log(String logMessage)
     {
         Logger.log(Thread.currentThread(),
@@ -199,6 +252,10 @@ public class DataBase
                    Logger.DATABASE);
     }
 
+    /**
+     * 
+     * @param message
+     */
     private static void msg(String message)
     {
         Logger.msg(message);

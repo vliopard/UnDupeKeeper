@@ -5,6 +5,10 @@ import java.io.InputStream;
 import java.io.Serializable;
 import settings.Settings;
 
+/**
+ * 
+ * @author vliopard
+ */
 public class SettingsHandler implements
                             Serializable
 {
@@ -19,6 +23,9 @@ public class SettingsHandler implements
     private static final long serialVersionUID  =-5557071137249098782L;
     transient InputStream     is                =System.in;
 
+    /**
+     * 
+     */
     public SettingsHandler()
     {
         final Toolkit toolKit=Toolkit.getDefaultToolkit();
@@ -32,6 +39,14 @@ public class SettingsHandler implements
         directoryChanged=false;
     }
 
+    /**
+     * 
+     * @param directory
+     * @param lookNfeel
+     * @param encryptionAlgorithm
+     * @param xScreenPosition
+     * @param yScreenPosition
+     */
     public SettingsHandler(String directory,
                            int lookNfeel,
                            int encryptionAlgorithm,
@@ -45,6 +60,11 @@ public class SettingsHandler implements
         yScreenAxis=yScreenPosition;
     }
 
+    /**
+     * 
+     * @param xScreenPosition
+     * @param yScreenPosition
+     */
     public void setXY(int xScreenPosition,
                       int yScreenPosition)
     {
@@ -52,17 +72,29 @@ public class SettingsHandler implements
         yScreenAxis=yScreenPosition;
     }
 
+    /**
+     * 
+     * @param directory
+     */
     public void setDirectory(String directory)
     {
         directoryToWatch=directory;
         directoryChanged=true;
     }
 
+    /**
+     * 
+     * @param lookNfeel
+     */
     public void setLookAndFeel(int lookNfeel)
     {
         lookAndFeel=lookNfeel;
     }
 
+    /**
+     * 
+     * @param encryptionAlgorithm
+     */
     public void setEncryptionMethod(int encryptionAlgorithm)
     {
         if(encryptionMethod!=encryptionAlgorithm)
@@ -76,61 +108,120 @@ public class SettingsHandler implements
         encryptionMethod=encryptionAlgorithm;
     }
 
+    /**
+     * 
+     * @param xScreenPosition
+     */
     public void setX(int xScreenPosition)
     {
         xScreenAxis=xScreenPosition;
     }
 
+    /**
+     * 
+     * @param yScreenPosition
+     */
     public void setY(int yScreenPosition)
     {
         yScreenAxis=yScreenPosition;
     }
 
+    /**
+     * 
+     * @return Returns an <code>String</code> containing a path to the directory
+     *         to be observed.
+     */
     public String getDirectory()
     {
         return directoryToWatch;
     }
 
+    /**
+     * 
+     * @return Returns an <code>int</code> value that represents a 'Look and
+     *         Feel' from "<code>Settings.LookAndFeelNames[]</code>"
+     */
     public int getLookAndFeel()
     {
         return lookAndFeel;
     }
 
+    /**
+     * 
+     * @return Returns an <code>int</code> value that represents an encryption
+     *         method from "<code>Settings.CypherMethodList[]</code>"
+     */
     public int getEncryptionMethod()
     {
         return encryptionMethod;
     }
 
+    /**
+     * 
+     * @return Returns an <code>int</code> value of the last X axis settings
+     *         screen
+     *         position.
+     */
     public int getX()
     {
         return xScreenAxis;
     }
 
+    /**
+     * 
+     * @return Returns an <code>int</code> value of the last Y axis settings
+     *         screen
+     *         position.
+     */
     public int getY()
     {
         return yScreenAxis;
     }
 
+    /**
+     * 
+     * @param confirmation
+     */
     public void setChanged(boolean confirmation)
     {
         settingsChanged=confirmation;
     }
 
+    /**
+     * 
+     */
     public void resetEncryptionChanged()
     {
         encryptionChanged=false;
     }
 
+    /**
+     * 
+     * @return Returns <code>true</code> if settings were changed. Returns
+     *         <code>false</code> if settings remain unchanged.
+     */
     public boolean isChanged()
     {
         return settingsChanged;
     }
 
+    /**
+     * 
+     * @return Returns <code>true</code> if directory has never changed before.
+     *         Returns <code>false</code> if directory has already being changed
+     *         later.
+     */
     public boolean isDirectoryFirstTime()
     {
         return !directoryChanged;
     }
 
+    /**
+     * 
+     * @return Returns <code>true</code> if encryption method is changed.
+     *         Returns <code>false</code> if encryption method remains
+     *         unchanged.
+     */
     public boolean isEncryptionChanged()
     {
         return encryptionChanged;

@@ -1,4 +1,8 @@
 package settings;
+/**
+ * 
+ * @author vliopard
+ */
 public class Settings
 {
     // TODO: Menu -> Source - > Externalize Strings
@@ -28,7 +32,7 @@ public class Settings
     public static final int      KeepWorking              =0;
     public static final int      StopWorking              =1;
     public static final int      WorkerStopped            =2;
-    public static final int      BlinkereStopped          =3;
+    public static final int      BlinkerStopped           =3;
     public static final int      WorkerStopSignal         =0;
     public static final int      FileCreated              =1;
     public static final int      FileModified             =2;

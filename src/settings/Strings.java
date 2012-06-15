@@ -1,4 +1,8 @@
 package settings;
+/**
+ * 
+ * @author vliopard
+ */
 public class Strings
 {
     public static final String bkTotalItems                    ="Total items: ";

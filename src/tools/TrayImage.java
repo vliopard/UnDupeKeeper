@@ -8,8 +8,18 @@ import main.UnDupeKeeper;
 import settings.Settings;
 import settings.Strings;
 
+/**
+ * 
+ * @author vliopard
+ */
 public class TrayImage
 {
+    /**
+     * 
+     * @param iconIndex
+     * @return Returns an <code>Image</code> object from internal icon list or a
+     *         new empty <code>Image</code> object.
+     */
     public static Image setSystemTrayImage(int iconIndex)
     {
         Image trayIconImage=createImage(Settings.iconList[iconIndex],
@@ -28,11 +38,23 @@ public class TrayImage
         return trayIconImage;
     }
 
+    /**
+     * 
+     * @param iconIndex
+     * @return Returns a <code>TrayIcon</code> object from an icon index;
+     */
     public static TrayIcon setSystemTrayIcon(int iconIndex)
     {
         return new TrayIcon(setSystemTrayImage(iconIndex));
     }
 
+    /**
+     * 
+     * @param resourceImagePath
+     * @param toolTipDescription
+     * @return Returns an <code>Image</code> from the internal resource file.
+     *         Returns <code>null</code> if resource is not found.
+     */
     protected static Image createImage(String resourceImagePath,
                                        String toolTipDescription)
     {
@@ -50,6 +72,10 @@ public class TrayImage
         }
     }
 
+    /**
+     * 
+     * @param errorMessage
+     */
     private static void err(String errorMessage)
     {
         Logger.err(errorMessage);

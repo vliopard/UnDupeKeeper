@@ -8,12 +8,25 @@ import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
 
+/**
+ * 
+ * @author vliopard
+ */
 public class Monitor
 {
     private FileQueue                      fileQueue;
     private final BlockingQueue<Integer>   stopSignal;
     private final BlockingQueue<FileQueue> transferQueue;
 
+    /**
+     * 
+     * @param directoryPath
+     * @param transferData
+     * @param stopCommand
+     * @param watchRecursive
+     * @throws JNotifyException
+     * @throws InterruptedException
+     */
     Monitor(String directoryPath,
             BlockingQueue<FileQueue> transferData,
             BlockingQueue<Integer> stopCommand,
@@ -48,6 +61,10 @@ public class Monitor
         msg(Strings.mtMonitorShutdown);
     }
 
+    /**
+     * 
+     * @author vliopard
+     */
     class Listener implements
                   JNotifyListener
     {
@@ -121,6 +138,10 @@ public class Monitor
         }
     }
 
+    /**
+     * 
+     * @param logMessage
+     */
     private static void log(String logMessage)
     {
         Logger.log(Thread.currentThread(),
@@ -128,6 +149,10 @@ public class Monitor
                    Logger.MONITOR);
     }
 
+    /**
+     * 
+     * @param message
+     */
     private static void msg(String message)
     {
         Logger.msg(message);

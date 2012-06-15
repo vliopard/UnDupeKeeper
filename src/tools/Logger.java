@@ -1,4 +1,8 @@
 package tools;
+/**
+ * 
+ * @author vliopard
+ */
 public class Logger
 {
     public static final int ALL_SOFTWARE          =0;
@@ -22,17 +26,27 @@ public class Logger
     private static boolean  USERINTERFACE_ENABLED =false;
     private static boolean  TRAYIMAGE_ENABLED     =false;
     private static boolean  undo                  =false;
-
+    /**
+     * 
+     * @param message
+     */
     public static void msg(String message)
     {
         System.out.println(message);
     }
-
+    /**
+     * 
+     * @param errorMessage
+     */
     public static void err(String errorMessage)
     {
         System.err.println(errorMessage);
     }
-
+    /**
+     * 
+     * @param type
+     * @param message
+     */
     private static void lprint(String type,
                                String message)
     {
@@ -40,7 +54,12 @@ public class Logger
                            "\t"+
                            message);
     }
-
+    /**
+     * 
+     * @param typo
+     * @param logMessage
+     * @param module
+     */
     public static void log(Thread typo,
                            String logMessage,
                            int module)
