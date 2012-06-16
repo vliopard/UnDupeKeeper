@@ -10,6 +10,7 @@ import java.util.Formatter;
 import settings.Settings;
 import settings.Strings;
 
+// TODO: JAVADOC
 /**
  * 
  * @author vliopard

@@ -16,6 +16,9 @@ import tools.FileQueue;
 import tools.Logger;
 
 /**
+ * Worker class is responsible for checking a
+ * <code>BlockingQueue&lt;FileQueue&gt;</code> and take actions related to
+ * unduplicate already indexed files.
  * 
  * @author vliopard
  */
@@ -29,9 +32,16 @@ public class Worker implements
     private static HashMap<String,String>  hashMapTable  =new HashMap<String,String>();
 
     /**
+     * Worker Constructor - Initializes a Worker object that starts to keep
+     * files unduplicated.
      * 
      * @param fileQueue
+     *            A <code>BlockingQueue&lt;FileQueue&gt;</code> containing all
+     *            the file system notifications sent from <code>Monitor</code>
+     *            class.
      * @param signalQueue
+     *            A <code>BlockingQueue&lt;Integer&gt;</code> that will receive
+     *            signals to shutdown gracefully.
      */
     Worker(BlockingQueue<FileQueue> fileQueue,
            BlockingQueue<Integer> signalQueue)
@@ -41,7 +51,8 @@ public class Worker implements
     }
 
     /**
-     * 
+     * This is the runnable method that starts background processing of file
+     * system contents.
      */
     public void run()
     {
@@ -55,10 +66,10 @@ public class Worker implements
             }
             while(!stopSignal.contains(Settings.StopWorking));
         }
-        catch(InterruptedException ex)
+        catch(InterruptedException e)
         {
             log(Strings.wkProblemRunningWorker+
-                ex);
+                e);
         }
         save();
         try
@@ -73,7 +84,7 @@ public class Worker implements
     }
 
     /**
-     * 
+     * This method saves the hash map of included files for later use.
      */
     public synchronized void save()
     {
@@ -84,7 +95,8 @@ public class Worker implements
     }
 
     /**
-     * 
+     * This method clear the hash map database for starting a new fresh
+     * unduplicate task.
      */
     public synchronized void clear()
     {
@@ -95,6 +107,8 @@ public class Worker implements
     }
 
     /**
+     * This method returns the size of the hash map database to inform how many
+     * items are already worked.
      * 
      * @return Returns a <code>long</code> value with the size of the file hash
      *         database.
@@ -108,7 +122,8 @@ public class Worker implements
     }
 
     /**
-     * 
+     * This method loads the hash map database from disk to restart later saved
+     * unduplication tasks.
      */
     public synchronized void load()
     {
@@ -119,8 +134,13 @@ public class Worker implements
     }
 
     /**
+     * This method will work on each <code>FileQueue</code> object to determine
+     * if a file is new on directory of if it already exist for taking the right
+     * action.
      * 
      * @param fileQueueObject
+     *            A <code>FileQueue</code> object containing an file system
+     *            action code and a path to the working file.
      */
     private void consume(Object fileQueueObject)
     {
@@ -144,8 +164,12 @@ public class Worker implements
     }
 
     /**
+     * This method includes a new fresh file to the hash table database or
+     * replaces the file content to a path that points to its identical file
+     * already added to the hash table database.
      * 
      * @param fileName
+     *            A <code>String</code> containing a file location path.
      */
     private void includeFileToHashTable(String fileName)
     {
@@ -207,8 +231,11 @@ public class Worker implements
     }
 
     /**
+     * This method removes an already included file in the hash table database
+     * in case it is deleted from file system.
      * 
      * @param fileName
+     *            A <code>String</code> containing a file location path.
      */
     private void replaceFileFromHashTable(String fileName)
     {
@@ -228,8 +255,11 @@ public class Worker implements
     }
 
     /**
+     * This method adds leading zeros to a <code>String</code> representation of
+     * a number to keep display organized in columns.
      * 
      * @param numberToFormat
+     *            A <code>long</code> number that will receive leading zeros.
      * @return Returns an <code>String</code> representing a <code>long</code>
      *         number with leading zeros.
      */
@@ -240,19 +270,23 @@ public class Worker implements
     }
 
     /**
+     * This method displays a log message through the embedded log system.
      * 
      * @param logMessage
+     *            A <code>String</code> containing the log message to display.
      */
     private static void log(String logMessage)
     {
         Logger.log(Thread.currentThread(),
                    logMessage,
-                   Logger.WORKER);
+                   Logger.MONITOR);
     }
 
     /**
+     * This method displays a message through the embedded log system.
      * 
      * @param message
+     *            A <code>String</code> containing the message to display.
      */
     private static void msg(String message)
     {
@@ -260,8 +294,10 @@ public class Worker implements
     }
 
     /**
+     * This method displays an error message through the embedded log system.
      * 
      * @param errorMessage
+     *            A <code>String</code> containing the error message to display.
      */
     private static void err(String errorMessage)
     {

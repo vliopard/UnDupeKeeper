@@ -1,5 +1,8 @@
 package tools;
 /**
+ * Logger class is responsible for centralize debug and message mechanism,
+ * allowing developer to use filters and levels of displaying message,
+ * controlling source code by sectors.
  * 
  * @author vliopard
  */
@@ -26,134 +29,156 @@ public class Logger
     private static boolean  USERINTERFACE_ENABLED =false;
     private static boolean  TRAYIMAGE_ENABLED     =false;
     private static boolean  undo                  =false;
+
     /**
+     * This method displays a message using the default output system.
      * 
      * @param message
+     *            A <code>String</code> containing the message to display.
      */
     public static void msg(String message)
     {
         System.out.println(message);
     }
+
     /**
+     * This method displays an error message using the default error output
+     * system.
      * 
      * @param errorMessage
+     *            A <code>String</code> containing the error message to display.
      */
     public static void err(String errorMessage)
     {
         System.err.println(errorMessage);
     }
+
     /**
+     * This is a formatter that places a log message with two tab separated
+     * values.
      * 
-     * @param type
-     * @param message
+     * @param debugModule
+     *            A <code>String</code> that contains the module identification
+     *            that will be displayed.
+     * @param debugMessage
+     *            A <code>String</code> that contains the log message.
      */
-    private static void lprint(String type,
-                               String message)
+    private static void messageFormat(String debugModule,
+                                      String debugMessage)
     {
-        System.out.println(type+
+        System.out.println(debugModule+
                            "\t"+
-                           message);
+                           debugMessage);
     }
+
     /**
+     * This is the main log handler. It decides what to display according to the
+     * developer settings.
      * 
-     * @param typo
+     * @param threadStackTrace
+     *            A <code>Thread</code> object from parent object that contains
+     *            a stack trace.
      * @param logMessage
-     * @param module
+     *            A <code>String</code> containing the log message that will be
+     *            displayed.
+     * @param systemModule
+     *            An <code>int</code> value that represents the module that is
+     *            being executed.
      */
-    public static void log(Thread typo,
+    public static void log(Thread threadStackTrace,
                            String logMessage,
-                           int module)
+                           int systemModule)
     {
         if(((!COMPLETE_DISABLED)&&(!logMessage.startsWith("*")))||
            (logMessage.startsWith("!")))
         {
             if(logMessage.startsWith("!"))
             {
-                module=ALL_SOFTWARE;
+                systemModule=ALL_SOFTWARE;
                 if(ALL_SOFTWARE_ENABLED==false)
                 {
                     ALL_SOFTWARE_ENABLED=true;
                     undo=true;
                 }
             }
-            String type=null;
+            String debugModuleName=null;
             if(logMessage.startsWith(" ")||
                logMessage.startsWith("!"))
             {
-                type=typo.getStackTrace()[2].getClassName();
-                type="["+
-                     type.substring(type.lastIndexOf(".")+1)+
-                     "."+
-                     typo.getStackTrace()[3].getMethodName()+
-                     "]\t";
+                debugModuleName=threadStackTrace.getStackTrace()[2].getClassName();
+                debugModuleName="["+
+                                debugModuleName.substring(debugModuleName.lastIndexOf(".")+1)+
+                                "."+
+                                threadStackTrace.getStackTrace()[3].getMethodName()+
+                                "]\t";
             }
             else
             {
-                type="[___________]\t";
+                debugModuleName="[___________]\t";
             }
-            switch(module)
+            switch(systemModule)
             {
                 case UNDUPEKEEPER:
                     if(UNDUPEKEEPER_ENABLED||
                        ALL_SOFTWARE_ENABLED)
                     {
-                        lprint(type,
-                               logMessage);
+                        messageFormat(debugModuleName,
+                                      logMessage);
                     }
                 break;
                 case DATABASE:
                     if(DATABASE_ENABLED||
                        ALL_SOFTWARE_ENABLED)
                     {
-                        lprint(type,
-                               logMessage);
+                        messageFormat(debugModuleName,
+                                      logMessage);
                     }
                 break;
                 case WORKER:
                     if(WORKER_ENABLED||
                        ALL_SOFTWARE_ENABLED)
                     {
-                        lprint(type,
-                               logMessage);
+                        messageFormat(debugModuleName,
+                                      logMessage);
                     }
                 break;
                 case CHECKSUM:
                     if(CHECKSUM_ENABLED||
                        ALL_SOFTWARE_ENABLED)
                     {
-                        lprint(type,
-                               logMessage);
+                        messageFormat(debugModuleName,
+                                      logMessage);
                     }
                 break;
                 case MONITOR:
                     if(MONITOR_ENABLED||
                        ALL_SOFTWARE_ENABLED)
                     {
-                        lprint(type,
-                               logMessage);
+                        messageFormat(debugModuleName,
+                                      logMessage);
                     }
                 break;
                 case USERINTERFACE:
                     if(USERINTERFACE_ENABLED||
                        ALL_SOFTWARE_ENABLED)
                     {
-                        lprint(type,
-                               logMessage);
+                        messageFormat(debugModuleName,
+                                      logMessage);
                     }
                 break;
                 case TRAYIMAGE:
                     if(TRAYIMAGE_ENABLED||
                        ALL_SOFTWARE_ENABLED)
                     {
-                        lprint(type,
-                               logMessage);
+                        messageFormat(debugModuleName,
+                                      logMessage);
                     }
                 break;
                 default:
                     if(ALL_SOFTWARE_ENABLED)
                     {
-                        lprint(type,
-                               logMessage);
+                        messageFormat(debugModuleName,
+                                      logMessage);
                     }
             }
             if(undo)

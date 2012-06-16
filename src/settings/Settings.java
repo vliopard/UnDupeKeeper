@@ -1,11 +1,12 @@
 package settings;
 /**
+ * Settings class contains all the system values for easy access. This is a
+ * place to keep constants.
  * 
  * @author vliopard
  */
 public class Settings
 {
-    // TODO: Menu -> Source - > Externalize Strings
     public static String         CypherMethodList[]       =
                                                           {
             "CRC32",

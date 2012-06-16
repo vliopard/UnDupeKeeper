@@ -12,6 +12,7 @@ import main.Worker;
 import settings.Settings;
 import settings.Strings;
 
+// TODO: JAVADOC
 /**
  * 
  * @author vliopard

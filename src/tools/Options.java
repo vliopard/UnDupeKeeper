@@ -5,6 +5,7 @@ import javax.swing.*;
 import settings.Settings;
 import settings.Strings;
 
+// TODO: JAVADOC
 /**
  * 
  * @author vliopard

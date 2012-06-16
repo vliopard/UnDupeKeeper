@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import settings.Settings;
 
+// TODO: JAVADOC
 /**
  * 
  * @author vliopard

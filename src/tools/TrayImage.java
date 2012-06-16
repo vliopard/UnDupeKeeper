@@ -9,14 +9,20 @@ import settings.Settings;
 import settings.Strings;
 
 /**
+ * TrayImage class is responsible for creating and set the System Trai Icon
+ * image.
  * 
  * @author vliopard
  */
 public class TrayImage
 {
     /**
+     * This is a method for setting the System Tray Image from an icon list from
+     * the system resources.
      * 
      * @param iconIndex
+     *            An <code>int</code> index that represents an item from
+     *            <code>Settings.iconList[]</code> array.
      * @return Returns an <code>Image</code> object from internal icon list or a
      *         new empty <code>Image</code> object.
      */
@@ -39,8 +45,12 @@ public class TrayImage
     }
 
     /**
+     * This is a method for setting the System Tray Image from an icon list from
+     * the system resources.
      * 
      * @param iconIndex
+     *            An <code>int</code> index that represents an item from
+     *            <code>Settings.iconList[]</code> array.
      * @return Returns a <code>TrayIcon</code> object from an icon index;
      */
     public static TrayIcon setSystemTrayIcon(int iconIndex)
@@ -49,9 +59,15 @@ public class TrayImage
     }
 
     /**
+     * This method creates an <code>Image</code> based on an internal resource
+     * picture file.
      * 
      * @param resourceImagePath
+     *            An <code>String</code> with the internal path to the resource
+     *            file.
      * @param toolTipDescription
+     *            An <code>String</code> containing a text message to display in
+     *            the tool tip.
      * @return Returns an <code>Image</code> from the internal resource file.
      *         Returns <code>null</code> if resource is not found.
      */
@@ -73,8 +89,10 @@ public class TrayImage
     }
 
     /**
+     * This method displays an error message through the embedded log system.
      * 
      * @param errorMessage
+     *            A <code>String</code> containing the error message to display.
      */
     private static void err(String errorMessage)
     {

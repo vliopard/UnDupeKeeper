@@ -24,6 +24,9 @@ import tools.SettingsHandler;
 import tools.TrayImage;
 
 /**
+ * UnDupeKeeper is the main class. It calls and starts everything on the system,
+ * regarding to User Interface, and working threads. Also takes care about
+ * settings.
  * 
  * @author vliopard
  */
@@ -38,7 +41,8 @@ public class UnDupeKeeper
     private static BlockingQueue<FileQueue> transferQueue;
 
     /**
-     * 
+     * In case of UnDupeKeeper is called by command prompt this method will show
+     * an usage message after receiving wrong parameters.
      */
     private static void usage()
     {
@@ -47,9 +51,11 @@ public class UnDupeKeeper
     }
 
     /**
+     * This method checks if a path is really a directory.
      * 
      * @param dirName
-     * @return Feturn <code>false</code> when dirName is: <code>null</code>, not
+     *            A <code>Path</code> to a file location.
+     * @return Return <code>false</code> when dirName is: <code>null</code>, not
      *         exists and is a Directory. Return <code>true</code> if it is an
      *         actual file.
      */
@@ -64,8 +70,12 @@ public class UnDupeKeeper
     }
 
     /**
+     * This method validates arguments passed to UnDupeKeeper via command
+     * prompt.
      * 
      * @param arguments
+     *            A <code>String</code> array containing the command prompt
+     *            arguments.
      * @return Returns a <code>Path</code> containing the directory passed as
      *         argument. Sets recursive mode 'on'.
      */
@@ -90,11 +100,13 @@ public class UnDupeKeeper
     }
 
     /**
+     * This is the main method of UnDupeKeeper that starts all the system.
      * 
      * @param args
-     * @throws IOException
+     *            A <code>String</code> array from command prompt that contains
+     *            arguments or empty.
      */
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args)
     {
         settingsHandler=DataBase.loadSettings();
         Path directoryToWatch=null;
@@ -158,7 +170,8 @@ public class UnDupeKeeper
     }
 
     /**
-     * 
+     * This is the method that starts the shutdown process and inform all the
+     * working threads they must have to exit.
      */
     private static void startShutdown()
     {
@@ -174,7 +187,8 @@ public class UnDupeKeeper
     }
 
     /**
-     * 
+     * This is a method for starting the user interface. It puts a System Tray
+     * Icon, sets the Look and Feel and other many options.
      */
     private static void startUI()
     {
@@ -183,9 +197,10 @@ public class UnDupeKeeper
             UIManager.setLookAndFeel(Settings.LookAndFeelPackages[settingsHandler.getLookAndFeel()]);
         }
         catch(UnsupportedLookAndFeelException|IllegalAccessException
-                |InstantiationException|ClassNotFoundException ex)
+                |InstantiationException|ClassNotFoundException e)
         {
-            err(Strings.ukErrorLoadingLookAndFeel);
+            err(Strings.ukErrorLoadingLookAndFeel+
+                e);
         }
         // UIManager.put("swing.boldMetal", Boolean.FALSE);
         SwingUtilities.invokeLater(new Runnable()
@@ -198,7 +213,8 @@ public class UnDupeKeeper
     }
 
     /**
-     * 
+     * This method creates and display an About dialog containing some
+     * information about the UnDupeKeeper.
      */
     private static void showAbout()
     {
@@ -213,7 +229,8 @@ public class UnDupeKeeper
     }
 
     /**
-     * 
+     * This method creates and display the Graphical User Interface, putting an
+     * Icon on System Tray and its pop-up menu.
      */
     private static void createAndShowGUI()
     {
@@ -311,8 +328,10 @@ public class UnDupeKeeper
     }
 
     /**
+     * This method displays a message through the embedded log system.
      * 
      * @param message
+     *            A <code>String</code> containing the message to display.
      */
     private static void msg(String message)
     {
@@ -320,8 +339,10 @@ public class UnDupeKeeper
     }
 
     /**
+     * This method displays an error message through the embedded log system.
      * 
      * @param errorMessage
+     *            A <code>String</code> containing the error message to display.
      */
     private static void err(String errorMessage)
     {

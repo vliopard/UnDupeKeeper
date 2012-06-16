@@ -1,10 +1,14 @@
 package settings;
 /**
+ * Strings class contains all the system messages for easy access. This is a
+ * place to keep constants together and could help to externalize for other
+ * languages.
  * 
  * @author vliopard
  */
 public class Strings
 {
+    // TODO: Menu -> Source - > Externalize Strings
     public static final String bkTotalItems                    ="Total items: ";
     public static final String csChecksumCreationFailed        ="!Checksum creation failed: ";
     public static final String csPasswordEncryptionFailed      ="!Password encryption failed: ";
@@ -32,6 +36,7 @@ public class Strings
     public static final String mtProblemAddingToCreatingQueue  ="!CR - Problem adding to queue: ";
     public static final String mtProblemAddingToDeletingQueue  ="!DL - Problem adding to queue: ";
     public static final String mtProblemAddingToModifyingQueue ="!MD - Problem adding to queue: ";
+    public static final String mtProblemCreatingMonitorObject  ="!Problem on creating Monitor Object: ";
     public static final String ssSettingsTitle                 ="UnDupeKeeper Settings";
     public static final String ssDirectoryLabel                ="Directory to work on:";
     public static final String ssWarningLabel                  ="WARNING: System will shutdown after saving!";
@@ -47,7 +52,7 @@ public class Strings
     public static final String ukCantSendExitToWorker          ="Cannot send shutdown dignal to Worker.";
     public static final String ukClearDatabase                 ="Clear database";
     public static final String ukDatabaseWillBeEmpty           ="Database will be empty. Are you sure?";
-    public static final String ukErrorLoadingLookAndFeel       ="Error loading look and feel.";
+    public static final String ukErrorLoadingLookAndFeel       ="Error loading look and feel: ";
     public static final String ukExitUndupekeeper              ="Exit";
     public static final String ukNormalShutdonw                ="UnDupeKeeper normal shutdown.\nExit.";
     public static final String ukOperationCanceled             ="Operation canceled.";
