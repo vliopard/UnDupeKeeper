@@ -279,7 +279,7 @@ public class Worker implements
     {
         Logger.log(Thread.currentThread(),
                    logMessage,
-                   Logger.MONITOR);
+                   Logger.WORKER);
     }
 
     /**

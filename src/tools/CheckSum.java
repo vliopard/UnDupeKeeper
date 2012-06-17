@@ -10,16 +10,20 @@ import java.util.Formatter;
 import settings.Settings;
 import settings.Strings;
 
-// TODO: JAVADOC
 /**
+ * CheckSum class is responsible for giving checksum results according to the
+ * selected encryption algorithm.
  * 
  * @author vliopard
  */
 public class CheckSum
 {
     /**
+     * This method uses <code>Settings.CypherMethodList[]</code> to set the
+     * encryption method for calculating checksum results.
      * 
      * @param cypherTypeMethod
+     *            An <code>int</code> value index for the desired algorithm.
      */
     public static void setMethod(int cypherTypeMethod)
     {
@@ -27,11 +31,14 @@ public class CheckSum
     }
 
     /**
+     * This method creates a checksum <code>byte array</code> from a given file
+     * name.
      * 
      * @param fileName
+     *            A <code>String</code> containing a path to the file to be
+     *            calculated.
      * @return Returns a <code>byte array</code> that contains the encrypted
-     *         representation
-     *         of a file.
+     *         representation of a file.
      */
     public static byte[] createChecksum(String fileName)
     {
@@ -60,11 +67,14 @@ public class CheckSum
     }
 
     /**
+     * This method creates a <code>String</code> checksum value from a given
+     * filename through a simple method calculation.
      * 
      * @param fileName
+     *            A <code>String</code> containing a path to the file to be
+     *            calculated.
      * @return Returns a <code>String</code> containing the encrypted
-     *         representation of a
-     *         file.
+     *         representation of a file.
      */
     public static String getChecksumSimple(String fileName)
     {
@@ -84,12 +94,17 @@ public class CheckSum
     }
 
     /**
+     * This method creates a <code>String</code> checksum value from a given
+     * filename through a faster method calculation.
      * 
      * @param fileName
+     *            A <code>String</code> containing a path to the file to be
+     *            calculated.
      * @return Returns a <code>String</code> containing the encrypted
-     *         representation of a
-     *         file.
+     *         representation of a file.
      * @throws UnsupportedEncodingException
+     *             This exception will be raised in case the return value could
+     *             not be converted to the ASCII.
      */
     public static String getChecksumFaster(String fileName) throws UnsupportedEncodingException
     {
@@ -108,11 +123,14 @@ public class CheckSum
     }
 
     /**
+     * This method creates a <code>String</code> checksum value from a given
+     * filename through an elegant method calculation.
      * 
      * @param fileName
+     *            A <code>String</code> containing a path to the file to be
+     *            calculated.
      * @return Returns a <code>String</code> containing the encrypted
-     *         representation of a
-     *         file.
+     *         representation of a file.
      */
     public static String getChecksumElegant(String fileName)
     {
@@ -129,11 +147,14 @@ public class CheckSum
     }
 
     /**
+     * This method creates a <code>String</code> checksum value from a given
+     * password.
      * 
      * @param password
+     *            A <code>String</code> containing the password to be
+     *            calculated.
      * @return Returns a <code>String</code> containing the encrypted
-     *         representation of a
-     *         password.
+     *         representation of a password.
      */
     public static String encryptPassword(String password)
     {
@@ -154,8 +175,11 @@ public class CheckSum
     }
 
     /**
+     * This method converts a <code>byte array</code> to a String value using a
+     * formatter method.
      * 
      * @param hashBytes
+     *            A <code>byte array</code> containing an hex value.
      * @return Returns a <code>String</code> containing the encrypted
      *         representation of a <code>byte array</code>.
      */
@@ -171,8 +195,11 @@ public class CheckSum
     }
 
     /**
+     * This method converts a <code>byte array</code> to a String value using a
+     * <code>StringBuffer</code> method.
      * 
      * @param byteData
+     *            A <code>byte array</code> containing an hex value.
      * @return Returns a <code>String</code> containing the encrypted
      *         representation of a <code>byte array</code>.
      */
@@ -192,8 +219,11 @@ public class CheckSum
     }
 
     /**
+     * This method waits for a file until it gets available to be read.
      * 
      * @param fileName
+     *            A <code>String</code> containing a path to the file to wait
+     *            for.
      */
     public static void waitForFile(String fileName)
     {
@@ -228,8 +258,10 @@ public class CheckSum
     }
 
     /**
+     * This method displays a log message through the embedded log system.
      * 
      * @param logMessage
+     *            A <code>String</code> containing the log message to display.
      */
     private static void log(String logMessage)
     {

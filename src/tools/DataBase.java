@@ -12,8 +12,9 @@ import main.Worker;
 import settings.Settings;
 import settings.Strings;
 
-// TODO: JAVADOC
 /**
+ * DataBase class is responsible for managing all the serialized information
+ * related to the UnDupeKeeper for later use.
  * 
  * @author vliopard
  */
@@ -22,8 +23,12 @@ public class DataBase
     private static Worker workerThread;
 
     /**
+     * This method receives a running worker to handle their information that
+     * will be persisted.
      * 
      * @param worker
+     *            A <code>Worker</code> thread to get its hash map of processing
+     *            values.
      */
     public static void useWorker(Worker worker)
     {
@@ -31,7 +36,8 @@ public class DataBase
     }
 
     /**
-     * 
+     * This method just clear the hash map serialized data with a new fresh
+     * object without any values.
      */
     public static void clear()
     {
@@ -41,8 +47,12 @@ public class DataBase
     }
 
     /**
+     * This method saves a hash map of working values to the file system for
+     * later use.
      * 
      * @param hashMapToSave
+     *            A <code>HashMap</code> of <code>Strings</code> containing the
+     *            values to be written to the disk.
      */
     public static void saveMap(HashMap<String,String> hashMapToSave)
     {
@@ -66,6 +76,8 @@ public class DataBase
     }
 
     /**
+     * This method restores a previous saved session containing all the data
+     * already worked.
      * 
      * @return Returns a <code>HashMap</code> of Strings containing an Encrypted
      *         representation and its file path location.
@@ -95,8 +107,12 @@ public class DataBase
     }
 
     /**
+     * This method saves the dialog chooser's directory to remember the last
+     * place you visit.
      * 
      * @param folderName
+     *            A <code>String</code> containing the path to the dialog
+     *            chooser's directory.
      */
     public static void saveDir(String folderName)
     {
@@ -115,6 +131,8 @@ public class DataBase
     }
 
     /**
+     * This method restores the last saved directory selected by the dialog
+     * chooser.
      * 
      * @return Returns a <code>String</code> that contains the path to a saved
      *         serialized Directory.
@@ -137,8 +155,11 @@ public class DataBase
     }
 
     /**
+     * This method saves all settings obtained from the settings dialog.
      * 
      * @param settingsTransfer
+     *            A <code>SettingsHandler</code> object containing the software
+     *            settings to be saved to disk.
      */
     public static void saveSettings(SettingsHandler settingsTransfer)
     {
@@ -159,6 +180,7 @@ public class DataBase
     }
 
     /**
+     * This method restores all dialog settings previously saved to the disk.
      * 
      * @return Returns a <code>SettingsHandler</code> object that contains
      *         previous serialized saved settings.
@@ -184,6 +206,8 @@ public class DataBase
     }
 
     /**
+     * This method displays the settings dialog window containing all changeable
+     * UndupeKeeper settings.
      * 
      * @return Returns <code>true</code> if settings were changed and confirmed.
      *         Returns <code>false</code> if dialog is canceled or closed.
@@ -214,6 +238,8 @@ public class DataBase
     }
 
     /**
+     * This method displays the Directory Chooser Dialog for selecting a
+     * directory to be handled by UnDupeKeeper.
      * 
      * @return Returns a <code>String</code> that contains the selected
      *         directory path from dialog box. Returns <code>null</code> if
@@ -243,8 +269,10 @@ public class DataBase
     }
 
     /**
+     * This method displays a log message through the embedded log system.
      * 
      * @param logMessage
+     *            A <code>String</code> containing the log message to display.
      */
     private static void log(String logMessage)
     {
@@ -254,8 +282,10 @@ public class DataBase
     }
 
     /**
+     * This method displays a message through the embedded log system.
      * 
      * @param message
+     *            A <code>String</code> containing the message to display.
      */
     private static void msg(String message)
     {

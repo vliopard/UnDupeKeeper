@@ -5,8 +5,9 @@ import java.io.InputStream;
 import java.io.Serializable;
 import settings.Settings;
 
-// TODO: JAVADOC
 /**
+ * SettingsHandler class is the main object to store all settings from
+ * UnDupeKeeper for save and restore settings data in just only one place.
  * 
  * @author vliopard
  */
@@ -25,7 +26,8 @@ public class SettingsHandler implements
     transient InputStream     is                =System.in;
 
     /**
-     * 
+     * SettingsHandler Constructor - It starts a new fresh and clean Settings
+     * Object with default values.
      */
     public SettingsHandler()
     {
@@ -41,12 +43,24 @@ public class SettingsHandler implements
     }
 
     /**
+     * SettingsHandler Constructor - It starts a new Settings Object starting
+     * with the passed values as parameters.
      * 
      * @param directory
+     *            A <code>String</code> value that points to the current working
+     *            directory.
      * @param lookNfeel
+     *            An <code>int</code> value that informs the current look and
+     *            feel of the system.
      * @param encryptionAlgorithm
+     *            An <code>int</code> value that informs the current encryption
+     *            algorithm of the system.
      * @param xScreenPosition
+     *            An <code>int</code> value that informs the horizontal position
+     *            of the settings dialog.
      * @param yScreenPosition
+     *            An <code>int</code> value that informs the vertical position
+     *            of the settings dialog.
      */
     public SettingsHandler(String directory,
                            int lookNfeel,
@@ -62,9 +76,14 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method sets the position of the settings dialog screen.
      * 
      * @param xScreenPosition
+     *            An <code>int</code> value that informs the horizontal position
+     *            of the settings dialog.
      * @param yScreenPosition
+     *            An <code>int</code> value that informs the vertical position
+     *            of the settings dialog.
      */
     public void setXY(int xScreenPosition,
                       int yScreenPosition)
@@ -74,8 +93,11 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method sets the working directory of UnDupeKeeper.
      * 
      * @param directory
+     *            A <code>String</code> value that represents the path to an
+     *            observed directory to keep unduplicated.
      */
     public void setDirectory(String directory)
     {
@@ -84,8 +106,11 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method sets the look and feel for the GUIs.
      * 
      * @param lookNfeel
+     *            An <code>int</code> value obtained from
+     *            <code>Settings.LookAndFeelNames[]</code> list.
      */
     public void setLookAndFeel(int lookNfeel)
     {
@@ -93,8 +118,11 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method sets the encryption method for getting files checksum.
      * 
      * @param encryptionAlgorithm
+     *            An <code>int</code> value obtained from
+     *            <code>Settings.CypherMethodList[]</code> list.
      */
     public void setEncryptionMethod(int encryptionAlgorithm)
     {
@@ -110,8 +138,11 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method sets the individual horizontal position of the dialog screen.
      * 
      * @param xScreenPosition
+     *            An <code>int</code> value that informs the horizontal position
+     *            of the settings dialog.
      */
     public void setX(int xScreenPosition)
     {
@@ -119,8 +150,11 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method sets the individual vertical position of the dialog screen.
      * 
      * @param yScreenPosition
+     *            An <code>int</code> value that informs the vertical position
+     *            of the settings dialog.
      */
     public void setY(int yScreenPosition)
     {
@@ -128,6 +162,8 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method returns the current working directory observed by the Monitor
+     * and Worker threads.
      * 
      * @return Returns an <code>String</code> containing a path to the directory
      *         to be observed.
@@ -138,6 +174,7 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method returns the current look and feel of the system.
      * 
      * @return Returns an <code>int</code> value that represents a 'Look and
      *         Feel' from "<code>Settings.LookAndFeelNames[]</code>"
@@ -148,6 +185,7 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method returns the current encryption method used by the system.
      * 
      * @return Returns an <code>int</code> value that represents an encryption
      *         method from "<code>Settings.CypherMethodList[]</code>"
@@ -158,6 +196,8 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method returns the current horizontal position used for placing the
+     * settings dialog.
      * 
      * @return Returns an <code>int</code> value of the last X axis settings
      *         screen
@@ -169,6 +209,8 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method returns the current vertical position used for placing the
+     * settings dialog.
      * 
      * @return Returns an <code>int</code> value of the last Y axis settings
      *         screen
@@ -180,8 +222,13 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method sets if there is a changed settings or not on Settings
+     * Dialog.
      * 
      * @param confirmation
+     *            A <code>boolean</code> value that informs <code>true</code> if
+     *            some value has been changed or <code>false</code> if any value
+     *            has not been changed.
      */
     public void setChanged(boolean confirmation)
     {
@@ -189,7 +236,7 @@ public class SettingsHandler implements
     }
 
     /**
-     * 
+     * This method sets the encryption method to be unchanged status.
      */
     public void resetEncryptionChanged()
     {
@@ -197,6 +244,7 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method returns if some changes were detected on settings dialog.
      * 
      * @return Returns <code>true</code> if settings were changed. Returns
      *         <code>false</code> if settings remain unchanged.
@@ -207,6 +255,8 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method informs whether user has already selected a directory to be
+     * monitored or not.
      * 
      * @return Returns <code>true</code> if directory has never changed before.
      *         Returns <code>false</code> if directory has already being changed
@@ -218,6 +268,8 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method informs if the encryption method were changed from settings
+     * dialog screen.
      * 
      * @return Returns <code>true</code> if encryption method is changed.
      *         Returns <code>false</code> if encryption method remains

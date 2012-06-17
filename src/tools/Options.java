@@ -5,8 +5,8 @@ import javax.swing.*;
 import settings.Settings;
 import settings.Strings;
 
-// TODO: JAVADOC
 /**
+ * Options class is responsible for showing settings GUI.
  * 
  * @author vliopard
  */
@@ -26,14 +26,17 @@ public class Options extends
     private JComboBox<String> comboBoxEncryptionMethod;
 
     /**
+     * Options Constructor - Starts all components of the GUI and display it.
      * 
      * @param settingsHandler
+     *            A <code>SettingsHandler</code> object that contains all the
+     *            user settings to be handled.
      */
     Options(final SettingsHandler settingsHandler)
     {
         this.setLocation(settingsHandler.getX(),
                          settingsHandler.getY());
-        UnDupeKeeperSettingsLayout customLayout=new UnDupeKeeperSettingsLayout();
+        OptionsLayout customLayout=new OptionsLayout();
         getContentPane().setFont(new Font("Helvetica",
                                           Font.PLAIN,
                                           12));
@@ -130,21 +133,26 @@ public class Options extends
 }
 
 /**
+ * OptionsLayout class is the LayoutManager for Options class.
  * 
  * @author vliopard
  */
-class UnDupeKeeperSettingsLayout implements
-                                LayoutManager
+class OptionsLayout implements
+                   LayoutManager
 {
+    private Insets[] values;
+
     /**
-     * 
+     * OptionsLayout Constructor - It is empty since no action should be taken
+     * for this part of code.
      */
-    public UnDupeKeeperSettingsLayout()
+    public OptionsLayout()
     {
     }
 
     /**
-     * 
+     * Just an inherited method from LayoutManager, not used in this project
+     * yet.
      */
     public void addLayoutComponent(String name,
                                    Component comp)
@@ -152,14 +160,15 @@ class UnDupeKeeperSettingsLayout implements
     }
 
     /**
-     * 
+     * Just an inherited method from LayoutManager, not used in this project
+     * yet.
      */
     public void removeLayoutComponent(Component comp)
     {
     }
 
     /**
-     * 
+     * This method sets the settings dialog default size.
      */
     public Dimension preferredLayoutSize(Container parent)
     {
@@ -176,7 +185,7 @@ class UnDupeKeeperSettingsLayout implements
     }
 
     /**
-     * 
+     * This method sets the minimum settings dialog size.
      */
     public Dimension minimumLayoutSize(Container parent)
     {
@@ -186,83 +195,66 @@ class UnDupeKeeperSettingsLayout implements
     }
 
     /**
+     * This method sets an array of <code>Insets</code> containing the
+     * components sizes of the settings screen.
      * 
+     * @param i
+     *            An <code>int</code> value that represents the order the
+     *            component is placed.
+     * @param left
+     *            An <code>int</code> value that represents the left position of
+     *            the component.
+     * @param top
+     *            An <code>int</code> value that represents the top position of
+     *            the component.
+     * @param right
+     *            An <code>int</code> value that represents the right position
+     *            of the component.
+     * @param bottom
+     *            An <code>int</code> value that represents the bottom position
+     *            of the component.
+     */
+    private void setBouts(int i,
+                          int left,
+                          int top,
+                          int right,
+                          int bottom)
+    {
+        values[i].left=left;
+        values[i].top=top;
+        values[i].right=right;
+        values[i].bottom=bottom;
+    }
+
+    /**
+     * It creates the places where all component objects will be placed on
+     * settings dialog.
      */
     public void layoutContainer(Container parent)
     {
         Insets insets=parent.getInsets();
-        Component c;
-        c=parent.getComponent(0);
-        if(c.isVisible())
+        Insets[] values=new Insets[9];
+        //@formatter:off
+        setBouts(0,insets.left+8  ,insets.top+8  ,152,24);
+        setBouts(1,insets.left+160,insets.top+8  ,152,24);
+        setBouts(2,insets.left+8  ,insets.top+32 ,152,24);
+        setBouts(3,insets.left+160,insets.top+32 ,152,24);
+        setBouts(4,insets.left+8  ,insets.top+56 ,152,24);
+        setBouts(5,insets.left+160,insets.top+56 ,152,24);
+        setBouts(6,insets.left+8  ,insets.top+83 ,152,30);
+        setBouts(7,insets.left+160,insets.top+83 ,152,30);
+        setBouts(8,insets.left+8  ,insets.top+110,300,24);
+        //@formatter:on
+        for(int i=0; i<values.length; i++)
         {
-            c.setBounds(insets.left+8,
-                        insets.top+8,
-                        152,
-                        24);
-        }
-        c=parent.getComponent(1);
-        if(c.isVisible())
-        {
-            c.setBounds(insets.left+160,
-                        insets.top+8,
-                        152,
-                        24);
-        }
-        c=parent.getComponent(2);
-        if(c.isVisible())
-        {
-            c.setBounds(insets.left+8,
-                        insets.top+32,
-                        152,
-                        24);
-        }
-        c=parent.getComponent(3);
-        if(c.isVisible())
-        {
-            c.setBounds(insets.left+160,
-                        insets.top+32,
-                        152,
-                        24);
-        }
-        c=parent.getComponent(4);
-        if(c.isVisible())
-        {
-            c.setBounds(insets.left+8,
-                        insets.top+56,
-                        152,
-                        24);
-        }
-        c=parent.getComponent(5);
-        if(c.isVisible())
-        {
-            c.setBounds(insets.left+160,
-                        insets.top+56,
-                        152,
-                        24);
-        }
-        c=parent.getComponent(6);
-        if(c.isVisible())
-        {
-            c.setBounds(insets.left+8,
-                        insets.top+83,
-                        152,
-                        30);
-        }
-        c=parent.getComponent(7);
-        if(c.isVisible())
-        {
-            c.setBounds(insets.left+160,
-                        insets.top+83,
-                        152,
-                        30);
-        }
-        c=parent.getComponent(8);
-        if(c.isVisible())
-        {
-            c.setBounds(insets.left+8,
-                        insets.top+110,
-                        300,
-                        24);
+            Component component=parent.getComponent(i);
+            if(component.isVisible())
+            {
+                component.setBounds(values[i].left,
+                                    values[i].top,
+                                    values[i].right,
+                                    values[i].bottom);
+            }
         }
     }
 }
