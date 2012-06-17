@@ -175,7 +175,6 @@ public class DataBase
      */
     public static String loadLanguage()
     {
-        // TODO: MESSAGES CLASS MUST BE INITIALIZED WITH SAVED LANGUAGE
         return Settings.languageValues[systemLanguage];
     }
 

@@ -10,7 +10,6 @@ import tools.DataBase;
  */
 public class Messages
 {
-    // TODO: TRANSLATE PT_BR MESSAGES
     private static String         BUNDLE_NAME     =Settings.LanguagePackage+
                                                    "en_us";                              //$NON-NLS-1$
     private static ResourceBundle RESOURCE_BUNDLE =ResourceBundle.getBundle(BUNDLE_NAME);
