@@ -29,7 +29,7 @@ public class Worker implements
     private long                           filesReplaced =0;
     private final BlockingQueue<Integer>   stopSignal;
     private final BlockingQueue<FileQueue> transferQueue;
-    private static HashMap<String,String>  hashMapTable  =new HashMap<String,String>();
+    private HashMap<String,String>         hashMapTable  =new HashMap<String,String>();
 
     /**
      * Worker Constructor - Initializes a Worker object that starts to keep

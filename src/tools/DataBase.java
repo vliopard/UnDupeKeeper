@@ -20,6 +20,7 @@ import settings.Strings;
  */
 public class DataBase
 {
+    private static int    systemLanguage =0;
     private static Worker workerThread;
 
     /**
@@ -155,6 +156,30 @@ public class DataBase
     }
 
     /**
+     * This method informs the last language index selected by the settings
+     * dialog.
+     * 
+     * @return Returns an <code>int</code> that contains the language index to
+     *         be used.
+     */
+    public static int loadLanguageIndex()
+    {
+        return systemLanguage;
+    }
+
+    /**
+     * This method informs the last language selected by the settings dialog.
+     * 
+     * @return Returns a <code>String</code> that contains the language to be
+     *         used.
+     */
+    public static String loadLanguage()
+    {
+        // TODO: MESSAGES CLASS MUST BE INITIALIZED WITH SAVED LANGUAGE
+        return Settings.languageValues[systemLanguage];
+    }
+
+    /**
      * This method saves all settings obtained from the settings dialog.
      * 
      * @param settingsTransfer
@@ -193,6 +218,7 @@ public class DataBase
             try
             {
                 SettingsHandler settingsTransfer=(SettingsHandler)new ObjectInputStream(new FileInputStream(Settings.UnDupeKeeperSettings)).readObject();
+                systemLanguage=settingsTransfer.getLanguageIndex();
                 return settingsTransfer;
             }
             catch(ClassNotFoundException|IOException e)

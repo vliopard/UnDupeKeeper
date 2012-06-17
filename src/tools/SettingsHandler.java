@@ -18,10 +18,12 @@ public class SettingsHandler implements
     private boolean           directoryChanged  =false;
     private boolean           encryptionChanged =false;
     private int               lookAndFeel;
+    private int               languageIndex;
     private int               encryptionMethod;
     private int               xScreenAxis;
     private int               yScreenAxis;
     private String            directoryToWatch;
+    private String            language;
     private static final long serialVersionUID  =-5557071137249098782L;
     transient InputStream     is                =System.in;
 
@@ -35,6 +37,8 @@ public class SettingsHandler implements
         final Dimension screenSize=toolKit.getScreenSize();
         directoryToWatch=Settings.RootDir;
         lookAndFeel=Settings.LookNimbus;
+        language=Settings.languageValues[0];
+        languageIndex=0;
         encryptionMethod=Settings.CypherMethodSHA512;
         xScreenAxis=(screenSize.width-320)/2;
         yScreenAxis=(screenSize.height-110)/2;
@@ -63,12 +67,15 @@ public class SettingsHandler implements
      *            of the settings dialog.
      */
     public SettingsHandler(String directory,
+                           int idiomIndex,
                            int lookNfeel,
                            int encryptionAlgorithm,
                            int xScreenPosition,
                            int yScreenPosition)
     {
         directoryToWatch=directory;
+        languageIndex=idiomIndex;
+        language=Settings.languageValues[idiomIndex];
         lookAndFeel=lookNfeel;
         encryptionMethod=encryptionAlgorithm;
         xScreenAxis=xScreenPosition;
@@ -115,6 +122,19 @@ public class SettingsHandler implements
     public void setLookAndFeel(int lookNfeel)
     {
         lookAndFeel=lookNfeel;
+    }
+
+    /**
+     * This method sets the language for the GUIs.
+     * 
+     * @param idiomIndex
+     *            An <code>int</code> value obtained from
+     *            <code>Settings.LanguageValues[]</code> list.
+     */
+    public void setLanguage(int idiomIndex)
+    {
+        language=Settings.languageValues[idiomIndex];
+        languageIndex=idiomIndex;
     }
 
     /**
@@ -182,6 +202,28 @@ public class SettingsHandler implements
     public int getLookAndFeel()
     {
         return lookAndFeel;
+    }
+
+    /**
+     * This method returns the current language of the system.
+     * 
+     * @return Returns a <code>String</code> value that represents a language
+     *         from "<code>Settings.LanguageValues[]</code>"
+     */
+    public String getLanguage()
+    {
+        return language;
+    }
+
+    /**
+     * This method returns the current language index of the system.
+     * 
+     * @return Returns an <code>int</code> value that represents a language
+     *         from "<code>Settings.LanguageValues[]</code>"
+     */
+    public int getLanguageIndex()
+    {
+        return languageIndex;
     }
 
     /**

@@ -8,8 +8,8 @@ import tools.Logger;
 import tools.TrayImage;
 
 /**
- * Blinker class is responsible for control System Tray Icon. It changes System
- * Tray Icon according to the usage.
+ * Blinker class is responsible for controlling System Tray Icon. It changes
+ * System Tray Icon according to the usage.
  * 
  * @author vliopard
  */

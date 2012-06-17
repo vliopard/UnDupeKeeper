@@ -18,11 +18,13 @@ public class Options extends
     private JLabel            labelDirectoryToWatch;
     private JLabel            labelWarning;
     private JLabel            labelLookAndFeel;
+    private JLabel            labelLanguage;
     private JLabel            labelEncryptionMethod;
     private JButton           buttonSave;
     private JButton           buttonCancel;
     private JTextField        directoryInputTextField;
     private JComboBox<String> comboBoxLookAndFeel;
+    private JComboBox<String> comboBoxLanguage;
     private JComboBox<String> comboBoxEncryptionMethod;
 
     /**
@@ -41,8 +43,10 @@ public class Options extends
                                           Font.PLAIN,
                                           12));
         getContentPane().setLayout(customLayout);
+        // DIRECTORY LABEL (0)
         labelDirectoryToWatch=new JLabel(Strings.ssDirectoryLabel);
         getContentPane().add(labelDirectoryToWatch);
+        // DIRECTORY TEXT FIELD (1)
         directoryInputTextField=new JTextField(settingsHandler.getDirectory());
         directoryInputTextField.setEditable(false);
         getContentPane().add(directoryInputTextField);
@@ -68,8 +72,10 @@ public class Options extends
                     }
                 }
             });
+        // LOOK AND FEEL LABEL (2)
         labelLookAndFeel=new JLabel(Strings.ssLookAndFeelLabel);
         getContentPane().add(labelLookAndFeel);
+        // LOOK AND FEEL COMBO BOX (3)
         comboBoxLookAndFeel=new JComboBox<String>();
         for(int i=0; i<9; i++)
         {
@@ -77,8 +83,10 @@ public class Options extends
         }
         comboBoxLookAndFeel.setSelectedIndex(settingsHandler.getLookAndFeel());
         getContentPane().add(comboBoxLookAndFeel);
+        // ENCRYPTION LABEL (4)
         labelEncryptionMethod=new JLabel(Strings.ssEncryptionMethodLabel);
         getContentPane().add(labelEncryptionMethod);
+        // ENCRYPTION COMBO BOX (5)
         comboBoxEncryptionMethod=new JComboBox<String>();
         for(int i=0; i<9; i++)
         {
@@ -86,6 +94,18 @@ public class Options extends
         }
         comboBoxEncryptionMethod.setSelectedIndex(settingsHandler.getEncryptionMethod());
         getContentPane().add(comboBoxEncryptionMethod);
+        // LANGUAGE LABEL (6)
+        labelLanguage=new JLabel(Strings.ssLanguage);
+        getContentPane().add(labelLanguage);
+        // LANGUAGE COMBO BOX (7)
+        comboBoxLanguage=new JComboBox<String>();
+        for(int i=0; i<2; i++)
+        {
+            comboBoxLanguage.addItem(Settings.languageList[i]);
+        }
+        comboBoxLanguage.setSelectedIndex(settingsHandler.getLanguageIndex());
+        getContentPane().add(comboBoxLanguage);
+        // BUTTON SAVE (8)
         buttonSave=new JButton(Strings.ssSaveButton);
         buttonSave.addActionListener(new ActionListener()
             {
@@ -94,6 +114,7 @@ public class Options extends
                     settingsHandler.setDirectory(directoryInputTextField.getText());
                     settingsHandler.setLookAndFeel(comboBoxLookAndFeel.getSelectedIndex());
                     settingsHandler.setEncryptionMethod(comboBoxEncryptionMethod.getSelectedIndex());
+                    settingsHandler.setLanguage(comboBoxLanguage.getSelectedIndex());
                     screenPosition=getLocationOnScreen();
                     settingsHandler.setX(screenPosition.x);
                     settingsHandler.setY(screenPosition.y);
@@ -102,6 +123,7 @@ public class Options extends
                 }
             });
         getContentPane().add(buttonSave);
+        // BUTTON CANCEL (9)
         buttonCancel=new JButton(Strings.ssCancelButton);
         buttonCancel.addActionListener(new ActionListener()
             {
@@ -115,6 +137,7 @@ public class Options extends
                 }
             });
         getContentPane().add(buttonCancel);
+        // WARNING LABEL (10)
         labelWarning=new JLabel(Strings.ssWarningLabel);
         labelWarning.setFont(new Font("Helvetica",
                                       Font.BOLD,
@@ -178,7 +201,7 @@ class OptionsLayout implements
         dim.width=320+
                   insets.left+
                   insets.right;
-        dim.height=130+
+        dim.height=165+
                    insets.top+
                    insets.bottom;
         return dim;
@@ -214,16 +237,16 @@ class OptionsLayout implements
      *            An <code>int</code> value that represents the bottom position
      *            of the component.
      */
-    private void setBouts(int i,
-                          int left,
-                          int top,
-                          int right,
-                          int bottom)
+    private void setBounds(int i,
+                           int left,
+                           int top,
+                           int right,
+                           int bottom)
     {
-        values[i].left=left;
-        values[i].top=top;
-        values[i].right=right;
-        values[i].bottom=bottom;
+        values[i]=new Insets(top,
+                             left,
+                             bottom,
+                             right);
     }
 
     /**
@@ -233,25 +256,29 @@ class OptionsLayout implements
     public void layoutContainer(Container parent)
     {
         Insets insets=parent.getInsets();
-        Insets[] values=new Insets[9];
+        values=new Insets[11];
         //@formatter:off
-        setBouts(0,insets.left+8  ,insets.top+8  ,152,24);
-        setBouts(1,insets.left+160,insets.top+8  ,152,24);
-        setBouts(2,insets.left+8  ,insets.top+32 ,152,24);
-        setBouts(3,insets.left+160,insets.top+32 ,152,24);
-        setBouts(4,insets.left+8  ,insets.top+56 ,152,24);
-        setBouts(5,insets.left+160,insets.top+56 ,152,24);
-        setBouts(6,insets.left+8  ,insets.top+83 ,152,30);
-        setBouts(7,insets.left+160,insets.top+83 ,152,30);
-        setBouts(8,insets.left+8  ,insets.top+110,300,24);
+        setBounds(0,8  ,8  ,152,24);
+        setBounds(1,160,8  ,152,24);
+        setBounds(2,8  ,32 ,152,24);
+        setBounds(3,160,32 ,152,24);
+        setBounds(4,8  ,56 ,152,24);
+        setBounds(5,160,56 ,152,24);
+        setBounds(6,8  ,83 ,152,24);
+        setBounds(7,160,83 ,152,24);
+        setBounds(8,8  ,110 ,152,30);
+        setBounds(9,160,110 ,152,30);
+        setBounds(10,8  ,137,300,24);
         //@formatter:on
         for(int i=0; i<values.length; i++)
         {
             Component component=parent.getComponent(i);
             if(component.isVisible())
             {
-                component.setBounds(values[i].left,
-                                    values[i].top,
+                component.setBounds(insets.left+
+                                            values[i].left,
+                                    insets.top+
+                                            values[i].top,
                                     values[i].right,
                                     values[i].bottom);
             }

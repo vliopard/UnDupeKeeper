@@ -96,6 +96,16 @@ public class Settings
                                                            "/";
     public static final String   Plaf                     ="com.sun.java.swing.plaf.";
     public static final String   Plafx                    ="javax.swing.plaf.";
+    public static final String   languageList[]           =
+                                                          {
+            "English",
+            "Portuguese"
+                                                          };
+    public static final String   languageValues[]         =
+                                                          {
+            "en_us",
+            "pt_br"
+                                                          };
     public static final String[] LookAndFeelNames         =
                                                           {
             "GTK",
