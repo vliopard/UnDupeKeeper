@@ -1,4 +1,5 @@
 package main;
+import gui.FileBrowser;
 import java.nio.file.*;
 import java.awt.AWTException;
 import java.awt.MenuItem;
@@ -247,12 +248,14 @@ public class UnDupeKeeper
         final SystemTray systemTray=SystemTray.getSystemTray();
         MenuItem saveDatabase=new MenuItem(Strings.ukSaveDatabase);
         MenuItem clearDatabase=new MenuItem(Strings.ukClearDatabase);
+        MenuItem checkManager=new MenuItem("View Results");
         MenuItem settingsItem=new MenuItem(Strings.ukSettingsMenu);
         MenuItem aboutItem=new MenuItem(Strings.ukAboutUndupekeeperMenu);
         MenuItem exitItem=new MenuItem(Strings.ukExitUndupekeeper);
         popupMenu.add(saveDatabase);
         popupMenu.add(clearDatabase);
         popupMenu.addSeparator();
+        popupMenu.add(checkManager);
         popupMenu.add(settingsItem);
         popupMenu.addSeparator();
         popupMenu.add(aboutItem);
@@ -303,6 +306,13 @@ public class UnDupeKeeper
                 public void actionPerformed(ActionEvent event)
                 {
                     showAbout();
+                }
+            });
+        checkManager.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent event)
+                {
+                    FileBrowser.show(settingsHandler);
                 }
             });
         settingsItem.addActionListener(new ActionListener()

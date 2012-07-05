@@ -151,13 +151,13 @@ public class Worker implements
                 includeFileToHashTable(fileQueue.getPath());
             break;
             case Settings.FileModified:
-            // TODO: Action to handle modified files
+            // TODO: [Action to handle modified files]
             break;
             case Settings.FileDeleted:
                 replaceFileFromHashTable(fileQueue.getPath());
             break;
             case Settings.FileRenamed:
-            // TODO: Action to handle renamed files
+            // TODO: [Action to handle renamed files]
             break;
             default:
         }

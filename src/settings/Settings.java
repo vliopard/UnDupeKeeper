@@ -169,6 +169,8 @@ public class Settings
             SystemTrayImageDirectory+
                     "dupeLoupe"+
                     SystemTrayIconSize+
-                    FileExtension
+                    FileExtension,
+            "/images/16/fbicon16.png",
+            "/images/32/fbicon32.png"
                                                           };
 }
