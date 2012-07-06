@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.AbstractTableModel;
+import settings.Strings;
 import tools.Logger;
 // TODO: JAVADOC
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
@@ -15,20 +16,19 @@ public class FileTableModel extends
     private static final long serialVersionUID =-6234469100236698739L;
     private File[]            files;
     private FileSystemView    fileSystemView   =FileSystemView.getFileSystemView();
-    // TODO: EXTERNALIZE COLUMN STRINGS
     private String[]          columns          =
                                                {
-            "Icon",
-            "Filename",
-            "Extension",
-            "Path",
-            "Size",
-            "Last Modified",
-            "R",
-            "W",
-            "E",
-            "D",
-            "F",
+            Strings.fbIcon,
+            Strings.fbFileName,
+            Strings.fbExtension,
+            Strings.fbPath,
+            Strings.fbSize,
+            Strings.fbDateHead,
+            Strings.fbRead,
+            Strings.fbWrite,
+            Strings.fbExecute,
+            Strings.fbDir,
+            Strings.fbIsFile,
                                                };
 
     private String customFormat(String pattern,
@@ -58,33 +58,33 @@ public class FileTableModel extends
                 return fileSystemView.getSystemIcon(file);
             case 1:
                 if(fileSystemView.getSystemDisplayName(file)
-                                 .lastIndexOf(".")<0)
+                                 .lastIndexOf(Strings.dot)<0)
                 {
                     return fileSystemView.getSystemDisplayName(file);
                 }
                 return fileSystemView.getSystemDisplayName(file)
                                      .substring(0,
                                                 fileSystemView.getSystemDisplayName(file)
-                                                              .lastIndexOf("."));
+                                                              .lastIndexOf(Strings.dot));
             case 2:
                 if(file.isDirectory())
                 {
-                    return "<DIR>";
+                    return Strings.fbDirSymbol;
                 }
                 if(fileSystemView.getSystemDisplayName(file)
-                                 .lastIndexOf(".")<0)
+                                 .lastIndexOf(Strings.dot)<0)
                 {
                     return "";
                 }
                 return fileSystemView.getSystemDisplayName(file)
                                      .substring(fileSystemView.getSystemDisplayName(file)
-                                                              .lastIndexOf(".")+1,
+                                                              .lastIndexOf(Strings.dot)+1,
                                                 fileSystemView.getSystemDisplayName(file)
                                                               .length());
             case 3:
                 return file.getPath();
             case 4:
-                return customFormat("###,###.###",
+                return customFormat(Strings.numberFormatMask,
                                     file.length());
             case 5:
                 return file.lastModified();
@@ -99,8 +99,7 @@ public class FileTableModel extends
             case 10:
                 return file.isFile();
             default:
-                // TODO: EXTERNALIZE STRING
-                err("Logic Error");
+                err(Strings.fbInvalidColumnIndex);
         }
         return "";
     }

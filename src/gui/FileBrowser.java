@@ -2,8 +2,6 @@ package gui;
 // TODO: FIX FILE SIZE ORDERING
 // TODO: JAVADOC
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
-// TODO: VIEW/REMOVE FILES (CONTEXT MENU?)
-// TODO: SHUTDOWN FILE BROWSER
 // TODO: SAVE POSITION AND SCREEN SETTINGS
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -21,8 +19,10 @@ import javax.swing.table.*;
 import javax.swing.filechooser.FileSystemView;
 import main.UnDupeKeeper;
 import settings.Settings;
+import settings.Strings;
 import tools.Logger;
 import tools.SettingsHandler;
+import tools.TrayImage;
 import tools.UnDupeChecker;
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -33,8 +33,6 @@ import java.net.URL;
 
 public class FileBrowser
 {
-    // TODO: EXTERNALIZE STRING
-    private static final String    APP_TITLE      ="UnDupeChecker";
     private Desktop                desktop;
     private FileSystemView         fileSystemView;
     private File                   currentFile;
@@ -47,9 +45,10 @@ public class FileBrowser
     private FileTableModel         fileTableModel;
     private ListSelectionListener  listSelectionListener;
     private boolean                cellSizesSet   =false;
-    private int                    rowIconPadding =6;
+    private int                    rowIconPadding =1;
+    private JButton                locateFile;
     private JButton                openFile;
-    private JButton                printFile;
+    private JButton                deleteFile;
     private JButton                editFile;
     private JLabel                 fileName;
     // private JLabel ext;
@@ -150,154 +149,146 @@ public class FileBrowser
                                                                2));
             fileMainDetails.add(fileDetailsValues,
                                 BorderLayout.CENTER);
-            // TODO: EXTERNALIZE STRING
-            fileDetailsLabels.add(new JLabel("File",
+            fileDetailsLabels.add(new JLabel(Strings.fbFile,
                                              JLabel.TRAILING));
             fileName=new JLabel();
             fileDetailsValues.add(fileName);
             // fileDetailsLabels.add(new JLabel("Ext",JLabel.TRAILING));
             // ext=new JLabel();
             // fileDetailsValues.add(ext);
-            // TODO: EXTERNALIZE STRING
-            fileDetailsLabels.add(new JLabel("Path/name",
+            fileDetailsLabels.add(new JLabel(Strings.fbPathName,
                                              JLabel.TRAILING));
             path=new JTextField();
             path.setEditable(false);
             fileDetailsValues.add(path);
-            // TODO: EXTERNALIZE STRING
-            fileDetailsLabels.add(new JLabel("Last Modified",
+            fileDetailsLabels.add(new JLabel(Strings.fbDate,
                                              JLabel.TRAILING));
             date=new JLabel();
             fileDetailsValues.add(date);
-            // TODO: EXTERNALIZE STRING
-            fileDetailsLabels.add(new JLabel("File size",
+            fileDetailsLabels.add(new JLabel(Strings.fbFileSize,
                                              JLabel.TRAILING));
             size=new JLabel();
             fileDetailsValues.add(size);
-            // TODO: EXTERNALIZE STRING
-            fileDetailsLabels.add(new JLabel("Type",
+            fileDetailsLabels.add(new JLabel(Strings.fbType,
                                              JLabel.TRAILING));
             JPanel flags=new JPanel(new FlowLayout(FlowLayout.LEADING,
                                                    4,
                                                    0));
-            // TODO: EXTERNALIZE STRING
-            isDirectory=new JRadioButton("Directory");
+            isDirectory=new JRadioButton(Strings.fbDirectory);
             flags.add(isDirectory);
-            // TODO: EXTERNALIZE STRING
-            isFile=new JRadioButton("File");
+            isFile=new JRadioButton(Strings.fileName);
             flags.add(isFile);
             fileDetailsValues.add(flags);
             JToolBar toolBar=new JToolBar();
             toolBar.setFloatable(false);
-            // TODO: EXTERNALIZE STRING
-            JButton locateFile=new JButton("Locate");
-            // TODO: EXTERNALIZE STRING
-            locateFile.setMnemonic('l');
+            locateFile=new JButton(Strings.btA);
+            locateFile.setMnemonic(Strings.btAShort);
             locateFile.addActionListener(new ActionListener()
                 {
                     public void actionPerformed(ActionEvent ae)
                     {
                         try
                         {
-                            // TODO: EXTERNALIZE STRING
-                            // TODO: HANDLE SYSTEM OUT MESSAGE
-                            System.out.println("Locate: "+
-                                               currentFile.getParentFile());
+                            msg(Strings.btAMessage+
+                                currentFile.getParentFile());
                             desktop.open(currentFile.getParentFile());
                         }
                         catch(Throwable t)
                         {
-                            // TODO: HANDLE ERROR MESSAGE
-                            showThrowable(t);
+                            showThrowable(Strings.btAError,
+                                          Strings.btA,
+                                          t);
                         }
                         gui.repaint();
                     }
                 });
             toolBar.add(locateFile);
-            // TODO: EXTERNALIZE STRING
-            openFile=new JButton("Open");
-            // TODO: EXTERNALIZE STRING
-            openFile.setMnemonic('o');
+            openFile=new JButton(Strings.btB);
+            openFile.setMnemonic(Strings.btBShort);
             openFile.addActionListener(new ActionListener()
                 {
                     public void actionPerformed(ActionEvent ae)
                     {
                         try
                         {
-                            // TODO: EXTERNALIZE STRING
-                            // TODO: HANDLE SYSTEM OUT MESSAGE
-                            System.out.println("Open: "+
-                                               currentFile);
+                            msg(Strings.btBMessage+
+                                currentFile);
                             desktop.open(currentFile);
                         }
                         catch(Throwable t)
                         {
-                            // TODO: HANDLE ERROR MESSAGE
-                            showThrowable(t);
+                            showThrowable(Strings.btBError,
+                                          Strings.btB,
+                                          t);
                         }
                         gui.repaint();
                     }
                 });
             toolBar.add(openFile);
-            // TODO: EXTERNALIZE STRING
-            editFile=new JButton("Edit");
-            // TODO: EXTERNALIZE STRING
-            editFile.setMnemonic('e');
+            editFile=new JButton(Strings.btC);
+            editFile.setMnemonic(Strings.btCShort);
             editFile.addActionListener(new ActionListener()
                 {
                     public void actionPerformed(ActionEvent ae)
                     {
                         try
                         {
+                            msg(Strings.btCMessage+
+                                currentFile);
                             desktop.edit(currentFile);
                         }
                         catch(Throwable t)
                         {
-                            // TODO: HANDLE ERROR MESSAGE
-                            showThrowable(t);
+                            showThrowable(Strings.btCError,
+                                          Strings.btC,
+                                          t);
                         }
                     }
                 });
             toolBar.add(editFile);
-            // TODO: EXTERNALIZE STRING
-            printFile=new JButton("Print");
-            // TODO: EXTERNALIZE STRING
-            printFile.setMnemonic('p');
-            printFile.addActionListener(new ActionListener()
+            deleteFile=new JButton(Strings.btD);
+            deleteFile.setMnemonic(Strings.btDShort);
+            deleteFile.addActionListener(new ActionListener()
                 {
                     public void actionPerformed(ActionEvent ae)
                     {
                         try
                         {
-                            desktop.print(currentFile);
+                            msg(Strings.btDMessage+
+                                currentFile);
+                            // TODO: LOOK FOR A WAY TO DELETE FILE
+                            // TODO: AFTER DELETE FILE, REFRESH GUI FILE TREE
+                            if(currentFile.delete())
+                            {
+                                showErrorMessage(Strings.btDError,
+                                                 Strings.btD);
+                            }
                         }
                         catch(Throwable t)
                         {
-                            // TODO: HANDLE ERROR MESSAGE
-                            showThrowable(t);
+                            showThrowable(Strings.btDError,
+                                          Strings.btD,
+                                          t);
                         }
                     }
                 });
-            toolBar.add(printFile);
+            toolBar.add(deleteFile);
+            locateFile.setEnabled(desktop.isSupported(Desktop.Action.OPEN));
             openFile.setEnabled(desktop.isSupported(Desktop.Action.OPEN));
             editFile.setEnabled(desktop.isSupported(Desktop.Action.EDIT));
-            printFile.setEnabled(desktop.isSupported(Desktop.Action.PRINT));
-            // TODO: EXTERNALIZE STRING
-            flags.add(new JLabel("::  Flags"));
-            // TODO: EXTERNALIZE STRING
-            readable=new JCheckBox("Read  ");
-            // TODO: EXTERNALIZE STRING
-            readable.setMnemonic('a');
+            deleteFile.setEnabled(false);
+            flags.add(new JLabel(Strings.pipe+
+                                 Strings.space+
+                                 Strings.space+
+                                 Strings.flags));
+            readable=new JCheckBox(Strings.btRead);
+            readable.setMnemonic(Strings.btReadShort);
             flags.add(readable);
-            // TODO: EXTERNALIZE STRING
-            writable=new JCheckBox("Write  ");
-            // TODO: EXTERNALIZE STRING
-            writable.setMnemonic('w');
+            writable=new JCheckBox(Strings.btWrite);
+            writable.setMnemonic(Strings.btWriteShort);
             flags.add(writable);
-            // TODO: EXTERNALIZE STRING
-            executable=new JCheckBox("Execute");
-            // TODO: EXTERNALIZE STRING
-            executable.setMnemonic('x');
+            executable=new JCheckBox(Strings.btExecute);
+            executable.setMnemonic(Strings.btExecuteShort);
             flags.add(executable);
             int count=fileDetailsLabels.getComponentCount();
             for(int ii=0; ii<count; ii++)
@@ -331,26 +322,25 @@ public class FileBrowser
                              BorderLayout.EAST);
             progressBar.setVisible(true);
             progressBar1=new JLabel();
-            // TODO: EXTERNALIZE STRING
             if(len==0)
             {
-                progressBar1.setText("No files found.");
+                progressBar1.setText(Strings.noFileFound);
             }
             else
             {
                 if(len==1)
                 {
-                    progressBar1.setText(" "+
-                                         customFormat("###,###,###",
+                    progressBar1.setText(Strings.space+
+                                         customFormat(Strings.numberFormatMask,
                                                       len)+
-                                         " file found.");
+                                         Strings.fileFound);
                 }
                 else
                 {
-                    progressBar1.setText(" "+
-                                         customFormat("###,###,###",
+                    progressBar1.setText(Strings.space+
+                                         customFormat(Strings.numberFormatMask,
                                                       len)+
-                                         " files found.");
+                                         Strings.filesFound);
                 }
             }
             simpleOutput.add(progressBar1,
@@ -393,11 +383,18 @@ public class FileBrowser
                                       JOptionPane.ERROR_MESSAGE);
     }
 
-    private void showThrowable(Throwable t)
+    private void showThrowable(String a,
+                               String b,
+                               Throwable t)
     {
-        t.printStackTrace();
-        showErrorMessage(t.toString(),
-                         t.getMessage());
+        err("["+
+            b+
+            "] "+
+            a+
+            " "+
+            t.getMessage());
+        showErrorMessage(a,
+                         b);
         gui.repaint();
     }
 
@@ -531,10 +528,9 @@ public class FileBrowser
         // ext.setText(fileSystemView.getSystemDisplayName(file).substring(fileSystemView.getSystemDisplayName(file).lastIndexOf(".")+1,fileSystemView.getSystemDisplayName(file).length()));
         path.setText(file.getPath());
         date.setText(new Date(file.lastModified()).toString());
-        // TODO: EXTERNALIZE STRING
-        size.setText(customFormat("###,###.###",
+        size.setText(customFormat(Strings.numberFormatMask,
                                   file.length())+
-                     " bytes");
+                     Strings.fileBytes);
         readable.setSelected(file.canRead());
         writable.setSelected(file.canWrite());
         executable.setSelected(file.canExecute());
@@ -543,10 +539,11 @@ public class FileBrowser
         JFrame f=(JFrame)gui.getTopLevelAncestor();
         if(f!=null)
         {
-            f.setTitle(APP_TITLE+
-                       " :: "+
+            f.setTitle(Strings.fbTitleCheck+
+                       Strings.space+
+                       Strings.separator+
+                       Strings.space+
                        fileSystemView.getSystemDisplayName(file));
-            f.setTitle(APP_TITLE);
         }
         gui.repaint();
     }
@@ -564,29 +561,45 @@ public class FileBrowser
                     }
                     catch(Exception weTried)
                     {
-                        // TODO: HANDLE ERROR MESSAGE
-                        err("WE TRIED: "+
+                        err(Strings.fbErrorLoadingLookAndFeel+
                             weTried);
                     }
-                    JFrame f=new JFrame(APP_TITLE);
+                    JFrame f=new JFrame(Strings.fbTitleCheck);
                     f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     FileBrowser FileBrowser=new FileBrowser();
                     f.setContentPane(FileBrowser.getGui());
                     try
                     {
-                        URL urlSmall=UnDupeKeeper.class.getResource(Settings.iconList[7]);
-                        URL urlBig=UnDupeKeeper.class.getResource(Settings.iconList[8]);
                         ArrayList<Image> images=new ArrayList<Image>();
-                        images.add((new ImageIcon(urlBig,
-                                                  "")).getImage());
-                        images.add((new ImageIcon(urlSmall,
-                                                  "")).getImage());
+                        URL urlSmall=UnDupeKeeper.class.getResource(Settings.iconList[8]);
+                        if(urlSmall==null)
+                        {
+                            err(Strings.ukResourceNotFound+
+                                Settings.iconList[8]);
+                            images.add(TrayImage.createNewImage());
+                        }
+                        else
+                        {
+                            images.add((new ImageIcon(urlSmall,
+                                                      "")).getImage());
+                        }
+                        URL urlBig=UnDupeKeeper.class.getResource(Settings.iconList[7]);
+                        if(urlBig==null)
+                        {
+                            err(Strings.ukResourceNotFound+
+                                Settings.iconList[7]);
+                            images.add(TrayImage.createNewImage());
+                        }
+                        else
+                        {
+                            images.add((new ImageIcon(urlBig,
+                                                      "")).getImage());
+                        }
                         f.setIconImages(images);
                     }
                     catch(Exception weTried)
                     {
-                        // TODO: HANDLE ERROR MESSAGE
-                        err("WE TRIED: "+
+                        err(Strings.fbErrorLoadingIcons+
                             weTried);
                     }
                     f.pack();
@@ -596,6 +609,17 @@ public class FileBrowser
                     FileBrowser.showRootFile();
                 }
             });
+    }
+
+    /**
+     * This method displays a message through the embedded log system.
+     * 
+     * @param message
+     *            A <code>String</code> containing the message to display.
+     */
+    private static void msg(String message)
+    {
+        Logger.msg(message);
     }
 
     /**

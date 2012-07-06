@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import settings.Settings;
+import settings.Strings;
 
 // TODO: JAVADOC
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
@@ -28,8 +29,7 @@ public class UnDupeChecker
 
     public static DefaultMutableTreeNode getRoot(String pathm)
     {
-        // TODO: EXTERNALIZE STRING
-        DefaultMutableTreeNode root=new DefaultMutableTreeNode("UnDupeKeeper");
+        DefaultMutableTreeNode root=new DefaultMutableTreeNode(Strings.fbTitleKeep);
         TreeMap<String,ArrayList<String>> hashMapTable=merge(showFiles(new File(pathm).listFiles(),
                                                                        Settings.UnDupeKeeperExtension));
         sz=hashMapTable.size();
@@ -80,7 +80,8 @@ public class UnDupeChecker
             }
             catch(IOException e)
             {
-                // TODO: HANDLE ERROR MESSAGE
+                err(Strings.fbReportError+
+                    e);
             }
         }
         return hm;
@@ -107,5 +108,16 @@ public class UnDupeChecker
             }
         }
         return fileList;
+    }
+
+    /**
+     * This method displays an error message through the embedded log system.
+     * 
+     * @param errorMessage
+     *            A <code>String</code> containing the error message to display.
+     */
+    private static void err(String errorMessage)
+    {
+        Logger.err(errorMessage);
     }
 }

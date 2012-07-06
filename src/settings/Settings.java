@@ -170,7 +170,13 @@ public class Settings
                     "dupeLoupe"+
                     SystemTrayIconSize+
                     FileExtension,
-            "/images/16/fbicon16.png",
-            "/images/32/fbicon32.png"
+            SystemTrayImageDirectory+
+                    "dupeCalc"+
+                    SystemTrayIconSize+
+                    FileExtension,
+            SystemTrayImageDirectory+
+                    "dnaMini"+
+                    SystemTrayIconSize+
+                    FileExtension
                                                           };
 }

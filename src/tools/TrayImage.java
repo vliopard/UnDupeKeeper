@@ -32,16 +32,26 @@ public class TrayImage
                                         Strings.ukSystemTrayIconTooltip);
         if(trayIconImage==null)
         {
-            Toolkit toolKit=Toolkit.getDefaultToolkit();
-            byte[] byteArray=new byte[]
-            {
-                0
-            };
-            trayIconImage=toolKit.createImage(byteArray,
-                                              Settings.IconWidth,
-                                              Settings.IconHeight);
+            trayIconImage=createNewImage();
         }
         return trayIconImage;
+    }
+
+    /**
+     * This is a method for creating a new empty image.
+     * 
+     * @return Returns an empty <code>Image</code> object.
+     */
+    public static Image createNewImage()
+    {
+        Toolkit toolKit=Toolkit.getDefaultToolkit();
+        byte[] byteArray=new byte[]
+        {
+            0
+        };
+        return toolKit.createImage(byteArray,
+                                   Settings.IconWidth,
+                                   Settings.IconHeight);
     }
 
     /**

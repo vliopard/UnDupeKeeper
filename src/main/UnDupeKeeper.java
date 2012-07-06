@@ -1,4 +1,6 @@
 package main;
+// TODO: AVOID SETTINGS DIALOG TO BE OPENED TWICE
+// TODO: AVOID FILE MANAGER TO BE OPENED TWICE
 import gui.FileBrowser;
 import java.nio.file.*;
 import java.awt.AWTException;
@@ -226,7 +228,7 @@ public class UnDupeKeeper
                                               " | GUI: "+
                                               Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]+
                                               "\nTotal DB items: "+
-                                              new DecimalFormat("##,###,###").format(workerThread.size()));
+                                              new DecimalFormat(Strings.numberFormatMask).format(workerThread.size()));
     }
 
     /**
@@ -248,7 +250,7 @@ public class UnDupeKeeper
         final SystemTray systemTray=SystemTray.getSystemTray();
         MenuItem saveDatabase=new MenuItem(Strings.ukSaveDatabase);
         MenuItem clearDatabase=new MenuItem(Strings.ukClearDatabase);
-        MenuItem checkManager=new MenuItem("View Results");
+        MenuItem checkManager=new MenuItem(Strings.ukViewReports);
         MenuItem settingsItem=new MenuItem(Strings.ukSettingsMenu);
         MenuItem aboutItem=new MenuItem(Strings.ukAboutUndupekeeperMenu);
         MenuItem exitItem=new MenuItem(Strings.ukExitUndupekeeper);
