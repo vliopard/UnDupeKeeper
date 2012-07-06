@@ -1,34 +1,39 @@
-UnDupeKeeper
-============
+#UnDupeKeeper
 
-Keep a directory without duplicate files. Just copy files to there and they will be automatically unduplicated.
+*Keep a directory without duplicate files.*
+--
+    Just copy files to there and they will be automatically unduplicated.
 
-___________________________
-How it works:
-
-This software start monitoring an empty folder of your choice. Every file you copy to that folder will be kept unique. If you try to copy the same file more than once, even inside a sub folder hierarchy, this software will keep just your first unique entry, the other copies will be replaced by a link to the original file.
-https://github.com/vliopard/UnDupeKeeper/raw/master/undupekeeper1.png
+##How it works:
+This software start monitoring an empty folder of your choice. Every file you copy to that folder will be kept unique. If you try to copy the same file more than once, even inside a sub folder hierarchy, this software will keep just your first unique entry, the other copies will be replaced by a link to the original file: [Settings Screenshot](https://github.com/vliopard/UnDupeKeeper/raw/master/undupekeeper1.png)
 
 After copying a bunch of files to your monitored folder, you can see a report to check results:
-https://github.com/vliopard/UnDupeKeeper/raw/master/undupekeeper2.png
+[Report Viewer Screenshot](https://github.com/vliopard/UnDupeKeeper/raw/master/undupekeeper2.png)
 
-___________________________
-How to install:
+##How to install:
+1.) Download [UnDupeKeeper.jar](https://github.com/vliopard/UnDupeKeeper/blob/master/UnDupeKeeper.jar?raw=true) to your computer. 
 
-Download UnDupeKeeper.jar to your computer: https://github.com/vliopard/UnDupeKeeper/blob/master/UnDupeKeeper.jar?raw=true
-Download JNotify (http://jnotify.sourceforge.net/) to your computer: http://sourceforge.net/projects/jnotify/files/jnotify/jnotify-0.94/jnotify-lib-0.94.zip/download 
+2.) Download [JNotify](http://jnotify.sourceforge.net/) to your computer: [JNotify094.zip](http://sourceforge.net/projects/jnotify/files/jnotify/jnotify-0.94/jnotify-lib-0.94.zip/download)
 
-Copy libraries from JNotify ZIP Package to your Operating System's path:
+3.) Copy the corresponding library from *JNotify ZIP Package* to your **Operating System**'s path:
 
-[Windows32bit] jnotify-lib-0.94.zip\jnotify.dll
-[Windows64bit] jnotify-lib-0.94.zip\jnotify_64bit.dll
-[Linux 64bit] jnotify-lib-0.94.zip\64-bit Linux\libjnotify.so
-[Linux 32bit] jnotify-lib-0.94.zip\libjnotify.jnilib
-[Linux 32bit] jnotify-lib-0.94.zip\libjnotify.so
+* **[Windows32bit]** jnotify-lib-0.94.zip/jnotify.dll
+* **[Windows64bit]** jnotify-lib-0.94.zip/jnotify_64bit.dll
+- **[Linux 64bit]** jnotify-lib-0.94.zip/64-bit Linux\libjnotify.so
+- **[Linux 32bit]** jnotify-lib-0.94.zip/libjnotify.jnilib
+- **[Linux 32bit]** jnotify-lib-0.94.zip/libjnotify.so
 
-___________________________
-How to run:
-
+##How to run:
 You can type the following command on a shell prompt or create a batch/script file for doing that:
 
+```
 java -jar UnDupeKeeper.jar > UnDupeKeeper.log 2>&1
+```
+
+##About
+*This is an* ***Open Source Project*** *that uses other [General Public License](http://www.gnu.org/copyleft/gpl.html) (GPL) sources from the web.*
+
+By OTDS H Co.
+___
+    Vincent Liopard. is a BIUCS Project.
+___
