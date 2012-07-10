@@ -22,7 +22,7 @@ public class UnDupeChecker
         return sz;
     }
 
-    public JTree getTree(String pt)
+    public static JTree getTree(String pt)
     {
         return new JTree(getRoot(pt));
     }

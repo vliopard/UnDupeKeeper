@@ -1,7 +1,6 @@
 package main;
-// TODO: AVOID SETTINGS DIALOG TO BE OPENED TWICE
-// TODO: AVOID FILE MANAGER TO BE OPENED TWICE
-import gui.FileBrowser;
+// TODO: ORDERING REPORT VIEWER FILES DESYNCHRONIZE SELECTED FOCUS FROM DETAIL
+import gui.ReportViewer;
 import java.nio.file.*;
 import java.awt.AWTException;
 import java.awt.MenuItem;
@@ -10,10 +9,13 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -42,6 +44,7 @@ public class UnDupeKeeper
     private static SettingsHandler          settingsHandler;
     private static BlockingQueue<Integer>   stopSignal;
     private static BlockingQueue<FileQueue> transferQueue;
+    private static JFrame                   reportViewer        =new JFrame();
 
     /**
      * In case of UnDupeKeeper is called by command prompt this method will show
@@ -170,6 +173,7 @@ public class UnDupeKeeper
                 e);
         }
         msg(Strings.ukNormalShutdonw);
+        System.exit(0);
     }
 
     /**
@@ -250,9 +254,9 @@ public class UnDupeKeeper
         final SystemTray systemTray=SystemTray.getSystemTray();
         MenuItem saveDatabase=new MenuItem(Strings.ukSaveDatabase);
         MenuItem clearDatabase=new MenuItem(Strings.ukClearDatabase);
-        MenuItem checkManager=new MenuItem(Strings.ukViewReports);
-        MenuItem settingsItem=new MenuItem(Strings.ukSettingsMenu);
-        MenuItem aboutItem=new MenuItem(Strings.ukAboutUndupekeeperMenu);
+        final MenuItem checkManager=new MenuItem(Strings.ukViewReports);
+        final MenuItem settingsItem=new MenuItem(Strings.ukSettingsMenu);
+        final MenuItem aboutItem=new MenuItem(Strings.ukAboutUndupekeeperMenu);
         MenuItem exitItem=new MenuItem(Strings.ukExitUndupekeeper);
         popupMenu.add(saveDatabase);
         popupMenu.add(clearDatabase);
@@ -276,7 +280,9 @@ public class UnDupeKeeper
             {
                 public void actionPerformed(ActionEvent event)
                 {
+                    aboutItem.setEnabled(false);
                     showAbout();
+                    aboutItem.setEnabled(true);
                 }
             });
         saveDatabase.addActionListener(new ActionListener()
@@ -307,26 +313,68 @@ public class UnDupeKeeper
             {
                 public void actionPerformed(ActionEvent event)
                 {
+                    aboutItem.setEnabled(false);
                     showAbout();
+                    aboutItem.setEnabled(true);
                 }
             });
         checkManager.addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent event)
                 {
-                    FileBrowser.show(settingsHandler);
+                    checkManager.setEnabled(false);
+                    reportViewer=ReportViewer.show(settingsHandler);
+                    reportViewer.addWindowListener(new WindowListener()
+                        {
+                            public void windowClosed(WindowEvent e)
+                            {
+                                checkManager.setEnabled(true);
+                            }
+
+                            @Override
+                            public void windowActivated(WindowEvent arg0)
+                            {
+                            }
+
+                            @Override
+                            public void windowClosing(WindowEvent arg0)
+                            {
+                            }
+
+                            @Override
+                            public void windowDeactivated(WindowEvent arg0)
+                            {
+                            }
+
+                            @Override
+                            public void windowDeiconified(WindowEvent arg0)
+                            {
+                            }
+
+                            @Override
+                            public void windowIconified(WindowEvent arg0)
+                            {
+                            }
+
+                            @Override
+                            public void windowOpened(WindowEvent arg0)
+                            {
+                            }
+                        });
                 }
             });
         settingsItem.addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent event)
                 {
+                    settingsItem.setEnabled(false);
                     DataBase.useWorker(workerThread);
                     if(DataBase.openSettings())
                     {
                         startShutdown();
                         systemTray.remove(trayIcon);
                     }
+                    settingsItem.setEnabled(true);
                 }
             });
         exitItem.addActionListener(new ActionListener()

@@ -7,8 +7,7 @@
 ##How it works:
 This software start monitoring an empty folder of your choice. Every file you copy to that folder will be kept unique. If you try to copy the same file more than once, even inside a sub folder hierarchy, this software will keep just your first unique entry, the other copies will be replaced by a link to the original file: [Settings Screenshot](https://github.com/vliopard/UnDupeKeeper/raw/master/undupekeeper1.png)
 
-After copying a bunch of files to your monitored folder, you can see a report to check results:
-[Report Viewer Screenshot](https://github.com/vliopard/UnDupeKeeper/raw/master/undupekeeper2.png)
+After copying a bunch of files to your monitored folder, you can see a report to check results: [Report Viewer Screenshot](https://github.com/vliopard/UnDupeKeeper/raw/master/undupekeeper2.png)
 
 ##How to install:
 1.) Download [UnDupeKeeper.jar](https://github.com/vliopard/UnDupeKeeper/blob/master/UnDupeKeeper.jar?raw=true) to your computer. 
@@ -19,7 +18,7 @@ After copying a bunch of files to your monitored folder, you can see a report to
 
 * **[Windows32bit]** jnotify-lib-0.94.zip/jnotify.dll
 * **[Windows64bit]** jnotify-lib-0.94.zip/jnotify_64bit.dll
-- **[Linux 64bit]** jnotify-lib-0.94.zip/64-bit Linux\libjnotify.so
+- **[Linux 64bit]** jnotify-lib-0.94.zip/64-bit Linux/libjnotify.so
 - **[Linux 32bit]** jnotify-lib-0.94.zip/libjnotify.jnilib
 - **[Linux 32bit]** jnotify-lib-0.94.zip/libjnotify.so
 

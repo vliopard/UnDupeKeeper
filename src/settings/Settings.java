@@ -55,6 +55,9 @@ public class Settings
     public static final int      IconDupeArrow            =4;
     public static final int      IconDupeFile             =5;
     public static final int      IconDupeLoupe            =6;
+    public static final int      IconDupeCalc             =7;
+    public static final int      IconDnaMini              =8;
+    public static final int      IconYellow               =9;
     public static final int      IconHeight               =16;
     public static final int      IconWidth                =16;
     public static final int      WaitForFileTimeOut       =50;
@@ -176,6 +179,10 @@ public class Settings
                     FileExtension,
             SystemTrayImageDirectory+
                     "dnaMini"+
+                    SystemTrayIconSize+
+                    FileExtension,
+            SystemTrayImageDirectory+
+                    "yellow"+
                     SystemTrayIconSize+
                     FileExtension
                                                           };

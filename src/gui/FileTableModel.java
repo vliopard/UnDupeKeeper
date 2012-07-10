@@ -1,12 +1,12 @@
 package gui;
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.AbstractTableModel;
 import settings.Strings;
 import tools.Logger;
+import tools.Utils;
 // TODO: JAVADOC
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
 
@@ -30,13 +30,6 @@ public class FileTableModel extends
             Strings.fbDir,
             Strings.fbIsFile,
                                                };
-
-    private String customFormat(String pattern,
-                                double value)
-    {
-        DecimalFormat myFormatter=new DecimalFormat(pattern);
-        return myFormatter.format(value);
-    }
 
     FileTableModel()
     {
@@ -84,8 +77,7 @@ public class FileTableModel extends
             case 3:
                 return file.getPath();
             case 4:
-                return customFormat(Strings.numberFormatMask,
-                                    file.length());
+                return Utils.format(file.length());
             case 5:
                 return file.lastModified();
             case 6:
