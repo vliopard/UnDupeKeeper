@@ -133,4 +133,5 @@ public class Strings
     public static final String flags                           =Messages.getString("StringValue122");                 //$NON-NLS-1$
     public static final String fileName                        =Messages.getString("StringValue123");                 //$NON-NLS-1$
     public static final String pipe                            =Messages.getString("StringValue124");                 //$NON-NLS-1$
+    public static final String utBalloonError                  =Messages.getString("StringValue125");                 //$NON-NLS-1$
 }

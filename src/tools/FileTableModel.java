@@ -1,23 +1,25 @@
-package gui;
+package tools;
 import java.io.File;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.AbstractTableModel;
 import settings.Strings;
-import tools.Logger;
-import tools.Utils;
-// TODO: JAVADOC
-// TODO: METHOD AND VARIABLE NAMES REFACTORING
 
+/**
+ * FileTableModel class provides a render set of tools to display files in a
+ * table.
+ * 
+ * @author vliopard
+ */
 public class FileTableModel extends
         AbstractTableModel
 {
-    private static final long serialVersionUID =-6234469100236698739L;
-    private File[]            files;
-    private FileSystemView    fileSystemView   =FileSystemView.getFileSystemView();
-    private String[]          columns          =
-                                               {
+    private static final long serialVersionUID  =-6234469100236698739L;
+    private File[]            fileArray;
+    private FileSystemView    fileSystemView    =FileSystemView.getFileSystemView();
+    private String[]          fileDetailColumns =
+                                                {
             Strings.fbIcon,
             Strings.fbFileName,
             Strings.fbExtension,
@@ -29,22 +31,43 @@ public class FileTableModel extends
             Strings.fbExecute,
             Strings.fbDir,
             Strings.fbIsFile,
-                                               };
+                                                };
 
-    FileTableModel()
+    /**
+     * FileTableModel Constructor - Initialize an empty FileTableModel object
+     * for rendering a file table.
+     */
+    public FileTableModel()
     {
         this(new File[0]);
     }
 
-    FileTableModel(File[] files)
+    /**
+     * FileTableModel Constructor - Initialize a FileTableModel object for
+     * rendering a file table.
+     * 
+     * @param fileList
+     *            A <code>File[]</code> array containing the file list to be
+     *            displayed.
+     */
+    public FileTableModel(File[] fileList)
     {
-        this.files=files;
+        fileArray=fileList;
     }
 
+    /**
+     * This method gets an <code>Object</code> at the provided position.
+     * 
+     * @param row
+     *            An <code>int</code> value of the <code>Object</code>'s row.
+     * @param column
+     *            An <code>int</code> value of the <code>Object</code>'s column.
+     * @return Object The <code>Object</code> from provided position.
+     */
     public Object getValueAt(int row,
                              int column)
     {
-        File file=files[row];
+        File file=fileArray[row];
         switch(column)
         {
             case 0:
@@ -77,7 +100,7 @@ public class FileTableModel extends
             case 3:
                 return file.getPath();
             case 4:
-                return Utils.format(file.length());
+                return Utils.numberFormat(file.length());
             case 5:
                 return file.lastModified();
             case 6:
@@ -96,11 +119,23 @@ public class FileTableModel extends
         return "";
     }
 
+    /**
+     * This method returns the total column count.
+     * 
+     * @return An <code>int</code> value representing the total column count.
+     */
     public int getColumnCount()
     {
-        return columns.length;
+        return fileDetailColumns.length;
     }
 
+    /**
+     * This method returns a class that represents the column position.
+     * 
+     * @param column
+     *            An <code>int</code> value of the selected column.
+     * @return The <code>Class</code> of the selected column.
+     */
     public Class<?> getColumnClass(int column)
     {
         switch(column)
@@ -121,24 +156,50 @@ public class FileTableModel extends
         return String.class;
     }
 
+    /**
+     * This method returns the <code>String</code> name of the selected column.
+     * 
+     * @param column
+     *            An <code>int</code> value of the selected column.
+     * @return A <code>String</code> value with the name of the column.
+     */
     public String getColumnName(int column)
     {
-        return columns[column];
+        return fileDetailColumns[column];
     }
 
+    /**
+     * This method returns the total row count.
+     * 
+     * @return An <code>int</code> value representing the total row count.
+     */
     public int getRowCount()
     {
-        return files.length;
+        return fileArray.length;
     }
 
+    /**
+     * This method returns a <code>File</code> from a given selected row.
+     * 
+     * @param row
+     *            An <code>int</code> value with the selected file row.
+     * @return Returns a <code>File</code> from the selected row.
+     */
     public File getFile(int row)
     {
-        return files[row];
+        return fileArray[row];
     }
 
-    public void setFiles(File[] files)
+    /**
+     * This method feed a file table with a list of files.
+     * 
+     * @param fileList
+     *            A <code>File[]</code> array containing the files to be placed
+     *            in a table list.
+     */
+    public void setFiles(File[] fileList)
     {
-        this.files=files;
+        fileArray=fileList;
         fireTableDataChanged();
     }
 

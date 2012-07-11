@@ -1,8 +1,9 @@
-package gui;
-// TODO: FIX FILE SIZE ORDERING
-// TODO: JAVADOC
-// TODO: METHOD AND VARIABLE NAMES REFACTORING
-// TODO: SAVE POSITION AND SCREEN SETTINGS
+package main;
+// TODO: 5 SAVE POSITION AND SCREEN SETTINGS
+// TODO: 6 FIX FILESIZE ORDERING TO ASC/DESC NUMBER (NOT STRING ALPHABET)
+// TODO: 7 ORDERING REPORT VIEWER FILES DESYNCHRONIZE SELECTED FOCUS FROM DETAIL
+// TODO: 08 METHOD AND VARIABLE NAMES REFACTORING
+// TODO: 09 JAVADOC
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -10,6 +11,7 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Container;
 import java.awt.Image;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -17,13 +19,14 @@ import javax.swing.event.*;
 import javax.swing.tree.*;
 import javax.swing.table.*;
 import javax.swing.filechooser.FileSystemView;
-import main.UnDupeKeeper;
 import settings.Settings;
 import settings.Strings;
+import tools.FileTableModel;
+import tools.FileTreeCellRenderer;
 import tools.Logger;
 import tools.SettingsHandler;
 import tools.TrayImage;
-import tools.UnDupeChecker;
+import tools.ReportGenerator;
 import tools.Utils;
 import java.util.Date;
 import java.util.List;
@@ -31,17 +34,21 @@ import java.util.ArrayList;
 import java.io.*;
 import java.net.URL;
 
+/**
+ * 
+ * @author vliopard
+ */
 public class ReportViewer
 {
     private static Desktop               desktop;
     private static FileSystemView        fileSystemView;
     private static File                  currentFile;
-    private static JPanel                gui;
-    private static JTree                 tree;
+    private static JPanel                guiPanel;
+    private static JTree                 mainTree;
     private static DefaultTreeModel      treeModel;
-    private static JTable                table;
+    private static JTable                fileTable;
     private static JProgressBar          progressBar    =new JProgressBar();
-    private static JLabel                progressBar1;
+    private static JLabel                statusBar;
     private static FileTableModel        fileTableModel;
     private static ListSelectionListener listSelectionListener;
     private static boolean               cellSizesSet   =false;
@@ -59,40 +66,44 @@ public class ReportViewer
     private static JCheckBox             executable;
     private static JRadioButton          isDirectory;
     private static JRadioButton          isFile;
-    private static int                   len;
+    private static int                   fileSize;
     private static SettingsHandler       settingsHandler;
 
+    /**
+     * 
+     * @return
+     */
     private static Container getGui()
     {
-        if(gui==null)
+        if(guiPanel==null)
         {
-            gui=new JPanel(new BorderLayout(1,
-                                            1));
-            gui.setBorder(new EmptyBorder(1,
-                                          1,
-                                          1,
-                                          1));
+            guiPanel=new JPanel(new BorderLayout(1,
+                                                 1));
+            guiPanel.setBorder(new EmptyBorder(1,
+                                               1,
+                                               1,
+                                               1));
             fileSystemView=FileSystemView.getFileSystemView();
             desktop=Desktop.getDesktop();
             JPanel detailView=new JPanel(new BorderLayout(1,
                                                           1));
-            table=new JTable();
-            table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            table.setAutoCreateRowSorter(true);
-            table.setShowVerticalLines(false);
+            fileTable=new JTable();
+            fileTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            fileTable.setAutoCreateRowSorter(true);
+            fileTable.setShowVerticalLines(false);
             listSelectionListener=new ListSelectionListener()
                 {
                     @Override
                     public void valueChanged(ListSelectionEvent lse)
                     {
-                        int row=table.getSelectionModel()
-                                     .getLeadSelectionIndex();
-                        setFileDetails(((FileTableModel)table.getModel()).getFile(row));
+                        int row=fileTable.getSelectionModel()
+                                         .getLeadSelectionIndex();
+                        setFileDetails(((FileTableModel)fileTable.getModel()).getFile(row));
                     }
                 };
-            table.getSelectionModel()
-                 .addListSelectionListener(listSelectionListener);
-            JScrollPane tableScroll=new JScrollPane(table);
+            fileTable.getSelectionModel()
+                     .addListSelectionListener(listSelectionListener);
+            JScrollPane tableScroll=new JScrollPane(fileTable);
             Dimension d=tableScroll.getPreferredSize();
             tableScroll.setPreferredSize(new Dimension((int)d.getWidth(),
                                                        (int)d.getHeight()/2));
@@ -110,22 +121,23 @@ public class ReportViewer
                         setFileDetails(new File((String)node.getUserObject()));
                     }
                 };
-            root.add(UnDupeChecker.getRoot(settingsHandler.getDirectory()));
-            len=UnDupeChecker.size();
-            tree=new JTree(treeModel);
-            tree.setRootVisible(false);
-            tree.addTreeSelectionListener(treeSelectionListener);
-            tree.setCellRenderer(new FileTreeCellRenderer());
+            root.add(ReportGenerator.getRootNode(settingsHandler.getDirectory()));
+            fileSize=ReportGenerator.size();
+            mainTree=new JTree(treeModel);
+            mainTree.setRootVisible(false);
+            mainTree.addTreeSelectionListener(treeSelectionListener);
+            mainTree.setCellRenderer(new FileTreeCellRenderer());
             // tree.expandRow(0);
-            JScrollPane treeScroll=new JScrollPane(tree);
-            tree.setVisibleRowCount(10);
-            tree.addTreeWillExpandListener(new TreeWillExpandListener()
+            JScrollPane treeScroll=new JScrollPane(mainTree);
+            mainTree.setVisibleRowCount(10);
+            mainTree.addTreeWillExpandListener(new TreeWillExpandListener()
                 {
                     public void treeWillExpand(TreeExpansionEvent e)
                     {
-                        // TODO: EXTERNALIZE STRING
+                        // TODO: 01 EXTERNALIZE STRING
                         Utils.displayBallon("Warning",
-                                            "This action may take a while...");
+                                            "This action may take a while...",
+                                            MessageType.WARNING);
                     }
 
                     @Override
@@ -133,13 +145,14 @@ public class ReportViewer
                     {
                     }
                 });
-            tree.addTreeExpansionListener(new TreeExpansionListener()
+            mainTree.addTreeExpansionListener(new TreeExpansionListener()
                 {
                     public void treeExpanded(TreeExpansionEvent e)
                     {
-                        // TODO: EXTERNALIZE STRING
-                        Utils.displayBallon("Warning",
-                                            "Done");
+                        // TODO: 02 EXTERNALIZE STRING
+                        Utils.displayBallon("Tree Expansion",
+                                            "Done!",
+                                            MessageType.INFO);
                     }
 
                     @Override
@@ -210,13 +223,13 @@ public class ReportViewer
                                 currentFile.getParentFile());
                             desktop.open(currentFile.getParentFile());
                         }
-                        catch(Throwable t)
+                        catch(Throwable e)
                         {
                             showThrowable(Strings.btAError,
                                           Strings.btA,
-                                          t);
+                                          e);
                         }
-                        gui.repaint();
+                        guiPanel.repaint();
                     }
                 });
             toolBar.add(locateFile);
@@ -232,13 +245,13 @@ public class ReportViewer
                                 currentFile);
                             desktop.open(currentFile);
                         }
-                        catch(Throwable t)
+                        catch(Throwable e)
                         {
                             showThrowable(Strings.btBError,
                                           Strings.btB,
-                                          t);
+                                          e);
                         }
-                        gui.repaint();
+                        guiPanel.repaint();
                     }
                 });
             toolBar.add(openFile);
@@ -254,11 +267,11 @@ public class ReportViewer
                                 currentFile);
                             desktop.edit(currentFile);
                         }
-                        catch(Throwable t)
+                        catch(Throwable e)
                         {
                             showThrowable(Strings.btCError,
                                           Strings.btC,
-                                          t);
+                                          e);
                         }
                     }
                 });
@@ -273,8 +286,8 @@ public class ReportViewer
                         {
                             msg(Strings.btDMessage+
                                 currentFile);
-                            // TODO: LOOK FOR A WAY TO DELETE FILE
-                            // TODO: AFTER DELETE FILE, REFRESH GUI FILE TREE
+                            // TODO: 3 LOOK FOR A WAY TO DELETE FILE
+                            // TODO: 4 AFTER DELETE FILE, REFRESH GUI FILE TREE
                             currentFile.setReadable(true);
                             currentFile.setWritable(true);
                             if(currentFile.delete())
@@ -283,11 +296,11 @@ public class ReportViewer
                                                  Strings.btD);
                             }
                         }
-                        catch(Throwable t)
+                        catch(Throwable e)
                         {
                             showThrowable(Strings.btDError,
                                           Strings.btD,
-                                          t);
+                                          e);
                         }
                     }
                 });
@@ -310,15 +323,15 @@ public class ReportViewer
             executable.setMnemonic(Strings.btExecuteShort);
             flags.add(executable);
             int count=fileDetailsLabels.getComponentCount();
-            for(int ii=0; ii<count; ii++)
+            for(int i=0; i<count; i++)
             {
-                fileDetailsLabels.getComponent(ii)
+                fileDetailsLabels.getComponent(i)
                                  .setEnabled(false);
             }
             count=flags.getComponentCount();
-            for(int ii=0; ii<count; ii++)
+            for(int i=0; i<count; i++)
             {
-                flags.getComponent(ii)
+                flags.getComponent(i)
                      .setEnabled(false);
             }
             JPanel fileView=new JPanel(new BorderLayout(3,
@@ -332,54 +345,57 @@ public class ReportViewer
             JSplitPane splitPane=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                                 treeScroll,
                                                 detailView);
-            gui.add(splitPane,
-                    BorderLayout.CENTER);
+            guiPanel.add(splitPane,
+                         BorderLayout.CENTER);
             JPanel simpleOutput=new JPanel(new BorderLayout(3,
                                                             3));
             // progressBar=new JProgressBar();
             simpleOutput.add(progressBar,
                              BorderLayout.EAST);
             progressBar.setVisible(true);
-            progressBar1=new JLabel();
-            if(len==0)
+            statusBar=new JLabel();
+            if(fileSize==0)
             {
-                progressBar1.setText(Strings.noFileFound);
+                statusBar.setText(Strings.noFileFound);
             }
             else
             {
-                if(len==1)
+                if(fileSize==1)
                 {
-                    progressBar1.setText(Strings.space+
-                                         Utils.format(len)+
-                                         Strings.fileFound);
+                    statusBar.setText(Strings.space+
+                                      Utils.numberFormat(fileSize)+
+                                      Strings.fileFound);
                 }
                 else
                 {
-                    progressBar1.setText(Strings.space+
-                                         Utils.format(len)+
-                                         Strings.filesFound);
+                    statusBar.setText(Strings.space+
+                                      Utils.numberFormat(fileSize)+
+                                      Strings.filesFound);
                 }
             }
-            simpleOutput.add(progressBar1,
+            simpleOutput.add(statusBar,
                              BorderLayout.WEST);
-            gui.add(simpleOutput,
-                    BorderLayout.SOUTH);
+            guiPanel.add(simpleOutput,
+                         BorderLayout.SOUTH);
         }
-        return gui;
+        return guiPanel;
     }
 
+    /**
+     * 
+     */
     private static void showRootFile()
     {
-        tree.setSelectionInterval(0,
-                                  0);
+        mainTree.setSelectionInterval(0,
+                                      0);
     }
 
     @SuppressWarnings("unused")
     private TreePath findTreePath(File find)
     {
-        for(int ii=0; ii<tree.getRowCount(); ii++)
+        for(int ii=0; ii<mainTree.getRowCount(); ii++)
         {
-            TreePath treePath=tree.getPathForRow(ii);
+            TreePath treePath=mainTree.getPathForRow(ii);
             Object object=treePath.getLastPathComponent();
             DefaultMutableTreeNode node=(DefaultMutableTreeNode)object;
             File nodeFile=(File)node.getUserObject();
@@ -394,25 +410,25 @@ public class ReportViewer
     private static void showErrorMessage(String errorMessage,
                                          String errorTitle)
     {
-        JOptionPane.showMessageDialog(gui,
+        JOptionPane.showMessageDialog(guiPanel,
                                       errorMessage,
                                       errorTitle,
                                       JOptionPane.ERROR_MESSAGE);
     }
 
-    private static void showThrowable(String a,
-                                      String b,
-                                      Throwable t)
+    private static void showThrowable(String message,
+                                      String title,
+                                      Throwable throwable)
     {
         err("["+
-            b+
+            title+
             "] "+
-            a+
+            message+
             " "+
-            t.getMessage());
-        showErrorMessage(a,
-                         b);
-        gui.repaint();
+            throwable.getMessage());
+        showErrorMessage(message,
+                         title);
+        guiPanel.repaint();
     }
 
     private static void setTableData(final File[] files)
@@ -424,25 +440,25 @@ public class ReportViewer
                     if(fileTableModel==null)
                     {
                         fileTableModel=new FileTableModel();
-                        table.setModel(fileTableModel);
+                        fileTable.setModel(fileTableModel);
                     }
-                    table.getSelectionModel()
-                         .removeListSelectionListener(listSelectionListener);
+                    fileTable.getSelectionModel()
+                             .removeListSelectionListener(listSelectionListener);
                     fileTableModel.setFiles(files);
-                    table.getSelectionModel()
-                         .addListSelectionListener(listSelectionListener);
+                    fileTable.getSelectionModel()
+                             .addListSelectionListener(listSelectionListener);
                     if(!cellSizesSet)
                     {
                         Icon icon=fileSystemView.getSystemIcon(files[0]);
-                        table.setRowHeight(icon.getIconHeight()+
-                                           rowIconPadding);
+                        fileTable.setRowHeight(icon.getIconHeight()+
+                                               rowIconPadding);
                         setColumnWidth(0,
                                        -1);
                         setColumnWidth(4,
                                        60);
-                        table.getColumnModel()
-                             .getColumn(4)
-                             .setMaxWidth(255);
+                        fileTable.getColumnModel()
+                                 .getColumn(4)
+                                 .setMaxWidth(255);
                         setColumnWidth(5,
                                        -1);
                         setColumnWidth(6,
@@ -464,8 +480,8 @@ public class ReportViewer
     private static void setColumnWidth(int column,
                                        int width)
     {
-        TableColumn tableColumn=table.getColumnModel()
-                                     .getColumn(column);
+        TableColumn tableColumn=fileTable.getColumnModel()
+                                         .getColumn(column);
         if(width<0)
         {
             JLabel label=new JLabel((String)tableColumn.getHeaderValue());
@@ -479,7 +495,7 @@ public class ReportViewer
 
     private static void showChildren(final DefaultMutableTreeNode node)
     {
-        tree.setEnabled(false);
+        mainTree.setEnabled(false);
         progressBar.setVisible(true);
         progressBar.setIndeterminate(true);
         SwingWorker<Void,File> worker=new SwingWorker<Void,File>()
@@ -522,7 +538,7 @@ public class ReportViewer
                 {
                     progressBar.setIndeterminate(false);
                     progressBar.setVisible(true);
-                    tree.setEnabled(true);
+                    mainTree.setEnabled(true);
                 }
             };
         worker.execute();
@@ -545,28 +561,28 @@ public class ReportViewer
         // ext.setText(fileSystemView.getSystemDisplayName(file).substring(fileSystemView.getSystemDisplayName(file).lastIndexOf(".")+1,fileSystemView.getSystemDisplayName(file).length()));
         path.setText(file.getPath());
         date.setText(new Date(file.lastModified()).toString());
-        size.setText(Utils.format(file.length())+
+        size.setText(Utils.numberFormat(file.length())+
                      Strings.fileBytes);
         readable.setSelected(file.canRead());
         writable.setSelected(file.canWrite());
         executable.setSelected(file.canExecute());
         isDirectory.setSelected(file.isDirectory());
         isFile.setSelected(file.isFile());
-        JFrame f=(JFrame)gui.getTopLevelAncestor();
-        if(f!=null)
+        JFrame localFrame=(JFrame)guiPanel.getTopLevelAncestor();
+        if(localFrame!=null)
         {
-            f.setTitle(Strings.fbTitleCheck+
-                       Strings.space+
-                       Strings.separator+
-                       Strings.space+
-                       fileSystemView.getSystemDisplayName(file));
+            localFrame.setTitle(Strings.fbTitleCheck+
+                                Strings.space+
+                                Strings.separator+
+                                Strings.space+
+                                fileSystemView.getSystemDisplayName(file));
         }
-        gui.repaint();
+        guiPanel.repaint();
     }
 
-    public static JFrame show(SettingsHandler sh)
+    public static JFrame show(SettingsHandler settings)
     {
-        settingsHandler=sh;
+        settingsHandler=settings;
         // SwingUtilities.invokeLater(new Runnable()
         // {
         // public void run()
@@ -575,55 +591,55 @@ public class ReportViewer
         {
             UIManager.setLookAndFeel(Settings.LookAndFeelPackages[settingsHandler.getLookAndFeel()]);
         }
-        catch(Exception weTried)
+        catch(Exception e)
         {
             err(Strings.fbErrorLoadingLookAndFeel+
-                weTried);
+                e);
         }
-        JFrame f=new JFrame(Strings.fbTitleCheck);
-        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JFrame mainFrame=new JFrame(Strings.fbTitleCheck);
+        mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // ReportViewer FileBrowser=new ReportViewer();
-        f.setContentPane(ReportViewer.getGui());
+        mainFrame.setContentPane(ReportViewer.getGui());
         try
         {
-            ArrayList<Image> images=new ArrayList<Image>();
-            URL urlSmall=UnDupeKeeper.class.getResource(Settings.iconList[8]);
-            if(urlSmall==null)
+            ArrayList<Image> imageArray=new ArrayList<Image>();
+            URL smallIconUrl=UnDupeKeeper.class.getResource(Settings.iconList[8]);
+            if(smallIconUrl==null)
             {
                 err(Strings.ukResourceNotFound+
                     Settings.iconList[8]);
-                images.add(TrayImage.createNewImage());
+                imageArray.add(TrayImage.createNewImage());
             }
             else
             {
-                images.add((new ImageIcon(urlSmall,
-                                          "")).getImage());
+                imageArray.add((new ImageIcon(smallIconUrl,
+                                              "")).getImage());
             }
-            URL urlBig=UnDupeKeeper.class.getResource(Settings.iconList[7]);
-            if(urlBig==null)
+            URL bigIconUrl=UnDupeKeeper.class.getResource(Settings.iconList[7]);
+            if(bigIconUrl==null)
             {
                 err(Strings.ukResourceNotFound+
                     Settings.iconList[7]);
-                images.add(TrayImage.createNewImage());
+                imageArray.add(TrayImage.createNewImage());
             }
             else
             {
-                images.add((new ImageIcon(urlBig,
-                                          "")).getImage());
+                imageArray.add((new ImageIcon(bigIconUrl,
+                                              "")).getImage());
             }
-            f.setIconImages(images);
+            mainFrame.setIconImages(imageArray);
         }
-        catch(Exception weTried)
+        catch(Exception e)
         {
             err(Strings.fbErrorLoadingIcons+
-                weTried);
+                e);
         }
-        f.pack();
+        mainFrame.pack();
         // f.setLocationByPlatform(true);
-        f.setMinimumSize(f.getSize());
-        f.setVisible(true);
+        mainFrame.setMinimumSize(mainFrame.getSize());
+        mainFrame.setVisible(true);
         ReportViewer.showRootFile();
-        return f;
+        return mainFrame;
         // }
         // });
     }

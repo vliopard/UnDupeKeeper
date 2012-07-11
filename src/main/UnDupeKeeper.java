@@ -1,6 +1,4 @@
 package main;
-// TODO: ORDERING REPORT VIEWER FILES DESYNCHRONIZE SELECTED FOCUS FROM DETAIL
-import gui.ReportViewer;
 import java.nio.file.*;
 import java.awt.AWTException;
 import java.awt.MenuItem;
@@ -119,6 +117,9 @@ public class UnDupeKeeper
         if(args.length>0)
         {
             directoryToWatch=checkPromptArguments(args);
+            settingsHandler.setDirectory(directoryToWatch.toString());
+            DataBase.saveDir(directoryToWatch.toString());
+            DataBase.saveSettings(settingsHandler);
         }
         while(!isDir(directoryToWatch))
         {

@@ -1,5 +1,4 @@
 package tools;
-import gui.Options;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import main.Options;
 import main.Worker;
 import settings.Settings;
 import settings.Strings;

@@ -9,7 +9,7 @@ import settings.Settings;
 import settings.Strings;
 
 /**
- * TrayImage class is responsible for creating and set the System Trai Icon
+ * TrayImage class is responsible for creating and set the System Tray Icon
  * image.
  * 
  * @author vliopard
