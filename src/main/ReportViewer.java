@@ -11,7 +11,6 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Container;
 import java.awt.Image;
-import java.awt.TrayIcon.MessageType;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -134,10 +133,7 @@ public class ReportViewer
                 {
                     public void treeWillExpand(TreeExpansionEvent e)
                     {
-                        // TODO: 01 EXTERNALIZE STRING
-                        Utils.displayBallon("Warning",
-                                            "This action may take a while...",
-                                            MessageType.WARNING);
+                        // Utils.displayBallon("Warning","This action may take a while...",MessageType.WARNING);
                     }
 
                     @Override
@@ -149,10 +145,7 @@ public class ReportViewer
                 {
                     public void treeExpanded(TreeExpansionEvent e)
                     {
-                        // TODO: 02 EXTERNALIZE STRING
-                        Utils.displayBallon("Tree Expansion",
-                                            "Done!",
-                                            MessageType.INFO);
+                        // Utils.displayBallon("Tree Expansion","Done!",MessageType.INFO);
                     }
 
                     @Override
