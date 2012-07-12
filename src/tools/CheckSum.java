@@ -191,7 +191,9 @@ public class CheckSum
             formatter.format("%02x",
                              byteLoop);
         }
-        return formatter.toString();
+        String result=formatter.toString();
+        formatter.close();
+        return result;
     }
 
     /**
@@ -240,6 +242,8 @@ public class CheckSum
                     fileInputStream=null;
                     return;
                 }
+                fileInputStream.close();
+                fileInputStream=null;
                 Thread.sleep(Settings.WaitForFileTimeOut);
             }
             catch(IOException|InterruptedException e)

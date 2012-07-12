@@ -94,12 +94,13 @@ public class ReportGenerator
     private static TreeMap<String,ArrayList<String>> convertToNodes(ArrayList<String> fileNameArray)
     {
         TreeMap<String,ArrayList<String>> treeMap=new TreeMap<String,ArrayList<String>>();
+        BufferedReader bufferedReader=null;
         for(int i=0; i<fileNameArray.size(); i++)
         {
             try
             {
                 FileReader fileReader=new FileReader(fileNameArray.get(i));
-                BufferedReader bufferedReader=new BufferedReader(fileReader);
+                bufferedReader=new BufferedReader(fileReader);
                 String fileName=bufferedReader.readLine();
                 fileName=fileName.substring(0,
                                             fileName.indexOf(Settings.UnDupeKeeperSignature));
@@ -122,6 +123,18 @@ public class ReportGenerator
             catch(IOException e)
             {
                 err(Strings.fbReportError+
+                    e);
+            }
+        }
+        if(bufferedReader!=null)
+        {
+            try
+            {
+                bufferedReader.close();
+            }
+            catch(IOException e)
+            {
+                err(Strings.rgErrorClosingBuffer+
                     e);
             }
         }

@@ -91,11 +91,13 @@ public class DataBase
             msg(Strings.dbLoadingDatabase);
             try
             {
+                FileInputStream fileInputStream=new FileInputStream(Settings.UnDupeKeeperDatabaseName);
                 @SuppressWarnings("unchecked")
-                HashMap<String,String> hashMapToLoad=(HashMap<String,String>)new ObjectInputStream(new FileInputStream(Settings.UnDupeKeeperDatabaseName)).readObject();
+                HashMap<String,String> hashMapToLoad=(HashMap<String,String>)new ObjectInputStream(fileInputStream).readObject();
                 msg(Strings.dbDatabaseContains+
                     hashMapToLoad.size()+
                     Strings.dbItems);
+                fileInputStream.close();
                 return hashMapToLoad;
             }
             catch(ClassNotFoundException|IOException e)
@@ -217,8 +219,10 @@ public class DataBase
             // msg(Strings.dbLoadingSettings);
             try
             {
-                SettingsHandler settingsTransfer=(SettingsHandler)new ObjectInputStream(new FileInputStream(Settings.UnDupeKeeperSettings)).readObject();
+                FileInputStream fileInputStream=new FileInputStream(Settings.UnDupeKeeperSettings);
+                SettingsHandler settingsTransfer=(SettingsHandler)new ObjectInputStream(fileInputStream).readObject();
                 systemLanguage=settingsTransfer.getLanguageIndex();
+                fileInputStream.close();
                 return settingsTransfer;
             }
             catch(ClassNotFoundException|IOException e)
