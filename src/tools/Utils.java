@@ -49,6 +49,41 @@ public class Utils
     }
 
     /**
+     * This method adds leading zeros to a <code>String</code> representation of
+     * a number to keep display organized in columns.
+     * 
+     * @param numberToFormat
+     *            A <code>long</code> number that will receive leading zeros.
+     * @return Returns an <code>String</code> representing a <code>long</code>
+     *         number with leading zeros.
+     */
+    public static String addLeadingZeros(long numberToFormat)
+    {
+        return String.format("%06d",
+                             numberToFormat);
+    }
+
+    /**
+     * This method adds leading zeros to a <code>String</code> representation of
+     * a number to keep display organized in columns.
+     * 
+     * @param mask
+     *            An <code>String</code> informing the amount of leading zeros.
+     * @param numberToFormat
+     *            A <code>long</code> number that will receive leading zeros.
+     * @return Returns an <code>String</code> representing a <code>long</code>
+     *         number with customized leading zeros.
+     */
+    public static String addCustomLeadingZeros(String mask,
+                                               long numberToFormat)
+    {
+        return String.format("%"+
+                                     mask+
+                                     "d",
+                             numberToFormat);
+    }
+
+    /**
      * This method creates and displays a notification Balloon on the System
      * Tray.
      * 

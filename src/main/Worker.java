@@ -11,9 +11,11 @@ import java.util.concurrent.BlockingQueue;
 import settings.Settings;
 import settings.Strings;
 import tools.CheckSum;
+import tools.Comparison;
 import tools.DataBase;
 import tools.FileQueue;
 import tools.Logger;
+import tools.Utils;
 
 /**
  * Worker class is responsible for checking a
@@ -182,9 +184,9 @@ public class Worker implements
                 {
                     filesIncluded++;
                     msg("["+
-                        addLeadingZeros(filesIncluded)+
+                        Utils.addLeadingZeros(filesIncluded)+
                         "]["+
-                        addLeadingZeros(filesReplaced)+
+                        Utils.addLeadingZeros(filesReplaced)+
                         "]\t["+
                         cypherMethod+
                         "]\t"+
@@ -195,31 +197,45 @@ public class Worker implements
                 }
                 else
                 {
-                    filesReplaced++;
-                    msg("["+
-                        addLeadingZeros(filesIncluded)+
-                        "]["+
-                        addLeadingZeros(filesReplaced)+
-                        "]\t["+
-                        cypherMethod+
-                        "]\t"+
-                        Strings.wkReplacing+
-                        fileName);
-                    File fileToRename=new File(fileName);
-                    Writer outputFile=new BufferedWriter(new FileWriter(fileToRename));
-                    outputFile.write(hashMapTable.get(cypherMethod)+
-                                     Settings.UnDupeKeeperSignature+
-                                     "["+
-                                     cypherMethod+
-                                     "]");
-                    outputFile.close();
-                    // CheckSum.waitFile(child);
-                    // f2.renameTo(new File(child + ".(Dup3K33p)"));
-                    Path fileNamePath=Paths.get(fileName);
-                    java.nio.file.Files.move(fileNamePath,
-                                             fileNamePath.resolveSibling(fileNamePath.getFileName()
-                                                                                     .toString()+
-                                                                         Settings.UnDupeKeeperExtension));
+                    String mapFileName=hashMapTable.get(cypherMethod);
+                    if(Settings.notComparing||
+                       Comparison.isEqual(fileName,
+                                          mapFileName))
+                    {
+                        filesReplaced++;
+                        msg("["+
+                            Utils.addLeadingZeros(filesIncluded)+
+                            "]["+
+                            Utils.addLeadingZeros(filesReplaced)+
+                            "]\t["+
+                            cypherMethod+
+                            "]\t"+
+                            Strings.wkReplacing+
+                            fileName);
+                        File fileToRename=new File(fileName);
+                        Writer outputFile=new BufferedWriter(new FileWriter(fileToRename));
+                        outputFile.write(mapFileName+
+                                         Settings.UnDupeKeeperSignature+
+                                         "["+
+                                         cypherMethod+
+                                         "]");
+                        outputFile.close();
+                        // CheckSum.waitFile(child);
+                        // f2.renameTo(new File(child + ".(Dup3K33p)"));
+                        Path fileNamePath=Paths.get(fileName);
+                        java.nio.file.Files.move(fileNamePath,
+                                                 fileNamePath.resolveSibling(fileNamePath.getFileName()
+                                                                                         .toString()+
+                                                                             Settings.UnDupeKeeperExtension));
+                    }
+                    else
+                    {
+                        err(Strings.wkFatalError);
+                        err("1: "+
+                            mapFileName);
+                        err("2: "+
+                            fileName);
+                    }
                 }
             }
             catch(IOException e)
@@ -242,9 +258,9 @@ public class Worker implements
         if(hashMapTable.containsValue(fileName))
         {
             msg("["+
-                addLeadingZeros(filesIncluded)+
+                Utils.addLeadingZeros(filesIncluded)+
                 "]["+
-                addLeadingZeros(filesReplaced)+
+                Utils.addLeadingZeros(filesReplaced)+
                 "]\t"+
                 Strings.wkRemoving+
                 fileName);
@@ -252,21 +268,6 @@ public class Worker implements
             hashMapTable.values()
                         .remove(fileName);
         }
-    }
-
-    /**
-     * This method adds leading zeros to a <code>String</code> representation of
-     * a number to keep display organized in columns.
-     * 
-     * @param numberToFormat
-     *            A <code>long</code> number that will receive leading zeros.
-     * @return Returns an <code>String</code> representing a <code>long</code>
-     *         number with leading zeros.
-     */
-    private String addLeadingZeros(long numberToFormat)
-    {
-        return String.format("%06d",
-                             numberToFormat);
     }
 
     /**

@@ -19,6 +19,7 @@ public class Settings
             "SHA-384",
             "SHA-512"
                                                           };
+    public static boolean        notComparing             =false;
     public static String         CypherMethod             =CypherMethodList[Settings.CypherMethodSHA512];
     public static final int      CypherMethodCRC32        =0;
     public static final int      CypherMethodMD5          =1;
@@ -29,7 +30,7 @@ public class Settings
     public static final int      CypherMethodSHA256       =6;
     public static final int      CypherMethodSHA384       =7;
     public static final int      CypherMethodSHA512       =8;
-    public static final int      TotalArguments           =2;
+    public static final int      TotalArguments           =3;
     public static final int      KeepWorking              =0;
     public static final int      StopWorking              =1;
     public static final int      WorkerStopped            =2;
@@ -85,6 +86,7 @@ public class Settings
                                                           };
     public static final String   RootDir                  ="/";
     public static final String   Recursive                ="-r";
+    public static final String   TextFileList             ="-f";
     public static final String   FileExtension            =".jpg";
     public static final String   WorkerPrepareToExit      ="ExitSignal";
     public static final String   HexHashValues            ="0123456789ABCDEF";

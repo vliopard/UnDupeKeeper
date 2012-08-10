@@ -1,0 +1,138 @@
+package tools;
+import java.io.File;
+
+// TODO: 05 JAVADOC
+// TODO: 04 REFACTOR NAMES
+public class FileUtils
+{
+    /**
+     * Delete all files and directories in directory but do not delete the
+     * directory itself.
+     * 
+     * @param strDir
+     *            - string that specifies directory to delete
+     * @return boolean - success flag
+     */
+    public static boolean deleteDirectoryContent(String strDir)
+    {
+        return ((strDir!=null)&&(strDir.length()>0))?deleteDirectoryContent(new File(strDir))
+                                                    :false;
+    }
+
+    /**
+     * Delete all files and directories in directory but do not delete the
+     * directory itself.
+     * 
+     * @param fDir
+     *            - directory to delete
+     * @return boolean - success flag
+     */
+    public static boolean deleteDirectoryContent(File fDir)
+    {
+        boolean bRetval=false;
+        if((fDir!=null)&&
+           (fDir.isDirectory()))
+        {
+            File[] files=fDir.listFiles();
+            if(files!=null)
+            {
+                bRetval=true;
+                boolean dirDeleted;
+                for(int index=0; index<files.length; index++)
+                {
+                    if(files[index].isDirectory())
+                    {
+                        // TODO: Performance: Implement this as a queue where
+                        // you add to the end and take from the beginning, it
+                        // will be more efficient than the recursion
+                        dirDeleted=deleteDirectoryContent(files[index]);
+                        if(dirDeleted)
+                        {
+                            bRetval=bRetval&&
+                                    files[index].delete();
+                        }
+                        else
+                        {
+                            bRetval=false;
+                        }
+                    }
+                    else
+                    {
+                        bRetval=bRetval&&
+                                files[index].delete();
+                    }
+                }
+            }
+        }
+        return bRetval;
+    }
+
+    /**
+     * Deletes all files and sub directories under the specified directory
+     * including the specified directory
+     * 
+     * @param strDir
+     *            - string that specifies directory to be deleted
+     * @return boolean - true if directory was successfully deleted
+     */
+    public static boolean deleteDir(String strDir)
+    {
+        return ((strDir!=null)&&(strDir.length()>0))?deleteDir(new File(strDir))
+                                                    :false;
+    }
+
+    /**
+     * Deletes all files and sub directories under the specified directory
+     * including the specified directory
+     * 
+     * @param fDir
+     *            - directory to be deleted
+     * @return boolean - true if directory was successfully deleted
+     */
+    public static boolean deleteDir(File fDir)
+    {
+        boolean bRetval=false;
+        if((fDir!=null)&&
+           (fDir.exists()))
+        {
+            bRetval=deleteDirectoryContent(fDir);
+            if(bRetval)
+            {
+                bRetval=bRetval&&
+                        fDir.delete();
+            }
+        }
+        return bRetval;
+    }
+
+    public static String getFilePath(String file)
+    {
+        return file.substring(0,
+                              file.lastIndexOf("\\")+1);
+    }
+
+    public static String getFileName(String file)
+    {
+        if(file.lastIndexOf(".")<0)
+        {
+            return file.substring(file.lastIndexOf("\\")+1);
+        }
+        return file.substring(file.lastIndexOf("\\")+1,
+                              file.lastIndexOf("."));
+    }
+
+    public static String getFileExtension(String file)
+    {
+        if(file.lastIndexOf(".")<0)
+        {
+            return "";
+        }
+        return file.substring(file.lastIndexOf("."));
+    }
+
+    public static String getFile(String file)
+    {
+        return getFileName(file)+
+               getFileExtension(file);
+    }
+}

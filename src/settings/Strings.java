@@ -135,4 +135,8 @@ public class Strings
     public static final String pipe                            =Messages.getString("StringValue124");                 //$NON-NLS-1$
     public static final String utBalloonError                  =Messages.getString("StringValue125");                 //$NON-NLS-1$
     public static final String rgErrorClosingBuffer            =Messages.getString("StringValue126");                 //$NON-NLS-1$
+    public static final String opBinaryComparison              =Messages.getString("StringValue127");                 //$NON-NLS-1$
+    public static final String wkFatalError                    =Messages.getString("StringValue128");                 //$NON-NLS-1$
+    public static final String ukComparisonOn                  =Messages.getString("StringValue129");                 //$NON-NLS-1$
+    public static final String ukComparisonOff                 =Messages.getString("StringValue130");                 //$NON-NLS-1$
 }

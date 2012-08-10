@@ -102,8 +102,17 @@ public class ReportGenerator
                 FileReader fileReader=new FileReader(fileNameArray.get(i));
                 bufferedReader=new BufferedReader(fileReader);
                 String fileName=bufferedReader.readLine();
-                fileName=fileName.substring(0,
-                                            fileName.indexOf(Settings.UnDupeKeeperSignature));
+                if(null!=fileName)
+                {
+                    fileName=fileName.substring(0,
+                                                fileName.indexOf(Settings.UnDupeKeeperSignature));
+                }
+                else
+                {
+                    // TODO: EXTERNALIZE STRING
+                    // TODO: HANDLE THIS ERROR
+                    err("");
+                }
                 if(!treeMap.containsKey(fileName))
                 {
                     ArrayList<String> childrenFileList=new ArrayList<String>();

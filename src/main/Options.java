@@ -22,12 +22,14 @@ public class Options extends
     private JLabel            labelLookAndFeel;
     private JLabel            labelLanguage;
     private JLabel            labelEncryptionMethod;
+    private JLabel            labelComparisonMethod;
     private JButton           buttonSave;
     private JButton           buttonCancel;
     private JTextField        directoryInputTextField;
     private JComboBox<String> comboBoxLookAndFeel;
     private JComboBox<String> comboBoxLanguage;
     private JComboBox<String> comboBoxEncryptionMethod;
+    private JCheckBox         checkBoxComparisonMethod;
 
     /**
      * Options Constructor - Starts all components of the GUI and display it.
@@ -107,7 +109,14 @@ public class Options extends
         }
         comboBoxLanguage.setSelectedIndex(settingsHandler.getLanguageIndex());
         getContentPane().add(comboBoxLanguage);
-        // BUTTON SAVE (8)
+        // COMPARISON LABEL (8)
+        labelComparisonMethod=new JLabel(Strings.opBinaryComparison);
+        getContentPane().add(labelComparisonMethod);
+        // COMPARISON CHECK BOX (9)
+        checkBoxComparisonMethod=new JCheckBox();
+        checkBoxComparisonMethod.setSelected(settingsHandler.getComparisonMethod());
+        getContentPane().add(checkBoxComparisonMethod);
+        // BUTTON SAVE (10)
         buttonSave=new JButton(Strings.ssSaveButton);
         buttonSave.addActionListener(new ActionListener()
             {
@@ -116,6 +125,7 @@ public class Options extends
                     settingsHandler.setDirectory(directoryInputTextField.getText());
                     settingsHandler.setLookAndFeel(comboBoxLookAndFeel.getSelectedIndex());
                     settingsHandler.setEncryptionMethod(comboBoxEncryptionMethod.getSelectedIndex());
+                    settingsHandler.setComparisonMethod(checkBoxComparisonMethod.isSelected());
                     settingsHandler.setLanguage(comboBoxLanguage.getSelectedIndex());
                     screenPosition=getLocationOnScreen();
                     settingsHandler.setX(screenPosition.x);
@@ -125,7 +135,7 @@ public class Options extends
                 }
             });
         getContentPane().add(buttonSave);
-        // BUTTON CANCEL (9)
+        // BUTTON CANCEL (11)
         buttonCancel=new JButton(Strings.ssCancelButton);
         buttonCancel.addActionListener(new ActionListener()
             {
@@ -139,7 +149,7 @@ public class Options extends
                 }
             });
         getContentPane().add(buttonCancel);
-        // WARNING LABEL (10)
+        // WARNING LABEL (12)
         labelWarning=new JLabel(Strings.ssWarningLabel);
         labelWarning.setFont(new Font("Helvetica",
                                       Font.BOLD,
@@ -203,7 +213,7 @@ class OptionsLayout implements
         dim.width=320+
                   insets.left+
                   insets.right;
-        dim.height=165+
+        dim.height=195+
                    insets.top+
                    insets.bottom;
         return dim;
@@ -258,19 +268,23 @@ class OptionsLayout implements
     public void layoutContainer(Container parent)
     {
         Insets insets=parent.getInsets();
-        values=new Insets[11];
+        values=new Insets[13];
         //@formatter:off
-        setBounds(0,8  ,8  ,152,24);
-        setBounds(1,160,8  ,152,24);
-        setBounds(2,8  ,32 ,152,24);
-        setBounds(3,160,32 ,152,24);
-        setBounds(4,8  ,56 ,152,24);
-        setBounds(5,160,56 ,152,24);
-        setBounds(6,8  ,83 ,152,24);
-        setBounds(7,160,83 ,152,24);
-        setBounds(8,8  ,110 ,152,30);
-        setBounds(9,160,110 ,152,30);
-        setBounds(10,8  ,137,300,24);
+        setBounds( 0,  8,  8,152,24);
+        setBounds( 1,160,  8,152,24);
+        setBounds( 2,  8, 32,152,24);
+        setBounds( 3,160, 32,152,24);
+        setBounds( 4,  8, 56,152,24);
+        setBounds( 5,160, 56,152,24);
+        setBounds( 6,  8, 83,152,24);
+        setBounds( 7,160, 83,152,24);
+
+        setBounds( 8,  8,110,152,24);
+        setBounds( 9,160,110,152,24);       
+        
+        setBounds(10,  8,137,152,30);
+        setBounds(11,160,137,152,30);
+        setBounds(12,  8,164,300,24);
         //@formatter:on
         for(int i=0; i<values.length; i++)
         {

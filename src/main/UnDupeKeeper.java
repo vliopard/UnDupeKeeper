@@ -20,6 +20,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import settings.Settings;
 import settings.Strings;
+import tools.Comparison;
 import tools.DataBase;
 import tools.FileQueue;
 import tools.Logger;
@@ -116,6 +117,32 @@ public class UnDupeKeeper
         Path directoryToWatch=null;
         if(args.length>0)
         {
+            if(args[0].equals(Settings.TextFileList))
+            {
+                // TODO: CREATE FILE NOT FOUND MSG
+                // TODO: EXTERNALIZE FILE NOT FOUND MSG
+                File textFile=new File(args[1]);
+                if((!(textFile.exists()&&
+                      textFile.isFile()&&(textFile.length()>1)))&&
+                   (args.length<Settings.TotalArguments))
+                {
+                    usage();
+                }
+                else
+                {
+                    if(args.length==Settings.TotalArguments)
+                    {
+                        Comparison.compare(args[1],
+                                           args[2]);
+                    }
+                    else
+                    {
+                        Comparison.compare(args[1],
+                                           null);
+                    }
+                    System.exit(0);
+                }
+            }
             directoryToWatch=checkPromptArguments(args);
             settingsHandler.setDirectory(directoryToWatch.toString());
             DataBase.saveDir(directoryToWatch.toString());
@@ -153,6 +180,7 @@ public class UnDupeKeeper
                                   trayIcon);
             new Thread(guiThread).start();
             Settings.CypherMethod=Settings.CypherMethodList[settingsHandler.getEncryptionMethod()];
+            Settings.notComparing=settingsHandler.getComparisonMethod();
             workerThread=new Worker(transferQueue,
                                     stopSignal);
             new Thread(workerThread).start();
@@ -230,7 +258,10 @@ public class UnDupeKeeper
                                       Strings.ukAboutUndupekeeperDialog+
                                               "\nUsing: "+
                                               Settings.CypherMethod+
-                                              " | GUI: "+
+                                              " with binary "+
+                                              (Settings.notComparing?Strings.ukComparisonOn
+                                                                    :Strings.ukComparisonOff)+
+                                              "\nGUI: "+
                                               Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]+
                                               "\nTotal DB items: "+
                                               new DecimalFormat(Strings.numberFormatMask).format(workerThread.size()));

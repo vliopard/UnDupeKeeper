@@ -14,9 +14,11 @@ import settings.Settings;
 public class SettingsHandler implements
                             Serializable
 {
-    private boolean           settingsChanged   =false;
-    private boolean           directoryChanged  =false;
-    private boolean           encryptionChanged =false;
+    private boolean           settingsChanged         =false;
+    private boolean           directoryChanged        =false;
+    private boolean           encryptionChanged       =false;
+    private boolean           comparisonMethodChanged =false;
+    private boolean           comparisonMethod;
     private int               lookAndFeel;
     private int               languageIndex;
     private int               encryptionMethod;
@@ -24,8 +26,8 @@ public class SettingsHandler implements
     private int               yScreenAxis;
     private String            directoryToWatch;
     private String            language;
-    private static final long serialVersionUID  =-5557071137249098782L;
-    transient InputStream     is                =System.in;
+    private static final long serialVersionUID        =-5557071137249098782L;
+    transient InputStream     is                      =System.in;
 
     /**
      * SettingsHandler Constructor - It starts a new fresh and clean Settings
@@ -40,6 +42,7 @@ public class SettingsHandler implements
         language=Settings.languageValues[0];
         languageIndex=0;
         encryptionMethod=Settings.CypherMethodSHA512;
+        comparisonMethod=Settings.notComparing;
         xScreenAxis=(screenSize.width-320)/2;
         yScreenAxis=(screenSize.height-110)/2;
         settingsChanged=false;
@@ -71,13 +74,15 @@ public class SettingsHandler implements
                            int lookNfeel,
                            int encryptionAlgorithm,
                            int xScreenPosition,
-                           int yScreenPosition)
+                           int yScreenPosition,
+                           boolean compareMethod)
     {
         directoryToWatch=directory;
         languageIndex=idiomIndex;
         language=Settings.languageValues[idiomIndex];
         lookAndFeel=lookNfeel;
         encryptionMethod=encryptionAlgorithm;
+        comparisonMethod=compareMethod;
         xScreenAxis=xScreenPosition;
         yScreenAxis=yScreenPosition;
     }
@@ -155,6 +160,26 @@ public class SettingsHandler implements
             encryptionChanged=false;
         }
         encryptionMethod=encryptionAlgorithm;
+    }
+
+    /**
+     * This method sets the comparison method for getting files binary compred.
+     * 
+     * @param compareMethod
+     *            A <code>boolean</code> value obtained from
+     *            <code>Settings.notComparing</code>.
+     */
+    public void setComparisonMethod(boolean compareMethod)
+    {
+        if(comparisonMethod!=compareMethod)
+        {
+            comparisonMethodChanged=true;
+        }
+        else
+        {
+            comparisonMethodChanged=false;
+        }
+        comparisonMethod=compareMethod;
     }
 
     /**
@@ -238,6 +263,17 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method returns the current comparison method used by the system.
+     * 
+     * @return Returns a <code>boolean</code> value that indicates if comparison
+     *         is on or off.
+     */
+    public boolean getComparisonMethod()
+    {
+        return comparisonMethod;
+    }
+
+    /**
      * This method returns the current horizontal position used for placing the
      * settings dialog.
      * 
@@ -286,6 +322,14 @@ public class SettingsHandler implements
     }
 
     /**
+     * This method sets the comparison method to be unchanged status.
+     */
+    public void resetComparisonChanged()
+    {
+        comparisonMethodChanged=false;
+    }
+
+    /**
      * This method returns if some changes were detected on settings dialog.
      * 
      * @return Returns <code>true</code> if settings were changed. Returns
@@ -320,5 +364,18 @@ public class SettingsHandler implements
     public boolean isEncryptionChanged()
     {
         return encryptionChanged;
+    }
+
+    /**
+     * This method informs if the comparison method were changed from settings
+     * dialog screen.
+     * 
+     * @return Returns <code>true</code> if comparison method is changed.
+     *         Returns <code>false</code> if comparison method remains
+     *         unchanged.
+     */
+    public boolean isComparisonChanged()
+    {
+        return comparisonMethodChanged;
     }
 }
