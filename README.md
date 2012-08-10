@@ -23,10 +23,24 @@ After copying a bunch of files to your monitored folder, you can see a report to
 - **[Linux 32bit]** jnotify-lib-0.94.zip/libjnotify.so
 
 ##How to run:
-You can type the following command on a shell prompt or create a batch/script file for doing that:
+You can type the following commands on a shell prompt or create a batch/script file for doing that:
 
 ```
 java -jar UnDupeKeeper.jar > UnDupeKeeper.log 2>&1
+```
+
+**Other options:**
+
+- Pass directory from line command
+
+```
+java -jar UnDupeKeeper.jar -r <DIRECTORY>
+```
+
+- Provide a text file list with complete file paths. It will scan files and rename duplicates. Available for Ascending or Descending file size.
+
+```
+java -jar UnDupeKeeper.jar -f <TEXT_FILE_LIST> [ASC|DESC]
 ```
 
 ##About
