@@ -72,7 +72,8 @@ public class DataBase
         }
         catch(IOException e)
         {
-            log(Strings.dbProblemToSaveMap+
+            log("027: "
+                    +Strings.dbProblemToSaveMap+
                 e);
         }
     }
@@ -102,7 +103,8 @@ public class DataBase
             }
             catch(ClassNotFoundException|IOException e)
             {
-                log(Strings.dbProblemDatabaseCreation+
+                log("028: "
+                        +Strings.dbProblemDatabaseCreation+
                     e);
             }
         }
@@ -129,7 +131,8 @@ public class DataBase
         }
         catch(IOException e)
         {
-            log(Strings.dbProblemSavingDir+
+            log("029: "
+                    +Strings.dbProblemSavingDir+
                 e);
         }
     }
@@ -151,7 +154,8 @@ public class DataBase
             }
             catch(ClassNotFoundException|IOException e)
             {
-                log(Strings.dbProblemStoringSettings+
+                log("030: "
+                        +Strings.dbProblemStoringSettings+
                     e);
             }
         }
@@ -201,7 +205,8 @@ public class DataBase
         }
         catch(IOException e)
         {
-            log(Strings.dbProblemToSaveSettings+
+            log("031: "
+                    +Strings.dbProblemToSaveSettings+
                 e);
         }
     }
@@ -227,7 +232,8 @@ public class DataBase
             }
             catch(ClassNotFoundException|IOException e)
             {
-                log(Strings.dbProblemSettingsCreation+
+                log("032: "
+                        +Strings.dbProblemSettingsCreation+
                     e);
             }
         }

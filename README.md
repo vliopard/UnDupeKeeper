@@ -40,7 +40,7 @@ java -jar UnDupeKeeper.jar -r <DIRECTORY>
 - Provide a text file list with complete file paths. It will scan files and rename duplicates. Available for Ascending or Descending file size.
 
 ```
-java -jar UnDupeKeeper.jar -f <TEXT_FILE_LIST> [ASC|DESC]
+java -jar UnDupeKeeper.jar -f [<TEXT_FILE_LIST>|<DIRECTORY>] [ASC|DESC]
 ```
 
 ##About

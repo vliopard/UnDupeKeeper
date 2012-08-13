@@ -70,7 +70,7 @@ public class Worker implements
         }
         catch(InterruptedException e)
         {
-            log(Strings.wkProblemRunningWorker+
+            log("016: "+Strings.wkProblemRunningWorker+
                 e);
         }
         save();
@@ -80,7 +80,7 @@ public class Worker implements
         }
         catch(InterruptedException e)
         {
-            err(Strings.wkErrorSendingShutdownMessage);
+            err("017: "+Strings.wkErrorSendingShutdownMessage);
         }
         msg(Strings.wkWorkerShutdown);
     }
@@ -198,9 +198,13 @@ public class Worker implements
                 else
                 {
                     String mapFileName=hashMapTable.get(cypherMethod);
-                    if(Settings.notComparing||
-                       Comparison.isEqual(fileName,
-                                          mapFileName))
+                    boolean isEqual=true;
+                    if(Settings.comparisonIsON)
+                    {
+                        isEqual=Comparison.isEqual(fileName,
+                                                   mapFileName);
+                    }
+                    if(isEqual)
                     {
                         filesReplaced++;
                         msg("["+
@@ -240,7 +244,7 @@ public class Worker implements
             }
             catch(IOException e)
             {
-                log(Strings.wkProblemIncludingNewFile+
+                log("018: "+Strings.wkProblemIncludingNewFile+
                     e);
             }
         }

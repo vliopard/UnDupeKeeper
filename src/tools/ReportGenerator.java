@@ -41,7 +41,7 @@ public class ReportGenerator
      *            A <code>String</code> containing a directory path to be mapped
      *            in terms of a tree.
      * @return Returns a <code>JTree</code> that contains a complete directory
-     *         branch representation.
+     *         branch representation, or <code>null</code> in case of any error.
      */
     public static JTree getTree(String directoryPath)
     {
@@ -56,13 +56,18 @@ public class ReportGenerator
      *            A <code>String</code> containing a directory path to be mapped
      *            in terms of a node tree.
      * @return Returns a <code>DefaultMutableTreeNode</code> which is the root
-     *         node of a complete directory branch tree.
+     *         node of a complete directory branch tree, or <code>null</code> in
+     *         case of any error.
      */
     public static DefaultMutableTreeNode getRootNode(String directoryPath)
     {
         DefaultMutableTreeNode treeNode=new DefaultMutableTreeNode(Strings.fbTitleKeep);
         TreeMap<String,ArrayList<String>> treeMap=convertToNodes(generateFileList(new File(directoryPath).listFiles(),
                                                                                   Settings.UnDupeKeeperExtension));
+        if(null==treeMap)
+        {
+            return null;
+        }
         totalItems=treeMap.size();
         for(int i=0; i<totalItems; i++)
         {
@@ -89,7 +94,8 @@ public class ReportGenerator
      *            An <code>ArrayList</code> of <code>String</code> containing a
      *            list of all files inside a directory and its sub directories.
      * @return Returns a <code>TreeMap</code> of nodes containing files
-     *         organized by their original parents.
+     *         organized by their original parents or <code>null</code> in case
+     *         of any error.
      */
     private static TreeMap<String,ArrayList<String>> convertToNodes(ArrayList<String> fileNameArray)
     {
@@ -110,8 +116,8 @@ public class ReportGenerator
                 else
                 {
                     // TODO: EXTERNALIZE STRING
-                    // TODO: HANDLE THIS ERROR
-                    err("");
+                    err("Invalid file content");
+                    return null;
                 }
                 if(!treeMap.containsKey(fileName))
                 {
@@ -131,8 +137,10 @@ public class ReportGenerator
             }
             catch(IOException e)
             {
-                err(Strings.fbReportError+
+                err("034: "
+                        +Strings.fbReportError+
                     e);
+                return null;
             }
         }
         if(bufferedReader!=null)
@@ -143,7 +151,8 @@ public class ReportGenerator
             }
             catch(IOException e)
             {
-                err(Strings.rgErrorClosingBuffer+
+                err("035: "
+                        +Strings.rgErrorClosingBuffer+
                     e);
             }
         }
@@ -163,8 +172,8 @@ public class ReportGenerator
      *         containing all files from the root directory and its sub
      *         directories.
      */
-    private static ArrayList<String> generateFileList(File[] fileArray,
-                                                      String fileExtension)
+    public static ArrayList<String> generateFileList(File[] fileArray,
+                                                     String fileExtension)
     {
         ArrayList<String> fileList=new ArrayList<String>();
         for(File file : fileArray)
@@ -176,8 +185,9 @@ public class ReportGenerator
             }
             else
             {
-                if(file.getAbsolutePath()
-                       .endsWith(fileExtension))
+                if((null==fileExtension)||
+                   (fileExtension.equals(Settings.Empty))||
+                   (file.getAbsolutePath().endsWith(fileExtension)))
                 {
                     fileList.add(file.getAbsolutePath());
                 }

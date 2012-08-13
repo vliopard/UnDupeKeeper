@@ -4,6 +4,7 @@ import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.AbstractTableModel;
+import settings.Settings;
 import settings.Strings;
 
 /**
@@ -90,7 +91,7 @@ public class FileTableModel extends
                 if(fileSystemView.getSystemDisplayName(file)
                                  .lastIndexOf(Strings.dot)<0)
                 {
-                    return "";
+                    return Settings.Empty;
                 }
                 return fileSystemView.getSystemDisplayName(file)
                                      .substring(fileSystemView.getSystemDisplayName(file)
@@ -116,7 +117,7 @@ public class FileTableModel extends
             default:
                 err(Strings.fbInvalidColumnIndex);
         }
-        return "";
+        return Settings.Empty;
     }
 
     /**

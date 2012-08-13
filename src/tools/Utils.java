@@ -111,7 +111,8 @@ public class Utils
         }
         catch(AWTException|InterruptedException e)
         {
-            err(Strings.utBalloonError+
+            err("036: "
+                    +Strings.utBalloonError+
                 e);
         }
         systemTray.remove(trayIcon);

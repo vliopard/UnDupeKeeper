@@ -1,8 +1,10 @@
 package tools;
 import java.io.File;
+import java.nio.file.Path;
+import settings.Settings;
 
-// TODO: 05 JAVADOC
-// TODO: 04 REFACTOR NAMES
+// TODO: JAVADOC
+// TODO: METHOD AND VARIABLE NAMES REFACTORING
 public class FileUtils
 {
     /**
@@ -42,7 +44,8 @@ public class FileUtils
                 {
                     if(files[index].isDirectory())
                     {
-                        // TODO: Performance: Implement this as a queue where
+                        // TODO: RESEARCH: Performance - Implement this as a
+                        // queue where
                         // you add to the end and take from the beginning, it
                         // will be more efficient than the recursion
                         dirDeleted=deleteDirectoryContent(files[index]);
@@ -105,6 +108,67 @@ public class FileUtils
         return bRetval;
     }
 
+    public static File file(String file)
+    {
+        return new File(file);
+    }
+
+    public static boolean exist(String file)
+    {
+        return file(file).exists();
+    }
+
+    public static boolean isFile(String file)
+    {
+        if(null==file)
+        {
+            return false;
+        }
+        return (exist(file))&&
+               (file(file).isFile());
+    }
+
+    /**
+     * This method checks if a path is really a directory.
+     * 
+     * @param dirName
+     *            A <code>Path</code> to a file location.
+     * @return Return <code>false</code> when dirName is: <code>null</code>, not
+     *         exists and is a Directory. Return <code>true</code> if it is an
+     *         actual file.
+     */
+    public static boolean isDir(Path dirName)
+    {
+        if(null==dirName)
+        {
+            return false;
+        }
+        return isDir(dirName.toString());
+    }
+
+    public static boolean isDir(String dirName)
+    {
+        if(null==dirName)
+        {
+            return false;
+        }
+        return (exist(dirName))&&
+               (file(dirName).isDirectory());
+    }
+
+    public static boolean isEmpty(String dirName)
+    {
+        if(isFile(dirName))
+        {
+            return(file(dirName).length()==0);
+        }
+        if(isDir(dirName))
+        {
+            return(file(dirName).list().length==0);
+        }
+        return true;
+    }
+
     public static String getFilePath(String file)
     {
         return file.substring(0,
@@ -125,7 +189,7 @@ public class FileUtils
     {
         if(file.lastIndexOf(".")<0)
         {
-            return "";
+            return Settings.Empty;
         }
         return file.substring(file.lastIndexOf("."));
     }

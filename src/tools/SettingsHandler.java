@@ -42,7 +42,7 @@ public class SettingsHandler implements
         language=Settings.languageValues[0];
         languageIndex=0;
         encryptionMethod=Settings.CypherMethodSHA512;
-        comparisonMethod=Settings.notComparing;
+        comparisonMethod=Settings.comparisonIsON;
         xScreenAxis=(screenSize.width-320)/2;
         yScreenAxis=(screenSize.height-110)/2;
         settingsChanged=false;

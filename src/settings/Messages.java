@@ -2,6 +2,7 @@ package settings;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import tools.DataBase;
+import tools.Logger;
 
 /**
  * Messages class is responsible for changing language.
@@ -40,7 +41,21 @@ public class Messages
         }
         catch(MissingResourceException e)
         {
+            // TODO: EXTERNALIZE STRING
+            err("019: "
+                +"ERROR");
             return '!'+key+'!';
         }
+    }
+
+    /**
+     * This method displays an error message through the embedded log system.
+     * 
+     * @param errorMessage
+     *            A <code>String</code> containing the error message to display.
+     */
+    private static void err(String errorMessage)
+    {
+        Logger.err(errorMessage);
     }
 }

@@ -1,4 +1,7 @@
 package tools;
+
+import settings.Settings;
+
 /**
  * Logger class is responsible for centralize debug and message mechanism,
  * allowing developer to use filters and levels of displaying message,
@@ -102,7 +105,7 @@ public class Logger
                 }
             }
             String debugModuleName=null;
-            if(logMessage.startsWith(" ")||
+            if(logMessage.startsWith(Settings.Blank)||
                logMessage.startsWith("!"))
             {
                 debugModuleName=threadStackTrace.getStackTrace()[2].getClassName();

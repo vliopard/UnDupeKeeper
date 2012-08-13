@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 // TODO: JAVADOC
-// TODO: REFACTORING NAMES
+// TODO: METHOD AND VARIABLE NAMES REFACTORING
 public class ProgressBarDialog
 {
     private JFrame       parentFrame;
@@ -28,7 +28,19 @@ public class ProgressBarDialog
                             90);
         jl=new JLabel(message);
         jb=new JButton("Done");
-        jb.addActionListener(new ButtonListener());
+        jb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent ae)
+                {
+                    jb.setEnabled(false);
+                    parentFrame.setVisible(false);
+                    parentFrame.dispose();
+                    synchronized(parentFrame)
+                    {
+                        parentFrame.notify();
+                    }
+                }
+            });
         jb.setEnabled(false);
         jl.setHorizontalTextPosition(JLabel.CENTER);
         jl.setHorizontalAlignment(JLabel.CENTER);
@@ -75,28 +87,26 @@ public class ProgressBarDialog
         {
             try
             {
+                // TODO: RESEARCH: _SOLVE FINDBUGS ISSUE
                 parentFrame.wait();
             }
             catch(InterruptedException e)
             {
                 // TODO: EXTERNALIZE STRING
-                // TODO: HANDLE ERROR
+                err("033: "
+                    +"FATAL: Cannot wait for user input");
             }
         }
     }
 
-    class ButtonListener implements
-                        ActionListener
+    /**
+     * This method displays an error message through the embedded log system.
+     * 
+     * @param errorMessage
+     *            A <code>String</code> containing the error message to display.
+     */
+    private static void err(String errorMessage)
     {
-        public void actionPerformed(ActionEvent ae)
-        {
-            jb.setEnabled(false);
-            parentFrame.setVisible(false);
-            parentFrame.dispose();
-            synchronized(parentFrame)
-            {
-                parentFrame.notify();
-            }
-        }
+        Logger.err(errorMessage);
     }
 }

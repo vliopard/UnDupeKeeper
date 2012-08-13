@@ -60,7 +60,8 @@ public class CheckSum
         }
         catch(IOException|NoSuchAlgorithmException e)
         {
-            log(Strings.csChecksumCreationFailed+
+            log("020: "
+                    +Strings.csChecksumCreationFailed+
                 e);
             return null;
         }
@@ -168,7 +169,8 @@ public class CheckSum
         }
         catch(NoSuchAlgorithmException|UnsupportedEncodingException e)
         {
-            log(Strings.csPasswordEncryptionFailed+
+            log("021: "
+                    +Strings.csPasswordEncryptionFailed+
                 e);
         }
         return cypherSha1Method;

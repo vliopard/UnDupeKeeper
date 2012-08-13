@@ -19,7 +19,7 @@ public class Settings
             "SHA-384",
             "SHA-512"
                                                           };
-    public static boolean        notComparing             =false;
+    public static boolean        comparisonIsON           =false;
     public static String         CypherMethod             =CypherMethodList[Settings.CypherMethodSHA512];
     public static final int      CypherMethodCRC32        =0;
     public static final int      CypherMethodMD5          =1;
@@ -84,15 +84,24 @@ public class Settings
             (byte)'e',
             (byte)'f'
                                                           };
+    public static final String   Empty                    ="";
+    public static final String   Blank                    =" ";
+    public static final String   Quote                    ="\"";
     public static final String   RootDir                  ="/";
+    public static final String   EndLine                  ="\r\n";
     public static final String   Recursive                ="-r";
     public static final String   TextFileList             ="-f";
     public static final String   FileExtension            =".jpg";
+    public static final String   CompareAsc               ="asc";
+    public static final String   CompareDesc              ="desc";
+    public static final String   CompareRecursive         ="recursive";
+    public static final String   CompareCommand           ="fc /B ";
     public static final String   WorkerPrepareToExit      ="ExitSignal";
     public static final String   HexHashValues            ="0123456789ABCDEF";
     public static final String   WatchedDirectoryName     ="UnDupeKeeper.dir";
     public static final String   UnDupeKeeperDatabaseName ="UnDupeKeeper.hdb";
     public static final String   UnDupeKeeperSettings     ="UnDupeKeeper.set";
+    public static final String   UnDupeKeeperTextFile     ="_text_file_list_(Dup3K33p).txt";
     public static final String   UnDupeKeeperExtension    =".(Dup3K33p)";
     public static final String   UnDupeKeeperSignature    =" repeeKepuDnU{.-::![|@|]!::-.}UnDupeKeeper ";
     public static final String   SystemTrayIconSize       ="16";

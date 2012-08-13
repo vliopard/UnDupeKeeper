@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.*;
 import java.text.DecimalFormat;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -23,6 +22,7 @@ import settings.Strings;
 import tools.Comparison;
 import tools.DataBase;
 import tools.FileQueue;
+import tools.FileUtils;
 import tools.Logger;
 import tools.SettingsHandler;
 import tools.TrayImage;
@@ -37,6 +37,7 @@ import tools.TrayImage;
 public class UnDupeKeeper
 {
     private static boolean                  recursiveFolderScan =false;
+    private static String                   fileOrder           =Settings.CompareAsc;
     private static TrayIcon                 trayIcon;
     private static Blinker                  guiThread;
     private static Worker                   workerThread;
@@ -56,25 +57,6 @@ public class UnDupeKeeper
     }
 
     /**
-     * This method checks if a path is really a directory.
-     * 
-     * @param dirName
-     *            A <code>Path</code> to a file location.
-     * @return Return <code>false</code> when dirName is: <code>null</code>, not
-     *         exists and is a Directory. Return <code>true</code> if it is an
-     *         actual file.
-     */
-    private static boolean isDir(Path dirName)
-    {
-        if(null==dirName)
-        {
-            return false;
-        }
-        return (new File(dirName.toString()).exists())&&
-               (new File(dirName.toString()).isDirectory());
-    }
-
-    /**
      * This method validates arguments passed to UnDupeKeeper via command
      * prompt.
      * 
@@ -86,22 +68,33 @@ public class UnDupeKeeper
      */
     private static Path checkPromptArguments(String[] arguments)
     {
-        int argumentIndex=0;
-        if(arguments.length==0||
-           arguments.length>Settings.TotalArguments)
+        String parameter=(arguments.length>0)?arguments[0]
+                                             :"";
+        String filename=(arguments.length>1)?arguments[1]
+                                            :"";
+        String sortorder=(arguments.length>2)?arguments[2]
+                                             :"";
+        if(parameter.trim()
+                    .equals("")||
+           filename.trim()
+                   .equals("")||
+           !FileUtils.exist(filename))
         {
             usage();
         }
-        if(arguments[0].equals(Settings.Recursive))
+        if(parameter.equals(Settings.TextFileList))
         {
-            recursiveFolderScan=true;
-            if(arguments.length<Settings.TotalArguments)
-            {
-                usage();
-            }
-            argumentIndex++;
+            fileOrder=sortorder;
         }
-        return Paths.get(arguments[argumentIndex]);
+        else
+        {
+            if(parameter.equals(Settings.Recursive))
+            {
+                recursiveFolderScan=true;
+                fileOrder=Settings.CompareRecursive;
+            }
+        }
+        return Paths.get(filename);
     }
 
     /**
@@ -117,38 +110,18 @@ public class UnDupeKeeper
         Path directoryToWatch=null;
         if(args.length>0)
         {
-            if(args[0].equals(Settings.TextFileList))
-            {
-                // TODO: CREATE FILE NOT FOUND MSG
-                // TODO: EXTERNALIZE FILE NOT FOUND MSG
-                File textFile=new File(args[1]);
-                if((!(textFile.exists()&&
-                      textFile.isFile()&&(textFile.length()>1)))&&
-                   (args.length<Settings.TotalArguments))
-                {
-                    usage();
-                }
-                else
-                {
-                    if(args.length==Settings.TotalArguments)
-                    {
-                        Comparison.compare(args[1],
-                                           args[2]);
-                    }
-                    else
-                    {
-                        Comparison.compare(args[1],
-                                           null);
-                    }
-                    System.exit(0);
-                }
-            }
             directoryToWatch=checkPromptArguments(args);
+            if(!fileOrder.equals(Settings.CompareRecursive))
+            {
+                Comparison.compare(directoryToWatch.toString(),
+                                   fileOrder);
+                System.exit(0);
+            }
             settingsHandler.setDirectory(directoryToWatch.toString());
             DataBase.saveDir(directoryToWatch.toString());
             DataBase.saveSettings(settingsHandler);
         }
-        while(!isDir(directoryToWatch))
+        while(!FileUtils.isDir(directoryToWatch))
         {
             String directoryName=null;
             recursiveFolderScan=true;
@@ -180,7 +153,7 @@ public class UnDupeKeeper
                                   trayIcon);
             new Thread(guiThread).start();
             Settings.CypherMethod=Settings.CypherMethodList[settingsHandler.getEncryptionMethod()];
-            Settings.notComparing=settingsHandler.getComparisonMethod();
+            Settings.comparisonIsON=settingsHandler.getComparisonMethod();
             workerThread=new Worker(transferQueue,
                                     stopSignal);
             new Thread(workerThread).start();
@@ -198,7 +171,7 @@ public class UnDupeKeeper
         }
         catch(InterruptedException e)
         {
-            err(Strings.ukProblemStarting+
+            err("012: "+Strings.ukProblemStarting+
                 e);
         }
         msg(Strings.ukNormalShutdonw);
@@ -218,7 +191,7 @@ public class UnDupeKeeper
         }
         catch(InterruptedException e)
         {
-            err(Strings.ukCantSendExitToWorker);
+            err("013: "+Strings.ukCantSendExitToWorker);
         }
     }
 
@@ -235,7 +208,7 @@ public class UnDupeKeeper
         catch(UnsupportedLookAndFeelException|IllegalAccessException
                 |InstantiationException|ClassNotFoundException e)
         {
-            err(Strings.ukErrorLoadingLookAndFeel+
+            err("014: "+Strings.ukErrorLoadingLookAndFeel+
                 e);
         }
         // UIManager.put("swing.boldMetal", Boolean.FALSE);
@@ -259,8 +232,8 @@ public class UnDupeKeeper
                                               "\nUsing: "+
                                               Settings.CypherMethod+
                                               " with binary "+
-                                              (Settings.notComparing?Strings.ukComparisonOn
-                                                                    :Strings.ukComparisonOff)+
+                                              (Settings.comparisonIsON?Strings.ukComparisonOn
+                                                                      :Strings.ukComparisonOff)+
                                               "\nGUI: "+
                                               Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]+
                                               "\nTotal DB items: "+
@@ -305,7 +278,7 @@ public class UnDupeKeeper
         }
         catch(AWTException e)
         {
-            err(Strings.ukSystemTrayIconCantBeAdded);
+            err("015: "+Strings.ukSystemTrayIconCantBeAdded);
             return;
         }
         trayIcon.addActionListener(new ActionListener()

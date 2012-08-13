@@ -1,7 +1,7 @@
 package tools;
 import java.util.concurrent.TimeUnit;
 
-// TODO: 00 JAVADOC
+// TODO: JAVADOC
 public class TimeControl
 {
     public static long getTime()
@@ -69,14 +69,19 @@ public class TimeControl
     {
         return Utils.addCustomLeadingZeros("02",
                                            getHour(time))+
-               ":"+
+               "°:"+
                Utils.addCustomLeadingZeros("02",
                                            getMin(time))+
-               ":"+
+               "\":"+
                Utils.addCustomLeadingZeros("02",
                                            getSec(time))+
+               "':"+
+               Utils.addCustomLeadingZeros("03",
+                                  getMil(time)-
+                                          (getSec(time)*1000))+
                ":"+
-               Utils.customFormat("###,###",
-                                  getMic(time));
+               Utils.addCustomLeadingZeros("03",
+                                  getMic(time)-
+                                          (getMil(time)*1000));
     }
 }
