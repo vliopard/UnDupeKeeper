@@ -1,4 +1,6 @@
 package tools;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
 // TODO: JAVADOC
@@ -67,21 +69,33 @@ public class TimeControl
 
     public static String getTotal(long time)
     {
+        Timestamp ts=new Timestamp(TimeUnit.MILLISECONDS.convert(time,
+                                                                 TimeUnit.NANOSECONDS));
+        SimpleDateFormat format=new SimpleDateFormat("°:mm'\"':ss'':SSS:");
+        long hr=getHour(time);
+        long mic=getMic(time);
+        long roundTime=mic/1000;
         return Utils.addCustomLeadingZeros("02",
-                                           getHour(time))+
-               "°:"+
-               Utils.addCustomLeadingZeros("02",
-                                           getMin(time))+
-               "\":"+
-               Utils.addCustomLeadingZeros("02",
-                                           getSec(time))+
-               "':"+
-               Utils.addCustomLeadingZeros("03",
-                                  getMil(time)-
-                                          (getSec(time)*1000))+
-               ":"+
-               Utils.addCustomLeadingZeros("03",
-                                  getMic(time)-
-                                          (getMil(time)*1000));
+                                           hr)+
+               format.format(ts)+
+               (mic-(roundTime*1000));
+        /*
+         * return Utils.addCustomLeadingZeros("02",
+         * getHour(time))+
+         * "°:"+
+         * Utils.addCustomLeadingZeros("02",
+         * getMin(time))+
+         * "\":"+
+         * Utils.addCustomLeadingZeros("02",
+         * getMin(time)-getSec(time))+
+         * "':"+
+         * Utils.addCustomLeadingZeros("03",
+         * getMil(time)-
+         * (getSec(time)*1000))+
+         * ":"+
+         * Utils.addCustomLeadingZeros("03",
+         * getMic(time)-
+         * (getMil(time)*1000));
+         */
     }
 }

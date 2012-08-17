@@ -72,8 +72,8 @@ public class DataBase
         }
         catch(IOException e)
         {
-            log("027: "
-                    +Strings.dbProblemToSaveMap+
+            err("MSG_027: "+
+                Strings.dbProblemToSaveMap+
                 e);
         }
     }
@@ -103,8 +103,8 @@ public class DataBase
             }
             catch(ClassNotFoundException|IOException e)
             {
-                log("028: "
-                        +Strings.dbProblemDatabaseCreation+
+                err("MSG_028: "+
+                    Strings.dbProblemDatabaseCreation+
                     e);
             }
         }
@@ -131,8 +131,8 @@ public class DataBase
         }
         catch(IOException e)
         {
-            log("029: "
-                    +Strings.dbProblemSavingDir+
+            err("MSG_029: "+
+                Strings.dbProblemSavingDir+
                 e);
         }
     }
@@ -154,8 +154,8 @@ public class DataBase
             }
             catch(ClassNotFoundException|IOException e)
             {
-                log("030: "
-                        +Strings.dbProblemStoringSettings+
+                err("MSG_030: "+
+                    Strings.dbProblemStoringSettings+
                     e);
             }
         }
@@ -205,8 +205,8 @@ public class DataBase
         }
         catch(IOException e)
         {
-            log("031: "
-                    +Strings.dbProblemToSaveSettings+
+            err("MSG_031: "+
+                Strings.dbProblemToSaveSettings+
                 e);
         }
     }
@@ -232,8 +232,8 @@ public class DataBase
             }
             catch(ClassNotFoundException|IOException e)
             {
-                log("032: "
-                        +Strings.dbProblemSettingsCreation+
+                err("MSG_032: "+
+                    Strings.dbProblemSettingsCreation+
                     e);
             }
         }
@@ -305,19 +305,6 @@ public class DataBase
     }
 
     /**
-     * This method displays a log message through the embedded log system.
-     * 
-     * @param logMessage
-     *            A <code>String</code> containing the log message to display.
-     */
-    private static void log(String logMessage)
-    {
-        Logger.log(Thread.currentThread(),
-                   logMessage,
-                   Logger.DATABASE);
-    }
-
-    /**
      * This method displays a message through the embedded log system.
      * 
      * @param message
@@ -326,5 +313,16 @@ public class DataBase
     private static void msg(String message)
     {
         Logger.msg(message);
+    }
+
+    /**
+     * This method displays an error message through the embedded log system.
+     * 
+     * @param errorMessage
+     *            A <code>String</code> containing the error message to display.
+     */
+    private static void err(String errorMessage)
+    {
+        Logger.err(errorMessage);
     }
 }

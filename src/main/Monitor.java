@@ -73,7 +73,8 @@ public class Monitor
         }
         catch(JNotifyException|InterruptedException e)
         {
-            err("002: "+Strings.mtProblemCreatingMonitorObject+
+            err("MSG_002: "+
+                Strings.mtProblemCreatingMonitorObject+
                 e);
         }
         msg(Strings.mtMonitorShutdown);
@@ -104,7 +105,8 @@ public class Monitor
             }
             catch(InterruptedException e)
             {
-                log("003: "+Strings.mtProblemAddingToCreatingQueue+
+                err("MSG_003: "+
+                    Strings.mtProblemAddingToCreatingQueue+
                     e);
             }
         }
@@ -124,7 +126,8 @@ public class Monitor
             }
             catch(InterruptedException e)
             {
-                log("004: "+Strings.mtProblemAddingToModifyingQueue+
+                err("MSG_004: "+
+                    Strings.mtProblemAddingToModifyingQueue+
                     e);
             }
         }
@@ -144,7 +147,8 @@ public class Monitor
             }
             catch(InterruptedException e)
             {
-                log("005: "+Strings.mtProblemAddingToDeletingQueue+
+                err("MSG_005: "+
+                    Strings.mtProblemAddingToDeletingQueue+
                     e);
             }
         }

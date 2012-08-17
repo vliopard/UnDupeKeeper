@@ -218,7 +218,7 @@ public class ReportViewer
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("006: "+Strings.btAError,
+                            showThrowable("MSG_006: "+Strings.btAError,
                                           Strings.btA,
                                           e);
                         }
@@ -240,7 +240,7 @@ public class ReportViewer
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("007: "+Strings.btBError,
+                            showThrowable("MSG_007: "+Strings.btBError,
                                           Strings.btB,
                                           e);
                         }
@@ -262,7 +262,7 @@ public class ReportViewer
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("008: "+Strings.btCError,
+                            showThrowable("MSG_008: "+Strings.btCError,
                                           Strings.btC,
                                           e);
                         }
@@ -291,7 +291,7 @@ public class ReportViewer
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("009: "+Strings.btDError,
+                            showThrowable("MSG_009: "+Strings.btDError,
                                           Strings.btD,
                                           e);
                         }
@@ -586,7 +586,7 @@ public class ReportViewer
         }
         catch(Exception e)
         {
-            err("010: "+Strings.fbErrorLoadingLookAndFeel+
+            err("MSG_010: "+Strings.fbErrorLoadingLookAndFeel+
                 e);
         }
         JFrame mainFrame=new JFrame(Strings.fbTitleCheck);
@@ -624,7 +624,7 @@ public class ReportViewer
         }
         catch(Exception e)
         {
-            err("011: "+Strings.fbErrorLoadingIcons+
+            err("MSG_011: "+Strings.fbErrorLoadingIcons+
                 e);
         }
         mainFrame.pack();

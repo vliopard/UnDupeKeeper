@@ -70,7 +70,8 @@ public class Worker implements
         }
         catch(InterruptedException e)
         {
-            log("016: "+Strings.wkProblemRunningWorker+
+            err("MSG_016: "+
+                Strings.wkProblemRunningWorker+
                 e);
         }
         save();
@@ -80,7 +81,8 @@ public class Worker implements
         }
         catch(InterruptedException e)
         {
-            err("017: "+Strings.wkErrorSendingShutdownMessage);
+            err("MSG_017: "+
+                Strings.wkErrorSendingShutdownMessage);
         }
         msg(Strings.wkWorkerShutdown);
     }
@@ -244,7 +246,8 @@ public class Worker implements
             }
             catch(IOException e)
             {
-                log("018: "+Strings.wkProblemIncludingNewFile+
+                err("MSG_018: "+
+                    Strings.wkProblemIncludingNewFile+
                     e);
             }
         }
@@ -272,19 +275,6 @@ public class Worker implements
             hashMapTable.values()
                         .remove(fileName);
         }
-    }
-
-    /**
-     * This method displays a log message through the embedded log system.
-     * 
-     * @param logMessage
-     *            A <code>String</code> containing the log message to display.
-     */
-    private static void log(String logMessage)
-    {
-        Logger.log(Thread.currentThread(),
-                   logMessage,
-                   Logger.WORKER);
     }
 
     /**

@@ -42,7 +42,7 @@ public class Messages
         catch(MissingResourceException e)
         {
             // TODO: EXTERNALIZE STRING
-            err("019: "
+            err("MSG_019: "
                 +"ERROR");
             return '!'+key+'!';
         }

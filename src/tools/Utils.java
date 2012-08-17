@@ -111,7 +111,7 @@ public class Utils
         }
         catch(AWTException|InterruptedException e)
         {
-            err("036: "
+            err("MSG_036: "
                     +Strings.utBalloonError+
                 e);
         }

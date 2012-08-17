@@ -60,8 +60,8 @@ public class CheckSum
         }
         catch(IOException|NoSuchAlgorithmException e)
         {
-            log("020: "
-                    +Strings.csChecksumCreationFailed+
+            err("MSG_020: "+
+                Strings.csChecksumCreationFailed+
                 e);
             return null;
         }
@@ -169,8 +169,8 @@ public class CheckSum
         }
         catch(NoSuchAlgorithmException|UnsupportedEncodingException e)
         {
-            log("021: "
-                    +Strings.csPasswordEncryptionFailed+
+            err("MSG_021: "+
+                Strings.csPasswordEncryptionFailed+
                 e);
         }
         return cypherSha1Method;
@@ -274,5 +274,16 @@ public class CheckSum
         Logger.log(Thread.currentThread(),
                    logMessage,
                    Logger.CHECKSUM);
+    }
+
+    /**
+     * This method displays an error message through the embedded log system.
+     * 
+     * @param errorMessage
+     *            A <code>String</code> containing the error message to display.
+     */
+    private static void err(String errorMessage)
+    {
+        Logger.err(errorMessage);
     }
 }

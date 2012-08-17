@@ -111,7 +111,8 @@ public class Blinker implements
             }
             catch(InterruptedException e)
             {
-                err("000: "+Strings.uiProblem+
+                err("MSG_000: "+
+                    Strings.uiProblem+
                     e);
             }
             size=transferQueue.size();
@@ -154,7 +155,8 @@ public class Blinker implements
         }
         catch(InterruptedException e)
         {
-            err("001: "+Strings.wkErrorSendingShutdownMessage);
+            err("MSG_001: "+
+                Strings.wkErrorSendingShutdownMessage);
         }
         msg(Strings.uiShutdown);
     }

@@ -42,7 +42,7 @@ public class Comparison
             catch(IOException e)
             {
                 // TODO: EXTERNALIZE STRING
-                err("022: "
+                err("MSG_022: "
                     +"aaa");
             }
             if(f1.length()!=f2.length())
@@ -70,6 +70,9 @@ public class Comparison
         {
             Process proc=Runtime.getRuntime()
                                 .exec(command);
+            // TODO: REMOVE THIS LOG MSG AFTER TESTING
+            err("Waiting for "+
+                command);
             proc.waitFor();
             BufferedReader inputStream=new BufferedReader(new InputStreamReader(proc.getInputStream()));
             BufferedReader errorStream=new BufferedReader(new InputStreamReader(proc.getErrorStream()));
@@ -92,7 +95,7 @@ public class Comparison
         catch(Exception e)
         {
             // TODO: EXTERNALIZE STRING
-            err("023: "+
+            err("MSG_023: "+
                 "bbb"+
                 e);
         }
@@ -284,7 +287,7 @@ public class Comparison
             catch(IOException e)
             {
                 // TODO: EXTERNALIZE STRING
-                err("024: "+
+                err("MSG_024: "+
                     "ccc"+
                     e);
                 return false;
@@ -298,15 +301,52 @@ public class Comparison
     {
         // TODO: EXTERNALIZE STRING
         String ftype="File";
+        ArrayList<String> arrayFileList=null;
         if(FileUtils.isDir(textFileList)&&
            (!FileUtils.isEmpty(textFileList)))
         {
-            ArrayList<String> arrayFileList=ReportGenerator.generateFileList(FileUtils.file(textFileList)
-                                                                                      .listFiles(),
-                                                                             Settings.Empty);
+            arrayFileList=ReportGenerator.generateFileList(FileUtils.file(textFileList)
+                                                                    .listFiles(),
+                                                           Settings.Empty);
             textFileList=FileUtils.getFilePath(textFileList)+
                          FileUtils.getFileName(textFileList)+
                          Settings.UnDupeKeeperTextFile;
+        }
+        else
+        {
+            if(FileUtils.isFile(textFileList)&&
+               (!FileUtils.isEmpty(textFileList)))
+            {
+                try
+                {
+                    arrayFileList=new ArrayList<String>();
+                    InputStream fis1=new FileInputStream(textFileList);
+                    BufferedReader myINfile=new BufferedReader(new InputStreamReader(fis1));
+                    String line3=Settings.Empty;
+                    while(((line3=myINfile.readLine())!=null))
+                    {
+                        arrayFileList.add(line3);
+                    }
+                    myINfile.close();
+                }
+                catch(IOException e)
+                {
+                    // TODO: EXTERNALIZE STRING
+                    err("MSG_038: "
+                        +"canot open text file");
+                    textFileList=null;
+                    arrayFileList=null;
+                }
+            }
+            else
+            {
+                textFileList=null;
+                arrayFileList=null;
+            }
+        }
+        if((null!=textFileList)&&
+           (null!=arrayFileList))
+        {
             try
             {
                 FileWriter writ=new FileWriter(textFileList);
@@ -332,15 +372,11 @@ public class Comparison
             catch(IOException e)
             {
                 // TODO: EXTERNALIZE STRING
-                err("025: "+
+                err("MSG_025: "+
                     "Could not write ordered file list"+
                     e);
                 textFileList=null;
             }
-        }
-        else
-        {
-            textFileList=null;
         }
         String vc[]=
         {
@@ -364,7 +400,7 @@ public class Comparison
             pbd=new ProgressBarDialog("Undupe "+
                                               fileOrDirectory[1],
                                       "Starting...");
-            msg("UnDupe version 12.08.09.10.10");
+            msg("UnDupe version 12.08.17.01.50");
             msg("Starting comparison...");
             int max=0;
             int i=0;
@@ -439,7 +475,7 @@ public class Comparison
             catch(IOException e)
             {
                 // TODO: EXTERNALIZE STRING
-                err("026: "
+                err("MSG_026: "
                     +"yyy");
             }
             pbd.setMessage("100% from "+
@@ -470,7 +506,7 @@ public class Comparison
         else
         {
             // TODO: EXTERNALIZE STRING
-            err("037: "
+            err("MSG_037: "
                 +"ERROR: Unable to sort input file");
         }
     }

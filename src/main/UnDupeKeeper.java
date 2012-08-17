@@ -171,7 +171,7 @@ public class UnDupeKeeper
         }
         catch(InterruptedException e)
         {
-            err("012: "+Strings.ukProblemStarting+
+            err("MSG_012: "+Strings.ukProblemStarting+
                 e);
         }
         msg(Strings.ukNormalShutdonw);
@@ -191,7 +191,7 @@ public class UnDupeKeeper
         }
         catch(InterruptedException e)
         {
-            err("013: "+Strings.ukCantSendExitToWorker);
+            err("MSG_013: "+Strings.ukCantSendExitToWorker);
         }
     }
 
@@ -208,7 +208,7 @@ public class UnDupeKeeper
         catch(UnsupportedLookAndFeelException|IllegalAccessException
                 |InstantiationException|ClassNotFoundException e)
         {
-            err("014: "+Strings.ukErrorLoadingLookAndFeel+
+            err("MSG_014: "+Strings.ukErrorLoadingLookAndFeel+
                 e);
         }
         // UIManager.put("swing.boldMetal", Boolean.FALSE);
@@ -278,7 +278,7 @@ public class UnDupeKeeper
         }
         catch(AWTException e)
         {
-            err("015: "+Strings.ukSystemTrayIconCantBeAdded);
+            err("MSG_015: "+Strings.ukSystemTrayIconCantBeAdded);
             return;
         }
         trayIcon.addActionListener(new ActionListener()

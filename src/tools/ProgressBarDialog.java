@@ -93,7 +93,7 @@ public class ProgressBarDialog
             catch(InterruptedException e)
             {
                 // TODO: EXTERNALIZE STRING
-                err("033: "
+                err("MSG_033: "
                     +"FATAL: Cannot wait for user input");
             }
         }
