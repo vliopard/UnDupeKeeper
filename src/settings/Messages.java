@@ -42,8 +42,9 @@ public class Messages
         catch(MissingResourceException e)
         {
             // TODO: EXTERNALIZE STRING
-            err("MSG_019: "
-                +"ERROR");
+            err("MSG_019: "+
+                "ERROR: "+
+                e);
             return '!'+key+'!';
         }
     }

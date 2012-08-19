@@ -116,7 +116,8 @@ public class ReportGenerator
                 else
                 {
                     // TODO: EXTERNALIZE STRING
-                    err("MSG_038:"+"Invalid file content");
+                    err("MSG_038:"
+                        +"Invalid file content");
                     return null;
                 }
                 if(!treeMap.containsKey(fileName))
@@ -137,8 +138,8 @@ public class ReportGenerator
             }
             catch(IOException e)
             {
-                err("MSG_034: "
-                        +Strings.fbReportError+
+                err("MSG_034: "+
+                    Strings.fbReportError+
                     e);
                 return null;
             }
@@ -151,8 +152,8 @@ public class ReportGenerator
             }
             catch(IOException e)
             {
-                err("MSG_035: "
-                        +Strings.rgErrorClosingBuffer+
+                err("MSG_035: "+
+                    Strings.rgErrorClosingBuffer+
                     e);
             }
         }

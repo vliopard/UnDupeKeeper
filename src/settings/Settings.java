@@ -95,7 +95,8 @@ public class Settings
     public static final String   CompareAsc               ="asc";
     public static final String   CompareDesc              ="desc";
     public static final String   CompareRecursive         ="recursive";
-    public static final String   CompareCommand           ="fc /B ";
+    public static final String   DosCompareCommand        ="fc /B ";
+    public static final String   DosCompareCommandResult  ="FC: no differences encountered";
     public static final String   WorkerPrepareToExit      ="ExitSignal";
     public static final String   HexHashValues            ="0123456789ABCDEF";
     public static final String   WatchedDirectoryName     ="UnDupeKeeper.dir";

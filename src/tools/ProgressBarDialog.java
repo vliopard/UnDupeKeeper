@@ -65,6 +65,11 @@ public class ProgressBarDialog
         dpb.setValue(progressValue);
     }
 
+    public void setIndeterminate(boolean indeterminate)
+    {
+        dpb.setIndeterminate(indeterminate);
+    }
+
     public void setMessage(String message)
     {
         jl.setText(message);

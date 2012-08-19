@@ -11,7 +11,6 @@ import java.util.concurrent.BlockingQueue;
 import settings.Settings;
 import settings.Strings;
 import tools.CheckSum;
-import tools.Comparison;
 import tools.DataBase;
 import tools.FileQueue;
 import tools.Logger;
@@ -203,7 +202,7 @@ public class Worker implements
                     boolean isEqual=true;
                     if(Settings.comparisonIsON)
                     {
-                        isEqual=Comparison.isEqual(fileName,
+                        isEqual=Comparison.isBinaryIdentical(fileName,
                                                    mapFileName);
                     }
                     if(isEqual)

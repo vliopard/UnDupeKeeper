@@ -1,7 +1,9 @@
 package main;
 // TODO: RESEARCH: SAVE POSITION AND SCREEN SETTINGS
-// TODO: RESEARCH: FIX FILESIZE ORDERING TO ASC/DESC NUMBER (NOT STRING ALPHABET)
-// TODO: RESEARCH: ORDERING REPORT VIEWER FILES DESYNCHRONIZE SELECTED FOCUS FROM DETAIL
+// TODO: RESEARCH: FIX FILESIZE ORDERING TO ASC/DESC NUMBER (NOT STRING
+// ALPHABET)
+// TODO: RESEARCH: ORDERING REPORT VIEWER FILES DESYNCHRONIZE SELECTED FOCUS
+// FROM DETAIL
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
 // TODO: JAVADOC
 import java.awt.BorderLayout;
@@ -218,7 +220,8 @@ public class ReportViewer
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("MSG_006: "+Strings.btAError,
+                            showThrowable("MSG_006: "+
+                                                  Strings.btAError,
                                           Strings.btA,
                                           e);
                         }
@@ -240,7 +243,8 @@ public class ReportViewer
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("MSG_007: "+Strings.btBError,
+                            showThrowable("MSG_007: "+
+                                                  Strings.btBError,
                                           Strings.btB,
                                           e);
                         }
@@ -262,7 +266,8 @@ public class ReportViewer
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("MSG_008: "+Strings.btCError,
+                            showThrowable("MSG_008: "+
+                                                  Strings.btCError,
                                           Strings.btC,
                                           e);
                         }
@@ -280,7 +285,8 @@ public class ReportViewer
                             msg(Strings.btDMessage+
                                 currentFile);
                             // TODO: RESEARCH: LOOK FOR A WAY TO DELETE FILE
-                            // TODO: RESEARCH: AFTER DELETE FILE, REFRESH GUI FILE TREE
+                            // TODO: RESEARCH: AFTER DELETE FILE, REFRESH GUI
+                            // FILE TREE
                             currentFile.setReadable(true);
                             currentFile.setWritable(true);
                             if(currentFile.delete())
@@ -291,7 +297,8 @@ public class ReportViewer
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("MSG_009: "+Strings.btDError,
+                            showThrowable("MSG_009: "+
+                                                  Strings.btDError,
                                           Strings.btD,
                                           e);
                         }
@@ -586,7 +593,8 @@ public class ReportViewer
         }
         catch(Exception e)
         {
-            err("MSG_010: "+Strings.fbErrorLoadingLookAndFeel+
+            err("MSG_010: "+
+                Strings.fbErrorLoadingLookAndFeel+
                 e);
         }
         JFrame mainFrame=new JFrame(Strings.fbTitleCheck);
@@ -624,7 +632,8 @@ public class ReportViewer
         }
         catch(Exception e)
         {
-            err("MSG_011: "+Strings.fbErrorLoadingIcons+
+            err("MSG_011: "+
+                Strings.fbErrorLoadingIcons+
                 e);
         }
         mainFrame.pack();

@@ -19,7 +19,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import settings.Settings;
 import settings.Strings;
-import tools.Comparison;
 import tools.DataBase;
 import tools.FileQueue;
 import tools.FileUtils;
@@ -113,7 +112,7 @@ public class UnDupeKeeper
             directoryToWatch=checkPromptArguments(args);
             if(!fileOrder.equals(Settings.CompareRecursive))
             {
-                Comparison.compare(directoryToWatch.toString(),
+                Comparison.searchAndMarkDuplicatedFiles(directoryToWatch.toString(),
                                    fileOrder);
                 System.exit(0);
             }
@@ -171,7 +170,8 @@ public class UnDupeKeeper
         }
         catch(InterruptedException e)
         {
-            err("MSG_012: "+Strings.ukProblemStarting+
+            err("MSG_012: "+
+                Strings.ukProblemStarting+
                 e);
         }
         msg(Strings.ukNormalShutdonw);
@@ -191,7 +191,8 @@ public class UnDupeKeeper
         }
         catch(InterruptedException e)
         {
-            err("MSG_013: "+Strings.ukCantSendExitToWorker);
+            err("MSG_013: "+
+                Strings.ukCantSendExitToWorker);
         }
     }
 
@@ -208,7 +209,8 @@ public class UnDupeKeeper
         catch(UnsupportedLookAndFeelException|IllegalAccessException
                 |InstantiationException|ClassNotFoundException e)
         {
-            err("MSG_014: "+Strings.ukErrorLoadingLookAndFeel+
+            err("MSG_014: "+
+                Strings.ukErrorLoadingLookAndFeel+
                 e);
         }
         // UIManager.put("swing.boldMetal", Boolean.FALSE);
@@ -278,7 +280,8 @@ public class UnDupeKeeper
         }
         catch(AWTException e)
         {
-            err("MSG_015: "+Strings.ukSystemTrayIconCantBeAdded);
+            err("MSG_015: "+
+                Strings.ukSystemTrayIconCantBeAdded);
             return;
         }
         trayIcon.addActionListener(new ActionListener()
