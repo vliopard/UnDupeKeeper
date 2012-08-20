@@ -1,5 +1,4 @@
 package tools;
-
 import settings.Settings;
 
 /**
@@ -70,7 +69,7 @@ public class Logger
                                       String debugMessage)
     {
         System.out.println(debugModule+
-                           "\t"+
+                           Settings.Tab+
                            debugMessage);
     }
 
@@ -113,11 +112,13 @@ public class Logger
                                 debugModuleName.substring(debugModuleName.lastIndexOf(".")+1)+
                                 "."+
                                 threadStackTrace.getStackTrace()[3].getMethodName()+
-                                "]\t";
+                                "]"+
+                                Settings.Tab;
             }
             else
             {
-                debugModuleName="[___________]\t";
+                debugModuleName="[___________]"+
+                                Settings.Tab;
             }
             switch(systemModule)
             {

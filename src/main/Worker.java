@@ -188,9 +188,12 @@ public class Worker implements
                         Utils.addLeadingZeros(filesIncluded)+
                         "]["+
                         Utils.addLeadingZeros(filesReplaced)+
-                        "]\t["+
+                        "]"+
+                        Settings.Tab+
+                        "["+
                         cypherMethod+
-                        "]\t"+
+                        "]"+
+                        Settings.Tab+
                         Strings.wkIncluding+
                         fileName);
                     hashMapTable.put(cypherMethod,
@@ -203,7 +206,7 @@ public class Worker implements
                     if(Settings.comparisonIsON)
                     {
                         isEqual=Comparison.isBinaryIdentical(fileName,
-                                                   mapFileName);
+                                                             mapFileName);
                     }
                     if(isEqual)
                     {
@@ -212,9 +215,12 @@ public class Worker implements
                             Utils.addLeadingZeros(filesIncluded)+
                             "]["+
                             Utils.addLeadingZeros(filesReplaced)+
-                            "]\t["+
+                            "]"+
+                            Settings.Tab+
+                            "["+
                             cypherMethod+
-                            "]\t"+
+                            "]"+
+                            Settings.Tab+
                             Strings.wkReplacing+
                             fileName);
                         File fileToRename=new File(fileName);
@@ -267,7 +273,8 @@ public class Worker implements
                 Utils.addLeadingZeros(filesIncluded)+
                 "]["+
                 Utils.addLeadingZeros(filesReplaced)+
-                "]\t"+
+                "]"+
+                Settings.Tab+
                 Strings.wkRemoving+
                 fileName);
             filesIncluded--;

@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import settings.Strings;
 
 // TODO: JAVADOC
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
@@ -27,7 +28,7 @@ public class ProgressBarDialog
         parentFrame.setSize(500,
                             90);
         jl=new JLabel(message);
-        jb=new JButton("Done");
+        jb=new JButton(Strings.done);
         jb.addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent ae)
@@ -97,9 +98,9 @@ public class ProgressBarDialog
             }
             catch(InterruptedException e)
             {
-                // TODO: EXTERNALIZE STRING
-                err("MSG_033: "
-                    +"FATAL: Cannot wait for user input");
+                err("MSG_033: "+
+                    Strings.fatalError+
+                    e);
             }
         }
     }

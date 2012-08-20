@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import settings.Settings;
+import settings.Strings;
 import tools.FileUtils;
 import tools.Logger;
 import tools.ProgressBarDialog;
@@ -57,10 +58,8 @@ public class Comparison
                  * This is not a desirable behavior. Better returning false
                  * instead.
                  */
-                // TODO: KEEP AS AN ERROR MESSAGE OR LOG MESSAGE?
                 err("MSG_022: "+
-                    // TODO: EXTERNALIZE STRING
-                    "Cannot compare files: "+
+                    Strings.cannotCompareFiles+
                     binaryFilePath1+
                     Settings.Blank+
                     binaryFilePath2);
@@ -119,16 +118,14 @@ public class Comparison
             inputStream=new BufferedReader(new InputStreamReader(proc.getErrorStream()));
             while((strLn=inputStream.readLine())!=null)
             {
-                // TODO: EXTERNALIZE STRING
-                err("OUTPUT ERROR: "+
+                err(Strings.outputError+
                     strLn);
             }
         }
         catch(Exception e)
         {
-            // TODO: EXTERNALIZE STRING
             err("MSG_023: "+
-                "Process Runtime Error: "+
+                Strings.processRuntimeError+
                 e);
         }
         return false;
@@ -152,9 +149,8 @@ public class Comparison
         }
         catch(IOException e)
         {
-            // TODO: EXTERNALIZE STRING
-            err("MSG_039"+
-                "Problem while counting lines: "+
+            err("MSG_039: "+
+                Strings.problemCountingLines+
                 e);
             return -1;
         }
@@ -187,7 +183,8 @@ public class Comparison
                                              String fileName2,
                                              long fileCounter)
     {
-        String removeMarker="[_REMOVE_]_(Dup3K33p)_["+
+        String removeMarker=Settings.UnDupeKeeperMarker+
+                            "_["+
                             fileCounter+
                             "]_";
         String originalSourceFileName=FileUtils.getFilePath(fileName2)+
@@ -205,7 +202,7 @@ public class Comparison
                             "@@"+
                             originalSourceFileName+
                             removeMarker;
-        if(fileName1.lastIndexOf(".")>fileName1.lastIndexOf("\\"))
+        if(fileName1.lastIndexOf(Settings.Dot)>fileName1.lastIndexOf(Settings.Slash))
         {
             newFileName1=newFileName1+
                          FileUtils.getFileExtension(fileName1);
@@ -221,19 +218,21 @@ public class Comparison
     {
         progressBarDialog.setProgress((int)percentage);
         progressBarDialog.setMessage(percentage+
-                                     "% from "+
+                                     Strings.percentageFrom+
                                      (long)totalFileCount+
-                                     " files ("+
+                                     Strings.filec+
                                      renamedFileCount+
-                                     ") renamed, current "+
+                                     Strings.renamed+
+                                     Strings.current+
                                      (long)currentFile);
-        msg("\t"+
+        msg(Settings.Tab+
             percentage+
-            "% from "+
+            Strings.percentageFrom+
             (long)totalFileCount+
-            " files ("+
+            Strings.filec+
             renamedFileCount+
-            ") renamed, current "+
+            Strings.renamed+
+            Strings.current+
             (long)currentFile);
     }
 
@@ -284,7 +283,7 @@ public class Comparison
             try
             {
                 progressBarDialog.setIndeterminate(true);
-                progressBarDialog.setMessage("Sorting file list...");
+                progressBarDialog.setMessage(Strings.sortingFileList);
                 InputStream textFileInputStream=new FileInputStream(textFileName);
                 BufferedReader textFileBufferedReader=new BufferedReader(new InputStreamReader(textFileInputStream));
                 String fileLine=Settings.Empty;
@@ -341,9 +340,8 @@ public class Comparison
             }
             catch(IOException e)
             {
-                // TODO: EXTERNALIZE STRING
                 err("MSG_024: "+
-                    "Problem Sorting Text File: "+
+                    Strings.problemSortingTextFile+
                     e);
                 return false;
             }
@@ -354,8 +352,7 @@ public class Comparison
 
     private static String[] checkIfListIsDirectory(String textFileList)
     {
-        // TODO: EXTERNALIZE STRING
-        String textFileType="File";
+        String textFileType=Strings.file;
         ArrayList<String> arrayFileList=new ArrayList<String>();
         if(FileUtils.isDir(textFileList)&&
            (!FileUtils.isEmpty(textFileList)))
@@ -366,8 +363,7 @@ public class Comparison
             textFileList=FileUtils.getFilePath(textFileList)+
                          FileUtils.getFileName(textFileList)+
                          Settings.UnDupeKeeperTextFile;
-            // TODO: EXTERNALIZE STRING
-            textFileType="Directory";
+            textFileType=Strings.directory;
             FileUtils.file(textFileList)
                      .deleteOnExit();
         }
@@ -392,9 +388,8 @@ public class Comparison
                 }
                 catch(IOException e)
                 {
-                    // TODO: EXTERNALIZE STRING
                     err("MSG_038: "+
-                        "Can not open text file: "+
+                        Strings.cannotOpenTextFile+
                         e);
                     textFileList=null;
                     arrayFileList=null;
@@ -427,9 +422,8 @@ public class Comparison
             }
             catch(IOException e)
             {
-                // TODO: EXTERNALIZE STRING
                 err("MSG_025: "+
-                    "Could not write ordered file list: "+
+                    Strings.couldNotWriteOrderedFileList+
                     e);
                 textFileList=null;
             }
@@ -448,16 +442,16 @@ public class Comparison
         long processStartTime=TimeControl.getNano();
         String fileOrDirectory[]=checkIfListIsDirectory(fileListToCompare);
         fileListToCompare=fileOrDirectory[0];
-        // TODO: EXTERNALIZE STRING
-        progressBarDialog=new ProgressBarDialog("Undupe "+
+        progressBarDialog=new ProgressBarDialog(Strings.undupe+
                                                         fileOrDirectory[1],
-                                                "Starting...");
+                                                Strings.starting);
         if(sortTextFile(fileListToCompare,
                         ascendingOrDescendingMethod))
         {
             progressBarDialog.setIndeterminate(false);
-            msg("UnDupe version 12.08.17.01.50");
-            msg("Starting comparison...");
+            msg(Strings.undpueVersion+
+                Settings.undupeVersion);
+            msg(Strings.startingComparison);
             long displayFactorControl=0;
             int i=0;
             int j=0;
@@ -471,12 +465,15 @@ public class Comparison
             try
             {
                 totalFileCount=totalLines(fileListToCompare);
-                progressBarDialog.setMessage("0% from "+
+                progressBarDialog.setMessage("0"+
+                                             Strings.percentageFrom+
                                              totalFileCount+
-                                             " files");
-                msg("\t0% from "+
+                                             Strings.files);
+                msg(Settings.Tab+
+                    "0"+
+                    Strings.percentageFrom+
                     totalFileCount+
-                    " files");
+                    Strings.files);
                 InputStream fileListToCompareInputStream=new FileInputStream(fileListToCompare);
                 InputStreamReader fileListToCompareInputStreamReader=new InputStreamReader(fileListToCompareInputStream);
                 BufferedReader fileListToCompareBufferedReader=new BufferedReader(fileListToCompareInputStreamReader);
@@ -534,41 +531,45 @@ public class Comparison
             }
             catch(IOException e)
             {
-                // TODO: EXTERNALIZE STRING
                 err("MSG_026: "+
-                    "Problem during comparison process: "+
+                    Strings.problemDuringComparisonProcess+
                     e);
             }
-            progressBarDialog.setMessage("100% from "+
+            progressBarDialog.setMessage("100"+
+                                         Strings.percentageFrom+
                                          totalFileCount+
-                                         " files ("+
+                                         Strings.filec+
                                          renamedFileCount+
-                                         ") renamed");
-            msg("\t100% from "+
+                                         Strings.renamed);
+            msg(Settings.Tab+
+                "100"+
+                Strings.percentageFrom+
                 totalFileCount+
-                " files ("+
+                Strings.filec+
                 renamedFileCount+
-                ") renamed");
-            msg("\n"+
+                Strings.renamed);
+            msg(Settings.endl+
                 renamedFileCount+
-                " files renamed and marked to be deleted!");
-            msg("Finishing execution...");
-            msg("Done.");
+                Strings.renamedAndMarked);
+            msg(Strings.finishingExecution);
+            msg(Strings.done+
+                Settings.Dot);
             long totalProcessTime=TimeControl.getElapsedNano(processStartTime);
-            msg("\tTotal time: "+
+            msg(Settings.Tab+
+                Strings.totalTime+
                 TimeControl.getTotal(totalProcessTime));
             progressBarDialog.setProgress(100);
             progressBarDialog.setMessage(progressBarDialog.getMessage()+
-                                         " - Total time: "+
+                                         " - "+
+                                         Strings.totalTime+
                                          TimeControl.getTotal(totalProcessTime));
             progressBarDialog.setDismiss();
             progressBarDialog.keep();
         }
         else
         {
-            // TODO: EXTERNALIZE STRING
-            err("MSG_037: "
-                +"ERROR: Unable to sort input file");
+            err("MSG_037: "+
+                Strings.unableToSortInputFile);
         }
     }
 
@@ -576,11 +577,11 @@ public class Comparison
      * Compare binary files. Both files must be files (not directories) and
      * exist.
      * 
-     * @param first
+     * @param file1
      *            - first file
-     * @param second
+     * @param file2
      *            - second file
-     * @return boolean - true if files are binery equal
+     * @return boolean - true if files are binary equal
      * @throws IOException
      *             - error in function
      */
@@ -622,9 +623,8 @@ public class Comparison
         }
         catch(IOException e)
         {
-            // TODO: EXTERNALIZE STRING
             err("MSG_040: "+
-                "Comparison failed: "+
+                Strings.comparisonFailed+
                 e);
         }
         return false;

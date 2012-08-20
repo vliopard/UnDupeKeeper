@@ -7,6 +7,7 @@ package settings;
  */
 public class Settings
 {
+    public static String         undupeVersion            ="12.08.20.01.11";
     public static String         CypherMethodList[]       =
                                                           {
             "CRC32",
@@ -86,8 +87,12 @@ public class Settings
                                                           };
     public static final String   Empty                    ="";
     public static final String   Blank                    =" ";
+    public static final String   Dot                      =".";
     public static final String   Quote                    ="\"";
     public static final String   RootDir                  ="/";
+    public static final String   Slash                    ="\\";
+    public static final String   Tab                      ="\t";
+    public static final String   endl                     ="\n";
     public static final String   EndLine                  ="\r\n";
     public static final String   Recursive                ="-r";
     public static final String   TextFileList             ="-f";
@@ -104,6 +109,7 @@ public class Settings
     public static final String   UnDupeKeeperSettings     ="UnDupeKeeper.set";
     public static final String   UnDupeKeeperTextFile     ="_text_file_list_(Dup3K33p).txt";
     public static final String   UnDupeKeeperExtension    =".(Dup3K33p)";
+    public static final String   UnDupeKeeperMarker       ="[_REMOVE_]_(Dup3K33p)";
     public static final String   UnDupeKeeperSignature    =" repeeKepuDnU{.-::![|@|]!::-.}UnDupeKeeper ";
     public static final String   SystemTrayIconSize       ="16";
     public static final String   LanguagePackage          ="languages.";

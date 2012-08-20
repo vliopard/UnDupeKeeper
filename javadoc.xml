@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="javadoc">
     <target name="javadoc">
-        <javadoc access="private" author="true" classpath="jnotify-0.94.jar" destdir="doc" doctitle="UnDupeKeeper Javadoc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="main,settings,tools" source="1.7" sourcepath="src" splitindex="true" use="true" version="true"/>
+        <javadoc access="private" author="true" classpath="jnotify-0.94.jar" destdir="doc" doctitle="UnDupeKeeper Java Documentation" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" sourcefiles="src/main/Comparison.java" sourcepath="src" splitindex="true" use="true" version="true"/>
     </target>
 </project>

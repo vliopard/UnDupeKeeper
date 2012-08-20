@@ -115,9 +115,8 @@ public class ReportGenerator
                 }
                 else
                 {
-                    // TODO: EXTERNALIZE STRING
-                    err("MSG_038:"
-                        +"Invalid file content");
+                    err("MSG_038: "+
+                        Strings.invalidContent);
                     return null;
                 }
                 if(!treeMap.containsKey(fileName))
