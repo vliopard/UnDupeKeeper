@@ -117,30 +117,30 @@ public class Blinker implements
             }
             size=transferQueue.size();
             changeSystemTrayTip(size);
-            if((size<=10)&&
+            if((size<=10000)&&
                (!green))
             {
                 setGreen();
                 changeSystemTrayIcon(Settings.IconDnaGreen);
                 continue;
             }
-            if((size>10)&&
-               (size<=100)&&
+            if((size>10000)&&
+               (size<=50000)&&
                (!gray))
             {
                 setGray();
                 changeSystemTrayIcon(Settings.IconDnaGray);
                 continue;
             }
-            if((size>100)&&
-               (size<=300)&&
+            if((size>50000)&&
+               (size<=100000)&&
                (!red))
             {
                 setRed();
                 changeSystemTrayIcon(Settings.IconDnaRed);
                 continue;
             }
-            if((size>300)&&
+            if((size>100000)&&
                (!color))
             {
                 setColor();

@@ -37,10 +37,10 @@ java -jar UnDupeKeeper.jar > UnDupeKeeper.log 2>&1
 java -jar UnDupeKeeper.jar -r <DIRECTORY>
 ```
 
-- Provide a text file list with complete file paths. It will scan files and rename duplicates. Available for Ascending or Descending file size.
+- Provide a text file list with complete file paths. It will scan files and rename duplicates. Avoid renaming original files from Ascending or Descending order.
 
 ```
-java -jar UnDupeKeeper.jar -f [<TEXT_FILE_LIST>|<DIRECTORY>] [ASC|DESC]
+java -jar UnDupeKeeper.jar -f [<TEXT_FILE_LIST>|<DIRECTORY>] [KEEP_FIRST|KEEP_LAST]
 ```
 
 ##About

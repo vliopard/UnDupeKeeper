@@ -172,31 +172,50 @@ public class FileUtils
     public static String getFilePath(String file)
     {
         return file.substring(0,
-                              file.lastIndexOf("\\")+1);
+                              file.lastIndexOf(Settings.Slash)+1);
     }
 
     public static String getFileName(String file)
     {
-        if(file.lastIndexOf(".")<0)
+        if((file.lastIndexOf(Settings.Dot)>0)&&
+           (file.lastIndexOf(Settings.Slash)>0)&&
+           (file.lastIndexOf(Settings.Dot)>file.lastIndexOf(Settings.Slash)))
         {
-            return file.substring(file.lastIndexOf("\\")+1);
+            return file.substring(file.lastIndexOf(Settings.Slash)+1,
+                                  file.lastIndexOf(Settings.Dot));
         }
-        return file.substring(file.lastIndexOf("\\")+1,
-                              file.lastIndexOf("."));
+        if(file.lastIndexOf(Settings.Slash)>0)
+        {
+            return file.substring(file.lastIndexOf(Settings.Slash)+1);
+        }
+        err("FATAL: "+
+            file);
+        return Settings.Empty;
     }
 
     public static String getFileExtension(String file)
     {
-        if(file.lastIndexOf(".")<0)
+        if(file.lastIndexOf(Settings.Dot)>file.lastIndexOf(Settings.Slash))
         {
-            return Settings.Empty;
+            return file.substring(file.lastIndexOf(Settings.Dot));
         }
-        return file.substring(file.lastIndexOf("."));
+        return Settings.Empty;
     }
 
     public static String getFile(String file)
     {
         return getFileName(file)+
                getFileExtension(file);
+    }
+
+    /**
+     * This method displays an error message through the embedded log system.
+     * 
+     * @param errorMessage
+     *            A <code>String</code> containing the error message to display.
+     */
+    private static void err(String errorMessage)
+    {
+        Logger.err(errorMessage);
     }
 }

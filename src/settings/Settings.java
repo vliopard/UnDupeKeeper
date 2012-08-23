@@ -97,8 +97,8 @@ public class Settings
     public static final String   Recursive                ="-r";
     public static final String   TextFileList             ="-f";
     public static final String   FileExtension            =".jpg";
-    public static final String   CompareAsc               ="asc";
-    public static final String   CompareDesc              ="desc";
+    public static final String   CompareAsc               ="keep_first";
+    public static final String   CompareDesc              ="keep_last";
     public static final String   CompareRecursive         ="recursive";
     public static final String   DosCompareCommand        ="fc /B ";
     public static final String   DosCompareCommandResult  ="FC: no differences encountered";
