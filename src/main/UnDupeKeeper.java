@@ -113,7 +113,7 @@ public class UnDupeKeeper
             if(!fileOrder.equals(Settings.CompareRecursive))
             {
                 Comparison.searchAndMarkDuplicatedFiles(directoryToWatch.toString(),
-                                   fileOrder);
+                                                        fileOrder);
                 System.exit(0);
             }
             settingsHandler.setDirectory(directoryToWatch.toString());

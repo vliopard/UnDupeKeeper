@@ -195,7 +195,8 @@ public class FileUtils
 
     public static String getFileExtension(String file)
     {
-        if(file.lastIndexOf(Settings.Dot)>file.lastIndexOf(Settings.Slash))
+        if((file.lastIndexOf(Settings.Dot)>0)&&
+           (file.lastIndexOf(Settings.Dot)>file.lastIndexOf(Settings.Slash)))
         {
             return file.substring(file.lastIndexOf(Settings.Dot));
         }

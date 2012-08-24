@@ -440,11 +440,14 @@ public class Comparison
                                                     String ascendingOrDescendingMethod)
     {
         long processStartTime=TimeControl.getNano();
+        // TODO: EXTERNALIZE STRING
+        msg("Generating file list... Please, wait.");
+        progressBarDialog=new ProgressBarDialog("Generating file list...",
+                                                "Please, wait...");
         String fileOrDirectory[]=checkIfListIsDirectory(fileListToCompare);
         fileListToCompare=fileOrDirectory[0];
-        progressBarDialog=new ProgressBarDialog(Strings.undupe+
-                                                        fileOrDirectory[1],
-                                                Strings.starting);
+        progressBarDialog.setTitle(Strings.undupe+
+                                   fileOrDirectory[1]);
         if(sortTextFile(fileListToCompare,
                         ascendingOrDescendingMethod))
         {

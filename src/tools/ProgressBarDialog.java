@@ -61,6 +61,11 @@ public class ProgressBarDialog
         parentFrame.setVisible(true);
     }
 
+    public void setTitle(String progressTitle)
+    {
+        parentFrame.setTitle(progressTitle);
+    }
+
     public void setProgress(int progressValue)
     {
         dpb.setValue(progressValue);
