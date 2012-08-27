@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -20,6 +21,7 @@ import tools.Logger;
 import tools.ProgressBarDialog;
 import tools.ReportGenerator;
 import tools.TimeControl;
+import tools.Utils;
 
 // TODO: JAVADOC
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
@@ -179,6 +181,72 @@ public class Comparison
         // }
     }
 
+    private static String checkFileName(String fileName)
+    {
+        if(fileName.length()>255)
+        {
+            String path1=Settings.Empty;
+            String name1=Settings.Empty;
+            String path2=Settings.Empty;
+            String name2=Settings.Empty;
+            String tail=Settings.Empty;
+            int slash=fileName.lastIndexOf(Settings.Slash)+1;
+            int at=fileName.lastIndexOf("@@");
+            int start=fileName.indexOf("-_(");
+            int end=fileName.lastIndexOf(")_[_");
+            if(slash>0)
+            {
+                path1=fileName.substring(0,
+                                         slash);
+                if(slash<at)
+                {
+                    name1=fileName.substring(slash,
+                                             at);
+                }
+                else
+                {
+                    // TODO: EXTERNALIZE STRING
+                    err("NAME1 ERROR "+
+                        name1);
+                    System.exit(-1);
+                }
+                if(at<start)
+                {
+                    path2=fileName.substring(at,
+                                             start);
+                }
+                else
+                {
+                    // TODO: EXTERNALIZE STRING
+                    err("PATH2 ERROR "+
+                        path2);
+                    System.exit(-1);
+                }
+                if(start<end)
+                {
+                    name2=fileName.substring(start,
+                                             end);
+                }
+                else
+                {
+                    // TODO: EXTERNALIZE STRING
+                    err("NAME2 ERROR "+
+                        name2);
+                    System.exit(-1);
+                }
+                tail=fileName.substring(end);
+            }
+            fileName=path1+
+                     name1.substring(0,
+                                     name1.length()/3)+
+                     path2+
+                     name2.substring(0,
+                                     name2.length()/3)+
+                     tail;
+        }
+        return fileName;
+    }
+
     private static void renameDuplicatedFile(String fileName1,
                                              String fileName2,
                                              long fileCounter)
@@ -207,14 +275,30 @@ public class Comparison
             newFileName1=newFileName1+
                          FileUtils.getFileExtension(fileName1);
         }
-        FileUtils.file(fileName1)
-                 .renameTo(FileUtils.file(newFileName1));
+        // FileUtils.file(fileName1).renameTo(FileUtils.file(newFileName1));
+        try
+        {
+            newFileName1=checkFileName(newFileName1);
+            java.nio.file.Files.move(Paths.get(fileName1),
+                                     Paths.get(newFileName1));
+        }
+        catch(IOException e)
+        {
+            // TODO: EXTERNALIZE STRING
+            err("===========");
+            err(newFileName1+
+                "\n------------------");
+            err("ERROR - Unable to rename file: "+
+                e);
+            err("===========");
+        }
     }
 
     private static void displayProgress(double currentFile,
                                         long percentage,
                                         double totalFileCount,
-                                        long renamedFileCount)
+                                        long renamedFileCount,
+                                        long elapsedTime)
     {
         progressBarDialog.setProgress((int)percentage);
         progressBarDialog.setMessage(percentage+
@@ -224,9 +308,13 @@ public class Comparison
                                      renamedFileCount+
                                      Strings.renamed+
                                      Strings.current+
-                                     (long)currentFile);
+                                     (long)currentFile+
+                                     " - ["+
+                                     TimeControl.getTotal(TimeControl.getElapsedNano(elapsedTime))+
+                                     "]");
         msg(Settings.Tab+
-            percentage+
+            Utils.addCustomLeadingZeros("03",
+                                        percentage)+
             Strings.percentageFrom+
             (long)totalFileCount+
             Strings.filec+
@@ -240,7 +328,8 @@ public class Comparison
                                      double totalFileCount,
                                      long displayFactorControl,
                                      long renamedFileCount,
-                                     int displaySteps)
+                                     int displaySteps,
+                                     long elapsedTime)
     {
         long percentage=(long)(((double)currentFile/(double)totalFileCount)*100.0);
         if((percentage>=displayFactorControl)&&
@@ -250,7 +339,8 @@ public class Comparison
             displayProgress(currentFile,
                             percentage,
                             totalFileCount,
-                            renamedFileCount);
+                            renamedFileCount,
+                            elapsedTime);
             displayFactorControl=displayFactorControl+
                                  displaySteps;
             return displayFactorControl;
@@ -440,6 +530,8 @@ public class Comparison
                                                     String ascendingOrDescendingMethod)
     {
         long processStartTime=TimeControl.getNano();
+        msg(Strings.undpueVersion+
+            Settings.undupeVersion);
         // TODO: EXTERNALIZE STRING
         msg("Generating file list... Please, wait.");
         progressBarDialog=new ProgressBarDialog("Generating file list...",
@@ -452,8 +544,6 @@ public class Comparison
                         ascendingOrDescendingMethod))
         {
             progressBarDialog.setIndeterminate(false);
-            msg(Strings.undpueVersion+
-                Settings.undupeVersion);
             msg(Strings.startingComparison);
             long displayFactorControl=0;
             int i=0;
@@ -473,7 +563,7 @@ public class Comparison
                                              totalFileCount+
                                              Strings.files);
                 msg(Settings.Tab+
-                    "0"+
+                    "000"+
                     Strings.percentageFrom+
                     totalFileCount+
                     Strings.files);
@@ -526,7 +616,8 @@ public class Comparison
                                                       totalFileCount,
                                                       displayFactorControl,
                                                       renamedFileCount,
-                                                      1);
+                                                      1,
+                                                      processStartTime);
                 }
                 fileListToCompareInputStream.close();
                 fileListToCompareInputStreamReader.close();
