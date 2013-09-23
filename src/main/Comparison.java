@@ -242,19 +242,19 @@ public class Comparison
             do
             {
                
-                if(n2l>5)
+                if(n2l>1)
                 {
                   n2l--;
                 }
                 else
                 {
-                    if(n1l>5)
+                    if(n1l>1)
                     {
                         n1l--;
                     }
                     else
                     {
-                        if(p2l>5)
+                        if(p2l>1)
                         {
                             p2l--;
                             path2=path2.substring(0,p2l);
