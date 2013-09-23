@@ -168,4 +168,14 @@ public class Strings
     public static final String totalTime                       =Messages.getString("StringValue157");                 //$NON-NLS-1$
     public static final String renamedAndMarked                =Messages.getString("StringValue158");                 //$NON-NLS-1$
     public static final String undpueVersion                   =Messages.getString("StringValue159");                 //$NON-NLS-1$
+    public static final String fileNameContainsDoubleAt        =Messages.getString("StringValue160");                 //$NON-NLS-1$
+    public static final String fileNameWrongDoubleAtPosition   =Messages.getString("StringValue161");                 //$NON-NLS-1$
+    public static final String fileNameMismatchStartEnd        =Messages.getString("StringValue162");                 //$NON-NLS-1$
+    public static final String cannotShrinkFilename            =Messages.getString("StringValue163");                 //$NON-NLS-1$
+    public static final String generatingFileListPleaseWait    =Messages.getString("StringValue164");                 //$NON-NLS-1$
+    public static final String generatingFileList              =Messages.getString("StringValue165");                 //$NON-NLS-1$
+    public static final String pleaseWait                      =Messages.getString("StringValue166");                 //$NON-NLS-1$
+    public static final String unableToRenameFile              =Messages.getString("StringValue167");                 //$NON-NLS-1$
+    public static final String sourceFileName                  =Messages.getString("StringValue167");                 //$NON-NLS-1$
+    public static final String targetFileName                  =Messages.getString("StringValue167");                 //$NON-NLS-1$
 }

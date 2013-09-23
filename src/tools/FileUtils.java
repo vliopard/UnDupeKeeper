@@ -45,9 +45,9 @@ public class FileUtils
                     if(files[index].isDirectory())
                     {
                         // TODO: RESEARCH: Performance - Implement this as a
-                        // queue where
-                        // you add to the end and take from the beginning, it
-                        // will be more efficient than the recursion
+                        // queue where you add to the end and take from the
+                        // beginning, it will be more efficient than the
+                        // recursion
                         dirDeleted=deleteDirectoryContent(files[index]);
                         if(dirDeleted)
                         {

@@ -7,7 +7,7 @@ package settings;
  */
 public class Settings
 {
-    public static String         undupeVersion            ="12.08.20.01.11";
+    public static String         undupeVersion            ="13.09.23.19.50";
     public static String         CypherMethodList[]       =
                                                           {
             "CRC32",
@@ -119,6 +119,12 @@ public class Settings
                                                            "/";
     public static final String   Plaf                     ="com.sun.java.swing.plaf.";
     public static final String   Plafx                    ="javax.swing.plaf.";
+    
+    public static final String   Separator                ="_____________________";
+    public static final String   SeparatorSingle          ="---------------------";
+    public static final String   SeparatorDouble          ="=====================";
+    public static final String   SeparatorVertical        ="|||||||||||||||||||||";
+
     public static final String   languageList[]           =
                                                           {
             "English",

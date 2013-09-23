@@ -205,8 +205,8 @@ public class Comparison
                 }
                 else
                 {
-                    // TODO: EXTERNALIZE STRING
-                    err("NAME1 ERROR "+
+                    err("MSG_041: "+
+                        Strings.fileNameContainsDoubleAt+
                         name1);
                     System.exit(-1);
                 }
@@ -217,8 +217,8 @@ public class Comparison
                 }
                 else
                 {
-                    // TODO: EXTERNALIZE STRING
-                    err("PATH2 ERROR "+
+                    err("MSG_042: "+
+                        Strings.fileNameWrongDoubleAtPosition+
                         path2);
                     System.exit(-1);
                 }
@@ -229,8 +229,8 @@ public class Comparison
                 }
                 else
                 {
-                    // TODO: EXTERNALIZE STRING
-                    err("NAME2 ERROR "+
+                    err("MSG_043: "+
+                        Strings.fileNameMismatchStartEnd+
                         name2);
                     System.exit(-1);
                 }
@@ -241,10 +241,9 @@ public class Comparison
             int p2l=path2.length();
             do
             {
-               
                 if(n2l>1)
                 {
-                  n2l--;
+                    n2l--;
                 }
                 else
                 {
@@ -254,27 +253,31 @@ public class Comparison
                     }
                     else
                     {
-                        if(p2l>1)
+                        if(p2l>2)
                         {
                             p2l--;
-                            path2=path2.substring(0,p2l);
+                            path2=path2.substring(0,
+                                                  p2l);
                         }
                         else
                         {
-                            err("Cannot shrink filename:");
-                            err("["+fileName.length()+"] "+fileName);
+                            err("MSG_044: "+
+                                Strings.cannotShrinkFilename);
+                            err("["+
+                                fileName.length()+
+                                "] "+
+                                fileName);
                             break;
                         }
                     }
-                }               
-                
+                }
                 fileName=path1+
-                        name1.substring(0,
-                                        n1l)+
-                                            path2+
-                                            name2.substring(0,
-                                                            n2l)+
-                                            tail;
+                         name1.substring(0,
+                                         n1l)+
+                         path2+
+                         name2.substring(0,
+                                         n2l)+
+                         tail;
             }
             while(fileName.length()>255);
         }
@@ -286,7 +289,9 @@ public class Comparison
                                              long fileCounter)
     {
         if(fileName1.contains(Settings.UnDupeKeeperNoRename))
+        {
             return;
+        }
         String removeMarker=Settings.UnDupeKeeperMarker+
                             "_["+
                             fileCounter+
@@ -311,33 +316,37 @@ public class Comparison
             newFileName1=newFileName1+
                          FileUtils.getFileExtension(fileName1);
         }
-        
         // FileUtils.file(fileName1).renameTo(FileUtils.file(newFileName1));
         try
         {
             newFileName1=checkFileName(newFileName1);
             java.nio.file.Files.move(Paths.get(fileName1),
-                                     Paths.get(newFileName1));            
+                                     Paths.get(newFileName1));
         }
         catch(IOException e)
-        {   
-            // TODO: EXTERNALIZE STRING
-            err("===========");
-            err("SrcFileName["+
-                    fileName1.length()+
-                    "] "+
-                    fileName1+
-                    "\n------------------");
-            err("NewFileName["+
+        {
+            err(Settings.Separator+
+                Settings.Separator);
+            err(Strings.sourceFileName+
+                "["+
+                fileName1.length()+
+                "] "+
+                fileName1+
+                Settings.endl+
+                Settings.SeparatorSingle+
+                Settings.SeparatorSingle);
+            err(Strings.targetFileName+
+                "["+
                 newFileName1.length()+
                 "] "+
                 newFileName1+
-                "\n------------------");
-            err("ERROR - Unable to rename file: "+
+                Settings.endl+
+                Settings.SeparatorDouble+
+                Settings.SeparatorDouble);
+            err("MSG_045: "+
+                Strings.unableToRenameFile+
                 e);
-            err("===========");        
-            }
-        
+        }
     }
 
     private static void displayProgress(double currentFile,
@@ -578,10 +587,9 @@ public class Comparison
         long processStartTime=TimeControl.getNano();
         msg(Strings.undpueVersion+
             Settings.undupeVersion);
-        // TODO: EXTERNALIZE STRING
-        msg("Generating file list... Please, wait.");
-        progressBarDialog=new ProgressBarDialog("Generating file list...",
-                                                "Please, wait...");
+        msg(Strings.generatingFileListPleaseWait);
+        progressBarDialog=new ProgressBarDialog(Strings.generatingFileList,
+                                                Strings.pleaseWait);
         String fileOrDirectory[]=checkIfListIsDirectory(fileListToCompare);
         fileListToCompare=fileOrDirectory[0];
         progressBarDialog.setTitle(Strings.undupe+
