@@ -254,9 +254,11 @@ public class Comparison
                     }
                     else
                     {
-                        p2l--;
-                        path2=path2.substring(0,p2l);
-                        
+                        if(p2l>5)
+                        {
+                            p2l--;
+                            path2=path2.substring(0,p2l);
+                        }
                     }
                 }               
                 
