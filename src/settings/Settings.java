@@ -110,6 +110,7 @@ public class Settings
     public static final String   UnDupeKeeperTextFile     ="_text_file_list_(Dup3K33p).txt";
     public static final String   UnDupeKeeperExtension    =".(Dup3K33p)";
     public static final String   UnDupeKeeperMarker       ="[_REMOVE_]_{Dup3K33p}";
+    public static final String   UnDupeKeeperNoRename       ="_N0R3n@me_";
     public static final String   UnDupeKeeperSignature    =" repeeKepuDnU{.-::![|@|]!::-.}UnDupeKeeper ";
     public static final String   SystemTrayIconSize       ="16";
     public static final String   LanguagePackage          ="languages.";

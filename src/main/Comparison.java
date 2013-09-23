@@ -236,13 +236,44 @@ public class Comparison
                 }
                 tail=fileName.substring(end);
             }
-            fileName=path1+
-                     name1.substring(0,
-                                     name1.length()/3)+
-                     path2+
-                     name2.substring(0,
-                                     name2.length()/3)+
-                     tail;
+            int n1l=name1.length();
+            int n2l=name2.length();
+            int p2l=path2.length();
+            do
+            {
+               
+                if(n2l>5)
+                {
+                  n2l--;
+                }
+                else
+                {
+                    if(n1l>5)
+                    {
+                        n1l--;
+                    }
+                    else
+                    {
+                        p2l--;
+                        path2=path2.substring(0,p2l);
+                        
+                    }
+                }               
+                
+                fileName=path1+
+                        name1.substring(0,
+                                        n1l)+
+                                            path2+
+                                            name2.substring(0,
+                                                            n2l)+
+                                            tail;
+                /*
+                msg("//////////////////////////////////////////////////////////");
+                msg("n1l "+n1l+" n2l "+n2l);
+                msg("["+fileName.length()+"]"+fileName);
+                */
+            }
+            while(fileName.length()>255);
         }
         return fileName;
     }
@@ -251,6 +282,8 @@ public class Comparison
                                              String fileName2,
                                              long fileCounter)
     {
+        if(fileName1.contains(Settings.UnDupeKeeperNoRename))
+            return;
         String removeMarker=Settings.UnDupeKeeperMarker+
                             "_["+
                             fileCounter+
@@ -275,23 +308,33 @@ public class Comparison
             newFileName1=newFileName1+
                          FileUtils.getFileExtension(fileName1);
         }
+        
         // FileUtils.file(fileName1).renameTo(FileUtils.file(newFileName1));
         try
         {
             newFileName1=checkFileName(newFileName1);
             java.nio.file.Files.move(Paths.get(fileName1),
-                                     Paths.get(newFileName1));
+                                     Paths.get(newFileName1));            
         }
         catch(IOException e)
-        {
+        {   
             // TODO: EXTERNALIZE STRING
             err("===========");
-            err(newFileName1+
+            err("SrcFileName["+
+                    fileName1.length()+
+                    "] "+
+                    fileName1+
+                    "\n------------------");
+            err("NewFileName["+
+                newFileName1.length()+
+                "] "+
+                newFileName1+
                 "\n------------------");
             err("ERROR - Unable to rename file: "+
                 e);
-            err("===========");
-        }
+            err("===========");        
+            }
+        
     }
 
     private static void displayProgress(double currentFile,
