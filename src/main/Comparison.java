@@ -259,6 +259,12 @@ public class Comparison
                             p2l--;
                             path2=path2.substring(0,p2l);
                         }
+                        else
+                        {
+                            err("Cannot shrink filename:");
+                            err("["+fileName.length()+"] "+fileName);
+                            break;
+                        }
                     }
                 }               
                 
@@ -269,11 +275,6 @@ public class Comparison
                                             name2.substring(0,
                                                             n2l)+
                                             tail;
-                /*
-                msg("//////////////////////////////////////////////////////////");
-                msg("n1l "+n1l+" n2l "+n2l);
-                msg("["+fileName.length()+"]"+fileName);
-                */
             }
             while(fileName.length()>255);
         }
