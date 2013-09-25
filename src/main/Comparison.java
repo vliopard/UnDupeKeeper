@@ -3,10 +3,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Writer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +19,7 @@ import tools.FileUtils;
 import tools.Logger;
 import tools.ProgressBarDialog;
 import tools.ReportGenerator;
+import tools.StreamManager;
 import tools.TimeControl;
 import tools.Utils;
 
@@ -138,14 +138,13 @@ public class Comparison
         long lineCount=0;
         try
         {
-            FileInputStream textFileNameInputStream=new FileInputStream(textFileName);
-            InputStreamReader textFileNameInputStreamReader=new InputStreamReader(textFileNameInputStream);
+            // Third
+            InputStreamReader textFileNameInputStreamReader=StreamManager.InputStreamReader(textFileName);
             BufferedReader textFileNameBufferedReader=new BufferedReader(textFileNameInputStreamReader);
             while((textFileNameBufferedReader.readLine())!=null)
             {
                 lineCount++;
             }
-            textFileNameInputStream.close();
             textFileNameInputStreamReader.close();
             textFileNameBufferedReader.close();
         }
@@ -429,8 +428,8 @@ public class Comparison
             {
                 progressBarDialog.setIndeterminate(true);
                 progressBarDialog.setMessage(Strings.sortingFileList);
-                InputStream textFileInputStream=new FileInputStream(textFileName);
-                BufferedReader textFileBufferedReader=new BufferedReader(new InputStreamReader(textFileInputStream));
+                // Second
+                BufferedReader textFileBufferedReader=new BufferedReader(StreamManager.InputStreamReader(textFileName));
                 String fileLine=Settings.Empty;
                 Map<Long,ArrayList<String>> textFileSortedHashList=new TreeMap<Long,ArrayList<String>>();
                 while((fileLine=textFileBufferedReader.readLine())!=null)
@@ -446,7 +445,6 @@ public class Comparison
                     textFileSortedHashList.put(textFileLineSize,
                                                textFileLineArrayList);
                 }
-                textFileInputStream.close();
                 textFileBufferedReader.close();
                 NavigableMap<Long,ArrayList<String>> textFileNavigableMap=null;
                 if(isAscending(sortMethodType))
@@ -457,7 +455,7 @@ public class Comparison
                 {
                     textFileNavigableMap=((TreeMap<Long,ArrayList<String>>)textFileSortedHashList).descendingMap();
                 }
-                FileWriter textFileWriter=new FileWriter(textFileName);
+                Writer textFileWriter=StreamManager.FileWriter(textFileName);
                 boolean firstTime=true;
                 for(ArrayList<String> textFileArrayList : textFileNavigableMap.values())
                 {
@@ -481,6 +479,7 @@ public class Comparison
                         textFileWriter.write((String)textFileArrayListElement.next());
                     }
                 }
+                textFileWriter.flush();
                 textFileWriter.close();
             }
             catch(IOException e)
@@ -519,16 +518,14 @@ public class Comparison
             {
                 try
                 {
-                    InputStream textFileListInputStream=new FileInputStream(textFileList);
-                    InputStreamReader textFileListInputStreamReader=new InputStreamReader(textFileListInputStream);
+                    // First
+                    InputStreamReader textFileListInputStreamReader=StreamManager.InputStreamReader(textFileList);
                     BufferedReader textFileListBufferedReader=new BufferedReader(textFileListInputStreamReader);
                     String textFileLine=Settings.Empty;
                     while((textFileLine=textFileListBufferedReader.readLine())!=null)
                     {
                         arrayFileList.add(textFileLine);
                     }
-                    textFileListInputStream.close();
-                    textFileListInputStreamReader.close();
                     textFileListBufferedReader.close();
                 }
                 catch(IOException e)
@@ -551,7 +548,7 @@ public class Comparison
         {
             try
             {
-                FileWriter textFileListWriter=new FileWriter(textFileList);
+                Writer textFileListWriter=StreamManager.FileWriter(textFileList);
                 Iterator<String> arrayFileListIterator=arrayFileList.iterator();
                 boolean firstTime=true;
                 while(arrayFileListIterator.hasNext())
@@ -563,6 +560,7 @@ public class Comparison
                     firstTime=false;
                     textFileListWriter.write((String)arrayFileListIterator.next());
                 }
+                textFileListWriter.flush();
                 textFileListWriter.close();
             }
             catch(IOException e)
@@ -621,8 +619,8 @@ public class Comparison
                     Strings.percentageFrom+
                     totalFileCount+
                     Strings.files);
-                InputStream fileListToCompareInputStream=new FileInputStream(fileListToCompare);
-                InputStreamReader fileListToCompareInputStreamReader=new InputStreamReader(fileListToCompareInputStream);
+                // Fourth
+                InputStreamReader fileListToCompareInputStreamReader=StreamManager.InputStreamReader(fileListToCompare);
                 BufferedReader fileListToCompareBufferedReader=new BufferedReader(fileListToCompareInputStreamReader);
                 fileListToCompareLine1=fileListToCompareBufferedReader.readLine();
                 while((!stop)&&
@@ -673,7 +671,6 @@ public class Comparison
                                                       1,
                                                       processStartTime);
                 }
-                fileListToCompareInputStream.close();
                 fileListToCompareInputStreamReader.close();
                 fileListToCompareBufferedReader.close();
             }
