@@ -43,6 +43,18 @@ java -jar UnDupeKeeper.jar -r <DIRECTORY>
 java -jar UnDupeKeeper.jar -f [<TEXT_FILE_LIST>|<DIRECTORY>] [KEEP_FIRST|KEEP_LAST]
 ```
 
+**Note** - An entire directory can be saved from renaming process by appending the string in to it:
+
+```
+_N0R3n@me_
+```
+
+**Example** - \<MyDirectory\> is going to be like below:
+
+```
+<MyDirectory_N0R3n@me_> OR <My_N0R3n@me_Directory>
+```
+
 ##About
 *This is an* ***Open Source Project*** *that uses other [General Public License](http://www.gnu.org/copyleft/gpl.html) (GPL) sources from the web.*
 
