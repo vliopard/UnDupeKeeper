@@ -14,26 +14,34 @@ import org.mozilla.universalchardet.UniversalDetector;
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
 public class StreamManager
 {
-    private static String getEncoding(String file) throws IOException
+    private static String getEncoding(String file)
     {
-        InputStream fileName=new FileInputStream(file);
-        byte[] buf=new byte[4096];
-        UniversalDetector detector=new UniversalDetector(null);
-        int nread;
-        while((nread=fileName.read(buf))>0&&
-              !detector.isDone())
+        String encoding="WINDOWS-1252";
+        try
         {
-            detector.handleData(buf,
-                                0,
-                                nread);
+            InputStream fileName=new FileInputStream(file);
+            byte[] buf=new byte[4096];
+            UniversalDetector detector=new UniversalDetector(null);
+            int nread;
+            while((nread=fileName.read(buf))>0&&
+                  !detector.isDone())
+            {
+                detector.handleData(buf,
+                                    0,
+                                    nread);
+            }
+            fileName.close();
+            detector.dataEnd();
+            encoding=detector.getDetectedCharset();
+            detector.reset();
+            if(encoding==null)
+            {
+                encoding="WINDOWS-1252";
+            }
         }
-        fileName.close();
-        detector.dataEnd();
-        String encoding=detector.getDetectedCharset();
-        detector.reset();
-        if(encoding==null)
+        catch(IOException e)
         {
-            encoding="WINDOWS-1252";
+            encoding="UTF-8";
         }
         return encoding;
     }
