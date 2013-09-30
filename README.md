@@ -7,11 +7,7 @@
 For complete information, please, refer to:
 
 
-[UnDupeKeeper Main Page](http://vliopard.wordpress.com/undupekeeper/)
-
-[UnDupeKeeper Introduction](http://vliopard.wordpress.com/undupekeeper/introduction/)
-
-[UnDupeKeeper Usage Samples](http://vliopard.wordpress.com/undupekeeper/usage-samples/)
+[Main Page](http://vliopard.wordpress.com/undupekeeper/) - [Introduction](http://vliopard.wordpress.com/undupekeeper/introduction/) - [Usage Samples](http://vliopard.wordpress.com/undupekeeper/usage-samples/)
 
 ##How it works:
 This software start monitoring an empty folder of your choice. Every file you copy to that folder will be kept unique. If you try to copy the same file more than once, even inside a sub folder hierarchy, this software will keep just your first unique entry, the other copies will be replaced by a link to the original file: [Settings Screenshot](https://github.com/vliopard/UnDupeKeeper/raw/master/undupekeeper1.png)
