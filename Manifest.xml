@@ -3,16 +3,16 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
-        <jar destfile="c:/vliopard/Dropbox/SourceCode/UnDupeKeeper/UnDupeKeeper.jar">
+        <jar destfile="/home/vliopard/UnDupeKeeper/UnDupeKeeper.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="main.UnDupeKeeper"/>
                 <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="./ jnotify-0.94.jar"/>
+                <attribute name="Rsrc-Class-Path" value="./ jnotify/jnotify-0.94.jar"/>
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
-            <fileset dir="C:/vliopard/Dropbox/SourceCode/UnDupeKeeper/bin"/>
-            <zipfileset dir="C:\vliopard\Dropbox\SourceCode\UnDupeKeeper" includes="jnotify-0.94.jar"/>
+            <fileset dir="/home/vliopard/UnDupeKeeper/bin"/>
+            <zipfileset dir="/home/vliopard/UnDupeKeeper" includes="jnotify/jnotify-0.94.jar"/>
         </jar>
     </target>
 </project>
