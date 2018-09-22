@@ -9,12 +9,12 @@ For complete information, please, refer to:
 
 [Main Page](http://vliopard.wordpress.com/undupekeeper/) - [Introduction](http://vliopard.wordpress.com/undupekeeper/introduction/) - [Usage Samples](http://vliopard.wordpress.com/undupekeeper/usage-samples/)
 
-##How it works:
+## How it works:
 This software start monitoring an empty folder of your choice. Every file you copy to that folder will be kept unique. If you try to copy the same file more than once, even inside a sub folder hierarchy, this software will keep just your first unique entry, the other copies will be replaced by a link to the original file: [Settings Screenshot](https://github.com/vliopard/UnDupeKeeper/raw/master/undupekeeper1.png)
 
 After copying a bunch of files to your monitored folder, you can see a report to check results: [Report Viewer Screenshot](https://github.com/vliopard/UnDupeKeeper/raw/master/undupekeeper2.png)
 
-##How to install:
+## How to install:
 1.) Download [UnDupeKeeper.jar](https://github.com/vliopard/UnDupeKeeper/blob/master/UnDupeKeeper.jar?raw=true) to your computer. 
 
 2.) Download [JNotify](http://jnotify.sourceforge.net/) to your computer: [JNotify094.zip](http://sourceforge.net/projects/jnotify/files/jnotify/jnotify-0.94/jnotify-lib-0.94.zip/download)
@@ -27,7 +27,7 @@ After copying a bunch of files to your monitored folder, you can see a report to
 - **[Linux 32bit]** jnotify-lib-0.94.zip/libjnotify.jnilib
 - **[Linux 32bit]** jnotify-lib-0.94.zip/libjnotify.so
 
-##How to run:
+## How to run:
 You can type the following commands on a shell prompt or create a batch/script file for doing that:
 
 ```
@@ -60,7 +60,7 @@ _N0R3n@me_
 <MyDirectory_N0R3n@me_> OR <My_N0R3n@me_Directory>
 ```
 
-##About
+## About
 *This is an* ***Open Source Project*** *that uses other [General Public License](http://www.gnu.org/copyleft/gpl.html) (GPL) sources from the web.*
 
 By OTDS H Co.
