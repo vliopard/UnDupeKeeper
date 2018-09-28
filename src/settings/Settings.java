@@ -1,4 +1,5 @@
 package settings;
+ 
 /**
  * Settings class contains all the system values for easy access. This is a
  * place to keep constants.
@@ -7,7 +8,8 @@ package settings;
  */
 public class Settings
 {
-    public static String         undupeVersion            ="13.09.23.19.50";
+	public static String         os                       = System.getProperty("os.name").toLowerCase();
+    public static String         undupeVersion            ="18.09.27.23.50";
     public static String         CypherMethodList[]       =
                                                           {
             "CRC32",
@@ -90,7 +92,7 @@ public class Settings
     public static final String   Dot                      =".";
     public static final String   Quote                    ="\"";
     public static final String   RootDir                  ="/";
-    public static final String   Slash                    ="\\";
+    public static final String   Slash                    = os.indexOf("win")>=0 ? "\\" : RootDir;
     public static final String   Tab                      ="\t";
     public static final String   endl                     ="\n";
     public static final String   EndLine                  ="\r\n";

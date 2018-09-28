@@ -109,6 +109,7 @@ public class UnDupeKeeper
         Path directoryToWatch=null;
         if(args.length>0)
         {
+        	// TODO: MUST GET $pwd/directoryToWatch. Now it just gets the dir name with dir path. FATAL getFileName
             directoryToWatch=checkPromptArguments(args);
             if(!fileOrder.equals(Settings.CompareRecursive))
             {

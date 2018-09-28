@@ -1,3 +1,2 @@
 #!/bin/sh
-export LD_LIBRARY_PATH=/home/vliopard/UnDupeKeeper/jnotify/
-java -Djava.library.path=/home/vliopard/UnDupeKeeper/jnotify/ -jar UnDupeKeeper.jar
+java -jar UnDupeKeeper.jar > UnDupeKeeper.log

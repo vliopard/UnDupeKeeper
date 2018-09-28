@@ -179,7 +179,7 @@ public class TimeControl
     {
         Timestamp ts=new Timestamp(TimeUnit.MILLISECONDS.convert(time,
                                                                  TimeUnit.NANOSECONDS));
-        SimpleDateFormat format=new SimpleDateFormat("°:mm'\"':ss'':SSS:");
+        SimpleDateFormat format=new SimpleDateFormat("Â°:mm'\"':ss'':SSS:");
         long hr=getHour(time);
         long mic=getMic(time);
         long roundTime=mic/1000;

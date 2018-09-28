@@ -302,8 +302,14 @@ public class Comparison
                                       ")_";
         originalSourceFileName=originalSourceFileName.replace(':',
                                                               '#');
-        originalSourceFileName=originalSourceFileName.replace('\\',
-                                                              '-');
+        if(Settings.os.indexOf("win")>=0) {
+            originalSourceFileName=originalSourceFileName.replace('\\',
+                                                                  '-');
+        }
+        else {
+        	originalSourceFileName=originalSourceFileName.replace('/',
+                                                                  '-');	
+        }
         String newFileName1=FileUtils.getFilePath(fileName1)+
                             FileUtils.getFileName(fileName1)+
                             FileUtils.getFileExtension(fileName1)+
