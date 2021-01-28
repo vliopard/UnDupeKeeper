@@ -161,7 +161,7 @@ public class SettingsHandler implements Serializable
     }
 
     /**
-     * This method sets the comparison method for getting files binary compred.
+     * This method sets the comparison method for getting files binary compared.
      * 
      * @param compareMethod
      *            A <code>boolean</code> value obtained from

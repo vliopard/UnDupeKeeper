@@ -108,6 +108,7 @@ public class Settings
     public static final String   HexHashValues            ="0123456789ABCDEF";
     public static final String   WatchedDirectoryName     ="UnDupeKeeper.dir";
     public static final String   UnDupeKeeperDatabaseName ="UnDupeKeeper.hdb";
+    public static final String   UnDupeKeeperDatabaseMap  ="UnDupeKeeper.map";
     public static final String   UnDupeKeeperSettings     ="UnDupeKeeper.set";
     public static final String   UnDupeKeeperTextFile     ="_text_file_list_(Dup3K33p).txt";
     public static final String   UnDupeKeeperExtension    =".(Dup3K33p)";
@@ -151,7 +152,7 @@ public class Settings
                                                           {
             Plaf  + "gtk.GTKLookAndFeel",
             Plaf  + "motif.MotifLookAndFeel",
-            Plaf  + "nimbus.NimbusLookAndFeel",
+            Plafx + "nimbus.NimbusLookAndFeel",
             Plaf  + "windows.WindowsLookAndFeel",
             Plafx + "basic.BasicLookAndFeel",
             Plafx + "metal.MetalLookAndFeel",

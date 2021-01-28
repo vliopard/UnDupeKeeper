@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Path;
 import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -44,8 +45,12 @@ public class DataBase
     public static void clear()
     {
         Logger.msg(Strings.dbEraseDatabase);
+
         HashMap<String,UniqueFile> hashMapToClear=new HashMap<String,UniqueFile>();
         saveMap(hashMapToClear);
+
+        HashMap<Path,String> hashMapToClear1=new HashMap<Path,String>();
+        saveMap1(hashMapToClear1);
     }
 
     /**
@@ -71,6 +76,24 @@ public class DataBase
         catch(IOException e)
         {
             Logger.err("MSG_027: "+ Strings.dbProblemToSaveMap+ e);
+        }
+    }
+    
+    public static void saveMap1(HashMap<Path,String> hashMapToSave)
+    {
+        Logger.msg(Strings.dbSaveDatabase);
+        try
+        {
+            ObjectOutputStream hashMapObjectOutput=new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperDatabaseMap));
+            Logger.msg(Strings.dbDatabaseContains + hashMapToSave.size() + Strings.dbItems);
+            hashMapObjectOutput.writeObject(hashMapToSave);
+            hashMapObjectOutput.close();
+            hashMapObjectOutput=null;
+            Logger.msg(Strings.dbDatabaseSaved);
+        }
+        catch(IOException e)
+        {
+            Logger.err("MSG_027a: "+ Strings.dbProblemToSaveMap+ e);
         }
     }
 
@@ -102,6 +125,29 @@ public class DataBase
         }
         Logger.msg(Strings.dbWarningNewDatabase);
         return new HashMap<String,UniqueFile>();
+    }
+
+    public static HashMap<Path,String> loadMap1()
+    {
+        if(new File(Settings.UnDupeKeeperDatabaseMap).exists())
+        {
+            Logger.msg(Strings.dbLoadingDatabase);
+            try
+            {
+                FileInputStream fileInputStream=new FileInputStream(Settings.UnDupeKeeperDatabaseMap);
+                @SuppressWarnings("unchecked")
+                HashMap<Path,String> hashMapToLoad=(HashMap<Path,String>)new ObjectInputStream(fileInputStream).readObject();
+                Logger.msg(Strings.dbDatabaseContains + hashMapToLoad.size() + Strings.dbItems);
+                fileInputStream.close();
+                return hashMapToLoad;
+            }
+            catch(ClassNotFoundException|IOException e)
+            {
+                Logger.err("MSG_028a: " + Strings.dbProblemDatabaseCreation + e);
+            }
+        }
+        Logger.msg(Strings.dbWarningNewDatabase);
+        return new HashMap<Path,String>();
     }
 
     /**

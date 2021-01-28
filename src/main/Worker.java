@@ -26,8 +26,11 @@ public class Worker implements Runnable
 {
     private long                           filesIncluded =0;
     private long                           filesReplaced =0;
+
     private final BlockingQueue<Integer>   stopSignal;
     private final BlockingQueue<FileQueue> transferQueue;
+
+    private HashMap<Path,String>           linkMapTable  =new HashMap<Path,String>();
     private HashMap<String,UniqueFile>     hashMapTable  =new HashMap<String,UniqueFile>();
 
     /**
@@ -55,6 +58,7 @@ public class Worker implements Runnable
     public void run()
     {
         hashMapTable=DataBase.loadMap();
+        linkMapTable=DataBase.loadMap1();
         Logger.msg(Strings.wkStartup);
         try
         {
@@ -88,12 +92,12 @@ public class Worker implements Runnable
         synchronized(this)
         {
             DataBase.saveMap(hashMapTable);
+            DataBase.saveMap1(linkMapTable);
         }
     }
 
     /**
-     * This method clear the hash map database for starting a new fresh
-     * unduplicate task.
+     * This method clear the hash map database for starting a new fresh unduplicate task.
      */
     public synchronized void clear()
     {
@@ -104,11 +108,8 @@ public class Worker implements Runnable
     }
 
     /**
-     * This method returns the size of the hash map database to inform how many
-     * items are already worked.
-     * 
-     * @return Returns a <code>long</code> value with the size of the file hash
-     *         database.
+     * This method returns the size of the hash map database to inform how many items are already worked.
+     * @return Returns a <code>long</code> value with the size of the file hash database.
      */
     public synchronized long size()
     {
@@ -119,14 +120,14 @@ public class Worker implements Runnable
     }
 
     /**
-     * This method loads the hash map database from disk to restart later saved
-     * unduplication tasks.
+     * This method loads the hash map database from disk to restart later saved unduplication tasks.
      */
     public synchronized void load()
     {
         synchronized(this)
         {
             hashMapTable=DataBase.loadMap();
+            linkMapTable=DataBase.loadMap1();
         }
     }
 
@@ -184,7 +185,7 @@ public class Worker implements Runnable
                 {
                     for(int i=0; i<shas.size();i++)
                     {
-                        UniqueFile file = hashMapTable.get(shas.get(i));                        
+                        UniqueFile file = hashMapTable.get(shas.get(i));
                         file.removeLinks();
                         file.clearUrl();
                     }
@@ -199,7 +200,8 @@ public class Worker implements Runnable
                     else
                     {
                         log(" HERE FILE IS NOT A LINK ["+fileQueue.getPath().toString()+"]");
-                        for(int i=0; i<shas.size();i++)
+                        // TODO: FOR NEVER REACHED - MUST GET NULL LINKS FROM HASH-MAP-TABLE TO REMOVE
+                        for(int i=0; i<shas.size(); i++)
                         {
                             if(FileOperations.isFile(fileQueue.getPath()))
                             {
@@ -230,20 +232,23 @@ public class Worker implements Runnable
                     ArrayList<String> shaz = getShaFromUri(fileQueue.getPath());
                     for(int i = 0; i < shaz.size(); i++)
                     {
-                        hashMapTable.get(shaz.get(i)).setFileUri(fileQueue.getPath2());
+                        hashMapTable.get(shaz.get(i)).setFilePath(fileQueue.getPath2());
                     }
                 }
             break;
             default:
         }
 
-        int count = 0;
         Iterator<Entry<String, UniqueFile>> it = hashMapTable.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, UniqueFile> pair = (Map.Entry<String, UniqueFile>)it.next();
-            Logger.msg("Index   : " +  count);
             pair.getValue().show();
-            count++;
+        }
+
+        Iterator<Entry<Path, String>> lm = linkMapTable.entrySet().iterator();
+        while (lm.hasNext()) {
+            Map.Entry<Path, String> pair = (Map.Entry<Path, String>)lm.next();
+            Logger.msg("["+pair.getKey()+"]["+pair.getValue()+"]");
         }
     }
 
@@ -288,19 +293,20 @@ public class Worker implements Runnable
         {
             newfile.makeLinks();
             hashMapTable.put(newfile.getSha(), newfile);
+            linkMapTable.put(newfile.getFilePath(), newfile.getSha());
         }
         else
         {
             if(0==currentfile.getFilePath().compareTo(newfile.getFilePath()))
             {
-                // Se o URI da base √© igual ao URI de entrada
+                // Se o URI da base È igual ao URI de entrada
                 // Mesmo SHA, Mesmo URI
-                // Ent√£o Arquivo n√£o mudou
+                // Ent„o Arquivo n„o mudou
                 log(" manageExistingSha({newfile}): {currentfile} == {newfile.fileUri}");
             }
             else
             {
-                // Se o URI da base √© diferente do URI de entrada
+                // Se o URI da base È diferente do URI de entrada
                 // Verifica se a URI de entrada tem algum SHA na base
                 ArrayList<String> oldsha = getShaFromUri(newfile.getFilePath());
                 if (oldsha.size() > 0)
@@ -310,8 +316,8 @@ public class Worker implements Runnable
                         if (oldsha.get(i).equals(newfile.getSha()))
                         {
                             log(" manageExistingSha("+newfile.toString()+"): A and B are the same, no changes");
-                            // se o SHA da URI de entrada √© igual ao SHA da URI da base
-                            // ent√£o o conte√∫do do URI foi salvo mas n√£o mudou o conte√∫do
+                            // se o SHA da URI de entrada È igual ao SHA da URI da base
+                            // ent„o o conte˙do do URI foi salvo mas n„o mudou o conte˙do
                         }
                         else
                         {
@@ -328,8 +334,8 @@ public class Worker implements Runnable
                                     Settings.Tab + "[" + newfile.getSha() + "]" + Settings.Tab + Strings.wkReplacing + newfile.getFileStr());
                                 hashMapTable.get(newfile.getSha()).addLink(newfile.getFileStr());
                             }
-                            // se o SHA da URI de entrada √∫ diferente do SHA da uri de base
-                            // ent√£o o conte√∫do do URI foi salvo e mudou o conte√∫do
+                            // se o SHA da URI de entrada È diferente do SHA da uri de base
+                            // ent„o o conte˙do do URI foi salvo e mudou o conte˙do
                             // atualizar SHA do URI
                             Logger.msg("[" + Utils.addLeadingZeros(filesIncluded) + "][" + Utils.addLeadingZeros(filesReplaced) + "]" +
                                 Settings.Tab + Strings.wkRemoving + newfile.getFileStr());
@@ -340,17 +346,18 @@ public class Worker implements Runnable
                 }
                 else
                 {
-                    // URI de entrada √© um arquivo duplicado
+                    // URI de entrada È um arquivo duplicado
                     if (FileOperations.isFile(newfile.getFileStr()))
                     {
                         if (hashMapTable.get(newfile.getSha()).getFileStr().isEmpty())
                         {
-                            hashMapTable.get(newfile.getSha()).setFileUri(newfile.getFileStr());
+                            hashMapTable.get(newfile.getSha()).setFilePath(newfile.getFilePath());
                             hashMapTable.get(newfile.getSha()).makeLinks();
                         }
                         else
                         {
                             hashMapTable.get(newfile.getSha()).addLink(newfile.getFileStr());
+                            linkMapTable.put(newfile.getFilePath(), newfile.getSha());
                         }
                     }
                     else
@@ -376,7 +383,7 @@ public class Worker implements Runnable
         }
         return shas;
     }
-   
+
     /**
      * This method displays a log message through the embedded log system.
      * 

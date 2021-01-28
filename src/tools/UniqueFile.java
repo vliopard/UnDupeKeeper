@@ -10,8 +10,8 @@ import java.util.ArrayList;
 public class UniqueFile
 {
 
-    private Path         fileUri      = null;
-    private String       fileSha      = null;
+    private Path            fileUri  = null;
+    private String          fileSha   = null;
     private ArrayList<Path> fileLinks = new ArrayList<Path>();
 
     public UniqueFile(String value)
@@ -51,12 +51,12 @@ public class UniqueFile
         fileUri=Paths.get("");
     }
 
-    public void setFileUri(String uri)
+    public void setFileStr(String uri)
     {
-        setFileUri(Paths.get(uri));
+        setFilePath(Paths.get(uri));
     }
     
-    public void setFileUri(Path uri)
+    public void setFilePath(Path uri)
     {
         fileUri = uri;
         setSha();
@@ -66,18 +66,18 @@ public class UniqueFile
             {
                 for (int i = 0; i < fileLinks.size(); i++)
                 {
-                    renewLink(uri);
+                    remakeLink(uri);
                 }
             }
         }
     }
 
-    public void renewLink(String uri)
+    public void remakeLink(String uri)
     {
-        renewLink(Paths.get(uri));
+        remakeLink(Paths.get(uri));
     }
-    
-    public void renewLink(Path uri)
+
+    public void remakeLink(Path uri)
     {
         
         if (FileOperations.isLink(uri))
@@ -143,7 +143,7 @@ public class UniqueFile
     {
         removeLink(Paths.get(link));
     }
-    
+
     public void removeLink(Path link)
     {
         if (fileLinks.contains(link))
@@ -186,19 +186,17 @@ public class UniqueFile
             Logger.msg("ERROR: FILE CONTENTS ARE NOT THE SAME");
         }
     }
-    
+
     public void show() 
     {
-        Logger.msg("Filename: [" + fileUri.toString() + "]");
-        Logger.msg("Checksum: [" + fileSha + "]");
+        Logger.msg("Checksum: [" + fileSha + "] Filename: [" + fileUri.toString() + "]");
         if (fileLinks.size() > 0)
         {
-            Logger.msg("Filelink:");
             for(int i = 0; i < fileLinks.size(); i++)
             {
-                Logger.msg("\t" + fileLinks.get(i).toString());
+                Logger.msg("Filelink:\t" + fileLinks.get(i).toString());
             }
-            Logger.msg("------------------------------------");
+            Logger.msg("--------------------------------------------");
         }
     }
 }
