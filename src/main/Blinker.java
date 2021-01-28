@@ -13,8 +13,7 @@ import tools.TrayImage;
  * 
  * @author vliopard
  */
-public class Blinker implements
-                    Runnable
+public class Blinker implements Runnable
 {
     private long                           size  =0;
     private boolean                        red   =false;
@@ -38,9 +37,7 @@ public class Blinker implements
      * @param iconTray
      *            Icon object that receives new icon image for changing.
      */
-    Blinker(BlockingQueue<FileQueue> fileQueue,
-            BlockingQueue<Integer> signalQueue,
-            TrayIcon iconTray)
+    Blinker(BlockingQueue<FileQueue> fileQueue, BlockingQueue<Integer> signalQueue, TrayIcon iconTray)
     {
         transferQueue=fileQueue;
         stopSignal=signalQueue;
@@ -102,7 +99,7 @@ public class Blinker implements
     @Override
     public void run()
     {
-        msg(Strings.uiStartup);
+        Logger.msg(Strings.uiStartup);
         do
         {
             try
@@ -111,37 +108,29 @@ public class Blinker implements
             }
             catch(InterruptedException e)
             {
-                err("MSG_000: "+
-                    Strings.uiProblem+
-                    e);
+                Logger.err("MSG_000: " + Strings.uiProblem + e);
             }
             size=transferQueue.size();
             changeSystemTrayTip(size);
-            if((size<=10000)&&
-               (!green))
+            if((size<=10000)&&(!green))
             {
                 setGreen();
                 changeSystemTrayIcon(Settings.IconDnaGreen);
                 continue;
             }
-            if((size>10000)&&
-               (size<=50000)&&
-               (!gray))
+            if((size>10000)&&(size<=50000)&&(!gray))
             {
                 setGray();
                 changeSystemTrayIcon(Settings.IconDnaGray);
                 continue;
             }
-            if((size>50000)&&
-               (size<=100000)&&
-               (!red))
+            if((size>50000)&&(size<=100000)&&(!red))
             {
                 setRed();
                 changeSystemTrayIcon(Settings.IconDnaRed);
                 continue;
             }
-            if((size>100000)&&
-               (!color))
+            if((size>100000)&&(!color))
             {
                 setColor();
                 changeSystemTrayIcon(Settings.IconDnaColor);
@@ -155,10 +144,9 @@ public class Blinker implements
         }
         catch(InterruptedException e)
         {
-            err("MSG_001: "+
-                Strings.wkErrorSendingShutdownMessage);
+            Logger.err("MSG_001: " + Strings.wkErrorSendingShutdownMessage);
         }
-        msg(Strings.uiShutdown);
+        Logger.msg(Strings.uiShutdown);
     }
 
     /**
@@ -170,8 +158,7 @@ public class Blinker implements
      */
     private void changeSystemTrayTip(long totalItems)
     {
-        trayIcon.setToolTip(Strings.bkTotalItems+
-                            String.valueOf(totalItems));
+        trayIcon.setToolTip(Strings.bkTotalItems + String.valueOf(totalItems));
     }
 
     /**
@@ -185,27 +172,5 @@ public class Blinker implements
     private void changeSystemTrayIcon(int iconIndex)
     {
         trayIcon.setImage(TrayImage.setSystemTrayImage(iconIndex));
-    }
-
-    /**
-     * This method displays a message through the embedded log system.
-     * 
-     * @param message
-     *            A <code>String</code> containing the message to display.
-     */
-    private static void msg(String message)
-    {
-        Logger.msg(message);
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }

@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
@@ -40,29 +41,25 @@ public class CheckSum
      * @return Returns a <code>byte array</code> that contains the encrypted
      *         representation of a file.
      */
-    public static byte[] createChecksum(String fileName)
+    public static byte[] createChecksum(Path fileName)
     {
         InputStream fileInputStream;
         try
         {
-            fileInputStream=new FileInputStream(fileName);
+            fileInputStream=new FileInputStream(fileName.toString());
             byte[] byteBuffer=new byte[1024];
             MessageDigest messageDigest=MessageDigest.getInstance(Settings.CypherMethod);
             int numberRead=0;
             while((numberRead=fileInputStream.read(byteBuffer))!=-1)
             {
-                messageDigest.update(byteBuffer,
-                                     0,
-                                     numberRead);
+                messageDigest.update(byteBuffer, 0, numberRead);
             }
             fileInputStream.close();
             return messageDigest.digest();
         }
         catch(IOException|NoSuchAlgorithmException e)
         {
-            err("MSG_020: "+
-                Strings.csChecksumCreationFailed+
-                e);
+            Logger.err("MSG_020: " + Strings.csChecksumCreationFailed + e);
             return null;
         }
     }
@@ -77,7 +74,7 @@ public class CheckSum
      * @return Returns a <code>String</code> containing the encrypted
      *         representation of a file.
      */
-    public static String getChecksumSimple(String fileName)
+    public static String getChecksumSimple(Path fileName)
     {
         waitForFile(fileName);
         byte[] rawBytes=createChecksum(fileName);
@@ -90,8 +87,7 @@ public class CheckSum
             resultBuffer.append(Integer.toHexString(0xFF&rawBytes[i]));
         }
         // return result.toUpperCase();
-        return resultBuffer.toString()
-                           .toUpperCase();
+        return resultBuffer.toString().toUpperCase();
     }
 
     /**
@@ -107,7 +103,7 @@ public class CheckSum
      *             This exception will be raised in case the return value could
      *             not be converted to the ASCII.
      */
-    public static String getChecksumFaster(String fileName) throws UnsupportedEncodingException
+    public static String getChecksumFaster(Path fileName) throws UnsupportedEncodingException
     {
         waitForFile(fileName);
         byte[] rawBytes=createChecksum(fileName);
@@ -119,8 +115,7 @@ public class CheckSum
             hex[index++]=Settings.HEX_CHAR_TABLE[v>>>4];
             hex[index++]=Settings.HEX_CHAR_TABLE[v&0xF];
         }
-        return new String(hex,
-                          "ASCII").toUpperCase();
+        return new String(hex, "ASCII").toUpperCase();
     }
 
     /**
@@ -133,7 +128,7 @@ public class CheckSum
      * @return Returns a <code>String</code> containing the encrypted
      *         representation of a file.
      */
-    public static String getChecksumElegant(String fileName)
+    public static String getChecksumElegant(Path fileName)
     {
         waitForFile(fileName);
         byte[] rawBytes=createChecksum(fileName);
@@ -143,8 +138,7 @@ public class CheckSum
             hexString.append(Settings.HexHashValues.charAt((b&0xF0)>>4))
                      .append(Settings.HexHashValues.charAt((b&0x0F)));
         }
-        return hexString.toString()
-                        .toUpperCase();
+        return hexString.toString().toUpperCase();
     }
 
     /**
@@ -169,9 +163,7 @@ public class CheckSum
         }
         catch(NoSuchAlgorithmException|UnsupportedEncodingException e)
         {
-            err("MSG_021: "+
-                Strings.csPasswordEncryptionFailed+
-                e);
+            Logger.err("MSG_021: " + Strings.csPasswordEncryptionFailed + e);
         }
         return cypherSha1Method;
     }
@@ -190,8 +182,7 @@ public class CheckSum
         Formatter formatter=new Formatter();
         for(byte byteLoop : hashBytes)
         {
-            formatter.format("%02x",
-                             byteLoop);
+            formatter.format("%02x", byteLoop);
         }
         String result=formatter.toString();
         formatter.close();
@@ -215,11 +206,12 @@ public class CheckSum
         {
             String hex=Integer.toHexString(0xff&byteData[i]);
             if(hex.length()==1)
+            {
                 hexString.append('0');
+            }
             hexString.append(hex);
         }
-        return hexString.toString()
-                        .toUpperCase();
+        return hexString.toString().toUpperCase();
     }
 
     /**
@@ -229,14 +221,14 @@ public class CheckSum
      *            A <code>String</code> containing a path to the file to wait
      *            for.
      */
-    public static void waitForFile(String fileName)
+    public static void waitForFile(Path fileName)
     {
         boolean reachedFirstTime=true;
         for(;;)
         {
             try
             {
-                File file=new File(fileName);
+                File file=new File(fileName.toString());
                 FileInputStream fileInputStream=new FileInputStream(file);
                 if(fileInputStream.available()==file.length())
                 {
@@ -254,10 +246,7 @@ public class CheckSum
             }
             if(reachedFirstTime)
             {
-                log(Strings.csWaitingForFile+
-                    " ["+
-                    fileName+
-                    "]");
+                log(Strings.csWaitingForFile + " [" + fileName + "]");
             }
             reachedFirstTime=false;
         }
@@ -271,19 +260,6 @@ public class CheckSum
      */
     private static void log(String logMessage)
     {
-        Logger.log(Thread.currentThread(),
-                   logMessage,
-                   Logger.CHECKSUM);
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
+        Logger.log(Thread.currentThread(), logMessage, Logger.CHECKSUM);
     }
 }

@@ -44,8 +44,7 @@ public class TimeControl
      */
     public static long getElapsedTime(long start)
     {
-        return getTime()-
-               start;
+        return getTime() - start;
     }
 
     /**
@@ -59,8 +58,7 @@ public class TimeControl
      */
     public static long getElapsedNano(long start)
     {
-        return getNano()-
-               start;
+        return getNano() - start;
     }
 
     /**
@@ -158,11 +156,7 @@ public class TimeControl
      */
     public static String getHMS(long time)
     {
-        return getHour(time)+
-               ":"+
-               getMin(time)+
-               ":"+
-               getSec(time);
+        return getHour(time) + ":" + getMin(time) + ":" + getSec(time);
     }
 
     /**
@@ -177,16 +171,12 @@ public class TimeControl
      */
     public static String getTotal(long time)
     {
-        Timestamp ts=new Timestamp(TimeUnit.MILLISECONDS.convert(time,
-                                                                 TimeUnit.NANOSECONDS));
+        Timestamp ts=new Timestamp(TimeUnit.MILLISECONDS.convert(time, TimeUnit.NANOSECONDS));
         SimpleDateFormat format=new SimpleDateFormat("°:mm'\"':ss'':SSS:");
-        long hr=getHour(time);
-        long mic=getMic(time);
-        long roundTime=mic/1000;
-        return Utils.addCustomLeadingZeros("02",
-                                           hr)+
-               format.format(ts)+
-               Utils.addCustomLeadingZeros("03",
-                                           (mic-(roundTime*1000)));
+        long hr = getHour(time);
+        long mic = getMic(time);
+        long roundTime = mic / 1000;
+        return Utils.addCustomLeadingZeros("02", hr) + format.format(ts) +
+               Utils.addCustomLeadingZeros("03", (mic - (roundTime * 1000)));
     }
 }

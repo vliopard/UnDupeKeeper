@@ -13,8 +13,7 @@ import settings.Strings;
  * 
  * @author vliopard
  */
-public class FileTableModel extends
-        AbstractTableModel
+public class FileTableModel extends AbstractTableModel
 {
     private static final long serialVersionUID  =-6234469100236698739L;
     private File[]            fileArray;
@@ -65,8 +64,7 @@ public class FileTableModel extends
      *            An <code>int</code> value of the <code>Object</code>'s column.
      * @return Object The <code>Object</code> from provided position.
      */
-    public Object getValueAt(int row,
-                             int column)
+    public Object getValueAt(int row, int column)
     {
         File file=fileArray[row];
         switch(column)
@@ -74,13 +72,11 @@ public class FileTableModel extends
             case 0:
                 return fileSystemView.getSystemIcon(file);
             case 1:
-                if(fileSystemView.getSystemDisplayName(file)
-                                 .lastIndexOf(Strings.dot)<0)
+                if(fileSystemView.getSystemDisplayName(file).lastIndexOf(Strings.dot)<0)
                 {
                     return fileSystemView.getSystemDisplayName(file);
                 }
-                return fileSystemView.getSystemDisplayName(file)
-                                     .substring(0,
+                return fileSystemView.getSystemDisplayName(file).substring(0,
                                                 fileSystemView.getSystemDisplayName(file)
                                                               .lastIndexOf(Strings.dot));
             case 2:
@@ -88,8 +84,7 @@ public class FileTableModel extends
                 {
                     return Strings.fbDirSymbol;
                 }
-                if(fileSystemView.getSystemDisplayName(file)
-                                 .lastIndexOf(Strings.dot)<0)
+                if(fileSystemView.getSystemDisplayName(file).lastIndexOf(Strings.dot)<0)
                 {
                     return Settings.Empty;
                 }
@@ -115,7 +110,7 @@ public class FileTableModel extends
             case 10:
                 return file.isFile();
             default:
-                err(Strings.fbInvalidColumnIndex);
+                Logger.err(Strings.fbInvalidColumnIndex);
         }
         return Settings.Empty;
     }
@@ -204,14 +199,4 @@ public class FileTableModel extends
         fireTableDataChanged();
     }
 
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
-    }
 }

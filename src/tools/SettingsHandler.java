@@ -11,8 +11,7 @@ import settings.Settings;
  * 
  * @author vliopard
  */
-public class SettingsHandler implements
-                            Serializable
+public class SettingsHandler implements Serializable
 {
     private boolean           settingsChanged         =false;
     private boolean           directoryChanged        =false;
@@ -97,8 +96,7 @@ public class SettingsHandler implements
      *            An <code>int</code> value that informs the vertical position
      *            of the settings dialog.
      */
-    public void setXY(int xScreenPosition,
-                      int yScreenPosition)
+    public void setXY(int xScreenPosition, int yScreenPosition)
     {
         xScreenAxis=xScreenPosition;
         yScreenAxis=yScreenPosition;

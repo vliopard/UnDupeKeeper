@@ -8,8 +8,8 @@ package settings;
  */
 public class Settings
 {
-	public static String         os                       = System.getProperty("os.name").toLowerCase();
-    public static String         undupeVersion            ="18.09.27.23.50";
+    public static String         os                       = System.getProperty("os.name").toLowerCase();
+    public static String         undupeVersion            ="21.01.25.09.43";
     public static String         CypherMethodList[]       =
                                                           {
             "CRC32",
@@ -23,7 +23,7 @@ public class Settings
             "SHA-512"
                                                           };
     public static boolean        comparisonIsON           =false;
-    public static String         CypherMethod             =CypherMethodList[Settings.CypherMethodSHA512];
+    public static String         CypherMethod             =CypherMethodList[Settings.CypherMethodMD5];
     public static final int      CypherMethodCRC32        =0;
     public static final int      CypherMethodMD5          =1;
     public static final int      CypherMethodSHA          =2;
@@ -92,7 +92,7 @@ public class Settings
     public static final String   Dot                      =".";
     public static final String   Quote                    ="\"";
     public static final String   RootDir                  ="/";
-    public static final String   Slash                    = os.indexOf("win")>=0 ? "\\" : RootDir;
+    public static final String   Slash                    = os.indexOf("win") >= 0 ? "\\" : RootDir;
     public static final String   Tab                      ="\t";
     public static final String   endl                     ="\n";
     public static final String   EndLine                  ="\r\n";
@@ -116,12 +116,10 @@ public class Settings
     public static final String   UnDupeKeeperSignature    =" repeeKepuDnU{.-::![|@|]!::-.}UnDupeKeeper ";
     public static final String   SystemTrayIconSize       ="16";
     public static final String   LanguagePackage          ="languages.";
-    public static final String   SystemTrayImageDirectory ="/images/"+
-                                                           SystemTrayIconSize+
-                                                           "/";
+    public static final String   SystemTrayImageDirectory ="/images/" + SystemTrayIconSize + "/";
     public static final String   Plaf                     ="com.sun.java.swing.plaf.";
     public static final String   Plafx                    ="javax.swing.plaf.";
-    
+
     public static final String   Separator                ="_____________________";
     public static final String   SeparatorSingle          ="---------------------";
     public static final String   SeparatorDouble          ="=====================";
@@ -151,66 +149,27 @@ public class Settings
                                                           };
     public static final String[] LookAndFeelPackages      =
                                                           {
-            Plaf+
-                    "gtk.GTKLookAndFeel",
-            Plaf+
-                    "motif.MotifLookAndFeel",
-            Plaf+
-                    "nimbus.NimbusLookAndFeel",
-            Plaf+
-                    "windows.WindowsLookAndFeel",
-            Plafx+
-                    "basic.BasicLookAndFeel",
-            Plafx+
-                    "metal.MetalLookAndFeel",
-            Plafx+
-                    "multi.MultiLookAndFeel",
-            Plafx+
-                    "nimbus.NimbusLookAndFeel",
-            Plafx+
-                    "synth.SynthLookAndFeel"
+            Plaf  + "gtk.GTKLookAndFeel",
+            Plaf  + "motif.MotifLookAndFeel",
+            Plaf  + "nimbus.NimbusLookAndFeel",
+            Plaf  + "windows.WindowsLookAndFeel",
+            Plafx + "basic.BasicLookAndFeel",
+            Plafx + "metal.MetalLookAndFeel",
+            Plafx + "multi.MultiLookAndFeel",
+            Plafx + "nimbus.NimbusLookAndFeel",
+            Plafx + "synth.SynthLookAndFeel"
                                                           };
     public static final String[] iconList                 =
                                                           {
-            SystemTrayImageDirectory+
-                    "dnaColor"+
-                    SystemTrayIconSize+
-                    FileExtension,
-            SystemTrayImageDirectory+
-                    "dnaGray"+
-                    SystemTrayIconSize+
-                    FileExtension,
-            SystemTrayImageDirectory+
-                    "dnaGreen"+
-                    SystemTrayIconSize+
-                    FileExtension,
-            SystemTrayImageDirectory+
-                    "dnaRed"+
-                    SystemTrayIconSize+
-                    FileExtension,
-            SystemTrayImageDirectory+
-                    "dupeArrow"+
-                    SystemTrayIconSize+
-                    FileExtension,
-            SystemTrayImageDirectory+
-                    "dupeFile"+
-                    SystemTrayIconSize+
-                    FileExtension,
-            SystemTrayImageDirectory+
-                    "dupeLoupe"+
-                    SystemTrayIconSize+
-                    FileExtension,
-            SystemTrayImageDirectory+
-                    "dupeCalc"+
-                    SystemTrayIconSize+
-                    FileExtension,
-            SystemTrayImageDirectory+
-                    "dnaMini"+
-                    SystemTrayIconSize+
-                    FileExtension,
-            SystemTrayImageDirectory+
-                    "yellow"+
-                    SystemTrayIconSize+
-                    FileExtension
+            SystemTrayImageDirectory + "dnaColor"  + SystemTrayIconSize + FileExtension,
+            SystemTrayImageDirectory + "dnaGray"   + SystemTrayIconSize + FileExtension,
+            SystemTrayImageDirectory + "dnaGreen"  + SystemTrayIconSize + FileExtension,
+            SystemTrayImageDirectory + "dnaRed"    + SystemTrayIconSize + FileExtension,
+            SystemTrayImageDirectory + "dupeArrow" + SystemTrayIconSize + FileExtension,
+            SystemTrayImageDirectory + "dupeFile"  + SystemTrayIconSize + FileExtension,
+            SystemTrayImageDirectory + "dupeLoupe" + SystemTrayIconSize + FileExtension,
+            SystemTrayImageDirectory + "dupeCalc"  + SystemTrayIconSize + FileExtension,
+            SystemTrayImageDirectory + "dnaMini"   + SystemTrayIconSize + FileExtension,
+            SystemTrayImageDirectory + "yellow"    + SystemTrayIconSize + FileExtension
                                                           };
 }

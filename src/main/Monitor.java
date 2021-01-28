@@ -1,4 +1,5 @@
 package main;
+import java.nio.file.Paths;
 import java.util.concurrent.BlockingQueue;
 import settings.Settings;
 import settings.Strings;
@@ -42,21 +43,15 @@ public class Monitor
             BlockingQueue<Integer> stopCommand,
             boolean watchRecursive)
     {
-        msg(Strings.mtMonitorStartup);
+        Logger.msg(Strings.mtMonitorStartup);
         transferQueue=transferData;
         stopSignal=stopCommand;
-        int jNotifyMask=JNotify.FILE_CREATED|
-                        JNotify.FILE_DELETED|
-                        JNotify.FILE_MODIFIED|
-                        JNotify.FILE_RENAMED;
+        int jNotifyMask=JNotify.FILE_CREATED|JNotify.FILE_DELETED|JNotify.FILE_MODIFIED|JNotify.FILE_RENAMED;
         boolean watchSubtree=watchRecursive;
         int watchID;
         try
         {
-            watchID=JNotify.addWatch(directoryPath,
-                                     jNotifyMask,
-                                     watchSubtree,
-                                     new Listener());
+            watchID=JNotify.addWatch(directoryPath, jNotifyMask, watchSubtree, new Listener());
             do
             {
                 Thread.sleep(Settings.ThreadSleepTime);
@@ -67,17 +62,15 @@ public class Monitor
                 log(Strings.mtInvalidWatchID);
             }
             fileQueue=new FileQueue();
-            fileQueue.set(Settings.WorkerStopSignal,
-                          Settings.WorkerPrepareToExit);
+            // TODO: EXIT SIGNAL FILE WILL SHUTDOWN SYSTEM - FIX IT
+            fileQueue.set(Settings.WorkerStopSignal, Paths.get(Settings.WorkerPrepareToExit));
             transferQueue.put(fileQueue);
         }
         catch(JNotifyException|InterruptedException e)
         {
-            err("MSG_002: "+
-                Strings.mtProblemCreatingMonitorObject+
-                e);
+            Logger.err("MSG_002: " + Strings.mtProblemCreatingMonitorObject + e);
         }
-        msg(Strings.mtMonitorShutdown);
+        Logger.msg(Strings.mtMonitorShutdown);
     }
 
     /**
@@ -87,79 +80,66 @@ public class Monitor
      * 
      * @author vliopard
      */
-    class Listener implements
-                  JNotifyListener
+    class Listener implements JNotifyListener
     {
-        public void fileCreated(int wd,
-                                String rootPath,
-                                String name)
+        public void fileCreated(int wd, String rootPath, String name)
         {
             fileQueue=new FileQueue();
-            fileQueue.set(Settings.FileCreated,
-                          rootPath+
-                                  "\\"+
-                                  name);
+            fileQueue.set(Settings.FileCreated, Paths.get(rootPath + Settings.Slash + name));
             try
             {
                 transferQueue.put(fileQueue);
             }
             catch(InterruptedException e)
             {
-                err("MSG_003: "+
-                    Strings.mtProblemAddingToCreatingQueue+
-                    e);
+                Logger.err("MSG_003: " + Strings.mtProblemAddingToCreatingQueue + e);
             }
         }
 
-        public void fileModified(int wd,
-                                 String rootPath,
-                                 String name)
+        public void fileModified(int wd, String rootPath, String name)
         {
             fileQueue=new FileQueue();
-            fileQueue.set(Settings.FileModified,
-                          rootPath+
-                                  "\\"+
-                                  name);
+            fileQueue.set(Settings.FileModified, Paths.get(rootPath + Settings.Slash + name));
             try
             {
                 transferQueue.put(fileQueue);
             }
             catch(InterruptedException e)
             {
-                err("MSG_004: "+
-                    Strings.mtProblemAddingToModifyingQueue+
-                    e);
+                Logger.err("MSG_004: " + Strings.mtProblemAddingToModifyingQueue + e);
             }
         }
 
-        public void fileDeleted(int wd,
-                                String rootPath,
-                                String name)
+        public void fileDeleted(int wd, String rootPath, String name)
         {
             fileQueue=new FileQueue();
-            fileQueue.set(Settings.FileDeleted,
-                          rootPath+
-                                  "\\"+
-                                  name);
+            fileQueue.set(Settings.FileDeleted, Paths.get(rootPath + Settings.Slash + name));
             try
             {
                 transferQueue.put(fileQueue);
             }
             catch(InterruptedException e)
             {
-                err("MSG_005: "+
-                    Strings.mtProblemAddingToDeletingQueue+
-                    e);
+                Logger.err("MSG_005: " + Strings.mtProblemAddingToDeletingQueue + e);
             }
         }
 
-        public void fileRenamed(int wd,
-                                String rootPath,
-                                String oldName,
-                                String newName)
+        public void fileRenamed(int wd, String rootPath, String oldName, String newName) 
         {
-            // TODO: [Feed queue with renamed file information]
-            // print("renamed "+rootPath+"\\"+oldName+" -> "+newName);
+            Logger.msg("MOVED FROM ["+rootPath + Settings.Slash + oldName+"]");
+            Logger.msg("MOVED TO   ["+rootPath + Settings.Slash + newName+"]");
+            fileQueue=new FileQueue();
+            fileQueue.set(Settings.FileRenamed, 
+                          Paths.get(rootPath + Settings.Slash + oldName), 
+                          Paths.get(rootPath + Settings.Slash + newName));
+            try 
+            {
+                transferQueue.put(fileQueue);
+            }
+            catch(InterruptedException e) 
+            {
+                Logger.err("MSG_005: " + Strings.mtProblemAddingToDeletingQueue + e);
+            }
         }
     }
 
@@ -171,30 +151,6 @@ public class Monitor
      */
     private static void log(String logMessage)
     {
-        Logger.log(Thread.currentThread(),
-                   logMessage,
-                   Logger.MONITOR);
-    }
-
-    /**
-     * This method displays a message through the embedded log system.
-     * 
-     * @param message
-     *            A <code>String</code> containing the message to display.
-     */
-    private static void msg(String message)
-    {
-        Logger.msg(message);
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
+        Logger.log(Thread.currentThread(), logMessage, Logger.MONITOR);
     }
 }

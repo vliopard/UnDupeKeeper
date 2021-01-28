@@ -19,14 +19,11 @@ public class ProgressBarDialog
     private JProgressBar dpb;
     private JButton      jb;
 
-    public ProgressBarDialog(String title,
-                             String message)
+    public ProgressBarDialog(String title, String message)
     {
-        Dimension dim=Toolkit.getDefaultToolkit()
-                             .getScreenSize();
+        Dimension dim=Toolkit.getDefaultToolkit().getScreenSize();
         parentFrame=new JFrame(title);
-        parentFrame.setSize(500,
-                            90);
+        parentFrame.setSize(500, 90);
         jl=new JLabel(message);
         jb=new JButton(Strings.done);
         jb.addActionListener(new ActionListener()
@@ -45,16 +42,11 @@ public class ProgressBarDialog
         jb.setEnabled(false);
         jl.setHorizontalTextPosition(JLabel.CENTER);
         jl.setHorizontalAlignment(JLabel.CENTER);
-        jl.setSize(500,
-                   50);
-        dpb=new JProgressBar(0,
-                             100);
-        parentFrame.add(BorderLayout.NORTH,
-                        dpb);
-        parentFrame.add(BorderLayout.SOUTH,
-                        jl);
-        parentFrame.add(BorderLayout.SOUTH,
-                        jb);
+        jl.setSize(500, 50);
+        dpb=new JProgressBar(0, 100);
+        parentFrame.add(BorderLayout.NORTH, dpb);
+        parentFrame.add(BorderLayout.SOUTH, jl);
+        parentFrame.add(BorderLayout.SOUTH, jb);
         parentFrame.setLocation((dim.width-parentFrame.getSize().width)/2,
                                 (dim.height-parentFrame.getSize().height)/3);
         parentFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -103,21 +95,8 @@ public class ProgressBarDialog
             }
             catch(InterruptedException e)
             {
-                err("MSG_033: "+
-                    Strings.fatalError+
-                    e);
+                Logger.err("MSG_033: " + Strings.fatalError + e);
             }
         }
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }

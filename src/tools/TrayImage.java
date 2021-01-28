@@ -28,8 +28,7 @@ public class TrayImage
      */
     public static Image setSystemTrayImage(int iconIndex)
     {
-        Image trayIconImage=createImage(Settings.iconList[iconIndex],
-                                        Strings.ukSystemTrayIconTooltip);
+        Image trayIconImage=createImage(Settings.iconList[iconIndex], Strings.ukSystemTrayIconTooltip);
         if(trayIconImage==null)
         {
             trayIconImage=createNewImage();
@@ -44,14 +43,12 @@ public class TrayImage
      */
     public static Image createNewImage()
     {
-        Toolkit toolKit=Toolkit.getDefaultToolkit();
-        byte[] byteArray=new byte[]
+        Toolkit toolKit = Toolkit.getDefaultToolkit();
+        byte[] byteArray = new byte[]
         {
             0
         };
-        return toolKit.createImage(byteArray,
-                                   Settings.IconWidth,
-                                   Settings.IconHeight);
+        return toolKit.createImage(byteArray, Settings.IconWidth, Settings.IconHeight);
     }
 
     /**
@@ -81,31 +78,17 @@ public class TrayImage
      * @return Returns an <code>Image</code> from the internal resource file.
      *         Returns <code>null</code> if resource is not found.
      */
-    protected static Image createImage(String resourceImagePath,
-                                       String toolTipDescription)
+    protected static Image createImage(String resourceImagePath, String toolTipDescription)
     {
-        URL imageURL=UnDupeKeeper.class.getResource(resourceImagePath);
-        if(imageURL==null)
+        URL imageURL = UnDupeKeeper.class.getResource(resourceImagePath);
+        if(null == imageURL)
         {
-            err(Strings.ukResourceNotFound+
-                resourceImagePath);
+            Logger.err(Strings.ukResourceNotFound + resourceImagePath);
             return null;
         }
         else
         {
-            return (new ImageIcon(imageURL,
-                                  toolTipDescription)).getImage();
+            return (new ImageIcon(imageURL, toolTipDescription)).getImage();
         }
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }

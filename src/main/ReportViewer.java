@@ -78,16 +78,11 @@ public class ReportViewer
     {
         if(guiPanel==null)
         {
-            guiPanel=new JPanel(new BorderLayout(1,
-                                                 1));
-            guiPanel.setBorder(new EmptyBorder(1,
-                                               1,
-                                               1,
-                                               1));
+            guiPanel=new JPanel(new BorderLayout(1, 1));
+            guiPanel.setBorder(new EmptyBorder(1, 1, 1, 1));
             fileSystemView=FileSystemView.getFileSystemView();
             desktop=Desktop.getDesktop();
-            JPanel detailView=new JPanel(new BorderLayout(1,
-                                                          1));
+            JPanel detailView=new JPanel(new BorderLayout(1, 1));
             fileTable=new JTable();
             fileTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             fileTable.setAutoCreateRowSorter(true);
@@ -97,19 +92,15 @@ public class ReportViewer
                     @Override
                     public void valueChanged(ListSelectionEvent lse)
                     {
-                        int row=fileTable.getSelectionModel()
-                                         .getLeadSelectionIndex();
+                        int row=fileTable.getSelectionModel().getLeadSelectionIndex();
                         setFileDetails(((FileTableModel)fileTable.getModel()).getFile(row));
                     }
                 };
-            fileTable.getSelectionModel()
-                     .addListSelectionListener(listSelectionListener);
+            fileTable.getSelectionModel().addListSelectionListener(listSelectionListener);
             JScrollPane tableScroll=new JScrollPane(fileTable);
             Dimension d=tableScroll.getPreferredSize();
-            tableScroll.setPreferredSize(new Dimension((int)d.getWidth(),
-                                                       (int)d.getHeight()/2));
-            detailView.add(tableScroll,
-                           BorderLayout.CENTER);
+            tableScroll.setPreferredSize(new Dimension((int)d.getWidth(),(int)d.getHeight()/2));
+            detailView.add(tableScroll,BorderLayout.CENTER);
             DefaultMutableTreeNode root=new DefaultMutableTreeNode();
             treeModel=new DefaultTreeModel(root);
             TreeSelectionListener treeSelectionListener=new TreeSelectionListener()
@@ -159,46 +150,27 @@ public class ReportViewer
             Dimension widePreferred=new Dimension(350,
                                                   (int)preferredSize.getHeight());
             treeScroll.setPreferredSize(widePreferred);
-            JPanel fileMainDetails=new JPanel(new BorderLayout(4,
-                                                               2));
-            fileMainDetails.setBorder(new EmptyBorder(0,
-                                                      6,
-                                                      0,
-                                                      6));
-            JPanel fileDetailsLabels=new JPanel(new GridLayout(0,
-                                                               1,
-                                                               2,
-                                                               2));
-            fileMainDetails.add(fileDetailsLabels,
-                                BorderLayout.WEST);
-            JPanel fileDetailsValues=new JPanel(new GridLayout(0,
-                                                               1,
-                                                               2,
-                                                               2));
-            fileMainDetails.add(fileDetailsValues,
-                                BorderLayout.CENTER);
-            fileDetailsLabels.add(new JLabel(Strings.fbFile,
-                                             JLabel.TRAILING));
+            JPanel fileMainDetails=new JPanel(new BorderLayout(4, 2));
+            fileMainDetails.setBorder(new EmptyBorder(0, 6, 0, 6));
+            JPanel fileDetailsLabels=new JPanel(new GridLayout(0, 1, 2, 2));
+            fileMainDetails.add(fileDetailsLabels, BorderLayout.WEST);
+            JPanel fileDetailsValues=new JPanel(new GridLayout(0, 1, 2, 2));
+            fileMainDetails.add(fileDetailsValues, BorderLayout.CENTER);
+            fileDetailsLabels.add(new JLabel(Strings.fbFile, JLabel.TRAILING));
             fileName=new JLabel();
             fileDetailsValues.add(fileName);
-            fileDetailsLabels.add(new JLabel(Strings.fbPathName,
-                                             JLabel.TRAILING));
+            fileDetailsLabels.add(new JLabel(Strings.fbPathName, JLabel.TRAILING));
             path=new JTextField();
             path.setEditable(false);
             fileDetailsValues.add(path);
-            fileDetailsLabels.add(new JLabel(Strings.fbDate,
-                                             JLabel.TRAILING));
+            fileDetailsLabels.add(new JLabel(Strings.fbDate, JLabel.TRAILING));
             date=new JLabel();
             fileDetailsValues.add(date);
-            fileDetailsLabels.add(new JLabel(Strings.fbFileSize,
-                                             JLabel.TRAILING));
+            fileDetailsLabels.add(new JLabel(Strings.fbFileSize, JLabel.TRAILING));
             size=new JLabel();
             fileDetailsValues.add(size);
-            fileDetailsLabels.add(new JLabel(Strings.fbType,
-                                             JLabel.TRAILING));
-            JPanel flags=new JPanel(new FlowLayout(FlowLayout.LEADING,
-                                                   4,
-                                                   0));
+            fileDetailsLabels.add(new JLabel(Strings.fbType, JLabel.TRAILING));
+            JPanel flags=new JPanel(new FlowLayout(FlowLayout.LEADING, 4, 0));
             isDirectory=new JRadioButton(Strings.fbDirectory);
             flags.add(isDirectory);
             isFile=new JRadioButton(Strings.fileName);
@@ -214,16 +186,12 @@ public class ReportViewer
                     {
                         try
                         {
-                            msg(Strings.btAMessage+
-                                currentFile.getParentFile());
+                            Logger.msg(Strings.btAMessage + currentFile.getParentFile());
                             desktop.open(currentFile.getParentFile());
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("MSG_006: "+
-                                                  Strings.btAError,
-                                          Strings.btA,
-                                          e);
+                            showThrowable("MSG_006: " + Strings.btAError, Strings.btA, e);
                         }
                         guiPanel.repaint();
                     }
@@ -237,16 +205,12 @@ public class ReportViewer
                     {
                         try
                         {
-                            msg(Strings.btBMessage+
-                                currentFile);
+                            Logger.msg(Strings.btBMessage + currentFile);
                             desktop.open(currentFile);
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("MSG_007: "+
-                                                  Strings.btBError,
-                                          Strings.btB,
-                                          e);
+                            showThrowable("MSG_007: " + Strings.btBError, Strings.btB, e);
                         }
                         guiPanel.repaint();
                     }
@@ -260,16 +224,12 @@ public class ReportViewer
                     {
                         try
                         {
-                            msg(Strings.btCMessage+
-                                currentFile);
+                            Logger.msg(Strings.btCMessage + currentFile);
                             desktop.edit(currentFile);
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("MSG_008: "+
-                                                  Strings.btCError,
-                                          Strings.btC,
-                                          e);
+                            showThrowable("MSG_008: " + Strings.btCError, Strings.btC, e);
                         }
                     }
                 });
@@ -282,8 +242,7 @@ public class ReportViewer
                     {
                         try
                         {
-                            msg(Strings.btDMessage+
-                                currentFile);
+                            Logger.msg(Strings.btDMessage + currentFile);
                             // TODO: RESEARCH: LOOK FOR A WAY TO DELETE FILE
                             // TODO: RESEARCH: AFTER DELETE FILE, REFRESH GUI
                             // FILE TREE
@@ -291,16 +250,12 @@ public class ReportViewer
                             currentFile.setWritable(true);
                             if(currentFile.delete())
                             {
-                                showErrorMessage(Strings.btDError,
-                                                 Strings.btD);
+                                showErrorMessage(Strings.btDError, Strings.btD);
                             }
                         }
                         catch(Throwable e)
                         {
-                            showThrowable("MSG_009: "+
-                                                  Strings.btDError,
-                                          Strings.btD,
-                                          e);
+                            showThrowable("MSG_009: " + Strings.btDError, Strings.btD, e);
                         }
                     }
                 });
@@ -309,10 +264,7 @@ public class ReportViewer
             openFile.setEnabled(desktop.isSupported(Desktop.Action.OPEN));
             editFile.setEnabled(desktop.isSupported(Desktop.Action.EDIT));
             deleteFile.setEnabled(true);
-            flags.add(new JLabel(Strings.pipe+
-                                 Strings.space+
-                                 Strings.space+
-                                 Strings.flags));
+            flags.add(new JLabel(Strings.pipe + Strings.space + Strings.space + Strings.flags));
             readable=new JCheckBox(Strings.btRead);
             readable.setMnemonic(Strings.btReadShort);
             flags.add(readable);
@@ -325,33 +277,22 @@ public class ReportViewer
             int count=fileDetailsLabels.getComponentCount();
             for(int i=0; i<count; i++)
             {
-                fileDetailsLabels.getComponent(i)
-                                 .setEnabled(false);
+                fileDetailsLabels.getComponent(i).setEnabled(false);
             }
             count=flags.getComponentCount();
             for(int i=0; i<count; i++)
             {
-                flags.getComponent(i)
-                     .setEnabled(false);
+                flags.getComponent(i).setEnabled(false);
             }
-            JPanel fileView=new JPanel(new BorderLayout(3,
-                                                        3));
-            fileView.add(toolBar,
-                         BorderLayout.NORTH);
-            fileView.add(fileMainDetails,
-                         BorderLayout.CENTER);
-            detailView.add(fileView,
-                           BorderLayout.SOUTH);
-            JSplitPane splitPane=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                                treeScroll,
-                                                detailView);
-            guiPanel.add(splitPane,
-                         BorderLayout.CENTER);
-            JPanel simpleOutput=new JPanel(new BorderLayout(3,
-                                                            3));
+            JPanel fileView=new JPanel(new BorderLayout(3, 3));
+            fileView.add(toolBar, BorderLayout.NORTH);
+            fileView.add(fileMainDetails, BorderLayout.CENTER);
+            detailView.add(fileView, BorderLayout.SOUTH);
+            JSplitPane splitPane=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, detailView);
+            guiPanel.add(splitPane, BorderLayout.CENTER);
+            JPanel simpleOutput=new JPanel(new BorderLayout(3, 3));
             // progressBar=new JProgressBar();
-            simpleOutput.add(progressBar,
-                             BorderLayout.EAST);
+            simpleOutput.add(progressBar, BorderLayout.EAST);
             progressBar.setVisible(true);
             statusBar=new JLabel();
             if(fileSize==0)
@@ -362,21 +303,15 @@ public class ReportViewer
             {
                 if(fileSize==1)
                 {
-                    statusBar.setText(Strings.space+
-                                      Utils.numberFormat(fileSize)+
-                                      Strings.fileFound);
+                    statusBar.setText(Strings.space + Utils.numberFormat(fileSize) + Strings.fileFound);
                 }
                 else
                 {
-                    statusBar.setText(Strings.space+
-                                      Utils.numberFormat(fileSize)+
-                                      Strings.filesFound);
+                    statusBar.setText(Strings.space + Utils.numberFormat(fileSize) + Strings.filesFound);
                 }
             }
-            simpleOutput.add(statusBar,
-                             BorderLayout.WEST);
-            guiPanel.add(simpleOutput,
-                         BorderLayout.SOUTH);
+            simpleOutput.add(statusBar, BorderLayout.WEST);
+            guiPanel.add(simpleOutput, BorderLayout.SOUTH);
         }
         return guiPanel;
     }
@@ -386,8 +321,7 @@ public class ReportViewer
      */
     private static void showRootFile()
     {
-        mainTree.setSelectionInterval(0,
-                                      0);
+        mainTree.setSelectionInterval(0, 0);
     }
 
     @SuppressWarnings("unused")
@@ -407,27 +341,15 @@ public class ReportViewer
         return null;
     }
 
-    private static void showErrorMessage(String errorMessage,
-                                         String errorTitle)
+    private static void showErrorMessage(String errorMessage, String errorTitle)
     {
-        JOptionPane.showMessageDialog(guiPanel,
-                                      errorMessage,
-                                      errorTitle,
-                                      JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(guiPanel, errorMessage, errorTitle, JOptionPane.ERROR_MESSAGE);
     }
 
-    private static void showThrowable(String message,
-                                      String title,
-                                      Throwable throwable)
+    private static void showThrowable(String message, String title, Throwable throwable)
     {
-        err("["+
-            title+
-            "] "+
-            message+
-            Settings.Blank+
-            throwable.getMessage());
-        showErrorMessage(message,
-                         title);
+        Logger.err("[" + title + "] " + message + Settings.Blank + throwable.getMessage());
+        showErrorMessage(message, title);
         guiPanel.repaint();
     }
 
@@ -442,46 +364,31 @@ public class ReportViewer
                         fileTableModel=new FileTableModel();
                         fileTable.setModel(fileTableModel);
                     }
-                    fileTable.getSelectionModel()
-                             .removeListSelectionListener(listSelectionListener);
+                    fileTable.getSelectionModel().removeListSelectionListener(listSelectionListener);
                     fileTableModel.setFiles(files);
-                    fileTable.getSelectionModel()
-                             .addListSelectionListener(listSelectionListener);
+                    fileTable.getSelectionModel().addListSelectionListener(listSelectionListener);
                     if(!cellSizesSet)
                     {
                         Icon icon=fileSystemView.getSystemIcon(files[0]);
-                        fileTable.setRowHeight(icon.getIconHeight()+
-                                               rowIconPadding);
-                        setColumnWidth(0,
-                                       -1);
-                        setColumnWidth(4,
-                                       60);
-                        fileTable.getColumnModel()
-                                 .getColumn(4)
-                                 .setMaxWidth(255);
-                        setColumnWidth(5,
-                                       -1);
-                        setColumnWidth(6,
-                                       -1);
-                        setColumnWidth(7,
-                                       -1);
-                        setColumnWidth(8,
-                                       -1);
-                        setColumnWidth(9,
-                                       -1);
-                        setColumnWidth(10,
-                                       -1);
+                        fileTable.setRowHeight(icon.getIconHeight() + rowIconPadding);
+                        setColumnWidth(0, -1);
+                        setColumnWidth(4, 60);
+                        fileTable.getColumnModel().getColumn(4).setMaxWidth(255);
+                        setColumnWidth(5, -1);
+                        setColumnWidth(6, -1);
+                        setColumnWidth(7, -1);
+                        setColumnWidth(8, -1);
+                        setColumnWidth(9, -1);
+                        setColumnWidth(10, -1);
                         cellSizesSet=true;
                     }
                 }
             });
     }
 
-    private static void setColumnWidth(int column,
-                                       int width)
+    private static void setColumnWidth(int column, int width)
     {
-        TableColumn tableColumn=fileTable.getColumnModel()
-                                         .getColumn(column);
+        TableColumn tableColumn=fileTable.getColumnModel().getColumn(column);
         if(width<0)
         {
             JLabel label=new JLabel((String)tableColumn.getHeaderValue());
@@ -504,11 +411,9 @@ public class ReportViewer
                 public Void doInBackground()
                 {
                     File file=new File((String)node.getUserObject());
-                    if(file.getParentFile()
-                           .isDirectory())
+                    if(file.getParentFile().isDirectory())
                     {
-                        File[] files=fileSystemView.getFiles(file.getParentFile(),
-                                                             true);
+                        File[] files=fileSystemView.getFiles(file.getParentFile(), true);
                         if(node.isLeaf())
                         {
                             for(File child : files)
@@ -561,8 +466,7 @@ public class ReportViewer
         // ext.setText(fileSystemView.getSystemDisplayName(file).substring(fileSystemView.getSystemDisplayName(file).lastIndexOf(".")+1,fileSystemView.getSystemDisplayName(file).length()));
         path.setText(file.getPath());
         date.setText(new Date(file.lastModified()).toString());
-        size.setText(Utils.numberFormat(file.length())+
-                     Strings.fileBytes);
+        size.setText(Utils.numberFormat(file.length()) + Strings.fileBytes);
         readable.setSelected(file.canRead());
         writable.setSelected(file.canWrite());
         executable.setSelected(file.canExecute());
@@ -593,9 +497,7 @@ public class ReportViewer
         }
         catch(Exception e)
         {
-            err("MSG_010: "+
-                Strings.fbErrorLoadingLookAndFeel+
-                e);
+            Logger.err("MSG_010: " + Strings.fbErrorLoadingLookAndFeel + e);
         }
         JFrame mainFrame=new JFrame(Strings.fbTitleCheck);
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -607,34 +509,28 @@ public class ReportViewer
             URL smallIconUrl=UnDupeKeeper.class.getResource(Settings.iconList[8]);
             if(smallIconUrl==null)
             {
-                err(Strings.ukResourceNotFound+
-                    Settings.iconList[8]);
+                Logger.err(Strings.ukResourceNotFound + Settings.iconList[8]);
                 imageArray.add(TrayImage.createNewImage());
             }
             else
             {
-                imageArray.add((new ImageIcon(smallIconUrl,
-                                              "")).getImage());
+                imageArray.add((new ImageIcon(smallIconUrl, "")).getImage());
             }
             URL bigIconUrl=UnDupeKeeper.class.getResource(Settings.iconList[7]);
             if(bigIconUrl==null)
             {
-                err(Strings.ukResourceNotFound+
-                    Settings.iconList[7]);
+                Logger.err(Strings.ukResourceNotFound + Settings.iconList[7]);
                 imageArray.add(TrayImage.createNewImage());
             }
             else
             {
-                imageArray.add((new ImageIcon(bigIconUrl,
-                                              "")).getImage());
+                imageArray.add((new ImageIcon(bigIconUrl, "")).getImage());
             }
             mainFrame.setIconImages(imageArray);
         }
         catch(Exception e)
         {
-            err("MSG_011: "+
-                Strings.fbErrorLoadingIcons+
-                e);
+            Logger.err("MSG_011: " + Strings.fbErrorLoadingIcons + e);
         }
         mainFrame.pack();
         // f.setLocationByPlatform(true);
@@ -644,27 +540,5 @@ public class ReportViewer
         return mainFrame;
         // }
         // });
-    }
-
-    /**
-     * This method displays a message through the embedded log system.
-     * 
-     * @param message
-     *            A <code>String</code> containing the message to display.
-     */
-    private static void msg(String message)
-    {
-        Logger.msg(message);
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }

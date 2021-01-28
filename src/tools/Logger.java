@@ -21,7 +21,7 @@ public class Logger
     /* ========================================================= */
     private static boolean  COMPLETE_DISABLED     =false;
     /* ========================================================= */
-    private static boolean  ALL_SOFTWARE_ENABLED  =false;
+    private static boolean  ALL_SOFTWARE_ENABLED  =true;
     /* ========================================================= */
     private static boolean  UNDUPEKEEPER_ENABLED  =false;
     private static boolean  DATABASE_ENABLED      =false;
@@ -65,12 +65,9 @@ public class Logger
      * @param debugMessage
      *            A <code>String</code> that contains the log message.
      */
-    private static void messageFormat(String debugModule,
-                                      String debugMessage)
+    private static void messageFormat(String debugModule, String debugMessage)
     {
-        System.out.println(debugModule+
-                           Settings.Tab+
-                           debugMessage);
+        System.out.println(debugModule + Settings.Tab + debugMessage);
     }
 
     /**
@@ -87,12 +84,9 @@ public class Logger
      *            An <code>int</code> value that represents the module that is
      *            being executed.
      */
-    public static void log(Thread threadStackTrace,
-                           String logMessage,
-                           int systemModule)
+    public static void log(Thread threadStackTrace, String logMessage, int systemModule)
     {
-        if(((!COMPLETE_DISABLED)&&(!logMessage.startsWith("*")))||
-           (logMessage.startsWith("!")))
+        if(((!COMPLETE_DISABLED)&&(!logMessage.startsWith("*")))||(logMessage.startsWith("!")))
         {
             if(logMessage.startsWith("!"))
             {
@@ -104,85 +98,64 @@ public class Logger
                 }
             }
             String debugModuleName=null;
-            if(logMessage.startsWith(Settings.Blank)||
-               logMessage.startsWith("!"))
+            if(logMessage.startsWith(Settings.Blank)||logMessage.startsWith("!"))
             {
                 debugModuleName=threadStackTrace.getStackTrace()[2].getClassName();
-                debugModuleName="["+
-                                debugModuleName.substring(debugModuleName.lastIndexOf(".")+1)+
-                                "."+
-                                threadStackTrace.getStackTrace()[3].getMethodName()+
-                                "]"+
-                                Settings.Tab;
+                debugModuleName="[" + debugModuleName.substring(debugModuleName.lastIndexOf(".") + 1) +
+                                "." + threadStackTrace.getStackTrace()[3].getMethodName()+ "]" + Settings.Tab;
             }
             else
             {
-                debugModuleName="[___________]"+
-                                Settings.Tab;
+                debugModuleName="[___________]" + Settings.Tab;
             }
             switch(systemModule)
             {
                 case UNDUPEKEEPER:
-                    if(UNDUPEKEEPER_ENABLED||
-                       ALL_SOFTWARE_ENABLED)
+                    if(UNDUPEKEEPER_ENABLED||ALL_SOFTWARE_ENABLED)
                     {
-                        messageFormat(debugModuleName,
-                                      logMessage);
+                        messageFormat(debugModuleName, logMessage);
                     }
                 break;
                 case DATABASE:
-                    if(DATABASE_ENABLED||
-                       ALL_SOFTWARE_ENABLED)
+                    if(DATABASE_ENABLED||ALL_SOFTWARE_ENABLED)
                     {
-                        messageFormat(debugModuleName,
-                                      logMessage);
+                        messageFormat(debugModuleName, logMessage);
                     }
                 break;
                 case WORKER:
-                    if(WORKER_ENABLED||
-                       ALL_SOFTWARE_ENABLED)
+                    if(WORKER_ENABLED||ALL_SOFTWARE_ENABLED)
                     {
-                        messageFormat(debugModuleName,
-                                      logMessage);
+                        messageFormat(debugModuleName,logMessage);
                     }
                 break;
                 case CHECKSUM:
-                    if(CHECKSUM_ENABLED||
-                       ALL_SOFTWARE_ENABLED)
+                    if(CHECKSUM_ENABLED||ALL_SOFTWARE_ENABLED)
                     {
-                        messageFormat(debugModuleName,
-                                      logMessage);
+                        messageFormat(debugModuleName, logMessage);
                     }
                 break;
                 case MONITOR:
-                    if(MONITOR_ENABLED||
-                       ALL_SOFTWARE_ENABLED)
+                    if(MONITOR_ENABLED||ALL_SOFTWARE_ENABLED)
                     {
-                        messageFormat(debugModuleName,
-                                      logMessage);
+                        messageFormat(debugModuleName, logMessage);
                     }
                 break;
                 case USERINTERFACE:
-                    if(USERINTERFACE_ENABLED||
-                       ALL_SOFTWARE_ENABLED)
+                    if(USERINTERFACE_ENABLED||ALL_SOFTWARE_ENABLED)
                     {
-                        messageFormat(debugModuleName,
-                                      logMessage);
+                        messageFormat(debugModuleName, logMessage);
                     }
                 break;
                 case TRAYIMAGE:
-                    if(TRAYIMAGE_ENABLED||
-                       ALL_SOFTWARE_ENABLED)
+                    if(TRAYIMAGE_ENABLED||ALL_SOFTWARE_ENABLED)
                     {
-                        messageFormat(debugModuleName,
-                                      logMessage);
+                        messageFormat(debugModuleName, logMessage);
                     }
                 break;
                 default:
                     if(ALL_SOFTWARE_ENABLED)
                     {
-                        messageFormat(debugModuleName,
-                                      logMessage);
+                        messageFormat(debugModuleName, logMessage);
                     }
             }
             if(undo)

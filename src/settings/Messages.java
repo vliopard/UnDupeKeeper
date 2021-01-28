@@ -11,8 +11,7 @@ import tools.Logger;
  */
 public class Messages
 {
-    private static String         BUNDLE_NAME     =Settings.LanguagePackage+
-                                                   "en_us";                              //$NON-NLS-1$
+    private static String         BUNDLE_NAME     =Settings.LanguagePackage + "en_us";  //$NON-NLS-1$
     private static ResourceBundle RESOURCE_BUNDLE =ResourceBundle.getBundle(BUNDLE_NAME);
 
     /**
@@ -34,28 +33,14 @@ public class Messages
     {
         try
         {
-            BUNDLE_NAME=Settings.LanguagePackage+
-                        DataBase.loadLanguage();
+            BUNDLE_NAME=Settings.LanguagePackage + DataBase.loadLanguage();
             RESOURCE_BUNDLE=ResourceBundle.getBundle(BUNDLE_NAME);
             return RESOURCE_BUNDLE.getString(key);
         }
         catch(MissingResourceException e)
         {
-            err("MSG_019: "+
-                Strings.resourseError+
-                e);
+            Logger.err("MSG_019: " + Strings.resourseError + e);
             return '!'+key+'!';
         }
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }

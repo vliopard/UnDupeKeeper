@@ -1,20 +1,19 @@
 package main;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 import settings.Settings;
 import settings.Strings;
-import tools.CheckSum;
 import tools.DataBase;
 import tools.FileQueue;
+import tools.FileOperations;
 import tools.Logger;
 import tools.Utils;
+import tools.UniqueFile;
 
 /**
  * Worker class is responsible for checking a
@@ -23,14 +22,13 @@ import tools.Utils;
  * 
  * @author vliopard
  */
-public class Worker implements
-                   Runnable
+public class Worker implements Runnable
 {
     private long                           filesIncluded =0;
     private long                           filesReplaced =0;
     private final BlockingQueue<Integer>   stopSignal;
     private final BlockingQueue<FileQueue> transferQueue;
-    private HashMap<String,String>         hashMapTable  =new HashMap<String,String>();
+    private HashMap<String,UniqueFile>     hashMapTable  =new HashMap<String,UniqueFile>();
 
     /**
      * Worker Constructor - Initializes a Worker object that starts to keep
@@ -44,8 +42,7 @@ public class Worker implements
      *            A <code>BlockingQueue&lt;Integer&gt;</code> that will receive
      *            signals to shutdown gracefully.
      */
-    Worker(BlockingQueue<FileQueue> fileQueue,
-           BlockingQueue<Integer> signalQueue)
+    Worker(BlockingQueue<FileQueue> fileQueue, BlockingQueue<Integer> signalQueue)
     {
         transferQueue=fileQueue;
         stopSignal=signalQueue;
@@ -58,7 +55,7 @@ public class Worker implements
     public void run()
     {
         hashMapTable=DataBase.loadMap();
-        msg(Strings.wkStartup);
+        Logger.msg(Strings.wkStartup);
         try
         {
             do
@@ -69,9 +66,7 @@ public class Worker implements
         }
         catch(InterruptedException e)
         {
-            err("MSG_016: "+
-                Strings.wkProblemRunningWorker+
-                e);
+            Logger.err("MSG_016: " + Strings.wkProblemRunningWorker+ e);
         }
         save();
         try
@@ -80,10 +75,9 @@ public class Worker implements
         }
         catch(InterruptedException e)
         {
-            err("MSG_017: "+
-                Strings.wkErrorSendingShutdownMessage);
+            Logger.err("MSG_017: " + Strings.wkErrorSendingShutdownMessage);
         }
-        msg(Strings.wkWorkerShutdown);
+        Logger.msg(Strings.wkWorkerShutdown);
     }
 
     /**
@@ -151,18 +145,105 @@ public class Worker implements
         switch(fileQueue.getType())
         {
             case Settings.FileCreated:
-                includeFileToHashTable(fileQueue.getPath());
+                log(" includeFileToHashTable(" + fileQueue.getPath() + ")");
             break;
+
             case Settings.FileModified:
-            // TODO: [Action to handle modified files]
+                log(" FILE MODIFIED (" + fileQueue.getPath().toString() + ")");
+                if(!FileOperations.isLink(fileQueue.getPath()))
+                {
+                    if(FileOperations.isFile(fileQueue.getPath()))
+                    {
+                        UniqueFile newfile = new UniqueFile(fileQueue.getPath());
+                        if (!hashMapTable.containsKey(newfile.getSha()))
+                        {
+                            log(" manageNewSha("+newfile.getFileStr()+")");
+                            manageNewSha(newfile);
+                        }
+                        else
+                        {
+                            log(" manageExistingSha("+newfile.getFileStr()+")");
+                            manageExistingSha(newfile);
+                        }
+                    }
+                    else
+                    {
+                        log(" FILE MODIFIED IS NOT A FILE [" + fileQueue.getPath() + "]");
+                    }
+                }
+                else
+                {
+                    log(" FILE MODIFIED IS NOT A LINK [" + fileQueue.getPath() + "]");
+                }
             break;
+
             case Settings.FileDeleted:
-                replaceFileFromHashTable(fileQueue.getPath());
+                log(" DELETED FILE (" + fileQueue.getPath() + ")");
+                ArrayList<String> shas = getShaFromUri(fileQueue.getPath());
+                if(shas.size() > 0)
+                {
+                    for(int i=0; i<shas.size();i++)
+                    {
+                        UniqueFile file = hashMapTable.get(shas.get(i));                        
+                        file.removeLinks();
+                        file.clearUrl();
+                    }
+                }
+                else
+                {
+                    if(FileOperations.isLink(fileQueue.getPath()))
+                    {
+                        // TODO: WHEN MOVE DO SOMETHING HERE
+                        log(" HERE FILE IS A LINK ["+fileQueue.getPath().toString()+"]");
+                    }
+                    else
+                    {
+                        log(" HERE FILE IS NOT A LINK ["+fileQueue.getPath().toString()+"]");
+                        for(int i=0; i<shas.size();i++)
+                        {
+                            if(FileOperations.isFile(fileQueue.getPath()))
+                            {
+                                log(" DEL LINK ["+fileQueue.getPath().toString()+"]");
+                                hashMapTable.get(shas.get(i)).delLink(fileQueue.getPath());
+                            }
+                            else
+                            {
+                                log(" UN LINK ["+fileQueue.getPath().toString()+"]");
+                                hashMapTable.get(shas.get(i)).unLink(fileQueue.getPath());
+                            }
+                        }
+                    }
+                }
             break;
+
             case Settings.FileRenamed:
-            // TODO: [Action to handle renamed files]
+                log(" RENAMED FILE FROM ("+fileQueue.getPath().toString()+")");
+                log(" RENAMED FILE TO   ("+fileQueue.getPath2().toString()+")");
+                if(FileOperations.isLink(fileQueue.getPath()))
+                {
+                    // se moveu link, atualizar caminho do link na tabela
+                    // se moveu o arquivo, atualizar path no sha do arquivo
+                    // se moveu o arquivo, atualizar todos os links do arquivo
+                }
+                else
+                {
+                    ArrayList<String> shaz = getShaFromUri(fileQueue.getPath());
+                    for(int i = 0; i < shaz.size(); i++)
+                    {
+                        hashMapTable.get(shaz.get(i)).setFileUri(fileQueue.getPath2());
+                    }
+                }
             break;
             default:
+        }
+
+        int count = 0;
+        Iterator<Entry<String, UniqueFile>> it = hashMapTable.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, UniqueFile> pair = (Map.Entry<String, UniqueFile>)it.next();
+            Logger.msg("Index   : " +  count);
+            pair.getValue().show();
+            count++;
         }
     }
 
@@ -174,88 +255,20 @@ public class Worker implements
      * @param fileName
      *            A <code>String</code> containing a file location path.
      */
-    private void includeFileToHashTable(String fileName)
+    private void manageNewSha(UniqueFile fileName)
     {
-        if(new File(fileName).isFile())
+        ArrayList<String> oldsha = getShaFromUri(fileName.getFilePath());
+        if(oldsha.size() > 0)
         {
-            try
+            for(int i = 0; i < oldsha.size(); i++)
             {
-                String cypherMethod=CheckSum.getChecksumElegant(fileName);
-                if(!hashMapTable.containsKey(cypherMethod))
-                {
-                    filesIncluded++;
-                    msg("["+
-                        Utils.addLeadingZeros(filesIncluded)+
-                        "]["+
-                        Utils.addLeadingZeros(filesReplaced)+
-                        "]"+
-                        Settings.Tab+
-                        "["+
-                        cypherMethod+
-                        "]"+
-                        Settings.Tab+
-                        Strings.wkIncluding+
-                        fileName);
-                    hashMapTable.put(cypherMethod,
-                                     fileName);
-                }
-                else
-                {
-                    String mapFileName=hashMapTable.get(cypherMethod);
-                    boolean isEqual=true;
-                    if(Settings.comparisonIsON)
-                    {
-                        isEqual=Comparison.isBinaryIdentical(fileName,
-                                                             mapFileName);
-                    }
-                    if(isEqual)
-                    {
-                        filesReplaced++;
-                        msg("["+
-                            Utils.addLeadingZeros(filesIncluded)+
-                            "]["+
-                            Utils.addLeadingZeros(filesReplaced)+
-                            "]"+
-                            Settings.Tab+
-                            "["+
-                            cypherMethod+
-                            "]"+
-                            Settings.Tab+
-                            Strings.wkReplacing+
-                            fileName);
-                        File fileToRename=new File(fileName);
-                        Writer outputFile=new BufferedWriter(new FileWriter(fileToRename));
-                        outputFile.write(mapFileName+
-                                         Settings.UnDupeKeeperSignature+
-                                         "["+
-                                         cypherMethod+
-                                         "]");
-                        outputFile.close();
-                        // CheckSum.waitFile(child);
-                        // f2.renameTo(new File(child + ".(Dup3K33p)"));
-                        Path fileNamePath=Paths.get(fileName);
-                        java.nio.file.Files.move(fileNamePath,
-                                                 fileNamePath.resolveSibling(fileNamePath.getFileName()
-                                                                                         .toString()+
-                                                                             Settings.UnDupeKeeperExtension));
-                    }
-                    else
-                    {
-                        err(Strings.wkFatalError);
-                        err("1: "+
-                            mapFileName);
-                        err("2: "+
-                            fileName);
-                    }
-                }
-            }
-            catch(IOException e)
-            {
-                err("MSG_018: "+
-                    Strings.wkProblemIncludingNewFile+
-                    e);
+                hashMapTable.remove(oldsha.get(i));
             }
         }
+        hashMapTable.put(fileName.getSha(), fileName);
+        filesIncluded++;
+        Logger.msg("[" + Utils.addLeadingZeros(filesIncluded) + "]["+ Utils.addLeadingZeros(filesReplaced) + "]" +
+            Settings.Tab + "[" + fileName.getSha() + "]" + Settings.Tab + Strings.wkIncluding + fileName.getFileStr());
     }
 
     /**
@@ -265,43 +278,113 @@ public class Worker implements
      * @param fileName
      *            A <code>String</code> containing a file location path.
      */
-    private void replaceFileFromHashTable(String fileName)
+    private void manageExistingSha(UniqueFile newfile)
     {
-        if(hashMapTable.containsValue(fileName))
+        
+        // SHA do URI já está cadastrado na base
+        // Retorna o URI da base com o SHA de entrada
+        UniqueFile currentfile = hashMapTable.get(newfile.getSha());
+        if(null == currentfile)
         {
-            msg("["+
-                Utils.addLeadingZeros(filesIncluded)+
-                "]["+
-                Utils.addLeadingZeros(filesReplaced)+
-                "]"+
-                Settings.Tab+
-                Strings.wkRemoving+
-                fileName);
-            filesIncluded--;
-            hashMapTable.values()
-                        .remove(fileName);
+            newfile.makeLinks();
+            hashMapTable.put(newfile.getSha(), newfile);
+        }
+        else
+        {
+            if(0==currentfile.getFilePath().compareTo(newfile.getFilePath()))
+            {
+                // Se o URI da base é igual ao URI de entrada
+                // Mesmo SHA, Mesmo URI
+                // Então Arquivo não mudou
+                log(" manageExistingSha({newfile}): {currentfile} == {newfile.fileUri}");
+            }
+            else
+            {
+                // Se o URI da base é diferente do URI de entrada
+                // Verifica se a URI de entrada tem algum SHA na base
+                ArrayList<String> oldsha = getShaFromUri(newfile.getFilePath());
+                if (oldsha.size() > 0)
+                {
+                    for(int i = 0; i < oldsha.size(); i++)
+                    {
+                        if (oldsha.get(i).equals(newfile.getSha()))
+                        {
+                            log(" manageExistingSha("+newfile.toString()+"): A and B are the same, no changes");
+                            // se o SHA da URI de entrada é igual ao SHA da URI da base
+                            // então o conteúdo do URI foi salvo mas não mudou o conteúdo
+                        }
+                        else
+                        {
+                            if (hashMapTable.get(oldsha.get(i)).getSha().equals(newfile.getSha()))
+                            {
+                                log(" manageExistingSha("+newfile.toString()+"): HANDLING THE SAME FILE");
+                                log(" manageExistingSha("+newfile.toString()+"): SHA: "+oldsha.get(i));
+                                log(" manageExistingSha("+newfile.toString()+"): FILE: "+hashMapTable.get(oldsha.get(i)).getFileStr());
+                            }
+                            else
+                            {
+                                filesReplaced++;
+                                Logger.msg("[" + Utils.addLeadingZeros(filesIncluded) + "][" + Utils.addLeadingZeros(filesReplaced) + "]" +
+                                    Settings.Tab + "[" + newfile.getSha() + "]" + Settings.Tab + Strings.wkReplacing + newfile.getFileStr());
+                                hashMapTable.get(newfile.getSha()).addLink(newfile.getFileStr());
+                            }
+                            // se o SHA da URI de entrada ú diferente do SHA da uri de base
+                            // então o conteúdo do URI foi salvo e mudou o conteúdo
+                            // atualizar SHA do URI
+                            Logger.msg("[" + Utils.addLeadingZeros(filesIncluded) + "][" + Utils.addLeadingZeros(filesReplaced) + "]" +
+                                Settings.Tab + Strings.wkRemoving + newfile.getFileStr());
+                                filesIncluded--;
+                            hashMapTable.remove(oldsha.get(i));
+                        }
+                    }
+                }
+                else
+                {
+                    // URI de entrada é um arquivo duplicado
+                    if (FileOperations.isFile(newfile.getFileStr()))
+                    {
+                        if (hashMapTable.get(newfile.getSha()).getFileStr().isEmpty())
+                        {
+                            hashMapTable.get(newfile.getSha()).setFileUri(newfile.getFileStr());
+                            hashMapTable.get(newfile.getSha()).makeLinks();
+                        }
+                        else
+                        {
+                            hashMapTable.get(newfile.getSha()).addLink(newfile.getFileStr());
+                        }
+                    }
+                    else
+                    {
+                        log(" manageExistingSha("+newfile.toString()+"): FROM {dupelist[newfile.fileSha]} TO:");
+                        log(" manageExistingSha("+newfile.toString()+"): dupelist[{newfile.fileSha}] = {newfile}");
+                    }
+                }
+            }
         }
     }
 
-    /**
-     * This method displays a message through the embedded log system.
-     * 
-     * @param message
-     *            A <code>String</code> containing the message to display.
-     */
-    private static void msg(String message)
+    private ArrayList<String> getShaFromUri(Path uri)
     {
-        Logger.msg(message);
+        ArrayList<String> shas = new ArrayList<String>();
+        Iterator<Entry<String, UniqueFile>> it = hashMapTable.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, UniqueFile> pair = (Map.Entry<String, UniqueFile>)it.next();
+            if(0==pair.getValue().getFilePath().compareTo(uri))
+            {
+                shas.add(pair.getKey());
+            }
+        }
+        return shas;
     }
-
+   
     /**
-     * This method displays an error message through the embedded log system.
+     * This method displays a log message through the embedded log system.
      * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
+     * @param logMessage
+     *            A <code>String</code> containing the log message to display.
      */
-    private static void err(String errorMessage)
+    private static void log(String logMessage)
     {
-        Logger.err(errorMessage);
+        Logger.log(Thread.currentThread(), logMessage, Logger.MONITOR);
     }
 }

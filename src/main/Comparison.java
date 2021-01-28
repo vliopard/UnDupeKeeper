@@ -1,13 +1,15 @@
 package main;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,13 +17,14 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import settings.Settings;
 import settings.Strings;
-import tools.FileUtils;
+import tools.FileOperations;
 import tools.Logger;
 import tools.ProgressBarDialog;
 import tools.ReportGenerator;
 import tools.StreamManager;
 import tools.TimeControl;
 import tools.Utils;
+import org.apache.commons.io.FileUtils;
 
 // TODO: JAVADOC
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
@@ -29,25 +32,101 @@ public class Comparison
 {
     static ProgressBarDialog progressBarDialog;
 
-    public static boolean isBinaryIdentical(String binaryFilePath1,
-                                            String binaryFilePath2)
+    public static boolean isArrayEqual(Path firstFile, Path secondFile)
     {
-        File binaryFile1=FileUtils.file(binaryFilePath1);
-        File binaryFile2=FileUtils.file(binaryFilePath2);
-        if((binaryFile1.exists())&&
-           (binaryFile1.isFile())&&
-           (binaryFile2.exists())&&
-           (binaryFile2.isFile()))
+        try
+        {
+            if (Files.size(firstFile) != Files.size(secondFile))
+            {
+                return false;
+            }
+
+            byte[] first = Files.readAllBytes(firstFile);
+            byte[] second = Files.readAllBytes(secondFile);
+            return Arrays.equals(first, second);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean isBufferedEqual(Path firstFile, Path secondFile)
+    {
+        try
+        {
+            long size = Files.size(firstFile);
+            if (size != Files.size(secondFile))
+            {
+                return false;
+            }
+
+            if (size < 2048)
+            {
+                return Arrays.equals(Files.readAllBytes(firstFile), Files.readAllBytes(secondFile));
+            }
+
+            // Compare character-by-character
+            try (BufferedReader bf1 = Files.newBufferedReader(firstFile);
+                 BufferedReader bf2 = Files.newBufferedReader(secondFile))
+            {
+
+                int ch;
+                while ((ch = bf1.read()) != -1)
+                {
+                    if (ch != bf2.read())
+                    {
+                        return false;
+                    }
+                }
+            }
+             return true;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean isFileEqual(Path file1, Path file2)
+    {
+        try
+        {
+            return FileUtils.contentEquals(file1.toFile(), file2.toFile());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean isBinaryIdentical(Path binaryFilePath1, Path binaryFilePath2)
+    {
+        if((binaryFilePath1.toFile().exists())&&(binaryFilePath1.toFile().isFile())&&
+           (binaryFilePath2.toFile().exists())&&(binaryFilePath2.toFile().isFile()))
         {
             try
             {
-                if(binaryFile1.getCanonicalPath()
-                              .equals(binaryFile2.getCanonicalPath()))
+                boolean a = false;
+                boolean b = false;
+                boolean c = false;
+                if(Files.isSameFile(binaryFilePath1, binaryFilePath2))
                 {
-                    /*
-                     * Two files cannot occupy the same disk space, so they are
-                     * exactly the same file.
-                     */
+                    a = true;
+                }
+                if(binaryFilePath1.toFile().getCanonicalPath().equals(binaryFilePath2.toFile().getCanonicalPath()))
+                {
+                    b = true;
+                }               
+                if(0 == binaryFilePath1.compareTo(binaryFilePath2))
+                {
+                    c = true;
+                }
+                if(a && b && c)
+                {
                     return true;
                 }
             }
@@ -60,14 +139,11 @@ public class Comparison
                  * This is not a desirable behavior. Better returning false
                  * instead.
                  */
-                err("MSG_022: "+
-                    Strings.cannotCompareFiles+
-                    binaryFilePath1+
-                    Settings.Blank+
-                    binaryFilePath2);
+                Logger.err("MSG_022: " + Strings.cannotCompareFiles + binaryFilePath1 +
+                    Settings.Blank + binaryFilePath2);
                 return false;
             }
-            if(binaryFile1.length()!=binaryFile2.length())
+            if(binaryFilePath1.toFile().length()!=binaryFilePath2.toFile().length())
             {
                 /*
                  * If sizes are different there is no reason for continuing any
@@ -79,8 +155,7 @@ public class Comparison
              * All checks passed. Files are eligible to be checked. Going
              * ahead!
              */
-            return isFileBinaryEqual(binaryFilePath1,
-                                     binaryFilePath2);
+            return isFileBinaryEqual(binaryFilePath1, binaryFilePath2);
             // return runSystemCommand(Settings.DosCompareCommand+
             // Settings.Quote+
             // binaryFilePath1+
@@ -104,15 +179,13 @@ public class Comparison
     {
         try
         {
-            Process proc=Runtime.getRuntime()
-                                .exec(command);
+            Process proc=Runtime.getRuntime().exec(command);
             proc.waitFor();
             BufferedReader inputStream=new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String strLn=Settings.Empty;
             while((strLn=inputStream.readLine())!=null)
             {
-                if(strLn.trim()
-                        .equals(Settings.DosCompareCommandResult))
+                if(strLn.trim().equals(Settings.DosCompareCommandResult))
                 {
                     return true;
                 }
@@ -120,15 +193,12 @@ public class Comparison
             inputStream=new BufferedReader(new InputStreamReader(proc.getErrorStream()));
             while((strLn=inputStream.readLine())!=null)
             {
-                err(Strings.outputError+
-                    strLn);
+                Logger.err(Strings.outputError + strLn);
             }
         }
         catch(Exception e)
         {
-            err("MSG_023: "+
-                Strings.processRuntimeError+
-                e);
+            Logger.err("MSG_023: " + Strings.processRuntimeError + e);
         }
         return false;
     }
@@ -150,9 +220,7 @@ public class Comparison
         }
         catch(IOException e)
         {
-            err("MSG_039: "+
-                Strings.problemCountingLines+
-                e);
+            Logger.err("MSG_039: " + Strings.problemCountingLines + e);
             return -1;
         }
         return lineCount;
@@ -189,48 +257,38 @@ public class Comparison
             String path2=Settings.Empty;
             String name2=Settings.Empty;
             String tail=Settings.Empty;
-            int slash=fileName.lastIndexOf(Settings.Slash)+1;
+            int slash=fileName.lastIndexOf(Settings.Slash) + 1;
             int at=fileName.lastIndexOf("@@");
             int start=fileName.indexOf("-_(");
             int end=fileName.lastIndexOf(")_[_");
             if(slash>0)
             {
-                path1=fileName.substring(0,
-                                         slash);
+                path1=fileName.substring(0, slash);
                 if(slash<at)
                 {
-                    name1=fileName.substring(slash,
-                                             at);
+                    name1=fileName.substring(slash, at);
                 }
                 else
                 {
-                    err("MSG_041: "+
-                        Strings.fileNameContainsDoubleAt+
-                        name1);
+                    Logger.err("MSG_041: " + Strings.fileNameContainsDoubleAt + name1);
                     System.exit(-1);
                 }
                 if(at<start)
                 {
-                    path2=fileName.substring(at,
-                                             start);
+                    path2=fileName.substring(at, start);
                 }
                 else
                 {
-                    err("MSG_042: "+
-                        Strings.fileNameWrongDoubleAtPosition+
-                        path2);
+                    Logger.err("MSG_042: " + Strings.fileNameWrongDoubleAtPosition + path2);
                     System.exit(-1);
                 }
                 if(start<end)
                 {
-                    name2=fileName.substring(start,
-                                             end);
+                    name2=fileName.substring(start, end);
                 }
                 else
                 {
-                    err("MSG_043: "+
-                        Strings.fileNameMismatchStartEnd+
-                        name2);
+                    Logger.err("MSG_043: " + Strings.fileNameMismatchStartEnd + name2);
                     System.exit(-1);
                 }
                 tail=fileName.substring(end);
@@ -255,102 +313,66 @@ public class Comparison
                         if(p2l>2)
                         {
                             p2l--;
-                            path2=path2.substring(0,
-                                                  p2l);
+                            path2=path2.substring(0, p2l);
                         }
                         else
                         {
-                            err("MSG_044: "+
-                                Strings.cannotShrinkFilename);
-                            err("["+
-                                fileName.length()+
-                                "] "+
-                                fileName);
+                            Logger.err("MSG_044: " + Strings.cannotShrinkFilename);
+                            Logger.err("[" + fileName.length() + "] " + fileName);
                             break;
                         }
                     }
                 }
-                fileName=path1+
-                         name1.substring(0,
-                                         n1l)+
-                         path2+
-                         name2.substring(0,
-                                         n2l)+
-                         tail;
+                fileName=path1 + name1.substring(0, n1l) + path2 + name2.substring(0, n2l) + tail;
             }
             while(fileName.length()>255);
         }
         return fileName;
     }
 
-    private static void renameDuplicatedFile(String fileName1,
-                                             String fileName2,
-                                             long fileCounter)
+    private static void renameDuplicatedFile(Path fileName1, Path fileName2, long fileCounter)
     {
-        if(fileName1.contains(Settings.UnDupeKeeperNoRename))
+        if(fileName1.toString().contains(Settings.UnDupeKeeperNoRename))
         {
             return;
         }
-        String removeMarker=Settings.UnDupeKeeperMarker+
-                            "_["+
-                            fileCounter+
-                            "]_";
-        String originalSourceFileName=FileUtils.getFilePath(fileName2)+
-                                      "_("+
-                                      FileUtils.getFileName(fileName2)+
-                                      FileUtils.getFileExtension(fileName2)+
-                                      ")_";
-        originalSourceFileName=originalSourceFileName.replace(':',
-                                                              '#');
-        if(Settings.os.indexOf("win")>=0) {
-            originalSourceFileName=originalSourceFileName.replace('\\',
-                                                                  '-');
+        String removeMarker=Settings.UnDupeKeeperMarker + "_[" + fileCounter + "]_";
+        String originalSourceFileName=FileOperations.getFilePath(fileName2.toString()) + "_(" +
+                                      FileOperations.getFileName(fileName2.toString()) +
+                                      FileOperations.getFileExtension(fileName2.toString()) + ")_";
+        originalSourceFileName=originalSourceFileName.replace(':', '#');
+        if(Settings.os.indexOf("win")>=0) 
+        {
+            originalSourceFileName=originalSourceFileName.replace('\\', '-');
         }
-        else {
-        	originalSourceFileName=originalSourceFileName.replace('/',
-                                                                  '-');	
+        else 
+        {
+        	originalSourceFileName=originalSourceFileName.replace('/', '-');	
         }
-        String newFileName1=FileUtils.getFilePath(fileName1)+
-                            FileUtils.getFileName(fileName1)+
-                            FileUtils.getFileExtension(fileName1)+
+        String newFileName1=FileOperations.getFilePath(fileName1.toString()) +
+                            FileOperations.getFileName(fileName1.toString()) +
+                            FileOperations.getFileExtension(fileName1.toString()) +
                             "@@"+
                             originalSourceFileName+
                             removeMarker;
-        if(fileName1.lastIndexOf(Settings.Dot)>fileName1.lastIndexOf(Settings.Slash))
+        if(fileName1.toString().lastIndexOf(Settings.Dot)>fileName1.toString().lastIndexOf(Settings.Slash))
         {
-            newFileName1=newFileName1+
-                         FileUtils.getFileExtension(fileName1);
+            newFileName1 = newFileName1 + FileOperations.getFileExtension(fileName1.toString());
         }
         // FileUtils.file(fileName1).renameTo(FileUtils.file(newFileName1));
         try
         {
             newFileName1=checkFileName(newFileName1);
-            java.nio.file.Files.move(Paths.get(fileName1),
-                                     Paths.get(newFileName1));
+            java.nio.file.Files.move(fileName1, Paths.get(newFileName1));
         }
         catch(IOException e)
         {
-            err(Settings.Separator+
-                Settings.Separator);
-            err(Strings.sourceFileName+
-                "["+
-                fileName1.length()+
-                "] "+
-                fileName1+
-                Settings.endl+
-                Settings.SeparatorSingle+
-                Settings.SeparatorSingle);
-            err(Strings.targetFileName+
-                "["+
-                newFileName1.length()+
-                "] "+
-                newFileName1+
-                Settings.endl+
-                Settings.SeparatorDouble+
-                Settings.SeparatorDouble);
-            err("MSG_045: "+
-                Strings.unableToRenameFile+
-                e);
+            Logger.err(Settings.Separator + Settings.Separator);
+            Logger.err(Strings.sourceFileName + "["+ fileName1.toString().length() + "] " + fileName1.toString() +
+                Settings.endl + Settings.SeparatorSingle + Settings.SeparatorSingle);
+            Logger.err(Strings.targetFileName + "[" + newFileName1.length() + "] " + newFileName1 +
+                Settings.endl + Settings.SeparatorDouble + Settings.SeparatorDouble);
+            Logger.err("MSG_045: " + Strings.unableToRenameFile + e);
         }
     }
 
@@ -372,9 +394,8 @@ public class Comparison
                                      " - ["+
                                      TimeControl.getTotal(TimeControl.getElapsedNano(elapsedTime))+
                                      "]");
-        msg(Settings.Tab+
-            Utils.addCustomLeadingZeros("03",
-                                        percentage)+
+        Logger.msg(Settings.Tab+
+            Utils.addCustomLeadingZeros("03", percentage)+
             Strings.percentageFrom+
             (long)totalFileCount+
             Strings.filec+
@@ -428,7 +449,7 @@ public class Comparison
     private static boolean sortTextFile(String textFileName,
                                         String sortMethodType)
     {
-        if(FileUtils.isFile(textFileName))
+        if(FileOperations.isFile(textFileName))
         {
             try
             {
@@ -440,7 +461,7 @@ public class Comparison
                 Map<Long,ArrayList<String>> textFileSortedHashList=new TreeMap<Long,ArrayList<String>>();
                 while((fileLine=textFileBufferedReader.readLine())!=null)
                 {
-                    Long textFileLineSize=FileUtils.file(fileLine)
+                    Long textFileLineSize=FileOperations.file(fileLine)
                                                    .length();
                     ArrayList<String> textFileLineArrayList=(ArrayList<String>)textFileSortedHashList.get(textFileLineSize);
                     if(null==textFileLineArrayList)
@@ -490,7 +511,7 @@ public class Comparison
             }
             catch(IOException e)
             {
-                err("MSG_024: "+
+                Logger.err("MSG_024: "+
                     Strings.problemSortingTextFile+
                     e);
                 return false;
@@ -504,23 +525,23 @@ public class Comparison
     {
         String textFileType=Strings.file;
         ArrayList<String> arrayFileList=new ArrayList<String>();
-        if(FileUtils.isDir(textFileList)&&
-           (!FileUtils.isEmpty(textFileList)))
+        if(FileOperations.isDir(textFileList)&&
+           (!FileOperations.isEmpty(textFileList)))
         {
-            arrayFileList=ReportGenerator.generateFileList(FileUtils.file(textFileList)
+            arrayFileList=ReportGenerator.generateFileList(FileOperations.file(textFileList)
                                                                     .listFiles(),
                                                            Settings.Empty);
-            textFileList=FileUtils.getFilePath(textFileList)+
-                         FileUtils.getFileName(textFileList)+
+            textFileList=FileOperations.getFilePath(textFileList)+
+                         FileOperations.getFileName(textFileList)+
                          Settings.UnDupeKeeperTextFile;
             textFileType=Strings.directory;
-            FileUtils.file(textFileList)
+            FileOperations.file(textFileList)
                      .deleteOnExit();
         }
         else
         {
-            if(FileUtils.isFile(textFileList)&&
-               (!FileUtils.isEmpty(textFileList)))
+            if(FileOperations.isFile(textFileList)&&
+               (!FileOperations.isEmpty(textFileList)))
             {
                 try
                 {
@@ -536,7 +557,7 @@ public class Comparison
                 }
                 catch(IOException e)
                 {
-                    err("MSG_038: "+
+                    Logger.err("MSG_038: "+
                         Strings.cannotOpenTextFile+
                         e);
                     textFileList=null;
@@ -571,7 +592,7 @@ public class Comparison
             }
             catch(IOException e)
             {
-                err("MSG_025: "+
+                Logger.err("MSG_025: "+
                     Strings.couldNotWriteOrderedFileList+
                     e);
                 textFileList=null;
@@ -589,20 +610,16 @@ public class Comparison
                                                     String ascendingOrDescendingMethod)
     {
         long processStartTime=TimeControl.getNano();
-        msg(Strings.undpueVersion+
-            Settings.undupeVersion);
-        msg(Strings.generatingFileListPleaseWait);
-        progressBarDialog=new ProgressBarDialog(Strings.generatingFileList,
-                                                Strings.pleaseWait);
+        Logger.msg(Strings.undpueVersion + Settings.undupeVersion);
+        Logger.msg(Strings.generatingFileListPleaseWait);
+        progressBarDialog=new ProgressBarDialog(Strings.generatingFileList, Strings.pleaseWait);
         String fileOrDirectory[]=checkIfListIsDirectory(fileListToCompare);
         fileListToCompare=fileOrDirectory[0];
-        progressBarDialog.setTitle(Strings.undupe+
-                                   fileOrDirectory[1]);
-        if(sortTextFile(fileListToCompare,
-                        ascendingOrDescendingMethod))
+        progressBarDialog.setTitle(Strings.undupe + fileOrDirectory[1]);
+        if(sortTextFile(fileListToCompare, ascendingOrDescendingMethod))
         {
             progressBarDialog.setIndeterminate(false);
-            msg(Strings.startingComparison);
+            Logger.msg(Strings.startingComparison);
             long displayFactorControl=0;
             int i=0;
             int j=0;
@@ -616,11 +633,9 @@ public class Comparison
             try
             {
                 totalFileCount=totalLines(fileListToCompare);
-                progressBarDialog.setMessage("0"+
-                                             Strings.percentageFrom+
-                                             totalFileCount+
-                                             Strings.files);
-                msg(Settings.Tab+
+                progressBarDialog.setMessage("0" + Strings.percentageFrom +
+                                             totalFileCount + Strings.files);
+                Logger.msg(Settings.Tab+
                     "000"+
                     Strings.percentageFrom+
                     totalFileCount+
@@ -629,13 +644,12 @@ public class Comparison
                 InputStreamReader fileListToCompareInputStreamReader=StreamManager.InputStreamReader(fileListToCompare);
                 BufferedReader fileListToCompareBufferedReader=new BufferedReader(fileListToCompareInputStreamReader);
                 fileListToCompareLine1=fileListToCompareBufferedReader.readLine();
-                while((!stop)&&
-                      ((fileListToCompareLine2=fileListToCompareBufferedReader.readLine())!=null))
+                while((!stop) && ((fileListToCompareLine2=fileListToCompareBufferedReader.readLine()) != null))
                 {
                     currentFile++;
                     linesUnderComparison.add(fileListToCompareLine1);
                     while((!stop)&&
-                          ((FileUtils.file(fileListToCompareLine1).length())==(FileUtils.file(fileListToCompareLine2).length())))
+                          ((FileOperations.file(fileListToCompareLine1).length())==(FileOperations.file(fileListToCompareLine2).length())))
                     {
                         linesUnderComparison.add(fileListToCompareLine2);
                         fileListToCompareLine1=fileListToCompareLine2;
@@ -652,11 +666,11 @@ public class Comparison
                         j=i+1;
                         while(j<linesUnderComparison.size())
                         {
-                            if(isBinaryIdentical(linesUnderComparison.get(i),
-                                                 linesUnderComparison.get(j)))
+                            if(isBinaryIdentical(Paths.get(linesUnderComparison.get(i)),
+                                                 Paths.get(linesUnderComparison.get(j))))
                             {
-                                renameDuplicatedFile(linesUnderComparison.get(j),
-                                                     linesUnderComparison.get(i),
+                                renameDuplicatedFile(Paths.get(linesUnderComparison.get(j)),
+                                                     Paths.get(linesUnderComparison.get(i)),
                                                      renamedFileCount);
                                 linesUnderComparison.remove(j);
                                 renamedFileCount++;
@@ -682,9 +696,7 @@ public class Comparison
             }
             catch(IOException e)
             {
-                err("MSG_026: "+
-                    Strings.problemDuringComparisonProcess+
-                    e);
+                Logger.err("MSG_026: " + Strings.problemDuringComparisonProcess + e);
             }
             progressBarDialog.setMessage("100"+
                                          Strings.percentageFrom+
@@ -692,35 +704,22 @@ public class Comparison
                                          Strings.filec+
                                          renamedFileCount+
                                          Strings.renamed);
-            msg(Settings.Tab+
-                "100"+
-                Strings.percentageFrom+
-                totalFileCount+
-                Strings.filec+
-                renamedFileCount+
-                Strings.renamed);
-            msg(Settings.endl+
-                renamedFileCount+
-                Strings.renamedAndMarked);
-            msg(Strings.finishingExecution);
-            msg(Strings.done+
-                Settings.Dot);
+            Logger.msg(Settings.Tab + "100" + Strings.percentageFrom + totalFileCount +
+                Strings.filec + renamedFileCount + Strings.renamed);
+            Logger.msg(Settings.endl + renamedFileCount + Strings.renamedAndMarked);
+            Logger.msg(Strings.finishingExecution);
+            Logger.msg(Strings.done + Settings.Dot);
             long totalProcessTime=TimeControl.getElapsedNano(processStartTime);
-            msg(Settings.Tab+
-                Strings.totalTime+
-                TimeControl.getTotal(totalProcessTime));
+            Logger.msg(Settings.Tab + Strings.totalTime + TimeControl.getTotal(totalProcessTime));
             progressBarDialog.setProgress(100);
-            progressBarDialog.setMessage(progressBarDialog.getMessage()+
-                                         " - "+
-                                         Strings.totalTime+
-                                         TimeControl.getTotal(totalProcessTime));
+            progressBarDialog.setMessage(progressBarDialog.getMessage() + " - " +
+                                         Strings.totalTime + TimeControl.getTotal(totalProcessTime));
             progressBarDialog.setDismiss();
             progressBarDialog.keep();
         }
         else
         {
-            err("MSG_037: "+
-                Strings.unableToSortInputFile);
+            Logger.err("MSG_037: " + Strings.unableToSortInputFile);
         }
     }
 
@@ -736,20 +735,15 @@ public class Comparison
      * @throws IOException
      *             - error in function
      */
-    public static boolean isFileBinaryEqual(String file1,
-                                            String file2)
+    public static boolean isFileBinaryEqual(Path file1, Path file2)
     {
         try
         {
             int BUFFER_SIZE=65536;
-            File file1st=new File(file1);
-            File file2nd=new File(file2);
-            FileInputStream file1stInputStream=new FileInputStream(file1st);
-            FileInputStream file2ndInputStream=new FileInputStream(file2nd);
-            BufferedInputStream file1stBufferedInputStream=new BufferedInputStream(file1stInputStream,
-                                                                                   BUFFER_SIZE);
-            BufferedInputStream file2ndBufferedInputStream=new BufferedInputStream(file2ndInputStream,
-                                                                                   BUFFER_SIZE);
+            FileInputStream file1stInputStream=new FileInputStream(file1.toFile());
+            FileInputStream file2ndInputStream=new FileInputStream(file2.toFile());
+            BufferedInputStream file1stBufferedInputStream=new BufferedInputStream(file1stInputStream, BUFFER_SIZE);
+            BufferedInputStream file2ndBufferedInputStream=new BufferedInputStream(file2ndInputStream, BUFFER_SIZE);
             int file1stByte;
             int file2ndByte;
             do
@@ -774,32 +768,8 @@ public class Comparison
         }
         catch(IOException e)
         {
-            err("MSG_040: "+
-                Strings.comparisonFailed+
-                e);
+            Logger.err("MSG_040: " + Strings.comparisonFailed + e);
         }
         return false;
-    }
-
-    /**
-     * This method displays a message through the embedded log system.
-     * 
-     * @param message
-     *            A <code>String</code> containing the message to display.
-     */
-    private static void msg(String message)
-    {
-        Logger.msg(message);
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }

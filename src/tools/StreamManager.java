@@ -23,12 +23,9 @@ public class StreamManager
             byte[] buf=new byte[4096];
             UniversalDetector detector=new UniversalDetector(null);
             int nread;
-            while((nread=fileName.read(buf))>0&&
-                  !detector.isDone())
+            while((nread=fileName.read(buf))>0&&!detector.isDone())
             {
-                detector.handleData(buf,
-                                    0,
-                                    nread);
+                detector.handleData(buf, 0, nread);
             }
             fileName.close();
             detector.dataEnd();
@@ -52,8 +49,7 @@ public class StreamManager
         String encoding=getEncoding(file);
         if(encoding!=null)
         {
-            return new InputStreamReader(fileName,
-                                         encoding);
+            return new InputStreamReader(fileName, encoding);
         }
         return new InputStreamReader(fileName);
     }
@@ -63,8 +59,7 @@ public class StreamManager
         File f=new File(fileName);
         String encoding=getEncoding(fileName);
         FileOutputStream fos=new FileOutputStream(f);
-        OutputStreamWriter osw=new OutputStreamWriter(fos,
-                                                      encoding);
+        OutputStreamWriter osw=new OutputStreamWriter(fos, encoding);
         BufferedWriter bw=new BufferedWriter(osw);
         return bw;
     }

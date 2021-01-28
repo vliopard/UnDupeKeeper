@@ -28,8 +28,7 @@ public class Utils
      * @return Returns a <code>String</code> containing a representation of the
      *         formated number.
      */
-    public static String customFormat(String pattern,
-                                      double value)
+    public static String customFormat(String pattern, double value)
     {
         return new DecimalFormat(pattern).format(value);
     }
@@ -59,8 +58,7 @@ public class Utils
      */
     public static String addLeadingZeros(long numberToFormat)
     {
-        return String.format("%06d",
-                             numberToFormat);
+        return String.format("%06d", numberToFormat);
     }
 
     /**
@@ -74,13 +72,9 @@ public class Utils
      * @return Returns an <code>String</code> representing a <code>long</code>
      *         number with customized leading zeros.
      */
-    public static String addCustomLeadingZeros(String mask,
-                                               long numberToFormat)
+    public static String addCustomLeadingZeros(String mask, long numberToFormat)
     {
-        return String.format("%"+
-                                     mask+
-                                     "d",
-                             numberToFormat);
+        return String.format("%" + mask + "d", numberToFormat);
     }
 
     /**
@@ -95,37 +89,20 @@ public class Utils
      *            A <code>MessageType</code> value containing the message type
      *            <code>[ERROR | INFO | WARNING | NONE]</code>.
      */
-    public static void displayBallon(String title,
-                                     String message,
-                                     MessageType type)
+    public static void displayBallon(String title, String message, MessageType type)
     {
         SystemTray systemTray=SystemTray.getSystemTray();
         TrayIcon trayIcon=TrayImage.setSystemTrayIcon(Settings.IconYellow);
         try
         {
             systemTray.add(trayIcon);
-            trayIcon.displayMessage(title,
-                                    message,
-                                    type);
+            trayIcon.displayMessage(title, message, type);
             Thread.sleep(5000);
         }
         catch(AWTException|InterruptedException e)
         {
-            err("MSG_036: "
-                    +Strings.utBalloonError+
-                e);
+            Logger.err("MSG_036: " + Strings.utBalloonError + e);
         }
         systemTray.remove(trayIcon);
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }

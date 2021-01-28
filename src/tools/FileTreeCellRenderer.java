@@ -13,8 +13,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  * 
  * @author vliopard
  */
-public class FileTreeCellRenderer extends
-        DefaultTreeCellRenderer
+public class FileTreeCellRenderer extends DefaultTreeCellRenderer
 {
     private static final long serialVersionUID =-4760945787076736344L;
     private FileSystemView    fileSystemView;

@@ -43,8 +43,8 @@ public class DataBase
      */
     public static void clear()
     {
-        msg(Strings.dbEraseDatabase);
-        HashMap<String,String> hashMapToClear=new HashMap<String,String>();
+        Logger.msg(Strings.dbEraseDatabase);
+        HashMap<String,UniqueFile> hashMapToClear=new HashMap<String,UniqueFile>();
         saveMap(hashMapToClear);
     }
 
@@ -56,25 +56,21 @@ public class DataBase
      *            A <code>HashMap</code> of <code>Strings</code> containing the
      *            values to be written to the disk.
      */
-    public static void saveMap(HashMap<String,String> hashMapToSave)
+    public static void saveMap(HashMap<String,UniqueFile> hashMapToSave)
     {
-        msg(Strings.dbSaveDatabase);
+        Logger.msg(Strings.dbSaveDatabase);
         try
         {
             ObjectOutputStream hashMapObjectOutput=new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperDatabaseName));
-            msg(Strings.dbDatabaseContains+
-                hashMapToSave.size()+
-                Strings.dbItems);
+            Logger.msg(Strings.dbDatabaseContains + hashMapToSave.size() + Strings.dbItems);
             hashMapObjectOutput.writeObject(hashMapToSave);
             hashMapObjectOutput.close();
             hashMapObjectOutput=null;
-            msg(Strings.dbDatabaseSaved);
+            Logger.msg(Strings.dbDatabaseSaved);
         }
         catch(IOException e)
         {
-            err("MSG_027: "+
-                Strings.dbProblemToSaveMap+
-                e);
+            Logger.err("MSG_027: "+ Strings.dbProblemToSaveMap+ e);
         }
     }
 
@@ -85,31 +81,27 @@ public class DataBase
      * @return Returns a <code>HashMap</code> of Strings containing an Encrypted
      *         representation and its file path location.
      */
-    public static HashMap<String,String> loadMap()
+    public static HashMap<String,UniqueFile> loadMap()
     {
         if(new File(Settings.UnDupeKeeperDatabaseName).exists())
         {
-            msg(Strings.dbLoadingDatabase);
+            Logger.msg(Strings.dbLoadingDatabase);
             try
             {
                 FileInputStream fileInputStream=new FileInputStream(Settings.UnDupeKeeperDatabaseName);
                 @SuppressWarnings("unchecked")
-                HashMap<String,String> hashMapToLoad=(HashMap<String,String>)new ObjectInputStream(fileInputStream).readObject();
-                msg(Strings.dbDatabaseContains+
-                    hashMapToLoad.size()+
-                    Strings.dbItems);
+                HashMap<String,UniqueFile> hashMapToLoad=(HashMap<String,UniqueFile>)new ObjectInputStream(fileInputStream).readObject();
+                Logger.msg(Strings.dbDatabaseContains + hashMapToLoad.size() + Strings.dbItems);
                 fileInputStream.close();
                 return hashMapToLoad;
             }
             catch(ClassNotFoundException|IOException e)
             {
-                err("MSG_028: "+
-                    Strings.dbProblemDatabaseCreation+
-                    e);
+                Logger.err("MSG_028: " + Strings.dbProblemDatabaseCreation + e);
             }
         }
-        msg(Strings.dbWarningNewDatabase);
-        return new HashMap<String,String>();
+        Logger.msg(Strings.dbWarningNewDatabase);
+        return new HashMap<String,UniqueFile>();
     }
 
     /**
@@ -131,9 +123,7 @@ public class DataBase
         }
         catch(IOException e)
         {
-            err("MSG_029: "+
-                Strings.dbProblemSavingDir+
-                e);
+            Logger.err("MSG_029: " + Strings.dbProblemSavingDir + e);
         }
     }
 
@@ -150,13 +140,14 @@ public class DataBase
         {
             try
             {
-                return (String)new ObjectInputStream(new FileInputStream(Settings.WatchedDirectoryName)).readObject();
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(Settings.WatchedDirectoryName));
+                String filename = (String)ois.readObject();
+                ois.close();
+                return filename;
             }
             catch(ClassNotFoundException|IOException e)
             {
-                err("MSG_030: "+
-                    Strings.dbProblemStoringSettings+
-                    e);
+                Logger.err("MSG_030: " + Strings.dbProblemStoringSettings + e);
             }
         }
         return null;
@@ -194,20 +185,18 @@ public class DataBase
      */
     public static void saveSettings(SettingsHandler settingsTransfer)
     {
-        // msg(Strings.dbSaveSettings);
+        // Logger.msg(Strings.dbSaveSettings);
         try
         {
             ObjectOutputStream hashMapObjectOutput=new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperSettings));
             hashMapObjectOutput.writeObject(settingsTransfer);
             hashMapObjectOutput.close();
             hashMapObjectOutput=null;
-            // msg(Strings.dbSettingsSaved);
+            // Logger.msg(Strings.dbSettingsSaved);
         }
         catch(IOException e)
         {
-            err("MSG_031: "+
-                Strings.dbProblemToSaveSettings+
-                e);
+            Logger.err("MSG_031: " + Strings.dbProblemToSaveSettings + e);
         }
     }
 
@@ -221,7 +210,7 @@ public class DataBase
     {
         if(new File(Settings.UnDupeKeeperSettings).exists())
         {
-            // msg(Strings.dbLoadingSettings);
+            // Logger.msg(Strings.dbLoadingSettings);
             try
             {
                 FileInputStream fileInputStream=new FileInputStream(Settings.UnDupeKeeperSettings);
@@ -232,12 +221,10 @@ public class DataBase
             }
             catch(ClassNotFoundException|IOException e)
             {
-                err("MSG_032: "+
-                    Strings.dbProblemSettingsCreation+
-                    e);
+                Logger.err("MSG_032: " + Strings.dbProblemSettingsCreation + e);
             }
         }
-        msg(Strings.dbWarningNewSettings);
+        Logger.msg(Strings.dbWarningNewSettings);
         return new SettingsHandler();
     }
 
@@ -296,33 +283,10 @@ public class DataBase
         chooser.setAcceptAllFileFilterUsed(false);
         if(chooser.showOpenDialog(frame)==JFileChooser.APPROVE_OPTION)
         {
-            directoryToLoad=chooser.getSelectedFile()
-                                   .toString();
+            directoryToLoad=chooser.getSelectedFile().toString();
             DataBase.saveDir(directoryToLoad);
             return directoryToLoad;
         }
         return null;
-    }
-
-    /**
-     * This method displays a message through the embedded log system.
-     * 
-     * @param message
-     *            A <code>String</code> containing the message to display.
-     */
-    private static void msg(String message)
-    {
-        Logger.msg(message);
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }

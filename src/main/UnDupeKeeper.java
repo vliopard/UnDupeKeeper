@@ -21,7 +21,7 @@ import settings.Settings;
 import settings.Strings;
 import tools.DataBase;
 import tools.FileQueue;
-import tools.FileUtils;
+import tools.FileOperations;
 import tools.Logger;
 import tools.SettingsHandler;
 import tools.TrayImage;
@@ -51,7 +51,7 @@ public class UnDupeKeeper
      */
     private static void usage()
     {
-        err(Strings.ukUsage);
+        Logger.err(Strings.ukUsage);
         System.exit(-1);
     }
 
@@ -67,17 +67,10 @@ public class UnDupeKeeper
      */
     private static Path checkPromptArguments(String[] arguments)
     {
-        String parameter=(arguments.length>0)?arguments[0]
-                                             :"";
-        String filename=(arguments.length>1)?arguments[1]
-                                            :"";
-        String sortorder=(arguments.length>2)?arguments[2]
-                                             :"";
-        if(parameter.trim()
-                    .equals("")||
-           filename.trim()
-                   .equals("")||
-           !FileUtils.exist(filename))
+        String parameter=(arguments.length>0)?arguments[0]:"";
+        String filename=(arguments.length>1)?arguments[1]:"";
+        String sortorder=(arguments.length>2)?arguments[2]:"";
+        if(parameter.trim().equals("")||filename.trim().equals("")||!FileOperations.exist(Paths.get(filename)))
         {
             usage();
         }
@@ -109,7 +102,7 @@ public class UnDupeKeeper
         Path directoryToWatch=null;
         if(args.length>0)
         {
-        	// TODO: MUST GET $pwd/directoryToWatch. Now it just gets the dir name with dir path. FATAL getFileName
+            // TODO: MUST GET $pwd/directoryToWatch. Now it just gets the dir name with dir path. FATAL getFileName
             directoryToWatch=checkPromptArguments(args);
             if(!fileOrder.equals(Settings.CompareRecursive))
             {
@@ -121,7 +114,7 @@ public class UnDupeKeeper
             DataBase.saveDir(directoryToWatch.toString());
             DataBase.saveSettings(settingsHandler);
         }
-        while(!FileUtils.isDir(directoryToWatch))
+        while(!FileOperations.isDir(directoryToWatch))
         {
             String directoryName=null;
             recursiveFolderScan=true;
@@ -148,16 +141,13 @@ public class UnDupeKeeper
         try
         {
             stopSignal.put(Settings.KeepWorking);
-            guiThread=new Blinker(transferQueue,
-                                  stopSignal,
-                                  trayIcon);
+            guiThread=new Blinker(transferQueue, stopSignal, trayIcon);
             new Thread(guiThread).start();
             Settings.CypherMethod=Settings.CypherMethodList[settingsHandler.getEncryptionMethod()];
             Settings.comparisonIsON=settingsHandler.getComparisonMethod();
-            workerThread=new Worker(transferQueue,
-                                    stopSignal);
+            workerThread=new Worker(transferQueue, stopSignal);
             new Thread(workerThread).start();
-            msg(Strings.ukUndupekeeperIsWorking);
+            Logger.msg(Strings.ukUndupekeeperIsWorking);
             @SuppressWarnings("unused")
             Monitor dm=new Monitor(directoryToWatch.toString(),
                                    transferQueue,
@@ -171,11 +161,9 @@ public class UnDupeKeeper
         }
         catch(InterruptedException e)
         {
-            err("MSG_012: "+
-                Strings.ukProblemStarting+
-                e);
+            Logger.err("MSG_012: " + Strings.ukProblemStarting + e);
         }
-        msg(Strings.ukNormalShutdonw);
+        Logger.msg(Strings.ukNormalShutdonw);
         System.exit(0);
     }
 
@@ -187,13 +175,12 @@ public class UnDupeKeeper
     {
         try
         {
-            msg(Strings.ukStopping);
+            Logger.msg(Strings.ukStopping);
             stopSignal.put(Settings.StopWorking);
         }
         catch(InterruptedException e)
         {
-            err("MSG_013: "+
-                Strings.ukCantSendExitToWorker);
+            Logger.err("MSG_013: " + Strings.ukCantSendExitToWorker);
         }
     }
 
@@ -207,12 +194,12 @@ public class UnDupeKeeper
         {
             UIManager.setLookAndFeel(Settings.LookAndFeelPackages[settingsHandler.getLookAndFeel()]);
         }
-        catch(UnsupportedLookAndFeelException|IllegalAccessException
-                |InstantiationException|ClassNotFoundException e)
+        catch(UnsupportedLookAndFeelException|
+              IllegalAccessException|
+              InstantiationException|
+              ClassNotFoundException e)
         {
-            err("MSG_014: "+
-                Strings.ukErrorLoadingLookAndFeel+
-                e);
+            Logger.err("MSG_014: " + Strings.ukErrorLoadingLookAndFeel + e);
         }
         // UIManager.put("swing.boldMetal", Boolean.FALSE);
         SwingUtilities.invokeLater(new Runnable()
@@ -231,16 +218,15 @@ public class UnDupeKeeper
     private static void showAbout()
     {
         JOptionPane.showMessageDialog(null,
-                                      Strings.ukAboutUndupekeeperDialog+
-                                              "\nUsing: "+
-                                              Settings.CypherMethod+
-                                              " with binary "+
-                                              (Settings.comparisonIsON?Strings.ukComparisonOn
-                                                                      :Strings.ukComparisonOff)+
-                                              "\nGUI: "+
-                                              Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()]+
-                                              "\nTotal DB items: "+
-                                              new DecimalFormat(Strings.numberFormatMask).format(workerThread.size()));
+                                      Strings.ukAboutUndupekeeperDialog +
+                                      "\nUsing: " +
+                                      Settings.CypherMethod +
+                                      " with binary " +
+                                      (Settings.comparisonIsON?Strings.ukComparisonOn:Strings.ukComparisonOff) +
+                                      "\nGUI: " +
+                                      Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()] +
+                                      "\nTotal DB items: " +
+                                      new DecimalFormat(Strings.numberFormatMask).format(workerThread.size()));
     }
 
     /**
@@ -251,9 +237,8 @@ public class UnDupeKeeper
     {
         if(!SystemTray.isSupported())
         {
-            JOptionPane.showMessageDialog(null,
-                                          Strings.ukSystemTrayNotSupported);
-            err(Strings.ukSystemTrayNotSupported);
+            JOptionPane.showMessageDialog(null, Strings.ukSystemTrayNotSupported);
+            Logger.err(Strings.ukSystemTrayNotSupported);
             startShutdown();
             return;
         }
@@ -281,8 +266,7 @@ public class UnDupeKeeper
         }
         catch(AWTException e)
         {
-            err("MSG_015: "+
-                Strings.ukSystemTrayIconCantBeAdded);
+            Logger.err("MSG_015: " + Strings.ukSystemTrayIconCantBeAdded);
             return;
         }
         trayIcon.addActionListener(new ActionListener()
@@ -305,16 +289,14 @@ public class UnDupeKeeper
             {
                 public void actionPerformed(ActionEvent event)
                 {
-                    if(JOptionPane.showConfirmDialog(null,
-                                                     Strings.ukDatabaseWillBeEmpty)==JOptionPane.YES_OPTION)
+                    if(JOptionPane.showConfirmDialog(null, Strings.ukDatabaseWillBeEmpty)==JOptionPane.YES_OPTION)
                     {
                         workerThread.clear();
                         workerThread.load();
                     }
                     else
                     {
-                        JOptionPane.showMessageDialog(null,
-                                                      Strings.ukOperationCanceled);
+                        JOptionPane.showMessageDialog(null, Strings.ukOperationCanceled);
                     }
                 }
             });
@@ -394,27 +376,5 @@ public class UnDupeKeeper
                     systemTray.remove(trayIcon);
                 }
             });
-    }
-
-    /**
-     * This method displays a message through the embedded log system.
-     * 
-     * @param message
-     *            A <code>String</code> containing the message to display.
-     */
-    private static void msg(String message)
-    {
-        Logger.msg(message);
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }

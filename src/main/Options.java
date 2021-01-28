@@ -12,8 +12,7 @@ import tools.SettingsHandler;
  * 
  * @author vliopard
  */
-public class Options extends
-        JDialog
+public class Options extends JDialog
 {
     private static final long serialVersionUID =2964455539250507658L;
     private Point             screenPosition;
@@ -40,12 +39,9 @@ public class Options extends
      */
     public Options(final SettingsHandler settingsHandler)
     {
-        this.setLocation(settingsHandler.getX(),
-                         settingsHandler.getY());
+        this.setLocation(settingsHandler.getX(), settingsHandler.getY());
         OptionsLayout customLayout=new OptionsLayout();
-        getContentPane().setFont(new Font("Helvetica",
-                                          Font.PLAIN,
-                                          12));
+        getContentPane().setFont(new Font("Helvetica", Font.PLAIN, 12));
         getContentPane().setLayout(customLayout);
         // DIRECTORY LABEL (0)
         labelDirectoryToWatch=new JLabel(Strings.ssDirectoryLabel);
@@ -151,9 +147,7 @@ public class Options extends
         getContentPane().add(buttonCancel);
         // WARNING LABEL (12)
         labelWarning=new JLabel(Strings.ssWarningLabel);
-        labelWarning.setFont(new Font("Helvetica",
-                                      Font.BOLD,
-                                      12));
+        labelWarning.setFont(new Font("Helvetica", Font.BOLD, 12));
         getContentPane().add(labelWarning);
         setSize(getPreferredSize());
         addWindowListener(new WindowAdapter()
@@ -172,8 +166,7 @@ public class Options extends
  * 
  * @author vliopard
  */
-class OptionsLayout implements
-                   LayoutManager
+class OptionsLayout implements LayoutManager
 {
     private Insets[] values;
 
@@ -189,8 +182,7 @@ class OptionsLayout implements
      * Just an inherited method from LayoutManager, not used in this project
      * yet.
      */
-    public void addLayoutComponent(String name,
-                                   Component comp)
+    public void addLayoutComponent(String name, Component comp)
     {
     }
 
@@ -207,15 +199,10 @@ class OptionsLayout implements
      */
     public Dimension preferredLayoutSize(Container parent)
     {
-        Dimension dim=new Dimension(0,
-                                    0);
+        Dimension dim=new Dimension(0, 0);
         Insets insets=parent.getInsets();
-        dim.width=320+
-                  insets.left+
-                  insets.right;
-        dim.height=195+
-                   insets.top+
-                   insets.bottom;
+        dim.width=320 + insets.left + insets.right;
+        dim.height=195 + insets.top + insets.bottom;
         return dim;
     }
 
@@ -224,8 +211,7 @@ class OptionsLayout implements
      */
     public Dimension minimumLayoutSize(Container parent)
     {
-        Dimension dim=new Dimension(0,
-                                    0);
+        Dimension dim=new Dimension(0, 0);
         return dim;
     }
 
@@ -249,16 +235,9 @@ class OptionsLayout implements
      *            An <code>int</code> value that represents the bottom position
      *            of the component.
      */
-    private void setBounds(int i,
-                           int left,
-                           int top,
-                           int right,
-                           int bottom)
+    private void setBounds(int i, int left, int top, int right, int bottom)
     {
-        values[i]=new Insets(top,
-                             left,
-                             bottom,
-                             right);
+        values[i]=new Insets(top, left, bottom, right);
     }
 
     /**
@@ -291,12 +270,7 @@ class OptionsLayout implements
             Component component=parent.getComponent(i);
             if(component.isVisible())
             {
-                component.setBounds(insets.left+
-                                            values[i].left,
-                                    insets.top+
-                                            values[i].top,
-                                    values[i].right,
-                                    values[i].bottom);
+                component.setBounds(insets.left + values[i].left, insets.top + values[i].top, values[i].right, values[i].bottom);
             }
         }
     }

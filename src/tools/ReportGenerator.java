@@ -110,36 +110,30 @@ public class ReportGenerator
                 String fileName=bufferedReader.readLine();
                 if(null!=fileName)
                 {
-                    fileName=fileName.substring(0,
-                                                fileName.indexOf(Settings.UnDupeKeeperSignature));
+                    fileName=fileName.substring(0, fileName.indexOf(Settings.UnDupeKeeperSignature));
                 }
                 else
                 {
-                    err("MSG_038: "+
-                        Strings.invalidContent);
+                    Logger.err("MSG_038: " + Strings.invalidContent);
                     return null;
                 }
                 if(!treeMap.containsKey(fileName))
                 {
                     ArrayList<String> childrenFileList=new ArrayList<String>();
                     childrenFileList.add(fileNameArray.get(i));
-                    treeMap.put(fileName,
-                                childrenFileList);
+                    treeMap.put(fileName, childrenFileList);
                 }
                 else
                 {
                     ArrayList<String> childrenFileList=treeMap.get(fileName);
                     childrenFileList.add(fileNameArray.get(i));
                     treeMap.remove(fileName);
-                    treeMap.put(fileName,
-                                childrenFileList);
+                    treeMap.put(fileName, childrenFileList);
                 }
             }
             catch(IOException e)
             {
-                err("MSG_034: "+
-                    Strings.fbReportError+
-                    e);
+                Logger.err("MSG_034: " + Strings.fbReportError + e);
                 return null;
             }
         }
@@ -151,9 +145,7 @@ public class ReportGenerator
             }
             catch(IOException e)
             {
-                err("MSG_035: "+
-                    Strings.rgErrorClosingBuffer+
-                    e);
+                Logger.err("MSG_035: " + Strings.rgErrorClosingBuffer + e);
             }
         }
         return treeMap;
@@ -172,16 +164,14 @@ public class ReportGenerator
      *         containing all files from the root directory and its sub
      *         directories.
      */
-    public static ArrayList<String> generateFileList(File[] fileArray,
-                                                     String fileExtension)
+    public static ArrayList<String> generateFileList(File[] fileArray, String fileExtension)
     {
         ArrayList<String> fileList=new ArrayList<String>();
         for(File file : fileArray)
         {
             if(file.isDirectory())
             {
-                fileList.addAll(generateFileList(file.listFiles(),
-                                                 fileExtension));
+                fileList.addAll(generateFileList(file.listFiles(), fileExtension));
             }
             else
             {
@@ -194,16 +184,5 @@ public class ReportGenerator
             }
         }
         return fileList;
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }
