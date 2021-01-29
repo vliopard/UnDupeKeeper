@@ -8,64 +8,66 @@ import java.util.Scanner;
 
 import settings.Settings;
 
-public class Linker {
-    public static boolean createLink(Path current, Path target) {
+public class Linker
+{
+    public static boolean createLink(Path current, Path target)
+    {
         String command = "";
-        if(Settings.os.startsWith("windows")) 
+        if (Settings.os.startsWith("windows"))
         {
             command = "cmd /c mklink " + current + " " + target;
-        } 
-        else 
+        }
+        else
         {
             command = "ln -s " + target + " " + current;
         }
         Process process;
-        try 
+        try
         {
             Logger.msg(command);
-            process = Runtime.getRuntime().exec(command);
-            int exitValue = process.waitFor();
-            if (exitValue != 0) 
+            process = Runtime.getRuntime( ).exec(command);
+            int exitValue = process.waitFor( );
+            if (exitValue != 0)
             {
                 Logger.msg("Abnormal process termination 1");
                 return false;
             }
-            
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) 
-            {
-                Logger.msg(line);
-            }
-            reader.close();
-            
-            Scanner scanner = new Scanner(process.getInputStream());
-            scanner.useDelimiter("\r\n");
-            while (scanner.hasNext()) 
-            {
-                Logger.msg(scanner.next());
-            }
-            scanner.close();
-            
-            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            while ((line = errorReader.readLine()) != null) 
-            {
-                Logger.msg(line);
-            }
-            errorReader.close();
 
-            process.destroy();
-            if (process.exitValue() != 0) 
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream( )));
+            String         line;
+            while ((line = reader.readLine( )) != null)
+            {
+                Logger.msg(line);
+            }
+            reader.close( );
+
+            Scanner scanner = new Scanner(process.getInputStream( ));
+            scanner.useDelimiter("\r\n");
+            while (scanner.hasNext( ))
+            {
+                Logger.msg(scanner.next( ));
+            }
+            scanner.close( );
+
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream( )));
+            while ((line = errorReader.readLine( )) != null)
+            {
+                Logger.msg(line);
+            }
+            errorReader.close( );
+
+            process.destroy( );
+            if (process.exitValue( ) != 0)
             {
                 Logger.msg("Abnormal process termination 2");
             }
-            
-        } 
-        catch (IOException|InterruptedException e) 
+
+        }
+        catch (IOException | InterruptedException e)
         {
-            e.printStackTrace();
+            e.printStackTrace( );
             Logger.msg("Exception: " + e);
         }
         return true;
-    }    
+    }
 }

@@ -10,61 +10,61 @@ import java.util.ArrayList;
 public class UniqueFile
 {
 
-    private Path            fileUri  = null;
-    private String          fileSha   = null;
-    private ArrayList<Path> fileLinks = new ArrayList<Path>();
+    private Path             fileUri   = null;
+    private String           fileSha   = null;
+    private ArrayList <Path> fileLinks = new ArrayList <Path>( );
 
     public UniqueFile(String value)
     {
         fileUri = Paths.get(value);
-        setSha();
+        setSha( );
     }
 
     public UniqueFile(Path value)
     {
         fileUri = value;
-        setSha();
+        setSha( );
     }
 
-    public String getSha()
+    public String getSha( )
     {
         return fileSha;
     }
 
-    public void setSha()
+    public void setSha( )
     {
         fileSha = CheckSum.getChecksumElegant(fileUri);
     }
 
-    public Path getFilePath()
+    public Path getFilePath( )
     {
         return fileUri;
     }
 
-    public String getFileStr()
+    public String getFileStr( )
     {
-        return fileUri.toString();
+        return fileUri.toString( );
     }
-    
-    public void clearUrl()
+
+    public void clearUrl( )
     {
-        fileUri=Paths.get("");
+        fileUri = Paths.get("");
     }
 
     public void setFileStr(String uri)
     {
         setFilePath(Paths.get(uri));
     }
-    
+
     public void setFilePath(Path uri)
     {
         fileUri = uri;
-        setSha();
-        if (!fileUri.equals(uri))
+        setSha( );
+        if ( ! fileUri.equals(uri))
         {
-            if (!fileLinks.isEmpty())
+            if ( ! fileLinks.isEmpty( ))
             {
-                for (int i = 0; i < fileLinks.size(); i++)
+                for (int i = 0; i < fileLinks.size( ); i++)
                 {
                     remakeLink(uri);
                 }
@@ -79,7 +79,7 @@ public class UniqueFile
 
     public void remakeLink(Path uri)
     {
-        
+
         if (FileOperations.isLink(uri))
         {
             FileOperations.deleteFile(uri);
@@ -87,15 +87,15 @@ public class UniqueFile
         Linker.createLink(uri, fileUri);
     }
 
-    public ArrayList<Path> getFileLinks()
+    public ArrayList <Path> getFileLinks( )
     {
         return fileLinks;
     }
 
-    public void setFileLinks(ArrayList<Path> value)
+    public void setFileLinks(ArrayList <Path> value)
     {
         fileLinks = value;
-        for (int i = 0; i < value.size(); i++)
+        for (int i = 0; i < value.size( ); i++)
         {
             makeLink(value.get(i));
         }
@@ -105,7 +105,7 @@ public class UniqueFile
     {
         addLink(Paths.get(value));
     }
-    
+
     public void addLink(Path value)
     {
         fileLinks.add(value);
@@ -127,7 +127,7 @@ public class UniqueFile
     {
         unLink(Paths.get(link));
     }
-    
+
     public void unLink(Path link)
     {
         if (fileLinks.contains(link))
@@ -163,17 +163,17 @@ public class UniqueFile
         }
     }
 
-    public void removeLinks()
+    public void removeLinks( )
     {
-        for (int i = 0; i < fileLinks.size(); i++)
+        for (int i = 0; i < fileLinks.size( ); i++)
         {
             FileOperations.deleteFile(fileLinks.get(i));
         }
     }
 
-    public void makeLinks()
+    public void makeLinks( )
     {
-        for (int i = 0; i < fileLinks.size(); i++)
+        for (int i = 0; i < fileLinks.size( ); i++)
         {
             Linker.createLink(fileLinks.get(i), fileUri);
         }
@@ -198,14 +198,14 @@ public class UniqueFile
         }
     }
 
-    public void show() 
+    public void show( )
     {
-        Logger.msg("Checksum: [" + fileSha + "] Filename: [" + fileUri.toString() + "]");
-        if (fileLinks.size() > 0)
+        Logger.msg("Checksum: [" + fileSha + "] Filename: [" + fileUri.toString( ) + "]");
+        if (fileLinks.size( ) > 0)
         {
-            for(int i = 0; i < fileLinks.size(); i++)
+            for (int i = 0; i < fileLinks.size( ); i++)
             {
-                Logger.msg("\t\tFilelink: " + fileLinks.get(i).toString());
+                Logger.msg("\t\tFilelink: " + fileLinks.get(i).toString( ));
             }
         }
     }

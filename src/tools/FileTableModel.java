@@ -1,4 +1,5 @@
 package tools;
+
 import java.io.File;
 import java.util.Date;
 import javax.swing.ImageIcon;
@@ -8,107 +9,110 @@ import settings.Settings;
 import settings.Strings;
 
 /**
- * FileTableModel class provides a render set of tools to display files in a
- * table.
+ * FileTableModel class provides a render set of tools to display files in a table.
  * 
  * @author vliopard
  */
 public class FileTableModel extends AbstractTableModel
 {
-    private static final long serialVersionUID  =-6234469100236698739L;
-    private File[]            fileArray;
-    private FileSystemView    fileSystemView    =FileSystemView.getFileSystemView();
-    private String[]          fileDetailColumns =
-                                                {
-            Strings.fbIcon,
-            Strings.fbFileName,
-            Strings.fbExtension,
-            Strings.fbPath,
-            Strings.fbSize,
-            Strings.fbDateHead,
-            Strings.fbRead,
-            Strings.fbWrite,
-            Strings.fbExecute,
-            Strings.fbDir,
+    private static final long serialVersionUID  = -6234469100236698739L;
+    private File[ ]           fileArray;
+    private FileSystemView    fileSystemView    = FileSystemView.getFileSystemView( );
+    private String[ ]         fileDetailColumns = 
+    {
+            Strings.fbIcon, 
+            Strings.fbFileName, 
+            Strings.fbExtension, 
+            Strings.fbPath, 
+            Strings.fbSize, 
+            Strings.fbDateHead, 
+            Strings.fbRead, 
+            Strings.fbWrite, 
+            Strings.fbExecute, 
+            Strings.fbDir, 
             Strings.fbIsFile,
-                                                };
+    };
 
     /**
-     * FileTableModel Constructor - Initialize an empty FileTableModel object
-     * for rendering a file table.
+     * FileTableModel Constructor - Initialize an empty FileTableModel object for rendering a file table.
      */
-    public FileTableModel()
+    public FileTableModel( )
     {
         this(new File[0]);
     }
 
     /**
-     * FileTableModel Constructor - Initialize a FileTableModel object for
-     * rendering a file table.
+     * FileTableModel Constructor - Initialize a FileTableModel object for rendering a file table.
      * 
      * @param fileList
-     *            A <code>File[]</code> array containing the file list to be
-     *            displayed.
+     *                     A <code>File[]</code> array containing the file list to be displayed.
      */
-    public FileTableModel(File[] fileList)
+    public FileTableModel(File[ ] fileList)
     {
-        fileArray=fileList;
+        fileArray = fileList;
     }
 
     /**
      * This method gets an <code>Object</code> at the provided position.
      * 
      * @param row
-     *            An <code>int</code> value of the <code>Object</code>'s row.
+     *                   An <code>int</code> value of the <code>Object</code>'s row.
      * @param column
-     *            An <code>int</code> value of the <code>Object</code>'s column.
+     *                   An <code>int</code> value of the <code>Object</code>'s column.
+     * 
      * @return Object The <code>Object</code> from provided position.
      */
     public Object getValueAt(int row, int column)
     {
-        File file=fileArray[row];
-        switch(column)
+        File file = fileArray[row];
+        switch (column)
         {
             case 0:
                 return fileSystemView.getSystemIcon(file);
+
             case 1:
-                if(fileSystemView.getSystemDisplayName(file).lastIndexOf(Strings.dot)<0)
+                if (fileSystemView.getSystemDisplayName(file).lastIndexOf(Strings.dot) < 0)
                 {
                     return fileSystemView.getSystemDisplayName(file);
                 }
-                return fileSystemView.getSystemDisplayName(file).substring(0,
-                                                fileSystemView.getSystemDisplayName(file)
-                                                              .lastIndexOf(Strings.dot));
+                return fileSystemView.getSystemDisplayName(file).substring(0, fileSystemView.getSystemDisplayName(file).lastIndexOf(Strings.dot));
+
             case 2:
-                if(file.isDirectory())
+                if (file.isDirectory( ))
                 {
                     return Strings.fbDirSymbol;
                 }
-                if(fileSystemView.getSystemDisplayName(file).lastIndexOf(Strings.dot)<0)
+                if (fileSystemView.getSystemDisplayName(file).lastIndexOf(Strings.dot) < 0)
                 {
                     return Settings.Empty;
                 }
-                return fileSystemView.getSystemDisplayName(file)
-                                     .substring(fileSystemView.getSystemDisplayName(file)
-                                                              .lastIndexOf(Strings.dot)+1,
-                                                fileSystemView.getSystemDisplayName(file)
-                                                              .length());
+                return fileSystemView.getSystemDisplayName(file).substring(fileSystemView.getSystemDisplayName(file).lastIndexOf(Strings.dot)
+                        + 1, fileSystemView.getSystemDisplayName(file).length( ));
+
             case 3:
-                return file.getPath();
+                return file.getPath( );
+
             case 4:
-                return Utils.numberFormat(file.length());
+                return Utils.numberFormat(file.length( ));
+
             case 5:
-                return file.lastModified();
+                return file.lastModified( );
+
             case 6:
-                return file.canRead();
+                return file.canRead( );
+
             case 7:
-                return file.canWrite();
+                return file.canWrite( );
+
             case 8:
-                return file.canExecute();
+                return file.canExecute( );
+
             case 9:
-                return file.isDirectory();
+                return file.isDirectory( );
+
             case 10:
-                return file.isFile();
+                return file.isFile( );
+
             default:
                 Logger.err(Strings.fbInvalidColumnIndex);
         }
@@ -120,7 +124,7 @@ public class FileTableModel extends AbstractTableModel
      * 
      * @return An <code>int</code> value representing the total column count.
      */
-    public int getColumnCount()
+    public int getColumnCount( )
     {
         return fileDetailColumns.length;
     }
@@ -129,19 +133,23 @@ public class FileTableModel extends AbstractTableModel
      * This method returns a class that represents the column position.
      * 
      * @param column
-     *            An <code>int</code> value of the selected column.
+     *                   An <code>int</code> value of the selected column.
+     * 
      * @return The <code>Class</code> of the selected column.
      */
-    public Class<?> getColumnClass(int column)
+    public Class <?> getColumnClass(int column)
     {
-        switch(column)
+        switch (column)
         {
             case 0:
                 return ImageIcon.class;
+
             case 4:
                 return Long.class;
+
             case 5:
                 return Date.class;
+
             case 6:
             case 7:
             case 8:
@@ -156,7 +164,8 @@ public class FileTableModel extends AbstractTableModel
      * This method returns the <code>String</code> name of the selected column.
      * 
      * @param column
-     *            An <code>int</code> value of the selected column.
+     *                   An <code>int</code> value of the selected column.
+     * 
      * @return A <code>String</code> value with the name of the column.
      */
     public String getColumnName(int column)
@@ -169,7 +178,7 @@ public class FileTableModel extends AbstractTableModel
      * 
      * @return An <code>int</code> value representing the total row count.
      */
-    public int getRowCount()
+    public int getRowCount( )
     {
         return fileArray.length;
     }
@@ -178,7 +187,8 @@ public class FileTableModel extends AbstractTableModel
      * This method returns a <code>File</code> from a given selected row.
      * 
      * @param row
-     *            An <code>int</code> value with the selected file row.
+     *                An <code>int</code> value with the selected file row.
+     * 
      * @return Returns a <code>File</code> from the selected row.
      */
     public File getFile(int row)
@@ -190,13 +200,12 @@ public class FileTableModel extends AbstractTableModel
      * This method feed a file table with a list of files.
      * 
      * @param fileList
-     *            A <code>File[]</code> array containing the files to be placed
-     *            in a table list.
+     *                     A <code>File[]</code> array containing the files to be placed in a table list.
      */
-    public void setFiles(File[] fileList)
+    public void setFiles(File[ ] fileList)
     {
-        fileArray=fileList;
-        fireTableDataChanged();
+        fileArray = fileList;
+        fireTableDataChanged( );
     }
 
 }

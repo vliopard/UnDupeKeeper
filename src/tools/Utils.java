@@ -1,4 +1,5 @@
 package tools;
+
 import java.awt.AWTException;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -15,18 +16,14 @@ import settings.Strings;
 public class Utils
 {
     /**
-     * 
-     * This is a method for customizing a number format value based on a
-     * provided pattern.
+     * This is a method for customizing a number format value based on a provided pattern.
      * 
      * @param pattern
-     *            A <code>String</code> value that represents the format to be
-     *            applied on provided number.
+     *                    A <code>String</code> value that represents the format to be applied on provided number.
      * @param value
-     *            A <code>double</code> value to be formated using provided
-     *            pattern.
-     * @return Returns a <code>String</code> containing a representation of the
-     *         formated number.
+     *                    A <code>double</code> value to be formated using provided pattern.
+     * 
+     * @return Returns a <code>String</code> containing a representation of the formated number.
      */
     public static String customFormat(String pattern, double value)
     {
@@ -37,10 +34,9 @@ public class Utils
      * This is a method to format a number using the default pattern.
      * 
      * @param value
-     *            A <code>double</code> value to be formated using default
-     *            pattern.
-     * @return Returns a <code>String</code> containing a representation of the
-     *         formated number.
+     *                  A <code>double</code> value to be formated using default pattern.
+     * 
+     * @return Returns a <code>String</code> containing a representation of the formated number.
      */
     public static String numberFormat(double value)
     {
@@ -48,13 +44,13 @@ public class Utils
     }
 
     /**
-     * This method adds leading zeros to a <code>String</code> representation of
-     * a number to keep display organized in columns.
+     * This method adds leading zeros to a <code>String</code> representation of a number to keep display organized in
+     * columns.
      * 
      * @param numberToFormat
-     *            A <code>long</code> number that will receive leading zeros.
-     * @return Returns an <code>String</code> representing a <code>long</code>
-     *         number with leading zeros.
+     *                           A <code>long</code> number that will receive leading zeros.
+     * 
+     * @return Returns an <code>String</code> representing a <code>long</code> number with leading zeros.
      */
     public static String addLeadingZeros(long numberToFormat)
     {
@@ -62,15 +58,15 @@ public class Utils
     }
 
     /**
-     * This method adds leading zeros to a <code>String</code> representation of
-     * a number to keep display organized in columns.
+     * This method adds leading zeros to a <code>String</code> representation of a number to keep display organized in
+     * columns.
      * 
      * @param mask
-     *            An <code>String</code> informing the amount of leading zeros.
+     *                           An <code>String</code> informing the amount of leading zeros.
      * @param numberToFormat
-     *            A <code>long</code> number that will receive leading zeros.
-     * @return Returns an <code>String</code> representing a <code>long</code>
-     *         number with customized leading zeros.
+     *                           A <code>long</code> number that will receive leading zeros.
+     * 
+     * @return Returns an <code>String</code> representing a <code>long</code> number with customized leading zeros.
      */
     public static String addCustomLeadingZeros(String mask, long numberToFormat)
     {
@@ -78,28 +74,27 @@ public class Utils
     }
 
     /**
-     * This method creates and displays a notification Balloon on the System
-     * Tray.
+     * This method creates and displays a notification Balloon on the System Tray.
      * 
      * @param title
-     *            A <code>String</code> value containing the message title.
+     *                    A <code>String</code> value containing the message title.
      * @param message
-     *            A <code>String</code> value containing the message body.
+     *                    A <code>String</code> value containing the message body.
      * @param type
-     *            A <code>MessageType</code> value containing the message type
-     *            <code>[ERROR | INFO | WARNING | NONE]</code>.
+     *                    A <code>MessageType</code> value containing the message type
+     *                    <code>[ERROR | INFO | WARNING | NONE]</code>.
      */
     public static void displayBallon(String title, String message, MessageType type)
     {
-        SystemTray systemTray=SystemTray.getSystemTray();
-        TrayIcon trayIcon=TrayImage.setSystemTrayIcon(Settings.IconYellow);
+        SystemTray systemTray = SystemTray.getSystemTray( );
+        TrayIcon   trayIcon   = TrayImage.setSystemTrayIcon(Settings.IconYellow);
         try
         {
             systemTray.add(trayIcon);
             trayIcon.displayMessage(title, message, type);
             Thread.sleep(5000);
         }
-        catch(AWTException|InterruptedException e)
+        catch (AWTException | InterruptedException e)
         {
             Logger.err("MSG_036: " + Strings.utBalloonError + e);
         }

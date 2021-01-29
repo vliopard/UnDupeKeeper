@@ -1,4 +1,5 @@
 package main;
+
 import java.nio.file.*;
 import java.awt.AWTException;
 import java.awt.MenuItem;
@@ -27,63 +28,60 @@ import tools.SettingsHandler;
 import tools.TrayImage;
 
 /**
- * UnDupeKeeper is the main class. It calls and starts everything on the system,
- * regarding to User Interface, and working threads. Also takes care about
- * settings.
+ * UnDupeKeeper is the main class. It calls and starts everything on the system, regarding to User Interface, and
+ * working threads. Also takes care about settings.
  * 
  * @author vliopard
  */
 public class UnDupeKeeper
 {
-    private static boolean                  recursiveFolderScan =false;
-    private static String                   fileOrder           =Settings.CompareAsc;
-    private static TrayIcon                 trayIcon;
-    private static Blinker                  guiThread;
-    private static Worker                   workerThread;
-    private static SettingsHandler          settingsHandler;
-    private static BlockingQueue<Integer>   stopSignal;
-    private static BlockingQueue<FileQueue> transferQueue;
-    private static JFrame                   reportViewer        =new JFrame();
+    private static boolean                   recursiveFolderScan = false;
+    private static String                    fileOrder           = Settings.CompareAsc;
+    private static TrayIcon                  trayIcon;
+    private static Blinker                   guiThread;
+    private static Worker                    workerThread;
+    private static SettingsHandler           settingsHandler;
+    private static BlockingQueue <Integer>   stopSignal;
+    private static BlockingQueue <FileQueue> transferQueue;
+    private static JFrame                    reportViewer        = new JFrame( );
 
     /**
-     * In case of UnDupeKeeper is called by command prompt this method will show
-     * an usage message after receiving wrong parameters.
+     * In case of UnDupeKeeper is called by command prompt this method will show an usage message after receiving wrong
+     * parameters.
      */
-    private static void usage()
+    private static void usage( )
     {
         Logger.err(Strings.ukUsage);
-        System.exit(-1);
+        System.exit( -1);
     }
 
     /**
-     * This method validates arguments passed to UnDupeKeeper via command
-     * prompt.
+     * This method validates arguments passed to UnDupeKeeper via command prompt.
      * 
      * @param arguments
-     *            A <code>String</code> array containing the command prompt
-     *            arguments.
-     * @return Returns a <code>Path</code> containing the directory passed as
-     *         argument. Sets recursive mode 'on'.
+     *                      A <code>String</code> array containing the command prompt arguments.
+     * 
+     * @return Returns a <code>Path</code> containing the directory passed as argument. Sets recursive mode 'on'.
      */
-    private static Path checkPromptArguments(String[] arguments)
+    private static Path checkPromptArguments(String[ ] arguments)
     {
-        String parameter=(arguments.length>0)?arguments[0]:"";
-        String filename=(arguments.length>1)?arguments[1]:"";
-        String sortorder=(arguments.length>2)?arguments[2]:"";
-        if(parameter.trim().equals("")||filename.trim().equals("")||!FileOperations.exist(Paths.get(filename)))
+        String parameter = (arguments.length > 0) ? arguments[0] : "";
+        String filename  = (arguments.length > 1) ? arguments[1] : "";
+        String sortorder = (arguments.length > 2) ? arguments[2] : "";
+        if (parameter.trim( ).equals("") || filename.trim( ).equals("") || ! FileOperations.exist(Paths.get(filename)))
         {
-            usage();
+            usage( );
         }
-        if(parameter.equals(Settings.TextFileList))
+        if (parameter.equals(Settings.TextFileList))
         {
-            fileOrder=sortorder;
+            fileOrder = sortorder;
         }
         else
         {
-            if(parameter.equals(Settings.Recursive))
+            if (parameter.equals(Settings.Recursive))
             {
-                recursiveFolderScan=true;
-                fileOrder=Settings.CompareRecursive;
+                recursiveFolderScan = true;
+                fileOrder = Settings.CompareRecursive;
             }
         }
         return Paths.get(filename);
@@ -93,73 +91,68 @@ public class UnDupeKeeper
      * This is the main method of UnDupeKeeper that starts all the system.
      * 
      * @param args
-     *            A <code>String</code> array from command prompt that contains
-     *            arguments or empty.
+     *                 A <code>String</code> array from command prompt that contains arguments or empty.
      */
-    public static void main(String[] args)
+    public static void main(String[ ] args)
     {
-        settingsHandler=DataBase.loadSettings();
-        Path directoryToWatch=null;
-        if(args.length>0)
+        settingsHandler = DataBase.loadSettings( );
+        Path directoryToWatch = null;
+        if (args.length > 0)
         {
             // TODO: MUST GET $pwd/directoryToWatch. Now it just gets the dir name with dir path. FATAL getFileName
-            directoryToWatch=checkPromptArguments(args);
-            if(!fileOrder.equals(Settings.CompareRecursive))
+            directoryToWatch = checkPromptArguments(args);
+            if ( ! fileOrder.equals(Settings.CompareRecursive))
             {
-                Comparison.searchAndMarkDuplicatedFiles(directoryToWatch.toString(),
-                                                        fileOrder);
+                Comparison.searchAndMarkDuplicatedFiles(directoryToWatch.toString( ), fileOrder);
                 System.exit(0);
             }
-            settingsHandler.setDirectory(directoryToWatch.toString());
-            DataBase.saveDir(directoryToWatch.toString());
+            settingsHandler.setDirectory(directoryToWatch.toString( ));
+            DataBase.saveDir(directoryToWatch.toString( ));
             DataBase.saveSettings(settingsHandler);
         }
-        while(!FileOperations.isDir(directoryToWatch))
+        while ( ! FileOperations.isDir(directoryToWatch))
         {
-            String directoryName=null;
-            recursiveFolderScan=true;
-            if(settingsHandler.isDirectoryFirstTime())
+            String directoryName = null;
+            recursiveFolderScan = true;
+            if (settingsHandler.isDirectoryFirstTime( ))
             {
-                directoryName=DataBase.chooseDir();
-                if(null==directoryName)
+                directoryName = DataBase.chooseDir( );
+                if (null == directoryName)
                 {
-                    usage();
+                    usage( );
                 }
                 settingsHandler.setDirectory(directoryName);
                 DataBase.saveSettings(settingsHandler);
             }
             else
             {
-                directoryName=settingsHandler.getDirectory();
+                directoryName = settingsHandler.getDirectory( );
             }
-            directoryToWatch=Paths.get(directoryName);
+            directoryToWatch = Paths.get(directoryName);
         }
-        trayIcon=TrayImage.setSystemTrayIcon(Settings.IconDnaGreen);
-        startUI();
-        stopSignal=new LinkedBlockingQueue<Integer>();
-        transferQueue=new LinkedBlockingQueue<FileQueue>();
+        trayIcon = TrayImage.setSystemTrayIcon(Settings.IconDnaGreen);
+        startUI( );
+        stopSignal = new LinkedBlockingQueue <Integer>( );
+        transferQueue = new LinkedBlockingQueue <FileQueue>( );
         try
         {
             stopSignal.put(Settings.KeepWorking);
-            guiThread=new Blinker(transferQueue, stopSignal, trayIcon);
-            new Thread(guiThread).start();
-            Settings.CypherMethod=Settings.CypherMethodList[settingsHandler.getEncryptionMethod()];
-            Settings.comparisonIsON=settingsHandler.getComparisonMethod();
-            workerThread=new Worker(transferQueue, stopSignal);
-            new Thread(workerThread).start();
+            guiThread = new Blinker(transferQueue, stopSignal, trayIcon);
+            new Thread(guiThread).start( );
+            Settings.CypherMethod = Settings.CypherMethodList[settingsHandler.getEncryptionMethod( )];
+            Settings.comparisonIsON = settingsHandler.getComparisonMethod( );
+            workerThread = new Worker(transferQueue, stopSignal);
+            new Thread(workerThread).start( );
             Logger.msg(Strings.ukUndupekeeperIsWorking);
             @SuppressWarnings("unused")
-            Monitor dm=new Monitor(directoryToWatch.toString(),
-                                   transferQueue,
-                                   stopSignal,
-                                   recursiveFolderScan);
-            while((!stopSignal.contains(Settings.WorkerStopped))||
-                  (!stopSignal.contains(Settings.BlinkerStopped)))
+            Monitor dm = new Monitor(directoryToWatch.toString( ), transferQueue, stopSignal, recursiveFolderScan);
+            while (( ! stopSignal.contains(Settings.WorkerStopped)) ||
+                    ( ! stopSignal.contains(Settings.BlinkerStopped)))
             {
                 Thread.sleep(Settings.ExitSleepTime);
             }
         }
-        catch(InterruptedException e)
+        catch (InterruptedException e)
         {
             Logger.err("MSG_012: " + Strings.ukProblemStarting + e);
         }
@@ -168,95 +161,88 @@ public class UnDupeKeeper
     }
 
     /**
-     * This is the method that starts the shutdown process and inform all the
-     * working threads they must have to exit.
+     * This is the method that starts the shutdown process and inform all the working threads they must have to exit.
      */
-    private static void startShutdown()
+    private static void startShutdown( )
     {
         try
         {
             Logger.msg(Strings.ukStopping);
             stopSignal.put(Settings.StopWorking);
         }
-        catch(InterruptedException e)
+        catch (InterruptedException e)
         {
             Logger.err("MSG_013: " + Strings.ukCantSendExitToWorker);
         }
     }
 
     /**
-     * This is a method for starting the user interface. It puts a System Tray
-     * Icon, sets the Look and Feel and other many options.
+     * This is a method for starting the user interface. It puts a System Tray Icon, sets the Look and Feel and other
+     * many options.
      */
-    private static void startUI()
+    private static void startUI( )
     {
         try
         {
-            UIManager.setLookAndFeel(Settings.LookAndFeelPackages[settingsHandler.getLookAndFeel()]);
+            UIManager.setLookAndFeel(Settings.LookAndFeelPackages[settingsHandler.getLookAndFeel( )]);
         }
-        catch(UnsupportedLookAndFeelException|
-              IllegalAccessException|
-              InstantiationException|
-              ClassNotFoundException e)
+        catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException e)
         {
             Logger.err("MSG_014: " + Strings.ukErrorLoadingLookAndFeel + e);
         }
         // UIManager.put("swing.boldMetal", Boolean.FALSE);
-        SwingUtilities.invokeLater(new Runnable()
+        SwingUtilities.invokeLater(new Runnable( )
+        {
+            public void run( )
             {
-                public void run()
-                {
-                    createAndShowGUI();
-                }
-            });
+                createAndShowGUI( );
+            }
+        });
     }
 
     /**
-     * This method creates and display an About dialog containing some
-     * information about the UnDupeKeeper.
+     * This method creates and display an About dialog containing some information about the UnDupeKeeper.
      */
-    private static void showAbout()
+    private static void showAbout( )
     {
-        JOptionPane.showMessageDialog(null,
-                                      Strings.ukAboutUndupekeeperDialog +
-                                      "\nUsing: " +
-                                      Settings.CypherMethod +
-                                      " with binary " +
-                                      (Settings.comparisonIsON?Strings.ukComparisonOn:Strings.ukComparisonOff) +
-                                      "\nGUI: " +
-                                      Settings.LookAndFeelNames[settingsHandler.getLookAndFeel()] +
-                                      "\nTotal DB items: " +
-                                      new DecimalFormat(Strings.numberFormatMask).format(workerThread.size()));
+        JOptionPane.showMessageDialog(null, Strings.ukAboutUndupekeeperDialog +
+                "\nUsing: " +
+                Settings.CypherMethod +
+                " with binary " +
+                (Settings.comparisonIsON ? Strings.ukComparisonOn : Strings.ukComparisonOff) +
+                "\nGUI: " +
+                Settings.LookAndFeelNames[settingsHandler.getLookAndFeel( )] +
+                "\nTotal DB items: " +
+                new DecimalFormat(Strings.numberFormatMask).format(workerThread.size( )));
     }
 
     /**
-     * This method creates and display the Graphical User Interface, putting an
-     * Icon on System Tray and its pop-up menu.
+     * This method creates and display the Graphical User Interface, putting an Icon on System Tray and its pop-up menu.
      */
-    private static void createAndShowGUI()
+    private static void createAndShowGUI( )
     {
-        if(!SystemTray.isSupported())
+        if ( ! SystemTray.isSupported( ))
         {
             JOptionPane.showMessageDialog(null, Strings.ukSystemTrayNotSupported);
             Logger.err(Strings.ukSystemTrayNotSupported);
-            startShutdown();
+            startShutdown( );
             return;
         }
-        final PopupMenu popupMenu=new PopupMenu();
+        final PopupMenu popupMenu = new PopupMenu( );
         // trayIcon=TrayImage.setSystemTrayIcon(Settings.IconDnaGreen);
-        final SystemTray systemTray=SystemTray.getSystemTray();
-        MenuItem saveDatabase=new MenuItem(Strings.ukSaveDatabase);
-        MenuItem clearDatabase=new MenuItem(Strings.ukClearDatabase);
-        final MenuItem checkManager=new MenuItem(Strings.ukViewReports);
-        final MenuItem settingsItem=new MenuItem(Strings.ukSettingsMenu);
-        final MenuItem aboutItem=new MenuItem(Strings.ukAboutUndupekeeperMenu);
-        MenuItem exitItem=new MenuItem(Strings.ukExitUndupekeeper);
+        final SystemTray systemTray    = SystemTray.getSystemTray( );
+        MenuItem         saveDatabase  = new MenuItem(Strings.ukSaveDatabase);
+        MenuItem         clearDatabase = new MenuItem(Strings.ukClearDatabase);
+        final MenuItem   checkManager  = new MenuItem(Strings.ukViewReports);
+        final MenuItem   settingsItem  = new MenuItem(Strings.ukSettingsMenu);
+        final MenuItem   aboutItem     = new MenuItem(Strings.ukAboutUndupekeeperMenu);
+        MenuItem         exitItem      = new MenuItem(Strings.ukExitUndupekeeper);
         popupMenu.add(saveDatabase);
         popupMenu.add(clearDatabase);
-        popupMenu.addSeparator();
+        popupMenu.addSeparator( );
         popupMenu.add(checkManager);
         popupMenu.add(settingsItem);
-        popupMenu.addSeparator();
+        popupMenu.addSeparator( );
         popupMenu.add(aboutItem);
         popupMenu.add(exitItem);
         trayIcon.setPopupMenu(popupMenu);
@@ -264,117 +250,117 @@ public class UnDupeKeeper
         {
             systemTray.add(trayIcon);
         }
-        catch(AWTException e)
+        catch (AWTException e)
         {
             Logger.err("MSG_015: " + Strings.ukSystemTrayIconCantBeAdded);
             return;
         }
-        trayIcon.addActionListener(new ActionListener()
+        trayIcon.addActionListener(new ActionListener( )
+        {
+            public void actionPerformed(ActionEvent event)
             {
-                public void actionPerformed(ActionEvent event)
+                aboutItem.setEnabled(false);
+                showAbout( );
+                aboutItem.setEnabled(true);
+            }
+        });
+        saveDatabase.addActionListener(new ActionListener( )
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                workerThread.save( );
+            }
+        });
+        clearDatabase.addActionListener(new ActionListener( )
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                if (JOptionPane.showConfirmDialog(null, Strings.ukDatabaseWillBeEmpty) == JOptionPane.YES_OPTION)
                 {
-                    aboutItem.setEnabled(false);
-                    showAbout();
-                    aboutItem.setEnabled(true);
+                    workerThread.clear( );
+                    workerThread.load( );
                 }
-            });
-        saveDatabase.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+                else
                 {
-                    workerThread.save();
+                    JOptionPane.showMessageDialog(null, Strings.ukOperationCanceled);
                 }
-            });
-        clearDatabase.addActionListener(new ActionListener()
+            }
+        });
+        aboutItem.addActionListener(new ActionListener( )
+        {
+            public void actionPerformed(ActionEvent event)
             {
-                public void actionPerformed(ActionEvent event)
+                aboutItem.setEnabled(false);
+                showAbout( );
+                aboutItem.setEnabled(true);
+            }
+        });
+        checkManager.addActionListener(new ActionListener( )
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                checkManager.setEnabled(false);
+                reportViewer = ReportViewer.show(settingsHandler);
+                reportViewer.addWindowListener(new WindowListener( )
                 {
-                    if(JOptionPane.showConfirmDialog(null, Strings.ukDatabaseWillBeEmpty)==JOptionPane.YES_OPTION)
+                    public void windowClosed(WindowEvent e)
                     {
-                        workerThread.clear();
-                        workerThread.load();
+                        checkManager.setEnabled(true);
                     }
-                    else
+
+                    @Override
+                    public void windowActivated(WindowEvent arg0)
                     {
-                        JOptionPane.showMessageDialog(null, Strings.ukOperationCanceled);
                     }
-                }
-            });
-        aboutItem.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
-                {
-                    aboutItem.setEnabled(false);
-                    showAbout();
-                    aboutItem.setEnabled(true);
-                }
-            });
-        checkManager.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
-                {
-                    checkManager.setEnabled(false);
-                    reportViewer=ReportViewer.show(settingsHandler);
-                    reportViewer.addWindowListener(new WindowListener()
-                        {
-                            public void windowClosed(WindowEvent e)
-                            {
-                                checkManager.setEnabled(true);
-                            }
 
-                            @Override
-                            public void windowActivated(WindowEvent arg0)
-                            {
-                            }
-
-                            @Override
-                            public void windowClosing(WindowEvent arg0)
-                            {
-                            }
-
-                            @Override
-                            public void windowDeactivated(WindowEvent arg0)
-                            {
-                            }
-
-                            @Override
-                            public void windowDeiconified(WindowEvent arg0)
-                            {
-                            }
-
-                            @Override
-                            public void windowIconified(WindowEvent arg0)
-                            {
-                            }
-
-                            @Override
-                            public void windowOpened(WindowEvent arg0)
-                            {
-                            }
-                        });
-                }
-            });
-        settingsItem.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
-                {
-                    settingsItem.setEnabled(false);
-                    DataBase.useWorker(workerThread);
-                    if(DataBase.openSettings())
+                    @Override
+                    public void windowClosing(WindowEvent arg0)
                     {
-                        startShutdown();
-                        systemTray.remove(trayIcon);
                     }
-                    settingsItem.setEnabled(true);
-                }
-            });
-        exitItem.addActionListener(new ActionListener()
+
+                    @Override
+                    public void windowDeactivated(WindowEvent arg0)
+                    {
+                    }
+
+                    @Override
+                    public void windowDeiconified(WindowEvent arg0)
+                    {
+                    }
+
+                    @Override
+                    public void windowIconified(WindowEvent arg0)
+                    {
+                    }
+
+                    @Override
+                    public void windowOpened(WindowEvent arg0)
+                    {
+                    }
+                });
+            }
+        });
+        settingsItem.addActionListener(new ActionListener( )
+        {
+            public void actionPerformed(ActionEvent event)
             {
-                public void actionPerformed(ActionEvent event)
+                settingsItem.setEnabled(false);
+                DataBase.useWorker(workerThread);
+                if (DataBase.openSettings( ))
                 {
-                    startShutdown();
+                    startShutdown( );
                     systemTray.remove(trayIcon);
                 }
-            });
+                settingsItem.setEnabled(true);
+            }
+        });
+        exitItem.addActionListener(new ActionListener( )
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                startShutdown( );
+                systemTray.remove(trayIcon);
+            }
+        });
     }
 }
