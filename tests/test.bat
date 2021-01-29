@@ -121,19 +121,6 @@ call:create_file gggg dddd
 call:remove_file dddd
 echo Test 15) DONE
 
-
-echo ""
-echo ==========
-echo Test 15a) Delete 1 local parent file
-call:create_file dddd dddd
-call:create_file eeee dddd
-call:create_file ffff dddd
-call:create_file gggg dddd
-call:remove_file dddd
-call:create_file dddd dddd
-echo Test 15a) DONE
-
-
 echo ""
 echo ==========
 echo Test 16) Move 1 local parent file to other name
