@@ -74,7 +74,7 @@ echo "=========="
 echo Test 07) Move 1 local file to other directory other file name
 create_file hhh hhh
 create_dir mydir1
-move_file hhh mydir/iii
+move_file hhh mydir1/iii
 echo Test 07) DONE
 
 echo "=========="
@@ -197,8 +197,8 @@ echo Test 22) DONE
 echo "=========="
 echo Test 23) Recover 1 local parent file with 1 link in other directory
 create_file aaaaaa aaaaaa
-create_dir mydir5
-create_file mydir5/bbbbbb aaaaaa
+create_dir mydir6
+create_file mydir6/bbbbbb aaaaaa
 remove_file aaaaaa
 create_file aaaaaa aaaaaa
 echo Test 23) DONE
@@ -206,9 +206,9 @@ echo Test 23) DONE
 echo "=========="
 echo Test 24) Recover 1 local parent file with 2 links in different directories
 create_file aaaaaaa aaaaaaa
-create_dir mydir6
-create_file mydir6/bbbbbbb aaaaaaa
-create_file mydir6/ccccccc aaaaaaa
+create_dir mydir7
+create_file mydir7/bbbbbbb aaaaaaa
+create_file mydir7/ccccccc aaaaaaa
 remove_file aaaaaaa
 create_file aaaaaaa aaaaaaa
 echo Test 24) DONE
@@ -216,10 +216,10 @@ echo Test 24) DONE
 echo "=========="
 echo Test 25) Recover 1 local parent file with 3 links in different directories
 create_file aaaaaaaa aaaaaaaa
-create_dir mydir7
-create_file mydir7/bbbbbbbb aaaaaaaa
-create_file mydir7/cccccccc aaaaaaaa
-create_file mydir7/dddddddd aaaaaaaa
+create_dir mydir8
+create_file mydir8/bbbbbbbb aaaaaaaa
+create_file mydir8/cccccccc aaaaaaaa
+create_file mydir8/dddddddd aaaaaaaa
 remove_file aaaaaaaa
 create_file aaaaaaaa aaaaaaaa
 echo Test 25) DONE

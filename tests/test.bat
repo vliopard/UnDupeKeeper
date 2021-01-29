@@ -42,7 +42,7 @@ echo ==========
 echo Test 06) Move 1 local file to other directory same file name
 call:create_file ggg ggg
 call:create_dir mydir
-call:move_file ggg mydir/ggg
+call:move_file ggg mydir\ggg
 echo Test 06) DONE
 
 echo ""
@@ -50,7 +50,7 @@ echo ==========
 echo Test 07) Move 1 local file to other directory other file name
 call:create_file hhh hhh
 call:create_dir mydir1
-call:move_file hhh mydir/iii
+call:move_file hhh mydir1\iii
 echo Test 07) DONE
 
 echo ""
@@ -99,7 +99,7 @@ echo Test 13) Move 1 local link file to other directory same link name
 call:create_file yyy yyy
 call:create_file zzz yyy 
 call:create_dir mydir2
-call:move_file zzz mydir2/zzz
+call:move_file zzz mydir2\zzz
 echo Test 13) DONE
 
 echo ""
@@ -108,7 +108,7 @@ echo Test 14) Move 1 local link file to other directory other link name
 call:create_file aaaa aaaa
 call:create_file bbbb aaaa
 call:create_dir mydir3
-call:move_file bbbb mydir3/cccc
+call:move_file bbbb mydir3\cccc
 echo Test 14) DONE
 
 echo ""
@@ -120,6 +120,19 @@ call:create_file ffff dddd
 call:create_file gggg dddd
 call:remove_file dddd
 echo Test 15) DONE
+
+
+echo ""
+echo ==========
+echo Test 15a) Delete 1 local parent file
+call:create_file dddd dddd
+call:create_file eeee dddd
+call:create_file ffff dddd
+call:create_file gggg dddd
+call:remove_file dddd
+call:create_file dddd dddd
+echo Test 15a) DONE
+
 
 echo ""
 echo ==========
@@ -135,7 +148,7 @@ echo Test 17) Move 1 local parent file to other directory same file name
 call:create_file hhhh hhhh
 call:create_file iiii hhhh
 call:create_dir mydir4
-call:move_file hhhh mydir4/hhhh
+call:move_file hhhh mydir4\hhhh
 echo Test 17) DONE
 
 echo ""
@@ -144,7 +157,7 @@ echo Test 18) Move 1 local parent file to other directory other file name
 call:create_file jjjj jjjj
 call:create_file kkkk jjjj
 call:create_dir mydir5
-call:move_file jjjj mydir5/llll
+call:move_file jjjj mydir5\llll
 echo Test 18) DONE
 
 echo ""
@@ -189,8 +202,8 @@ echo ""
 echo ==========
 echo Test 23) Recover 1 local parent file with 1 link in other directory
 call:create_file aaaaaa aaaaaa
-call:create_dir mydir5
-call:create_file mydir5/bbbbbb aaaaaa
+call:create_dir mydir6
+call:create_file mydir6\bbbbbb aaaaaa
 call:remove_file aaaaaa
 call:create_file aaaaaa aaaaaa
 echo Test 23) DONE
@@ -199,9 +212,9 @@ echo ""
 echo ==========
 echo Test 24) Recover 1 local parent file with 2 links in different directories
 call:create_file aaaaaaa aaaaaaa
-call:create_dir mydir6
-call:create_file mydir6/bbbbbbb aaaaaaa
-call:create_file mydir6/ccccccc aaaaaaa
+call:create_dir mydir7
+call:create_file mydir7\bbbbbbb aaaaaaa
+call:create_file mydir7\ccccccc aaaaaaa
 call:remove_file aaaaaaa
 call:create_file aaaaaaa aaaaaaa
 echo Test 24) DONE
@@ -210,10 +223,10 @@ echo ""
 echo ==========
 echo Test 25) Recover 1 local parent file with 3 links in different directories
 call:create_file aaaaaaaa aaaaaaaa
-call:create_dir mydir7
-call:create_file mydir7/bbbbbbbb aaaaaaaa
-call:create_file mydir7/cccccccc aaaaaaaa
-call:create_file mydir7/dddddddd aaaaaaaa
+call:create_dir mydir8
+call:create_file mydir8\bbbbbbbb aaaaaaaa
+call:create_file mydir8\cccccccc aaaaaaaa
+call:create_file mydir8\dddddddd aaaaaaaa
 call:remove_file aaaaaaaa
 call:create_file aaaaaaaa aaaaaaaa
 echo Test 25) DONE

@@ -112,6 +112,17 @@ public class UniqueFile
         makeLink(value);
     }
 
+    public void includeLink(Path value)
+    {
+        fileLinks.add(value);
+    }
+
+    public void renLink(Path oldname, Path newname)
+    {
+        fileLinks.remove(oldname);
+        fileLinks.add(newname);
+    }
+
     public void unLink(String link)
     {
         unLink(Paths.get(link));
@@ -154,7 +165,7 @@ public class UniqueFile
 
     public void removeLinks()
     {
-        for (int i = 0; i > fileLinks.size(); i++)
+        for (int i = 0; i < fileLinks.size(); i++)
         {
             FileOperations.deleteFile(fileLinks.get(i));
         }
@@ -194,9 +205,8 @@ public class UniqueFile
         {
             for(int i = 0; i < fileLinks.size(); i++)
             {
-                Logger.msg("Filelink:\t" + fileLinks.get(i).toString());
+                Logger.msg("\t\tFilelink: " + fileLinks.get(i).toString());
             }
-            Logger.msg("--------------------------------------------");
         }
     }
 }

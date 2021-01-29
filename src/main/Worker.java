@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 import settings.Settings;
 import settings.Strings;
+import tools.CheckSum;
 import tools.DataBase;
 import tools.FileQueue;
 import tools.FileOperations;
@@ -147,6 +148,25 @@ public class Worker implements Runnable
         {
             case Settings.FileCreated:
                 log(" includeFileToHashTable(" + fileQueue.getPath() + ")");
+                if(FileOperations.isLink(fileQueue.getPath()))
+                {
+                    String filesha = linkMapTable.get(fileQueue.getPath());
+                    if(null==filesha)
+                    {
+                        Logger.msg("SEARCHING ORIGINAL FILE");
+                        String fileSha = CheckSum.getChecksumElegant(fileQueue.getPath());
+                        hashMapTable.get(fileSha).includeLink(fileQueue.getPath());
+                        linkMapTable.put(fileQueue.getPath(),fileSha);
+                    }
+                    else
+                    {
+                        Logger.msg("INCLUDE FILE TO HASH TABLE [SHA IS NOT NULL { "+filesha+" } ]");
+                    }
+                }
+                else
+                {
+                    Logger.msg("INCLUDE FILE TO HASH TABLE [ FILE IS NOT A LINK ]");
+                }
             break;
 
             case Settings.FileModified:
@@ -179,10 +199,13 @@ public class Worker implements Runnable
             break;
 
             case Settings.FileDeleted:
-                log(" DELETED FILE (" + fileQueue.getPath() + ")");
+                // TODO: WHEN A FILE IS DELETED, ITS FILE LINKS SHALL BE ALSO DELETED
+                // TODO: EVEN IF ITS REGISTRY LINKS REMAINS ON DATABASE
                 ArrayList<String> shas = getShaFromUri(fileQueue.getPath());
+                log(" DELETED FILE (" + fileQueue.getPath() + ") SHASIZE{"+shas.size()+"}");
                 if(shas.size() > 0)
                 {
+                    Logger.msg("reach");
                     for(int i=0; i<shas.size();i++)
                     {
                         UniqueFile file = hashMapTable.get(shas.get(i));
@@ -200,18 +223,22 @@ public class Worker implements Runnable
                     else
                     {
                         log(" HERE FILE IS NOT A LINK ["+fileQueue.getPath().toString()+"]");
-                        // TODO: FOR NEVER REACHED - MUST GET NULL LINKS FROM HASH-MAP-TABLE TO REMOVE
-                        for(int i=0; i<shas.size(); i++)
+                        String filesha = linkMapTable.get(fileQueue.getPath());
+                        if(FileOperations.isFile(fileQueue.getPath()))
                         {
-                            if(FileOperations.isFile(fileQueue.getPath()))
+                            log(" DEL LINK ["+fileQueue.getPath().toString()+"]");
+                            hashMapTable.get(filesha).delLink(fileQueue.getPath());
+                        }
+                        else
+                        {
+                            log(" UN LINK ["+fileQueue.getPath().toString()+"] path["+hashMapTable.get(filesha).getFilePath().toString()+"]");
+                            // TODO: MUST CHECK IF PATH IS NOT NULL
+                            // TODO: MUST CHECK IF LINK HAS A VALID PARENT (NOT DELETED PARENT)
+                            
+                            if(!hashMapTable.get(filesha).getFilePath().toString().isEmpty())
                             {
-                                log(" DEL LINK ["+fileQueue.getPath().toString()+"]");
-                                hashMapTable.get(shas.get(i)).delLink(fileQueue.getPath());
-                            }
-                            else
-                            {
-                                log(" UN LINK ["+fileQueue.getPath().toString()+"]");
-                                hashMapTable.get(shas.get(i)).unLink(fileQueue.getPath());
+                                hashMapTable.get(filesha).unLink(fileQueue.getPath());
+                                linkMapTable.remove(fileQueue.getPath());
                             }
                         }
                     }
@@ -221,9 +248,13 @@ public class Worker implements Runnable
             case Settings.FileRenamed:
                 log(" RENAMED FILE FROM ("+fileQueue.getPath().toString()+")");
                 log(" RENAMED FILE TO   ("+fileQueue.getPath2().toString()+")");
-                if(FileOperations.isLink(fileQueue.getPath()))
+                if(FileOperations.isLink(fileQueue.getPath2()))
                 {
                     // se moveu link, atualizar caminho do link na tabela
+                    String filesha = linkMapTable.get(fileQueue.getPath());
+                    linkMapTable.put(fileQueue.getPath2(),filesha);
+                    linkMapTable.remove(fileQueue.getPath());
+                    hashMapTable.get(filesha).renLink(fileQueue.getPath(), fileQueue.getPath2());
                     // se moveu o arquivo, atualizar path no sha do arquivo
                     // se moveu o arquivo, atualizar todos os links do arquivo
                 }
@@ -239,16 +270,18 @@ public class Worker implements Runnable
             default:
         }
 
+        Logger.msg("===========================================================");
         Iterator<Entry<String, UniqueFile>> it = hashMapTable.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, UniqueFile> pair = (Map.Entry<String, UniqueFile>)it.next();
             pair.getValue().show();
         }
 
+        Logger.msg("___________________________________________________________");
         Iterator<Entry<Path, String>> lm = linkMapTable.entrySet().iterator();
         while (lm.hasNext()) {
             Map.Entry<Path, String> pair = (Map.Entry<Path, String>)lm.next();
-            Logger.msg("["+pair.getKey()+"]["+pair.getValue()+"]");
+            Logger.msg("["+pair.getValue()+"]["+pair.getKey()+"]");
         }
     }
 
