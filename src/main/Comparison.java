@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 
 // TODO: WINDOWS
 // TODO: CALL fc /b file1 file2
+// TODO: CALL comp file1 file2
 // TODO: LINUX
 // TODO: CALL cmp -b file1 file2
 // TODO: CALL diff file1 file2
