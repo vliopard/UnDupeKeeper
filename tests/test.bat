@@ -9,18 +9,24 @@ echo ""
 echo ==========
 echo Test 01) Add 1 local unique file
 call:create_file aaa aaa
+call:check_file aaa file
+call:assert %file% 1
 echo Test 01) DONE
 
 echo ""
 echo ==========
 echo Test 02) Add 2 local unique files
 call:create_file bbb bbb
+call:check_file bbb file
+call:assert %file% 1
 echo Test 02) DONE
 
 echo ""
 echo ==========
 echo Test 03) Add 3 local unique files
 call:create_file ccc ccc
+call:check_file ccc file
+call:assert %file% 1
 echo Test 03) DONE
 
 echo ""
@@ -28,6 +34,8 @@ echo ==========
 echo Test 04) Delete 1 local file
 call:create_file ddd ddd
 call:remove_file ddd
+call:check_file ddd file
+call:assert %file% 0
 echo Test 04) DONE
 
 echo ""
@@ -35,6 +43,10 @@ echo ==========
 echo Test 05) Move 1 local file to other name
 call:create_file eee eee
 call:move_file eee fff
+call:check_file eee file
+call:assert %file% 0
+call:check_file fff file
+call:assert %file% 1
 echo Test 05) DONE
 
 echo ""
@@ -43,6 +55,10 @@ echo Test 06) Move 1 local file to other directory same file name
 call:create_file ggg ggg
 call:create_dir mydir
 call:move_file ggg mydir\ggg
+call:check_file ggg file
+call:assert %file% 0
+call:check_file mydir\ggg file
+call:assert %file% 1
 echo Test 06) DONE
 
 echo ""
@@ -51,6 +67,10 @@ echo Test 07) Move 1 local file to other directory other file name
 call:create_file hhh hhh
 call:create_dir mydir1
 call:move_file hhh mydir1\iii
+call:check_file hhh file
+call:assert %file% 0
+call:check_file mydir1\iii file
+call:assert %file% 1
 echo Test 07) DONE
 
 echo ""
@@ -246,4 +266,28 @@ set filename1=%~1
 mkdir !basedir!%filename1%
 echo !basedir!%filename1%
 pause
+EXIT /B 0
+
+:check_file
+if exist !basedir!%~1 (
+    set "%~2=1"
+) else (
+    set "%~2=0"
+)
+EXIT /B 0
+
+:check_link
+set tmpfile=temp_file.tmp
+fsutil reparsepoint query "!basedir!%~1" > "%tmpfile%"
+if %errorlevel% == 0 set "%~2=1"
+if %errorlevel% == 1 set "%~2=0"
+del temp_file.tmp
+EXIT /B 0
+
+:assert
+if %~1==%~2 (
+    echo PASSED
+) else (
+    echo FAILED
+)
 EXIT /B 0

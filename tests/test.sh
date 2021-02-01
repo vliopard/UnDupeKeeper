@@ -2,7 +2,7 @@
 timeout=1
 basedir="/home/vliopard/temp/"
 
-create_file()
+call_create_file()
 {
     filename1=$1
     fcontent1=$2
@@ -11,7 +11,7 @@ create_file()
     echo ""
 }
 
-remove_file()
+call_remove_file()
 {
     filename1=$1
     rm ${basedir}${filename1}
@@ -19,7 +19,7 @@ remove_file()
     echo ""
 }
 
-move_file()
+call_move_file()
 {
     filename1=$1
     filename2=$2    
@@ -28,7 +28,7 @@ move_file()
     echo ""
 }
 
-create_dir()
+call_create_dir()
 {
     filename1=$1
     mkdir ${basedir}${filename1}
@@ -36,190 +36,263 @@ create_dir()
     echo ""
 }
 
+call_check_file()
+{
+    filename1=$1
+    if [ -e ${basedir}${filename1} ]
+    then
+        file=1
+    else
+        file=0
+    fi
+}
+
+call_check_link()
+{
+    filename1=$1
+    if [ -h ${basedir}${filename1} ]
+    then
+        link=1
+    else
+        link=0
+    fi
+}
+
+call_assert()
+{
+    if [ $1 == $2 ]
+    then
+        echo PASSED
+    else
+        echo FAILED
+    fi
+}
+
+echo ""
 echo "=========="
 echo Test 01) Add 1 local unique file
-create_file aaa aaa
+call_create_file aaa aaa
+call_check_file aaa
+call_assert file 1
 echo Test 01) DONE
 
+echo ""
 echo "=========="
 echo Test 02) Add 2 local unique files
-create_file bbb bbb
+call_create_file bbb bbb
+call_check_file bbb
+call_assert file 1
 echo Test 02) DONE
 
+echo ""
 echo "=========="
 echo Test 03) Add 3 local unique files
-create_file ccc ccc
+call_create_file ccc ccc
+call_check_file ccc
+call_assert file 1
 echo Test 03) DONE
 
+echo ""
 echo "=========="
 echo Test 04) Delete 1 local file
-create_file ddd ddd
-remove_file ddd
+call_create_file ddd ddd
+call_remove_file ddd
+call_check_file ddd
+call_assert file 0
 echo Test 04) DONE
 
+echo ""
 echo "=========="
 echo Test 05) Move 1 local file to other name
-create_file eee eee
-move_file eee fff
+call_create_file eee eee
+call_move_file eee fff
+call_check_file eee
+call_assert file 0
+call_check_file fff
+call_assert file 1
 echo Test 05) DONE
 
+echo ""
 echo "=========="
 echo Test 06) Move 1 local file to other directory same file name
-create_file ggg ggg
-create_dir mydir
-move_file ggg mydir/ggg
+call_create_file ggg ggg
+call_create_dir mydir
+call_move_file ggg mydir/ggg
+call_check_file ggg
+call_assert file 0
+call_check_file mydir/ggg
+call_assert file 1
 echo Test 06) DONE
 
+echo ""
 echo "=========="
 echo Test 07) Move 1 local file to other directory other file name
-create_file hhh hhh
-create_dir mydir1
-move_file hhh mydir1/iii
+call_create_file hhh hhh
+call_create_dir mydir1
+call_move_file hhh mydir1/iii
 echo Test 07) DONE
 
+echo ""
 echo "=========="
 echo Test 08) Add 1 local dupe file
-create_file jjj jjj
-create_file kkk jjj
+call_create_file jjj jjj
+call_create_file kkk jjj
 echo Test 08) DONE
 
+echo ""
 echo "=========="
 echo Test 09) Add 2 local dupe file
-create_file lll lll
-create_file mmm lll
-create_file nnn nnn
+call_create_file lll lll
+call_create_file mmm lll
+call_create_file nnn lll
 echo Test 09) DONE
 
+echo ""
 echo "=========="
 echo Test 10) Add 3 local dupe file
-create_file ooo ooo
-create_file ppp ooo
-create_file qqq ooo
-create_file rrr ooo
+call_create_file ooo ooo
+call_create_file ppp ooo
+call_create_file qqq ooo
+call_create_file rrr ooo
 echo Test 10) DONE
 
+echo ""
 echo "=========="
 echo Test 11) Delete 1 local link file
-create_file sss sss
-create_file ttt sss
-remove_file ttt
+call_create_file sss sss
+call_create_file ttt sss
+call_remove_file ttt
 echo Test 11) DONE
 
+echo ""
 echo "=========="
 echo Test 12) Move 1 local link file to other name
-create_file uuu uuu
-create_file vvv uuu
-move_file vvv xxx
+call_create_file uuu uuu
+call_create_file vvv uuu
+call_move_file vvv xxx
 echo Test 12) DONE
 
+echo ""
 echo "=========="
 echo Test 13) Move 1 local link file to other directory same link name
-create_file yyy yyy
-create_file zzz yyy
-create_dir mydir2
-move_file zzz mydir2/zzz
+call_create_file yyy yyy
+call_create_file zzz yyy
+call_create_dir mydir2
+call_move_file zzz mydir2/zzz
 echo Test 13) DONE
 
+echo ""
 echo "=========="
 echo Test 14) Move 1 local link file to other directory other link name
-create_file aaaa aaaa
-create_file bbbb aaaa
-create_dir mydir3
-move_file bbbb mydir3/cccc
+call_create_file aaaa aaaa
+call_create_file bbbb aaaa
+call_create_dir mydir3
+call_move_file bbbb mydir3/cccc
 echo Test 14) DONE
 
+echo ""
 echo "=========="
 echo Test 15) Delete 1 local parent file
-create_file dddd dddd
-create_file eeee dddd
-create_file ffff dddd
-create_file gggg dddd
-remove_file dddd
+call_create_file dddd dddd
+call_create_file eeee dddd
+call_create_file ffff dddd
+call_create_file gggg dddd
+call_remove_file dddd
 echo Test 15) DONE
 
+echo ""
 echo "=========="
 echo Test 16) Move 1 local parent file to other name
-create_file eeee eeee
-create_file ffff eeee
-move_file eeee gggg
+call_create_file eeee eeee
+call_create_file ffff eeee
+call_move_file eeee gggg
 echo Test 16) DONE
 
+echo ""
 echo "=========="
 echo Test 17) Move 1 local parent file to other directory same file name
-create_file hhhh hhhh
-create_file iiii hhhh
-create_dir mydir4
-move_file hhhh mydir4/hhhh
+call_create_file hhhh hhhh
+call_create_file iiii hhhh
+call_create_dir mydir4
+call_move_file hhhh mydir4/hhhh
 echo Test 17) DONE
 
+echo ""
 echo "=========="
 echo Test 18) Move 1 local parent file to other directory other file name
-create_file jjjj jjjj
-create_file kkkk jjjj
-create_dir mydir5
-move_file jjjj mydir5/llll
+call_create_file jjjj jjjj
+call_create_file kkkk jjjj
+call_create_dir mydir5
+call_move_file jjjj mydir5/llll
 echo Test 18) DONE
 
+echo ""
 echo "=========="
 echo Test 19) Recover 1 local file with no links
-create_file mmmm mmmm
-remove_file mmmm
-create_file mmmm mmmm
+call_create_file mmmm mmmm
+call_remove_file mmmm
+call_create_file mmmm mmmm
 echo Test 19) DONE
 
+echo ""
 echo "=========="
 echo Test 20) Recover 1 local parent file with 1 link
-create_file nnnn nnnn
-create_file oooo nnnn
-remove_file nnnn
-create_file nnnn nnnn
+call_create_file nnnn nnnn
+call_create_file oooo nnnn
+call_remove_file nnnn
+call_create_file nnnn nnnn
 echo Test 20) DONE
 
+echo ""
 echo "=========="
 echo Test 21) Recover 1 local parent file with 2 links
-create_file pppp pppp
-create_file qqqq pppp
-create_file rrrr pppp
-remove_file pppp
-create_file pppp pppp
+call_create_file pppp pppp
+call_create_file qqqq pppp
+call_create_file rrrr pppp
+call_remove_file pppp
+call_create_file pppp pppp
 echo Test 21) DONE
 
+echo ""
 echo "=========="
 echo Test 22) Recover 1 local parent file with 3 links
-create_file aaaaa aaaaa
-create_file bbbbb aaaaa
-create_file ccccc aaaaa
-create_file ddddd aaaaa
-remove_file aaaaa
-create_file aaaaa aaaaa
+call_create_file aaaaa aaaaa
+call_create_file bbbbb aaaaa
+call_create_file ccccc aaaaa
+call_create_file ddddd aaaaa
+call_remove_file aaaaa
+call_create_file aaaaa aaaaa
 echo Test 22) DONE
 
+echo ""
 echo "=========="
 echo Test 23) Recover 1 local parent file with 1 link in other directory
-create_file aaaaaa aaaaaa
-create_dir mydir6
-create_file mydir6/bbbbbb aaaaaa
-remove_file aaaaaa
-create_file aaaaaa aaaaaa
+call_create_file aaaaaa aaaaaa
+call_create_dir mydir6
+call_create_file mydir6/bbbbbb aaaaaa
+call_remove_file aaaaaa
+call_create_file aaaaaa aaaaaa
 echo Test 23) DONE
 
+echo ""
 echo "=========="
 echo Test 24) Recover 1 local parent file with 2 links in different directories
-create_file aaaaaaa aaaaaaa
-create_dir mydir7
-create_file mydir7/bbbbbbb aaaaaaa
-create_file mydir7/ccccccc aaaaaaa
-remove_file aaaaaaa
-create_file aaaaaaa aaaaaaa
+call_create_file aaaaaaa aaaaaaa
+call_create_dir mydir7
+call_create_file mydir7/bbbbbbb aaaaaaa
+call_create_file mydir7/ccccccc aaaaaaa
+call_remove_file aaaaaaa
+call_create_file aaaaaaa aaaaaaa
 echo Test 24) DONE
 
+echo ""
 echo "=========="
 echo Test 25) Recover 1 local parent file with 3 links in different directories
-create_file aaaaaaaa aaaaaaaa
-create_dir mydir8
-create_file mydir8/bbbbbbbb aaaaaaaa
-create_file mydir8/cccccccc aaaaaaaa
-create_file mydir8/dddddddd aaaaaaaa
-remove_file aaaaaaaa
-create_file aaaaaaaa aaaaaaaa
+call_create_file aaaaaaaa aaaaaaaa
+call_create_dir mydir8
+call_create_file mydir8/bbbbbbbb aaaaaaaa
+call_create_file mydir8/cccccccc aaaaaaaa
+call_create_file mydir8/dddddddd aaaaaaaa
+call_remove_file aaaaaaaa
+call_create_file aaaaaaaa aaaaaaaa
 echo Test 25) DONE

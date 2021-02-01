@@ -27,6 +27,12 @@ import tools.TimeControl;
 import tools.Utils;
 import org.apache.commons.io.FileUtils;
 
+// TODO: WINDOWS
+// TODO: CALL fc /b file1 file2
+// TODO: LINUX
+// TODO: CALL cmp -b file1 file2
+// TODO: CALL diff file1 file2
+
 // TODO: JAVADOC
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
 public class Comparison
