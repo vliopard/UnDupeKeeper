@@ -58,6 +58,19 @@ call_check_link()
     fi
 }
 
+call_compare_file()
+{
+    #diff --brief $1 $2
+    #comp_value=$?
+    #if [ $comp_value -eq 0 ]
+    if [ cmp -s $1 $2 ]
+    then
+        file=1
+    else
+        file=0
+    fi
+}
+
 call_assert()
 {
     if [ $1 == $2 ]
@@ -72,6 +85,12 @@ call_assert()
     fi
 }
 
+call_press_key()
+{
+    testcase=$1
+    read -p "Test ${testcase}) DONE"
+}
+
 echo -
 echo ____________________________
 echo Test 01) Add 1 local unique file
@@ -79,7 +98,7 @@ call_create_file aaa aaa
 
 call_check_file aaa
 call_assert file 1
-echo Test 01) DONE
+call_press_key 01
 
 echo -
 echo ____________________________
@@ -88,7 +107,7 @@ call_create_file bbb bbb
 
 call_check_file bbb
 call_assert file 1
-echo Test 02) DONE
+call_press_key 02
 
 echo -
 echo ____________________________
@@ -97,7 +116,7 @@ call_create_file ccc ccc
 
 call_check_file ccc
 call_assert file 1
-echo Test 03) DONE
+call_press_key 03
 
 echo -
 echo ____________________________
@@ -107,7 +126,7 @@ call_remove_file ddd
 
 call_check_file ddd
 call_assert file 0
-echo Test 04) DONE
+call_press_key 04
 
 echo -
 echo ____________________________
@@ -120,7 +139,7 @@ call_assert file 0
 
 call_check_file fff
 call_assert file 1
-echo Test 05) DONE
+call_press_key 05
 
 echo -
 echo ____________________________
@@ -134,7 +153,7 @@ call_assert file 0
 
 call_check_file mydir/ggg
 call_assert file 1
-echo Test 06) DONE
+call_press_key 06
 
 echo -
 echo ____________________________
@@ -148,7 +167,7 @@ call_assert file 0
 
 call_check_file mydir1/iii
 call_assert file 1
-echo Test 07) DONE
+call_press_key 07
 
 echo -
 echo ____________________________
@@ -160,11 +179,11 @@ call_check_file jjj
 call_assert file 1
 
 call_check_link kkk
-call_assert file 1
+call_assert link 1
 
-call:compare_file jjj kkk file
-call_assert file 0
-echo Test 08) DONE
+call_compare_file jjj kkk
+call_assert file 1
+call_press_key 08
 
 echo -
 echo ____________________________
@@ -177,17 +196,17 @@ call_check_file lll
 call_assert file 1
 
 call_check_link mmm
-call_assert file 1
+call_assert link 1
 
 call_check_link nnn
+call_assert link 1
+
+call_compare_file lll mmm
 call_assert file 1
 
-call:compare_file lll mmm file
-call_assert file 0
-
-call:compare_file lll nnn file
-call_assert file 0
-echo Test 09) DONE
+call_compare_file lll nnn
+call_assert file 1
+call_press_key 09
 
 echo -
 echo ____________________________
@@ -201,23 +220,23 @@ call_check_file ooo
 call_assert file 1
 
 call_check_link ppp
-call_assert file 1
+call_assert link 1
 
 call_check_link qqq
-call_assert file 1
+call_assert link 1
 
 call_check_link rrr
+call_assert link 1
+
+call_compare_file ooo ppp
 call_assert file 1
 
-call:compare_file ooo ppp file
-call_assert file 0
+call_compare_file ooo qqq
+call_assert file 1
 
-call:compare_file ooo qqq file
-call_assert file 0
-
-call:compare_file ooo rrr file
-call_assert file 0
-echo Test 10) DONE
+call_compare_file ooo rrr
+call_assert file 1
+call_press_key 10
 
 echo -
 echo ____________________________
@@ -230,8 +249,8 @@ call_check_file sss
 call_assert file 1
 
 call_check_link ttt
-call_assert file 0
-echo Test 11) DONE
+call_assert link 0
+call_press_key 11
 
 echo -
 echo ____________________________
@@ -244,11 +263,11 @@ call_check_file uuu
 call_assert file 1
 
 call_check_link vvv
-call_assert file 0
+call_assert link 0
 
 call_check_link xxx
-call_assert file 1
-echo Test 12) DONE
+call_assert link 1
+call_press_key 12
 
 echo -
 echo ____________________________
@@ -262,11 +281,11 @@ call_check_file yyy
 call_assert file 1
 
 call_check_link zzz
-call_assert file 0
+call_assert link 0
 
 call_check_link mydir2/zzz
-call_assert file 1
-echo Test 13) DONE
+call_assert link 1
+call_press_key 13
 
 echo -
 echo ____________________________
@@ -280,11 +299,11 @@ call_check_file aaaa
 call_assert file 1
 
 call_check_link bbbb
-call_assert file 0
+call_assert link 0
 
 call_check_link mydir3/cccc
-call_assert file 1
-echo Test 14) DONE
+call_assert link 1
+call_press_key 14
 
 echo -
 echo ____________________________
@@ -299,14 +318,14 @@ call_check_file dddd
 call_assert file 0
 
 call_check_link eeee
-call_assert file 0
+call_assert link 0
 
 call_check_link ffff
-call_assert file 0
+call_assert link 0
 
 call_check_link gggg
-call_assert file 0
-echo Test 15) DONE
+call_assert link 0
+call_press_key 15
 
 echo -
 echo ____________________________
@@ -319,11 +338,11 @@ call_check_file eeee
 call_assert file 0
 
 call_check_link ffff
-call_assert file 1
+call_assert link 1
 
 call_check_file gggg
 call_assert file 1
-echo Test 16) DONE
+call_press_key 16
 
 echo -
 echo ____________________________
@@ -337,11 +356,11 @@ call_check_file hhhh
 call_assert file 0
 
 call_check_link iiii
-call_assert file 1
+call_assert link 1
 
-call_check_link mydir4/hhhh
+call_check_file mydir4/hhhh
 call_assert file 1
-echo Test 17) DONE
+call_press_key 17
 
 echo -
 echo ____________________________
@@ -355,11 +374,11 @@ call_check_file jjjj
 call_assert file 0
 
 call_check_link kkkk
-call_assert file 1
+call_assert link 1
 
-call_check_link mydir5/llll
+call_check_file mydir5/llll
 call_assert file 1
-echo Test 18) DONE
+call_press_key 18
 
 echo -
 echo ____________________________
@@ -370,7 +389,7 @@ call_create_file mmmm mmmm
 
 call_check_file mmmm
 call_assert file 1
-echo Test 19) DONE
+call_press_key 19
 
 echo -
 echo ____________________________
@@ -384,8 +403,8 @@ call_check_file nnnn
 call_assert file 1
 
 call_check_link oooo
-call_assert file 1
-echo Test 20) DONE
+call_assert link 1
+call_press_key 20
 
 echo -
 echo ____________________________
@@ -400,11 +419,11 @@ call_check_file pppp
 call_assert file 1
 
 call_check_link qqqq
-call_assert file 1
+call_assert link 1
 
 call_check_link rrrr
-call_assert file 1
-echo Test 21) DONE
+call_assert link 1
+call_press_key 21
 
 echo -
 echo ____________________________
@@ -420,14 +439,14 @@ call_check_file aaaaa
 call_assert file 1
 
 call_check_link bbbbb
-call_assert file 1
+call_assert link 1
 
 call_check_link ccccc
-call_assert file 1
+call_assert link 1
 
 call_check_link ddddd
-call_assert file 1
-echo Test 22) DONE
+call_assert link 1
+call_press_key 22
 
 echo -
 echo ____________________________
@@ -442,8 +461,8 @@ call_check_file aaaaaa
 call_assert file 1
 
 call_check_link mydir6/bbbbbb
-call_assert file 1
-echo Test 23) DONE
+call_assert link 1
+call_press_key 23
 
 echo -
 echo ____________________________
@@ -459,11 +478,11 @@ call_check_file aaaaaaa
 call_assert file 1
 
 call_check_link mydir7/bbbbbbb
-call_assert file 1
+call_assert link 1
 
 call_check_link mydir7/ccccccc
-call_assert file 1
-echo Test 24) DONE
+call_assert link 1
+call_press_key 24
 
 echo -
 echo ____________________________
@@ -480,11 +499,11 @@ call_check_file aaaaaaaa
 call_assert file 1
 
 call_check_link mydir8/bbbbbbbb
-call_assert file 1
+call_assert link 1
 
 call_check_link mydir8/cccccccc
-call_assert file 1
+call_assert link 1
 
 call_check_link mydir8/dddddddd
-call_assert file 1
-echo Test 25) DONE
+call_assert link 1
+call_press_key 25

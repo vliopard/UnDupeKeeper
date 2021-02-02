@@ -226,6 +226,7 @@ public class Worker implements Runnable
                         {
                             log(" Settings.FileDeleted: hashMapTable.get(filesha).delLink(fileQueue.getPath()); ["
                                     + fileQueue.getPath( ).toString( ) + "]");
+                            // TODO: CHECK NULL POINTER
                             hashMapTable.get(filesha).delLink(fileQueue.getPath( ));
                         }
                         else
@@ -234,7 +235,7 @@ public class Worker implements Runnable
                                     + fileQueue.getPath( ).toString( ) + "]");
 
                             // TODO: MUST CHECK IF PATH IS NOT NULL
-                            if ( ! hashMapTable.get(filesha).getFilePath( ).toString( ).isEmpty( ))
+                            if (! hashMapTable.get(filesha).getFilePath( ).toString( ).isEmpty( ))
                             {
                                 log(" Settings.FileDeleted: hashMapTable.get(filesha).unLink(fileQueue.getPath()); ["
                                         + fileQueue.getPath( ).toString( ) + "]");
@@ -242,6 +243,10 @@ public class Worker implements Runnable
                                         + "]");
                                 hashMapTable.get(filesha).unLink(fileQueue.getPath( ));
                                 linkMapTable.remove(fileQueue.getPath( ));
+                            }
+                            else
+                            {
+                                log(" if (! hashMapTable.get(filesha).getFilePath( ).toString( ).isEmpty( )) FALSE");
                             }
                         }
                     }
@@ -441,6 +446,6 @@ public class Worker implements Runnable
      */
     private static void log(String logMessage)
     {
-        Logger.log(Thread.currentThread( ), logMessage, Logger.MONITOR);
+        Logger.log(Thread.currentThread( ), logMessage, Logger.WORKER);
     }
 }
