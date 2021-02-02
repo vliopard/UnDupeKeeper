@@ -83,7 +83,6 @@ call:check_file mydir1\iii file
 call:assert %file% 1
 call:press_key 07
 
-
 echo -
 echo ____________________________
 echo Test 08) Add 1 local dupe file
@@ -299,7 +298,15 @@ echo -
 echo ____________________________
 echo Test 19) Recover 1 local file with no links
 call:create_file mmmm mmmm
+
+call:check_file mmmm file
+call:assert %file% 1
+
 call:remove_file mmmm
+
+call:check_file mmmm file
+call:assert %file% 0
+
 call:create_file mmmm mmmm
 
 call:check_file mmmm file
@@ -311,7 +318,21 @@ echo ____________________________
 echo Test 20) Recover 1 local parent file with 1 link
 call:create_file nnnn nnnn
 call:create_file oooo nnnn
+
+call:check_file nnnn file
+call:assert %file% 1
+
+call:check_link oooo link
+call:assert %link% 1
+
 call:remove_file nnnn
+
+call:check_file nnnn file
+call:assert %file% 0
+
+call:check_link oooo link
+call:assert %link% 0
+
 call:create_file nnnn nnnn
 
 call:check_file nnnn file
@@ -327,7 +348,27 @@ echo Test 21) Recover 1 local parent file with 2 links
 call:create_file pppp pppp
 call:create_file qqqq pppp
 call:create_file rrrr pppp
+
+call:check_file pppp file
+call:assert %file% 1
+
+call:check_link qqqq link
+call:assert %link% 1
+
+call:check_link rrrr link
+call:assert %link% 1
+
 call:remove_file pppp
+
+call:check_file pppp file
+call:assert %file% 0
+
+call:check_link qqqq link
+call:assert %link% 0
+
+call:check_link rrrr link
+call:assert %link% 0
+
 call:create_file pppp pppp
 
 call:check_file pppp file
@@ -347,7 +388,33 @@ call:create_file aaaaa aaaaa
 call:create_file bbbbb aaaaa
 call:create_file ccccc aaaaa
 call:create_file ddddd aaaaa
+
+call:check_file aaaaa file
+call:assert %file% 1
+
+call:check_link bbbbb link
+call:assert %link% 1
+
+call:check_link ccccc link
+call:assert %link% 1
+
+call:check_link ddddd link
+call:assert %link% 1
+
 call:remove_file aaaaa
+
+call:check_file aaaaa file
+call:assert %file% 0
+
+call:check_link bbbbb link
+call:assert %link% 0
+
+call:check_link ccccc link
+call:assert %link% 0
+
+call:check_link ddddd link
+call:assert %link% 0
+
 call:create_file aaaaa aaaaa
 
 call:check_file aaaaa file
@@ -369,7 +436,21 @@ echo Test 23) Recover 1 local parent file with 1 link in other directory
 call:create_file aaaaaa aaaaaa
 call:create_dir mydir6
 call:create_file mydir6\bbbbbb aaaaaa
+
+call:check_file aaaaaa file
+call:assert %file% 1
+
+call:check_link mydir6\bbbbbb link
+call:assert %link% 1
+
 call:remove_file aaaaaa
+
+call:check_file aaaaaa file
+call:assert %file% 0
+
+call:check_link mydir6\bbbbbb link
+call:assert %link% 0
+
 call:create_file aaaaaa aaaaaa
 
 call:check_file aaaaaa file
@@ -386,7 +467,27 @@ call:create_file aaaaaaa aaaaaaa
 call:create_dir mydir7
 call:create_file mydir7\bbbbbbb aaaaaaa
 call:create_file mydir7\ccccccc aaaaaaa
+
+call:check_file aaaaaaa file
+call:assert %file% 1
+
+call:check_link mydir7\bbbbbbb link
+call:assert %link% 1
+
+call:check_link mydir7\ccccccc link
+call:assert %link% 1
+
 call:remove_file aaaaaaa
+
+call:check_file aaaaaaa file
+call:assert %file% 0
+
+call:check_link mydir7\bbbbbbb link
+call:assert %link% 0
+
+call:check_link mydir7\ccccccc link
+call:assert %link% 0
+
 call:create_file aaaaaaa aaaaaaa
 
 call:check_file aaaaaaa file
@@ -407,7 +508,33 @@ call:create_dir mydir8
 call:create_file mydir8\bbbbbbbb aaaaaaaa
 call:create_file mydir8\cccccccc aaaaaaaa
 call:create_file mydir8\dddddddd aaaaaaaa
+
+call:check_file aaaaaaaa file
+call:assert %file% 1
+
+call:check_link mydir8\bbbbbbbb link
+call:assert %link% 1
+
+call:check_link mydir8\cccccccc link
+call:assert %link% 1
+
+call:check_link mydir8\dddddddd link
+call:assert %link% 1
+
 call:remove_file aaaaaaaa
+
+call:check_file aaaaaaaa file
+call:assert %file% 0
+
+call:check_link mydir8\bbbbbbbb link
+call:assert %link% 0
+
+call:check_link mydir8\cccccccc link
+call:assert %link% 0
+
+call:check_link mydir8\dddddddd link
+call:assert %link% 0
+
 call:create_file aaaaaaaa aaaaaaaa
 
 call:check_file aaaaaaaa file

@@ -384,7 +384,15 @@ echo -
 echo ____________________________
 echo Test 19) Recover 1 local file with no links
 call_create_file mmmm mmmm
+
+call_check_file mmmm
+call_assert file 1
+
 call_remove_file mmmm
+
+call_check_file mmmm
+call_assert file 0
+
 call_create_file mmmm mmmm
 
 call_check_file mmmm
@@ -396,7 +404,21 @@ echo ____________________________
 echo Test 20) Recover 1 local parent file with 1 link
 call_create_file nnnn nnnn
 call_create_file oooo nnnn
+
+call_check_file nnnn
+call_assert file 1
+
+call_check_link oooo
+call_assert link 1
+
 call_remove_file nnnn
+
+call_check_file nnnn
+call_assert file 0
+
+call_check_link oooo
+call_assert link 0
+
 call_create_file nnnn nnnn
 
 call_check_file nnnn
@@ -412,7 +434,27 @@ echo Test 21) Recover 1 local parent file with 2 links
 call_create_file pppp pppp
 call_create_file qqqq pppp
 call_create_file rrrr pppp
+
+call_check_file pppp
+call_assert file 1
+
+call_check_link qqqq
+call_assert link 1
+
+call_check_link rrrr
+call_assert link 1
+
 call_remove_file pppp
+
+call_check_file pppp
+call_assert file 0
+
+call_check_link qqqq
+call_assert link 0
+
+call_check_link rrrr
+call_assert link 0
+
 call_create_file pppp pppp
 
 call_check_file pppp
@@ -432,7 +474,33 @@ call_create_file aaaaa aaaaa
 call_create_file bbbbb aaaaa
 call_create_file ccccc aaaaa
 call_create_file ddddd aaaaa
+
+call_check_file aaaaa
+call_assert file 1
+
+call_check_link bbbbb
+call_assert link 1
+
+call_check_link ccccc
+call_assert link 1
+
+call_check_link ddddd
+call_assert link 1
+
 call_remove_file aaaaa
+
+call_check_file aaaaa
+call_assert file 0
+
+call_check_link bbbbb
+call_assert link 0
+
+call_check_link ccccc
+call_assert link 0
+
+call_check_link ddddd
+call_assert link 0
+
 call_create_file aaaaa aaaaa
 
 call_check_file aaaaa
@@ -454,7 +522,21 @@ echo Test 23) Recover 1 local parent file with 1 link in other directory
 call_create_file aaaaaa aaaaaa
 call_create_dir mydir6
 call_create_file mydir6/bbbbbb aaaaaa
+
+call_check_file aaaaaa
+call_assert file 1
+
+call_check_link mydir6/bbbbbb
+call_assert link 1
+
 call_remove_file aaaaaa
+
+call_check_file aaaaaa
+call_assert file 0
+
+call_check_link mydir6/bbbbbb
+call_assert link 0
+
 call_create_file aaaaaa aaaaaa
 
 call_check_file aaaaaa
@@ -471,7 +553,27 @@ call_create_file aaaaaaa aaaaaaa
 call_create_dir mydir7
 call_create_file mydir7/bbbbbbb aaaaaaa
 call_create_file mydir7/ccccccc aaaaaaa
+
+call_check_file aaaaaaa
+call_assert file 1
+
+call_check_link mydir7/bbbbbbb
+call_assert link 1
+
+call_check_link mydir7/ccccccc
+call_assert link 1
+
 call_remove_file aaaaaaa
+
+call_check_file aaaaaaa
+call_assert file 0
+
+call_check_link mydir7/bbbbbbb
+call_assert link 0
+
+call_check_link mydir7/ccccccc
+call_assert link 0
+
 call_create_file aaaaaaa aaaaaaa
 
 call_check_file aaaaaaa
@@ -492,7 +594,33 @@ call_create_dir mydir8
 call_create_file mydir8/bbbbbbbb aaaaaaaa
 call_create_file mydir8/cccccccc aaaaaaaa
 call_create_file mydir8/dddddddd aaaaaaaa
+
+call_check_file aaaaaaaa
+call_assert file 1
+
+call_check_link mydir8/bbbbbbbb
+call_assert link 1
+
+call_check_link mydir8/cccccccc
+call_assert link 1
+
+call_check_link mydir8/dddddddd
+call_assert link 1
+
 call_remove_file aaaaaaaa
+
+call_check_file aaaaaaaa
+call_assert file 0
+
+call_check_link mydir8/bbbbbbbb
+call_assert link 0
+
+call_check_link mydir8/cccccccc
+call_assert link 0
+
+call_check_link mydir8/dddddddd
+call_assert link 0
+
 call_create_file aaaaaaaa aaaaaaaa
 
 call_check_file aaaaaaaa
