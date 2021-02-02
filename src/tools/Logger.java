@@ -95,7 +95,8 @@ public class Logger
             {
                 debugModuleName = threadStackTrace.getStackTrace( )[2].getClassName( );
                 debugModuleName = "[" + debugModuleName.substring(debugModuleName.lastIndexOf(".") + 1) +
-                        "." + threadStackTrace.getStackTrace( )[3].getMethodName( ) + "]" + Settings.Tab;
+                        "." + threadStackTrace.getStackTrace( )[3].getMethodName( ) + "]("
+                        + threadStackTrace.getStackTrace( )[3].getLineNumber( ) + ")" + Settings.Tab;
             }
             else
             {

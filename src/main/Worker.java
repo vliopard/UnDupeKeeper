@@ -162,7 +162,7 @@ public class Worker implements Runnable
                 }
                 else
                 {
-                    log(" case Settings.FileCreated: if(FileOperations.isLink(fileQueue.getPath())) FALSE");
+                    log(" case Settings.FileCreated: if(FileOperations.isLink(" + fileQueue.getPath( ) + ")) FALSE");
                 }
             break;
 
@@ -219,25 +219,27 @@ public class Worker implements Runnable
                     }
                     else
                     {
-                        log(" Settings.FileDeleted: if(FileOperations.isLink(fileQueue.getPath())) FALSE ["
+                        log(" Settings.FileDeleted: if(FileOperations.isLink(" + fileQueue.getPath( ) + ")) FALSE ["
                                 + fileQueue.getPath( ).toString( ) + "]");
                         String filesha = linkMapTable.get(fileQueue.getPath( ));
                         if (FileOperations.isFile(fileQueue.getPath( )))
                         {
-                            log(" Settings.FileDeleted: hashMapTable.get(filesha).delLink(fileQueue.getPath()); ["
+                            log(" Settings.FileDeleted: hashMapTable.get(filesha).delLink(" + fileQueue.getPath( )
+                                    + "); ["
                                     + fileQueue.getPath( ).toString( ) + "]");
                             // TODO: CHECK NULL POINTER
                             hashMapTable.get(filesha).delLink(fileQueue.getPath( ));
                         }
                         else
                         {
-                            log(" Settings.FileDeleted: if(FileOperations.isFile(fileQueue.getPath())) FALSE ["
+                            log(" Settings.FileDeleted: if(FileOperations.isFile(" + fileQueue.getPath( ) + ")) FALSE ["
                                     + fileQueue.getPath( ).toString( ) + "]");
 
                             // TODO: MUST CHECK IF PATH IS NOT NULL
-                            if (! hashMapTable.get(filesha).getFilePath( ).toString( ).isEmpty( ))
+                            if ( ! hashMapTable.get(filesha).getFilePath( ).toString( ).isEmpty( ))
                             {
-                                log(" Settings.FileDeleted: hashMapTable.get(filesha).unLink(fileQueue.getPath()); ["
+                                log(" Settings.FileDeleted: hashMapTable.get(" + filesha
+                                        + ").unLink(fileQueue.getPath()); ["
                                         + fileQueue.getPath( ).toString( ) + "]");
                                 log(" Settings.FileDeleted: [" + hashMapTable.get(filesha).getFilePath( ).toString( )
                                         + "]");
@@ -246,7 +248,8 @@ public class Worker implements Runnable
                             }
                             else
                             {
-                                log(" if (! hashMapTable.get(filesha).getFilePath( ).toString( ).isEmpty( )) FALSE");
+                                log(" if (! hashMapTable.get(" + filesha
+                                        + ").getFilePath( ).toString( ).isEmpty( )) FALSE");
                             }
                         }
                     }
@@ -345,7 +348,7 @@ public class Worker implements Runnable
                 // Se o URI da base é igual ao URI de entrada
                 // Mesmo SHA, Mesmo URI
                 // Então Arquivo não mudou
-                log(" if(0==currentfile.getFilePath().compareTo(newfile.getFilePath())) TRUE");
+                log(" if(0==currentfile.getFilePath().compareTo(" + newfile.getFilePath( ) + ")) TRUE");
             }
             else
             {
@@ -358,7 +361,7 @@ public class Worker implements Runnable
                     {
                         if (oldsha.get(i).equals(newfile.getSha( )))
                         {
-                            log(" if (oldsha.get(i).equals(newfile.getSha())) TRUE (" + newfile.toString( )
+                            log(" if (oldsha.get(i).equals(" + newfile.getSha( ) + ")) TRUE (" + newfile.toString( )
                                     + "): A and B are the same, no changes");
                             // se o SHA da URI de entrada é igual ao SHA da URI da base
                             // então o conteúdo do URI foi salvo mas não mudou o conteúdo
@@ -367,11 +370,14 @@ public class Worker implements Runnable
                         {
                             if (hashMapTable.get(oldsha.get(i)).getSha( ).equals(newfile.getSha( )))
                             {
-                                log(" if (hashMapTable.get(oldsha.get(i)).getSha().equals(newfile.getSha())) TRUE ("
+                                log(" if (hashMapTable.get(" + oldsha.get(i) + ").getSha().equals(" + newfile.getSha( )
+                                        + ")) TRUE ("
                                         + newfile.toString( ) + "): HANDLING THE SAME FILE");
-                                log(" if (hashMapTable.get(oldsha.get(i)).getSha().equals(newfile.getSha())) TRUE ("
+                                log(" if (hashMapTable.get(" + oldsha.get(i) + ").getSha().equals(" + newfile.getSha( )
+                                        + ")) TRUE ("
                                         + newfile.toString( ) + "): SHA: " + oldsha.get(i));
-                                log(" if (hashMapTable.get(oldsha.get(i)).getSha().equals(newfile.getSha())) TRUE ("
+                                log(" if (hashMapTable.get(" + oldsha.get(i) + ").getSha().equals(" + newfile.getSha( )
+                                        + ")) TRUE ("
                                         + newfile.toString( ) + "): FILE: "
                                         + hashMapTable.get(oldsha.get(i)).getFileStr( ));
                             }
@@ -413,10 +419,10 @@ public class Worker implements Runnable
                     }
                     else
                     {
-                        log(" if (FileOperations.isFile(newfile.getFileStr())) FALSE (" + newfile.toString( )
-                                + "): FROM {dupelist[newfile.fileSha]} TO:");
-                        log(" if (FileOperations.isFile(newfile.getFileStr())) FALSE (" + newfile.toString( )
-                                + "): dupelist[{newfile.fileSha}] = {newfile}");
+                        log(" if (FileOperations.isFile(" + newfile.getFileStr( ) + ")) FALSE "
+                                + "): FROM {" + hashMapTable.get(newfile.getSha( )).getFileStr( ) + "} TO:");
+                        log(" if (FileOperations.isFile(" + newfile.getFileStr( ) + ")) FALSE "
+                                + "): dupelist[{" + newfile.getSha( ) + "}] = {" + newfile.getFileStr( ) + "}");
                     }
                 }
             }
