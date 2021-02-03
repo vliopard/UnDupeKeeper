@@ -1,209 +1,236 @@
-@ echo off
+@ echo off & setlocal
 cls
 
 setlocal enabledelayedexpansion
 
 set basedir=c:\vliopard\tests\
+set testnro=0
 
-echo -
-echo ____________________________
-echo Test 01) Add 1 local unique file
-call:create_file aaa aaa
+REM ##############################################################
+call:start_test "Add 1 local unique file" label
 
-call:check_file aaa file
-call:assert %file% 1
-call:press_key 01
+set name1=file1-test%label%
 
-echo -
-echo ____________________________
-echo Test 02) Add 2 local unique files
-call:create_file bbb bbb
+call:create_file %name1% %name1%
 
-call:check_file bbb file
-call:assert %file% 1
-call:press_key 02
+call:check_file %name1% 1
 
-echo -
-echo ____________________________
-echo Test 03) Add 3 local unique files
-call:create_file ccc ccc
+call:end_test
 
-call:check_file ccc file
-call:assert %file% 1
-call:press_key 03
+REM ##############################################################
+call:start_test "Add 2 local unique files" label
 
-echo -
-echo ____________________________
-echo Test 04) Delete 1 local file
-call:create_file ddd ddd
-call:remove_file ddd
+set name1=file1-test%label%
+set name2=file2-test%label%
 
-call:check_file ddd file
-call:assert %file% 0
-call:press_key 04
+call:create_file %name1% %name1%
+call:create_file %name2% %name2%
 
-echo -
-echo ____________________________
-echo Test 05) Move 1 local file to other name
-call:create_file eee eee
-call:move_file eee fff
+call:check_file %name1% 1
+call:check_file %name2% 1
 
-call:check_file eee file
-call:assert %file% 0
+call:end_test
 
-call:check_file fff file
-call:assert %file% 1
-call:press_key 05
+REM ##############################################################
+call:start_test "Add 3 local unique files" label
 
-echo -
-echo ____________________________
-echo Test 06) Move 1 local file to other directory same file name
-call:create_file ggg ggg
-call:create_dir mydir
-call:move_file ggg mydir\ggg
+set name1=file1-test%label%
+set name2=file2-test%label%
+set name3=file3-test%label%
 
-call:check_file ggg file
-call:assert %file% 0
+call:create_file %name1% %name1%
+call:create_file %name2% %name2%
+call:create_file %name3% %name3%
 
-call:check_file mydir\ggg file
-call:assert %file% 1
-call:press_key 06
+call:check_file %name1% 1
+call:check_file %name2% 1
+call:check_file %name3% 1
 
-echo -
-echo ____________________________
-echo Test 07) Move 1 local file to other directory other file name
-call:create_file hhh hhh
-call:create_dir mydir1
-call:move_file hhh mydir1\iii
+call:end_test
 
-call:check_file hhh file
-call:assert %file% 0
+REM ##############################################################
+call:start_test "Delete 1 local file" label
 
-call:check_file mydir1\iii file
-call:assert %file% 1
-call:press_key 07
+set name1=file1-test%label%
 
-echo -
-echo ____________________________
-echo Test 08) Add 1 local dupe file
-call:create_file jjj jjj
-call:create_file kkk jjj
+call:create_file %name1% %name1%
 
-call:check_file jjj file
-call:assert %file% 1
+call:remove_file %name1%
 
-call:check_link kkk link
-call:assert %link% 1
+call:check_file %name1% 0
 
-call:compare_file jjj kkk file
-call:assert %file% 1
-call:press_key 08
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 09) Add 2 local dupe file
-call:create_file lll lll
-call:create_file mmm lll
-call:create_file nnn lll
+REM ##############################################################
+call:start_test "Move 1 local file to other name" label
 
-call:check_file lll file
-call:assert %file% 1
+set name1=fileOri1-test%label%
+set name2=fileRen1-test%label%
 
-call:check_link mmm link
-call:assert %link% 1
+call:create_file %name1% %name1%
 
-call:check_link nnn link
-call:assert %link% 1
+call:move_file %name1% %name2%
 
-call:compare_file lll mmm file
-call:assert %file% 1
+call:check_file %name1% 0
+call:check_file %name2% 1
 
-call:compare_file lll nnn file
-call:assert %file% 1
-call:press_key 09
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 10) Add 3 local dupe file
-call:create_file ooo ooo
-call:create_file ppp ooo
-call:create_file qqq ooo
-call:create_file rrr ooo
+REM ##############################################################
+call:start_test "Move 1 local file to other directory same file name" label
 
-call:check_file ooo file
-call:assert %file% 1
+set name1=file1-test%label%
+set dir1=dir1-test%label%
 
-call:check_link ppp link
-call:assert %link% 1
+call:create_file %name1% %name1%
 
-call:check_link qqq link
-call:assert %link% 1
+call:create_dir %dir1%
+call:move_file %name1% %dir1%\%name1%
 
-call:check_link rrr link
-call:assert %link% 1
+call:check_file %name1% 0
+call:check_file %dir1%\%name1% 1
 
-call:compare_file ooo ppp file
-call:assert %file% 1
+call:end_test
 
-call:compare_file ooo qqq file
-call:assert %file% 1
+REM ##############################################################
+call:start_test "Move 1 local file to other directory other file name" label
 
-call:compare_file ooo rrr file
-call:assert %file% 1
-call:press_key 10
+set name1=fileOri1-test%label%
+set name2=fileRen1-test%label%
 
-echo -
-echo ____________________________
-echo Test 11) Delete 1 local link file
-call:create_file sss sss
-call:create_file ttt sss
-call:remove_file ttt
+set dir1=dir1-test%label%
 
-call:check_file sss file
-call:assert %file% 1
+call:create_file %name1% %name1%
+call:create_dir %dir1%
+call:move_file %name1% %dir1%\%name2%
 
-call:check_link ttt link
-call:assert %link% 0
-call:press_key 11
+call:check_file %name1% 0
+call:check_file %dir1%\%name2% 1
 
-echo -
-echo ____________________________
-echo Test 12) Move 1 local link file to other name
-call:create_file uuu uuu
-call:create_file vvv uuu 
-call:move_file vvv xxx
+call:end_test
 
-call:check_file uuu file
-call:assert %file% 1
+REM ##############################################################
+call:start_test "Add 1 local dupe file" label
 
-call:check_link vvv link
-call:assert %link% 0
+set name1=file1-test%label%
+set name2=file2-test%label%
 
-call:check_link xxx link
-call:assert %link% 1
-call:press_key 12
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
 
-echo -
-echo ____________________________
-echo Test 13) Move 1 local link file to other directory same link name
-call:create_file yyy yyy
-call:create_file zzz yyy 
-call:create_dir mydir2
-call:move_file zzz mydir2\zzz
+call:check_file %name1% 1
 
-call:check_file yyy file
-call:assert %file% 1
+call:check_link %name2% 1
 
-call:check_link zzz link
-call:assert %link% 0
+call:compare_file %name1% %name2% 1
 
-call:check_link mydir2\zzz link
-call:assert %link% 1
-call:press_key 13
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 14) Move 1 local link file to other directory other link name
+REM ##############################################################
+call:start_test "Add 2 local dupe file" label
+
+set name1=file1-test%label%
+set name2=file2-test%label%
+set name3=file3-test%label%
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+call:create_file %name3% %name1%
+
+call:check_file %name1% 1
+
+call:check_link %name2% 1
+call:check_link %name3% 1
+
+call:compare_file %name1% %name2% 1
+call:compare_file %name1% %name3% 1
+
+call:end_test
+
+REM ##############################################################
+call:start_test "Add 3 local dupe file" label
+
+set name1=file1-test%label%
+set name2=file2-test%label%
+set name3=file3-test%label%
+set name4=file4-test%label%
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+call:create_file %name3% %name1%
+call:create_file %name4% %name1%
+
+call:check_file %name1% 1
+
+call:check_link %name2% 1
+call:check_link %name3% 1
+call:check_link %name4% 1
+
+call:compare_file %name1% %name2% 1
+call:compare_file %name1% %name3% 1
+call:compare_file %name1% %name4% 1
+
+call:end_test
+
+REM ##############################################################
+call:start_test "Delete 1 local link file" label
+
+set name1=file1-test%label%
+set name2=file2-test%label%
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+
+call:remove_file %name2%
+
+call:check_file %name1% 1
+
+call:check_link %name2% 0
+
+call:end_test
+
+REM ##############################################################
+call:start_test "Move 1 local link file to other name" label
+
+set name1=file1-test%label%
+set name2=file2-test%label%
+set name3=file3-test%label%
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+call:move_file %name2% %name3%
+
+call:check_file %name1% 1
+
+call:check_link %name2% 0
+call:check_link %name3% 1
+
+call:end_test
+
+REM ##############################################################
+call:start_test "Move 1 local link file to other directory same link name" label
+
+set name1=fileOri1-test%label%
+set name2=fileRen1-test%label%
+
+set dir1=dir1-test%label%
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+
+call:create_dir %dir1%
+
+call:move_file %name2% %dir1%\%name2%
+
+call:check_file %name1% 1
+
+call:check_link %name2% 0
+call:check_link %dir1%\%name2% 1
+
+call:end_test
+
+REM ##############################################################
+call:start_test "Move 1 local link file to other directory other link name" label
 call:create_file aaaa aaaa
 call:create_file bbbb aaaa
 call:create_dir mydir3
@@ -217,11 +244,10 @@ call:assert %link% 0
 
 call:check_link mydir3\cccc link
 call:assert %link% 1
-call:press_key 14
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 15) Delete 1 local parent file
+REM ##############################################################
+call:start_test "Delete 1 local parent file" label
 call:create_file dddd dddd
 call:create_file eeee dddd
 call:create_file ffff dddd
@@ -239,11 +265,10 @@ call:assert %link% 0
 
 call:check_link gggg link
 call:assert %link% 0
-call:press_key 15
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 16) Move 1 local parent file to other name
+REM ##############################################################
+call:start_test "Move 1 local parent file to other name" label
 call:create_file eeee eeee
 call:create_file ffff eeee
 call:move_file eeee gggg
@@ -256,11 +281,10 @@ call:assert %link% 1
 
 call:check_file gggg file
 call:assert %file% 1
-call:press_key 16
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 17) Move 1 local parent file to other directory same file name
+REM ##############################################################
+call:start_test "Move 1 local parent file to other directory same file name" label
 call:create_file hhhh hhhh
 call:create_file iiii hhhh
 call:create_dir mydir4
@@ -274,11 +298,10 @@ call:assert %link% 1
 
 call:check_file mydir4\hhhh file
 call:assert %file% 1
-call:press_key 17
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 18) Move 1 local parent file to other directory other file name
+REM ##############################################################
+call:start_test "Move 1 local parent file to other directory other file name" label
 call:create_file jjjj jjjj
 call:create_file kkkk jjjj
 call:create_dir mydir5
@@ -292,11 +315,10 @@ call:assert %link% 1
 
 call:check_file mydir5\llll file
 call:assert %file% 1
-call:press_key 18
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 19) Recover 1 local file with no links
+REM ##############################################################
+call:start_test "Recover 1 local file with no links" label
 call:create_file mmmm mmmm
 
 call:check_file mmmm file
@@ -311,11 +333,10 @@ call:create_file mmmm mmmm
 
 call:check_file mmmm file
 call:assert %file% 1
-call:press_key 19
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 20) Recover 1 local parent file with 1 link
+REM ##############################################################
+call:start_test "Recover 1 local parent file with 1 link" label
 call:create_file nnnn nnnn
 call:create_file oooo nnnn
 
@@ -340,11 +361,10 @@ call:assert %file% 1
 
 call:check_link oooo link
 call:assert %link% 1
-call:press_key 20
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 21) Recover 1 local parent file with 2 links
+REM ##############################################################
+call:start_test "Recover 1 local parent file with 2 links" label
 call:create_file pppp pppp
 call:create_file qqqq pppp
 call:create_file rrrr pppp
@@ -379,11 +399,10 @@ call:assert %link% 1
 
 call:check_link rrrr link
 call:assert %link% 1
-call:press_key 21
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 22) Recover 1 local parent file with 3 links
+REM ##############################################################
+call:start_test "Recover 1 local parent file with 3 links" label
 call:create_file aaaaa aaaaa
 call:create_file bbbbb aaaaa
 call:create_file ccccc aaaaa
@@ -428,11 +447,10 @@ call:assert %link% 1
 
 call:check_link ddddd link
 call:assert %link% 1
-call:press_key 22
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 23) Recover 1 local parent file with 1 link in other directory
+REM ##############################################################
+call:start_test "Recover 1 local parent file with 1 link in other directory" label
 call:create_file aaaaaa aaaaaa
 call:create_dir mydir6
 call:create_file mydir6\bbbbbb aaaaaa
@@ -458,11 +476,10 @@ call:assert %file% 1
 
 call:check_link mydir6\bbbbbb link
 call:assert %link% 1
-call:press_key 23
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 24) Recover 1 local parent file with 2 links in different directories
+REM ##############################################################
+call:start_test "Recover 1 local parent file with 2 links in different directories" label
 call:create_file aaaaaaa aaaaaaa
 call:create_dir mydir7
 call:create_file mydir7\bbbbbbb aaaaaaa
@@ -498,11 +515,10 @@ call:assert %link% 1
 
 call:check_link mydir7\ccccccc link
 call:assert %link% 1
-call:press_key 24
+call:end_test
 
-echo -
-echo ____________________________
-echo Test 25) Recover 1 local parent file with 3 links in different directories
+REM ##############################################################
+call:start_test "Recover 1 local parent file with 3 links in different directories" label
 call:create_file aaaaaaaa aaaaaaaa
 call:create_dir mydir8
 call:create_file mydir8\bbbbbbbb aaaaaaaa
@@ -548,9 +564,51 @@ call:assert %link% 1
 
 call:check_link mydir8\dddddddd link
 call:assert %link% 1
-call:press_key 25
+call:end_test
+
+REM ##############################################################
+call:start_test "Recover 1 parent from dir1 to dir2 with same name" label
+call:end_test
+
+REM ##############################################################
+call:start_test "Recover 1 parent from dir1 to dir2 with same name and 1 child link" label
+call:end_test
+
+REM ##############################################################
+call:start_test "Recover 1 parent from dir1 to dir2 with same name and 2 child link" label
+call:end_test
+
+REM ##############################################################
+call:start_test "Recover 1 parent from dir1 to dir2 with different name" label
+call:end_test
+
+REM ##############################################################
+call:start_test "Recover 1 parent from dir1 to dir2 with different name and 1 child link" label
+call:end_test
+
+REM ##############################################################
+call:start_test "Recover 1 parent from dir1 to dir2 with different name and 2 child link" label
+call:end_test
+
+REM ##############################################################
+call:start_test "Create new unique file which its path is the same of a removed link from a removed parent" label
+call:end_test
+
+REM ##############################################################
 GOTO EOF
 
+REM ##############################################################
+:start_test
+set /A testnro=testnro+1
+echo ===========================================
+call:to_upper "%~1" upperword
+call:leading %testnro% retval
+echo TEST #%retval%) %upperword%
+echo ===========================================
+set %~2=%retval%
+EXIT /B 0
+
+REM ##############################################################
 :create_file
 set filename1=%~1
 set fcontent1=%~2
@@ -559,6 +617,7 @@ echo !basedir!%filename1%
 call:wait_time
 EXIT /B 0
 
+REM ##############################################################
 :remove_file
 set filename1=%~1
 del !basedir!%filename1%
@@ -566,6 +625,7 @@ echo !basedir!%filename1%*
 call:wait_time
 EXIT /B 0
 
+REM ##############################################################
 :move_file
 set filename1=%~1
 set filename2=%~2    
@@ -574,6 +634,7 @@ echo !basedir!%filename2%
 call:wait_time
 EXIT /B 0
 
+REM ##############################################################
 :create_dir
 set filename1=%~1
 mkdir !basedir!%filename1%
@@ -581,22 +642,25 @@ echo !basedir!%filename1%
 call:wait_time
 EXIT /B 0
 
+REM ##############################################################
 :check_file
 if exist !basedir!%~1 (
-    set "%~2=1"
+    call:assert 1 %~2
 ) else (
-    set "%~2=0"
+    call:assert 0 %~2
 )
 EXIT /B 0
 
+REM ##############################################################
 :check_link
 set tmpfile=temp_file.tmp
 fsutil reparsepoint query "!basedir!%~1" > "%tmpfile%"
-if %errorlevel% == 0 set "%~2=1"
-if %errorlevel% == 1 set "%~2=0"
+if %errorlevel% == 0 call:assert 1 %~2
+if %errorlevel% == 1 call:assert 0 %~2
 del temp_file.tmp
 EXIT /B 0
 
+REM ##############################################################
 :assert
 if %~1==%~2 (
     echo =
@@ -609,19 +673,45 @@ if %~1==%~2 (
 )
 EXIT /B 0
 
+REM ##############################################################
 :compare_file
 fc /b !basedir!%~1 !basedir!%~2 > nul 2>&1
-if %errorlevel% == 0 set "%~3=1"
-if %errorlevel% == 1 set "%~3=0"
+if %errorlevel% == 0 call:assert 1 %~3
+if %errorlevel% == 1 call:assert 0 %~3
 EXIT /B 0
 
-:press_key
-echo Test %~1) DONE
+REM ##############################################################
+:end_test
+echo ===========================================
+call:leading %testnro% retval
+echo TEST #%retval%) DONE
+echo ===========================================
 pause
 EXIT /B 0
 
+REM ##############################################################
 :wait_time
 timeout 1 > NUL
 EXIT /B 0
 
+REM ##############################################################
+:to_upper
+set upper=
+set "str=%~1"
+for /f "skip=2 delims=" %%I in ('tree "\%str%"') do if not defined upper set "upper=%%~I"
+set "upper=%upper:~3%"
+set %~2=%upper%
+EXIT /B 0
+
+REM ##############################################################
+:leading
+set count=%~1
+for /L %%i in (1, 1, %count%) do (
+     set "formattedValue=000000%%i"
+     set retval=!formattedValue:~-3!
+)
+set %~2=%retval%
+EXIT /B 0
+
+REM ##############################################################
 :EOF
