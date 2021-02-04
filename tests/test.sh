@@ -1,7 +1,21 @@
 #!/bin/bash
 timeout=1
 basedir="/home/vliopard/temp/"
+set testnro=0
+set label=""
 
+# REM ##############################################################
+call_start_test()
+{
+	let testnro=testnro+1
+	echo ===========================================
+	call_to_upper "$1" upperword
+	call_leading ${testnro}
+	echo TEST #${label}) ${upperword}
+	echo ===========================================
+}
+
+# REM ##############################################################
 call_create_file()
 {
     filename1=$1
@@ -11,6 +25,7 @@ call_create_file()
     echo -
 }
 
+# REM ##############################################################
 call_remove_file()
 {
     filename1=$1
@@ -19,6 +34,7 @@ call_remove_file()
     echo -
 }
 
+# REM ##############################################################
 call_move_file()
 {
     filename1=$1
@@ -28,6 +44,7 @@ call_move_file()
     echo -
 }
 
+# REM ##############################################################
 call_create_dir()
 {
     filename1=$1
@@ -36,41 +53,31 @@ call_create_dir()
     echo -
 }
 
+# REM ##############################################################
 call_check_file()
 {
     filename1=$1
     if [ -e ${basedir}${filename1} ]
     then
-        file=1
+        call_assert 1 $2
     else
-        file=0
+        call_assert 0 $2
     fi
 }
 
+# REM ##############################################################
 call_check_link()
 {
     filename1=$1
     if [ -h ${basedir}${filename1} ]
     then
-        link=1
+        call_assert 1 $2
     else
-        link=0
+        call_assert 0 $2
     fi
 }
 
-call_compare_file()
-{
-    #diff --brief $1 $2
-    #comp_value=$?
-    #if [ $comp_value -eq 0 ]
-    if [ cmp -s $1 $2 ]
-    then
-        file=1
-    else
-        file=0
-    fi
-}
-
+# REM ##############################################################
 call_assert()
 {
     if [ $1 == $2 ]
@@ -85,553 +92,510 @@ call_assert()
     fi
 }
 
-call_press_key()
+# REM ##############################################################
+call_compare_file()
 {
-    testcase=$1
-    read -p "Test ${testcase}) DONE"
+    #diff --brief $1 $2
+    #comp_value=$?
+    #if [ $comp_value -eq 0 ]
+    if [ cmp -s $1 $2 ]
+    then
+        call_assert 1 $3
+    else
+        call_assert 0 $3
+    fi
 }
 
-echo -
-echo ____________________________
-echo Test 01) Add 1 local unique file
+# REM ##############################################################
+call_end_test()
+{
+	echo ===========================================
+	echo TEST #${label}) DONE
+	echo ===========================================
+    read -p "Press any key to continue..."
+}
+
+# REM ##############################################################
+call_to_upper()
+{
+	set upper=
+	set "str=%~1"
+	for /f "skip=2 delims=" %%I in ('tree "\%str%"') do if not defined upper set "upper=%%~I"
+	set "upper=%upper:~3%"
+	set %~2=%upper%
+}
+
+# REM ##############################################################
+call_leading()
+{
+	set count=%~1
+	for /L %%i in (1, 1, %count%) do (
+		 set "formattedValue=000000%%i"
+		 set retval=!formattedValue:~-3!
+	)
+	set label=%retval%
+}
+
+# REM ##############################################################
+call_start_test "Add 1 local unique file"
+
 call_create_file aaa aaa
 
-call_check_file aaa
-call_assert file 1
-call_press_key 01
+call_check_file aaa 1
 
-echo -
-echo ____________________________
-echo Test 02) Add 2 local unique files
+call_end_test
+
+# REM ##############################################################
+call_start_test "Add 2 local unique files"
+
 call_create_file bbb bbb
 
-call_check_file bbb
-call_assert file 1
-call_press_key 02
+call_check_file bbb 1
 
-echo -
-echo ____________________________
-echo Test 03) Add 3 local unique files
+call_end_test
+
+# REM ##############################################################
+call_start_test "Add 3 local unique files"
+
 call_create_file ccc ccc
 
-call_check_file ccc
-call_assert file 1
-call_press_key 03
+call_check_file ccc 1
 
-echo -
-echo ____________________________
-echo Test 04) Delete 1 local file
+call_end_test
+
+# REM ##############################################################
+call_start_test "Delete 1 local file"
+
 call_create_file ddd ddd
+
 call_remove_file ddd
 
-call_check_file ddd
-call_assert file 0
-call_press_key 04
+call_check_file ddd 0
 
-echo -
-echo ____________________________
-echo Test 05) Move 1 local file to other name
+call_end_test
+
+# REM ##############################################################
+call_start_test "Move 1 local file to other name"
+
 call_create_file eee eee
+
 call_move_file eee fff
 
-call_check_file eee
-call_assert file 0
+call_check_file eee 0
 
-call_check_file fff
-call_assert file 1
-call_press_key 05
+call_check_file fff 1
 
-echo -
-echo ____________________________
-echo Test 06) Move 1 local file to other directory same file name
+call_end_test
+
+# REM ##############################################################
+call_start_test "Move 1 local file to other directory same file name"
+
 call_create_file ggg ggg
+
 call_create_dir mydir
+
 call_move_file ggg mydir/ggg
 
-call_check_file ggg
-call_assert file 0
+call_check_file ggg 0
 
-call_check_file mydir/ggg
-call_assert file 1
-call_press_key 06
+call_check_file mydir/ggg 1
 
-echo -
-echo ____________________________
-echo Test 07) Move 1 local file to other directory other file name
+call_end_test
+
+# REM ##############################################################
+call_start_test "Move 1 local file to other directory other file name"
+
 call_create_file hhh hhh
+
 call_create_dir mydir1
+
 call_move_file hhh mydir1/iii
 
-call_check_file hhh
-call_assert file 0
+call_check_file hhh 0
 
-call_check_file mydir1/iii
-call_assert file 1
-call_press_key 07
+call_check_file mydir1/iii 1
 
-echo -
-echo ____________________________
-echo Test 08) Add 1 local dupe file
+call_end_test
+
+# REM ##############################################################
+call_start_test "Add 1 local dupe file"
+
 call_create_file jjj jjj
 call_create_file kkk jjj
 
-call_check_file jjj
-call_assert file 1
+call_check_file jjj 1
 
-call_check_link kkk
-call_assert link 1
+call_check_link kkk 1
 
-call_compare_file jjj kkk
-call_assert file 1
-call_press_key 08
+call_compare_file jjj kkk 1
 
-echo -
-echo ____________________________
-echo Test 09) Add 2 local dupe file
+call_end_test
+
+# REM ##############################################################
+call_start_test "Add 2 local dupe file"
+
 call_create_file lll lll
 call_create_file mmm lll
 call_create_file nnn lll
 
-call_check_file lll
-call_assert file 1
+call_check_file lll 1
 
-call_check_link mmm
-call_assert link 1
+call_check_link mmm 1
 
-call_check_link nnn
-call_assert link 1
+call_check_link nnn 1
 
-call_compare_file lll mmm
-call_assert file 1
+call_compare_file lll mmm 1
 
-call_compare_file lll nnn
-call_assert file 1
-call_press_key 09
+call_compare_file lll nnn 1
 
-echo -
-echo ____________________________
-echo Test 10) Add 3 local dupe file
+call_end_test
+
+# REM ##############################################################
+call_start_test "Add 3 local dupe file"
+
 call_create_file ooo ooo
 call_create_file ppp ooo
 call_create_file qqq ooo
 call_create_file rrr ooo
 
-call_check_file ooo
-call_assert file 1
+call_check_file ooo 1
 
-call_check_link ppp
-call_assert link 1
+call_check_link ppp 1
+call_check_link qqq 1
+call_check_link rrr 1
 
-call_check_link qqq
-call_assert link 1
+call_compare_file ooo ppp 1
+call_compare_file ooo qqq 1
+call_compare_file ooo rrr 1
 
-call_check_link rrr
-call_assert link 1
+call_end_test
 
-call_compare_file ooo ppp
-call_assert file 1
+# REM ##############################################################
+call_start_test "Delete 1 local link file"
 
-call_compare_file ooo qqq
-call_assert file 1
-
-call_compare_file ooo rrr
-call_assert file 1
-call_press_key 10
-
-echo -
-echo ____________________________
-echo Test 11) Delete 1 local link file
 call_create_file sss sss
 call_create_file ttt sss
+
 call_remove_file ttt
 
-call_check_file sss
-call_assert file 1
+call_check_file sss 1
 
-call_check_link ttt
-call_assert link 0
-call_press_key 11
+call_check_link ttt 0
 
-echo -
-echo ____________________________
-echo Test 12) Move 1 local link file to other name
+call_end_test
+
+# REM ##############################################################
+call_start_test "Move 1 local link file to other name"
+
 call_create_file uuu uuu
 call_create_file vvv uuu
 call_move_file vvv xxx
 
-call_check_file uuu
-call_assert file 1
+call_check_file uuu 1
 
-call_check_link vvv
-call_assert link 0
+call_check_link vvv 0
+call_check_link xxx 1
 
-call_check_link xxx
-call_assert link 1
-call_press_key 12
+call_end_test
 
-echo -
-echo ____________________________
-echo Test 13) Move 1 local link file to other directory same link name
+# REM ##############################################################
+call_start_test "Move 1 local link file to other directory same link name"
+
 call_create_file yyy yyy
 call_create_file zzz yyy
+
 call_create_dir mydir2
+
 call_move_file zzz mydir2/zzz
 
-call_check_file yyy
-call_assert file 1
+call_check_file yyy 1
 
-call_check_link zzz
-call_assert link 0
+call_check_link zzz 0
 
-call_check_link mydir2/zzz
-call_assert link 1
-call_press_key 13
+call_check_link mydir2/zzz 1
 
-echo -
-echo ____________________________
-echo Test 14) Move 1 local link file to other directory other link name
+call_end_test
+
+# REM ##############################################################
+call_start_test "Move 1 local link file to other directory other link name"
+
 call_create_file aaaa aaaa
 call_create_file bbbb aaaa
+
 call_create_dir mydir3
+
 call_move_file bbbb mydir3/cccc
 
-call_check_file aaaa
-call_assert file 1
+call_check_file aaaa 1
 
-call_check_link bbbb
-call_assert link 0
+call_check_link bbbb 0
 
-call_check_link mydir3/cccc
-call_assert link 1
-call_press_key 14
+call_check_link mydir3/cccc 1
 
-echo -
-echo ____________________________
-echo Test 15) Delete 1 local parent file
+call_end_test
+
+# REM ##############################################################
+call_start_test "Delete 1 local parent file"
+
 call_create_file dddd dddd
 call_create_file eeee dddd
 call_create_file ffff dddd
 call_create_file gggg dddd
+
 call_remove_file dddd
 
-call_check_file dddd
-call_assert file 0
+call_check_file dddd 0
 
-call_check_link eeee
-call_assert link 0
+call_check_link eeee 0
+call_check_link ffff 0
+call_check_link gggg 0
 
-call_check_link ffff
-call_assert link 0
+call_end_test
 
-call_check_link gggg
-call_assert link 0
-call_press_key 15
+# REM ##############################################################
+call_start_test "Move 1 local parent file to other name"
 
-echo -
-echo ____________________________
-echo Test 16) Move 1 local parent file to other name
 call_create_file eeee eeee
 call_create_file ffff eeee
+
 call_move_file eeee gggg
 
-call_check_file eeee
-call_assert file 0
+call_check_file eeee 0
 
-call_check_link ffff
-call_assert link 1
+call_check_link ffff 1
 
-call_check_file gggg
-call_assert file 1
-call_press_key 16
+call_check_file gggg 1
 
-echo -
-echo ____________________________
-echo Test 17) Move 1 local parent file to other directory same file name
+call_end_test
+
+# REM ##############################################################
+call_start_test "Move 1 local parent file to other directory same file name"
+
 call_create_file hhhh hhhh
 call_create_file iiii hhhh
+
 call_create_dir mydir4
+
 call_move_file hhhh mydir4/hhhh
 
-call_check_file hhhh
-call_assert file 0
+call_check_file hhhh 0
 
-call_check_link iiii
-call_assert link 1
+call_check_link iiii 1
 
-call_check_file mydir4/hhhh
-call_assert file 1
-call_press_key 17
+call_check_file mydir4/hhhh 1
 
-echo -
-echo ____________________________
-echo Test 18) Move 1 local parent file to other directory other file name
+call_end_test
+
+# REM ##############################################################
+call_start_test "Move 1 local parent file to other directory other file name"
+
 call_create_file jjjj jjjj
 call_create_file kkkk jjjj
+
 call_create_dir mydir5
+
 call_move_file jjjj mydir5/llll
 
-call_check_file jjjj
-call_assert file 0
+call_check_file jjjj 0
 
-call_check_link kkkk
-call_assert link 1
+call_check_link kkkk 1
 
-call_check_file mydir5/llll
-call_assert file 1
-call_press_key 18
+call_check_file mydir5/llll 1
 
-echo -
-echo ____________________________
-echo Test 19) Recover 1 local file with no links
+call_end_test
+
+# REM ##############################################################
+call_start_test "Recover 1 local file with no links"
 call_create_file mmmm mmmm
 
-call_check_file mmmm
-call_assert file 1
+call_check_file mmmm 1
 
 call_remove_file mmmm
 
-call_check_file mmmm
-call_assert file 0
+call_check_file mmmm 0
 
 call_create_file mmmm mmmm
 
-call_check_file mmmm
-call_assert file 1
-call_press_key 19
+call_check_file mmmm 1
 
-echo -
-echo ____________________________
-echo Test 20) Recover 1 local parent file with 1 link
+call_end_test
+
+# REM ##############################################################
+call_start_test "Recover 1 local parent file with 1 link"
+
 call_create_file nnnn nnnn
 call_create_file oooo nnnn
 
-call_check_file nnnn
-call_assert file 1
+call_check_file nnnn 1
 
-call_check_link oooo
-call_assert link 1
+call_check_link oooo 1
 
 call_remove_file nnnn
 
-call_check_file nnnn
-call_assert file 0
+call_check_file nnnn 0
 
-call_check_link oooo
-call_assert link 0
+call_check_link oooo 0
 
 call_create_file nnnn nnnn
 
-call_check_file nnnn
-call_assert file 1
+call_check_file nnnn 1
 
-call_check_link oooo
-call_assert link 1
-call_press_key 20
+call_check_link oooo 1
 
-echo -
-echo ____________________________
-echo Test 21) Recover 1 local parent file with 2 links
+call_end_test
+
+# REM ##############################################################
+call_start_test "Recover 1 local parent file with 2 links"
+
 call_create_file pppp pppp
 call_create_file qqqq pppp
 call_create_file rrrr pppp
 
-call_check_file pppp
-call_assert file 1
+call_check_file pppp 1
 
-call_check_link qqqq
-call_assert link 1
-
-call_check_link rrrr
-call_assert link 1
+call_check_link qqqq 1
+call_check_link rrrr 1
 
 call_remove_file pppp
 
-call_check_file pppp
-call_assert file 0
+call_check_file pppp 0
 
-call_check_link qqqq
-call_assert link 0
+call_check_link qqqq 0
 
-call_check_link rrrr
-call_assert link 0
+call_check_link rrrr 0
 
 call_create_file pppp pppp
 
-call_check_file pppp
-call_assert file 1
+call_check_file pppp 1
 
-call_check_link qqqq
-call_assert link 1
+call_check_link qqqq 1
 
-call_check_link rrrr
-call_assert link 1
-call_press_key 21
+call_check_link rrrr 1
 
-echo -
-echo ____________________________
-echo Test 22) Recover 1 local parent file with 3 links
+call_end_test
+
+# REM ##############################################################
+call_start_test "Recover 1 local parent file with 3 links"
+
 call_create_file aaaaa aaaaa
 call_create_file bbbbb aaaaa
 call_create_file ccccc aaaaa
 call_create_file ddddd aaaaa
 
-call_check_file aaaaa
-call_assert file 1
+call_check_file aaaaa 1
 
-call_check_link bbbbb
-call_assert link 1
-
-call_check_link ccccc
-call_assert link 1
-
-call_check_link ddddd
-call_assert link 1
+call_check_link bbbbb 1
+call_check_link ccccc 1
+call_check_link ddddd 1
 
 call_remove_file aaaaa
 
-call_check_file aaaaa
-call_assert file 0
+call_check_file aaaaa 0
 
-call_check_link bbbbb
-call_assert link 0
-
-call_check_link ccccc
-call_assert link 0
-
-call_check_link ddddd
-call_assert link 0
+call_check_link bbbbb 0
+call_check_link ccccc 0
+call_check_link ddddd 0
 
 call_create_file aaaaa aaaaa
 
-call_check_file aaaaa
-call_assert file 1
+call_check_file aaaaa 1
 
-call_check_link bbbbb
-call_assert link 1
+call_check_link bbbbb 1
+call_check_link ccccc 1
+call_check_link ddddd 1
 
-call_check_link ccccc
-call_assert link 1
+call_end_test
 
-call_check_link ddddd
-call_assert link 1
-call_press_key 22
+# REM ##############################################################
+call_start_test "Recover 1 local parent file with 1 link in other directory"
 
-echo -
-echo ____________________________
-echo Test 23) Recover 1 local parent file with 1 link in other directory
 call_create_file aaaaaa aaaaaa
+
 call_create_dir mydir6
+
 call_create_file mydir6/bbbbbb aaaaaa
 
-call_check_file aaaaaa
-call_assert file 1
+call_check_file aaaaaa 1
 
-call_check_link mydir6/bbbbbb
-call_assert link 1
+call_check_link mydir6/bbbbbb 1
 
 call_remove_file aaaaaa
 
-call_check_file aaaaaa
-call_assert file 0
+call_check_file aaaaaa 0
 
-call_check_link mydir6/bbbbbb
-call_assert link 0
+call_check_link mydir6/bbbbbb 0
 
 call_create_file aaaaaa aaaaaa
 
-call_check_file aaaaaa
-call_assert file 1
+call_check_file aaaaaa 1
 
-call_check_link mydir6/bbbbbb
-call_assert link 1
-call_press_key 23
+call_check_link mydir6/bbbbbb 1
 
-echo -
-echo ____________________________
-echo Test 24) Recover 1 local parent file with 2 links in different directories
+call_end_test
+
+# REM ##############################################################
+call_start_test "Recover 1 local parent file with 2 links in different directories"
+
 call_create_file aaaaaaa aaaaaaa
+
 call_create_dir mydir7
+
 call_create_file mydir7/bbbbbbb aaaaaaa
 call_create_file mydir7/ccccccc aaaaaaa
 
-call_check_file aaaaaaa
-call_assert file 1
+call_check_file aaaaaaa 1
 
-call_check_link mydir7/bbbbbbb
-call_assert link 1
-
-call_check_link mydir7/ccccccc
-call_assert link 1
+call_check_link mydir7/bbbbbbb 1
+call_check_link mydir7/ccccccc 1
 
 call_remove_file aaaaaaa
 
-call_check_file aaaaaaa
-call_assert file 0
+call_check_file aaaaaaa 0
 
-call_check_link mydir7/bbbbbbb
-call_assert link 0
-
-call_check_link mydir7/ccccccc
-call_assert link 0
+call_check_link mydir7/bbbbbbb 0
+call_check_link mydir7/ccccccc 0
 
 call_create_file aaaaaaa aaaaaaa
 
-call_check_file aaaaaaa
-call_assert file 1
+call_check_file aaaaaaa 1
 
-call_check_link mydir7/bbbbbbb
-call_assert link 1
+call_check_link mydir7/bbbbbbb 1
+call_check_link mydir7/ccccccc 1
 
-call_check_link mydir7/ccccccc
-call_assert link 1
-call_press_key 24
+call_end_test
 
-echo -
-echo ____________________________
-echo Test 25) Recover 1 local parent file with 3 links in different directories
+# REM ##############################################################
+call_start_test "Recover 1 local parent file with 3 links in different directories"
+
 call_create_file aaaaaaaa aaaaaaaa
+
 call_create_dir mydir8
+
 call_create_file mydir8/bbbbbbbb aaaaaaaa
 call_create_file mydir8/cccccccc aaaaaaaa
 call_create_file mydir8/dddddddd aaaaaaaa
 
-call_check_file aaaaaaaa
-call_assert file 1
+call_check_file aaaaaaaa 1
 
-call_check_link mydir8/bbbbbbbb
-call_assert link 1
-
-call_check_link mydir8/cccccccc
-call_assert link 1
-
-call_check_link mydir8/dddddddd
-call_assert link 1
+call_check_link mydir8/bbbbbbbb 1
+call_check_link mydir8/cccccccc 1
+call_check_link mydir8/dddddddd 1
 
 call_remove_file aaaaaaaa
 
-call_check_file aaaaaaaa
-call_assert file 0
+call_check_file aaaaaaaa 0
 
-call_check_link mydir8/bbbbbbbb
-call_assert link 0
+call_check_link mydir8/bbbbbbbb 0
 
-call_check_link mydir8/cccccccc
-call_assert link 0
-
-call_check_link mydir8/dddddddd
-call_assert link 0
+call_check_link mydir8/cccccccc 0
+call_check_link mydir8/dddddddd 0
 
 call_create_file aaaaaaaa aaaaaaaa
 
-call_check_file aaaaaaaa
-call_assert file 1
+call_check_file aaaaaaaa 1
 
-call_check_link mydir8/bbbbbbbb
-call_assert link 1
+call_check_link mydir8/bbbbbbbb 1
+call_check_link mydir8/cccccccc 1
+call_check_link mydir8/dddddddd 1
 
-call_check_link mydir8/cccccccc
-call_assert link 1
-
-call_check_link mydir8/dddddddd
-call_assert link 1
-call_press_key 25
+call_end_test
