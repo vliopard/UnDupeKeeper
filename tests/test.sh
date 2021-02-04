@@ -158,6 +158,8 @@ name1=file1-test${label}
 
 call_create_file ${name1} ${name1}
 
+call_check_file ${name1} 1
+
 call_remove_file ${name1}
 
 call_check_file ${name1} 0

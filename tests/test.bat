@@ -158,6 +158,8 @@ set name1=file1-test%label%
 
 call:create_file %name1% %name1%
 
+call:check_file %name1% 1
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
@@ -998,13 +1000,13 @@ EXIT /B 0
 REM ##############################################################
 :assert
 if %~1==%~2 (
-    echo ##########################
-    echo ####### [ PASSED ] #######
-    echo ##########################
+    echo --------------------------
+    echo ------- [ PASSED ] -------
+    echo --------------------------
 ) else (
-    echo ##########################
-    echo ####### [ FAILED ] #######
-    echo ##########################
+    echo --------------------------
+    echo ------- [ FAILED ] -------
+    echo --------------------------
 )
 EXIT /B 0
 
