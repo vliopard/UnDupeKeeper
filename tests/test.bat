@@ -38,7 +38,7 @@ rem call_move_file()
 rem {
 rem     filename1=$1
 rem     filename2=$2    
-rem     echo ${basedir}${filename1} TO ${basedir}${filename2}
+rem     echo ${basedir}${filename2}
 rem     mv ${basedir}${filename1} ${basedir}${filename2}
 rem     read -t ${timeout} -p "${basedir}${filename2}"
 rem     echo -
@@ -79,13 +79,13 @@ rem call_assert()
 rem {
 rem     if [ $1 == $2 ]
 rem     then
-rem         echo ==========================
-rem         echo ======= [ PASSED ] =======
-rem         echo ==========================
+rem         echo -------------------------------------------
+rem         echo =============== [ PASSED ] ================
+rem         echo -------------------------------------------
 rem     else
-rem         echo ==========================
-rem         echo ======= [ FAILED ] =======
-rem         echo ==========================
+rem         echo -------------------------------------------
+rem         echo =============== [ FAILED ] ================
+rem         echo -------------------------------------------
 rem     fi
 rem }
 
@@ -970,7 +970,7 @@ REM ##############################################################
 set filename1=%~1
 set filename2=%~2    
 move !basedir!%filename1% !basedir!%filename2%
-echo !basedir!%filename1% TO !basedir!%filename2%
+echo !basedir!%filename2%
 call:wait_time
 EXIT /B 0
 
@@ -1003,13 +1003,13 @@ EXIT /B 0
 REM ##############################################################
 :assert
 if %~1==%~2 (
-    echo --------------------------
-    echo ------- [ PASSED ] -------
-    echo --------------------------
+    echo -------------------------------------------
+    echo --------------- [ PASSED ] ----------------
+    echo -------------------------------------------
 ) else (
-    echo --------------------------
-    echo ------- [ FAILED ] -------
-    echo --------------------------
+    echo -------------------------------------------
+    echo --------------- [ FAILED ] ----------------
+    echo -------------------------------------------
 )
 EXIT /B 0
 

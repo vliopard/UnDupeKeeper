@@ -38,7 +38,7 @@ call_move_file()
 {
     filename1=$1
     filename2=$2    
-    echo ${basedir}${filename1} TO ${basedir}${filename2}
+    echo ${basedir}${filename2}
     mv ${basedir}${filename1} ${basedir}${filename2}
     read -t ${timeout} -p "${basedir}${filename2}"
     echo -
@@ -79,13 +79,13 @@ call_assert()
 {
     if [ $1 == $2 ]
     then
-        echo ==========================
-        echo ======= [ PASSED ] =======
-        echo ==========================
+        echo -------------------------------------------
+        echo =============== [ PASSED ] ================
+        echo -------------------------------------------
     else
-        echo ==========================
-        echo ======= [ FAILED ] =======
-        echo ==========================
+        echo -------------------------------------------
+        echo =============== [ FAILED ] ================
+        echo -------------------------------------------
     fi
 }
 
