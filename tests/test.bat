@@ -7,6 +7,108 @@ set basedir=c:\vliopard\tests\
 set testnro=0
 set label=
 
+rem call_start_test()
+rem {
+rem     let testnro=testnro+1
+rem     echo ===========================================
+rem     upperword="$1"
+rem     label=$(printf "%03d" ${testnro})
+rem     echo TEST #${label}) ${upperword^^}
+rem     echo ===========================================
+rem }
+
+rem call_create_file()
+rem {
+rem     filename1=$1
+rem     fcontent1=$2
+rem     echo ${fcontent1} > ${basedir}${filename1}
+rem     read -t ${timeout} -p "${basedir}${filename1}"
+rem     echo -
+rem }
+
+rem call_remove_file()
+rem {
+rem     filename1=$1
+rem     rm ${basedir}${filename1}
+rem     read -t ${timeout} -p "${basedir}${filename1}*"
+rem     echo -
+rem }
+
+rem call_move_file()
+rem {
+rem     filename1=$1
+rem     filename2=$2    
+rem     mv ${basedir}${filename1} ${basedir}${filename2}
+rem     read -t ${timeout} -p "${basedir}${filename2}"
+rem     echo -
+rem }
+
+rem call_create_dir()
+rem {
+rem     filename1=$1
+rem     mkdir ${basedir}${filename1}
+rem     read -t ${timeout} -p "${basedir}${filename1}"
+rem     echo -
+rem }
+
+rem call_check_file()
+rem {
+rem     filename1=$1
+rem     if [ -e ${basedir}${filename1} ]
+rem     then
+rem         call_assert 1 $2
+rem     else
+rem         call_assert 0 $2
+rem     fi
+rem }
+
+rem call_check_link()
+rem {
+rem     filename1=$1
+rem     if [ -h ${basedir}${filename1} ]
+rem     then
+rem         call_assert 1 $2
+rem     else
+rem         call_assert 0 $2
+rem     fi
+rem }
+
+rem call_assert()
+rem {
+rem     if [ $1 == $2 ]
+rem     then
+rem         echo ==========================
+rem         echo ======= [ PASSED ] =======
+rem         echo ==========================
+rem     else
+rem         echo ==========================
+rem         echo ======= [ FAILED ] =======
+rem         echo ==========================
+rem     fi
+rem }
+
+rem call_compare_file()
+rem {
+rem     #diff --brief $1 $2
+rem     #comp_value=$?
+rem     #if [ $comp_value -eq 0 ]
+rem     if [ cmp -s $1 $2 ]
+rem     then
+rem         call_assert 1 $3
+rem     else
+rem         call_assert 0 $3
+rem     fi
+rem }
+
+rem call_end_test()
+rem {
+rem     echo ===========================================
+rem     echo TEST #${label}) DONE
+rem     echo ===========================================
+rem     read -p "Press any key to continue..."
+rem }
+
+
 REM ##############################################################
 call:start_test "Add 1 local unique file"
 
@@ -86,6 +188,7 @@ set dir1=dir1-test%label%
 call:create_file %name1% %name1%
 
 call:create_dir %dir1%
+
 call:move_file %name1% %dir1%\%name1%
 
 call:check_file %name1% 0
@@ -102,7 +205,9 @@ set name2=fileRen1-test%label%
 set dir1=dir1-test%label%
 
 call:create_file %name1% %name1%
+
 call:create_dir %dir1%
+
 call:move_file %name1% %dir1%\%name2%
 
 call:check_file %name1% 0
@@ -404,7 +509,6 @@ call:create_file %name3% %name1%
 call:check_file %name1% 1
 
 call:check_link %name2% 1
-
 call:check_link %name3% 1
 
 call:remove_file %name1%
@@ -412,7 +516,6 @@ call:remove_file %name1%
 call:check_file %name1% 0
 
 call:check_link %name2% 0
-
 call:check_link %name3% 0
 
 call:create_file %name1% %name1%
@@ -420,7 +523,6 @@ call:create_file %name1% %name1%
 call:check_file %name1% 1
 
 call:check_link %name2% 1
-
 call:check_link %name3% 1
 
 call:end_test
@@ -505,7 +607,9 @@ set name3=file3-test%label%
 set dir1=dir1-test%label%
 
 call:create_file %name1% %name1%
+
 call:create_dir %dir1%
+
 call:create_file %dir1%\%name2% %name1%
 call:create_file %dir1%\%name3% %name1%
 
@@ -894,13 +998,13 @@ EXIT /B 0
 REM ##############################################################
 :assert
 if %~1==%~2 (
-    echo =
-    echo ======= [ PASSED ] =======
-    echo =
+    echo ##########################
+    echo ####### [ PASSED ] #######
+    echo ##########################
 ) else (
-    echo =
-    echo ======= [ FAILED ] =======
-    echo =
+    echo ##########################
+    echo ####### [ FAILED ] #######
+    echo ##########################
 )
 EXIT /B 0
 

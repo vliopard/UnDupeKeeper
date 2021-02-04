@@ -1,21 +1,22 @@
 #!/bin/bash
-timeout=1
-basedir="/home/vliopard/temp/"
-set testnro=0
-set label=""
 
-# REM ##############################################################
+timeout=1
+
+
+basedir="/home/vliopard/tests/"
+testnro=0
+label=""
+
 call_start_test()
 {
-	let testnro=testnro+1
-	echo ===========================================
-	call_to_upper "$1" upperword
-	call_leading ${testnro}
-	echo TEST #${label}) ${upperword}
-	echo ===========================================
+    let testnro=testnro+1
+    echo ===========================================
+    upperword="$1"
+    label=$(printf "%03d" ${testnro})
+    echo TEST #${label}) ${upperword^^}
+    echo ===========================================
 }
 
-# REM ##############################################################
 call_create_file()
 {
     filename1=$1
@@ -25,7 +26,6 @@ call_create_file()
     echo -
 }
 
-# REM ##############################################################
 call_remove_file()
 {
     filename1=$1
@@ -34,7 +34,6 @@ call_remove_file()
     echo -
 }
 
-# REM ##############################################################
 call_move_file()
 {
     filename1=$1
@@ -44,7 +43,6 @@ call_move_file()
     echo -
 }
 
-# REM ##############################################################
 call_create_dir()
 {
     filename1=$1
@@ -53,7 +51,6 @@ call_create_dir()
     echo -
 }
 
-# REM ##############################################################
 call_check_file()
 {
     filename1=$1
@@ -65,7 +62,6 @@ call_check_file()
     fi
 }
 
-# REM ##############################################################
 call_check_link()
 {
     filename1=$1
@@ -77,22 +73,20 @@ call_check_link()
     fi
 }
 
-# REM ##############################################################
 call_assert()
 {
     if [ $1 == $2 ]
     then
-        echo =
+        echo ==========================
         echo ======= [ PASSED ] =======
-        echo =
+        echo ==========================
     else
-        echo =
+        echo ==========================
         echo ======= [ FAILED ] =======
-        echo =
+        echo ==========================
     fi
 }
 
-# REM ##############################################################
 call_compare_file()
 {
     #diff --brief $1 $2
@@ -106,496 +100,832 @@ call_compare_file()
     fi
 }
 
-# REM ##############################################################
 call_end_test()
 {
-	echo ===========================================
-	echo TEST #${label}) DONE
-	echo ===========================================
+    echo ===========================================
+    echo TEST #${label}) DONE
+    echo ===========================================
     read -p "Press any key to continue..."
 }
 
-# REM ##############################################################
-call_to_upper()
-{
-	set upper=
-	set "str=%~1"
-	for /f "skip=2 delims=" %%I in ('tree "\%str%"') do if not defined upper set "upper=%%~I"
-	set "upper=%upper:~3%"
-	set %~2=%upper%
-}
-
-# REM ##############################################################
-call_leading()
-{
-	set count=%~1
-	for /L %%i in (1, 1, %count%) do (
-		 set "formattedValue=000000%%i"
-		 set retval=!formattedValue:~-3!
-	)
-	set label=%retval%
-}
 
 # REM ##############################################################
 call_start_test "Add 1 local unique file"
 
-call_create_file aaa aaa
+name1=file1-test${label}
 
-call_check_file aaa 1
+call_create_file ${name1} ${name1}
+
+call_check_file ${name1} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Add 2 local unique files"
 
-call_create_file bbb bbb
+name1=file1-test${label}
+name2=file2-test${label}
 
-call_check_file bbb 1
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name2}
+
+call_check_file ${name1} 1
+call_check_file ${name2} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Add 3 local unique files"
 
-call_create_file ccc ccc
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
 
-call_check_file ccc 1
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name2}
+call_create_file ${name3} ${name3}
+
+call_check_file ${name1} 1
+call_check_file ${name2} 1
+call_check_file ${name3} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Delete 1 local file"
 
-call_create_file ddd ddd
+name1=file1-test${label}
 
-call_remove_file ddd
+call_create_file ${name1} ${name1}
 
-call_check_file ddd 0
+call_remove_file ${name1}
+
+call_check_file ${name1} 0
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Move 1 local file to other name"
 
-call_create_file eee eee
+name1=fileOri1-test${label}
+name2=fileRen1-test${label}
 
-call_move_file eee fff
+call_create_file ${name1} ${name1}
 
-call_check_file eee 0
+call_move_file ${name1} ${name2}
 
-call_check_file fff 1
+call_check_file ${name1} 0
+call_check_file ${name2} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Move 1 local file to other directory same file name"
 
-call_create_file ggg ggg
+name1=file1-test${label}
+dir1=dir1-test${label}
 
-call_create_dir mydir
+call_create_file ${name1} ${name1}
 
-call_move_file ggg mydir/ggg
+call_create_dir ${dir1}
 
-call_check_file ggg 0
+call_move_file ${name1} ${dir1}/${name1}
 
-call_check_file mydir/ggg 1
+call_check_file ${name1} 0
+call_check_file ${dir1}/${name1} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Move 1 local file to other directory other file name"
 
-call_create_file hhh hhh
+name1=fileOri1-test${label}
+name2=fileRen1-test${label}
 
-call_create_dir mydir1
+dir1=dir1-test${label}
 
-call_move_file hhh mydir1/iii
+call_create_file ${name1} ${name1}
 
-call_check_file hhh 0
+call_create_dir ${dir1}
 
-call_check_file mydir1/iii 1
+call_move_file ${name1} ${dir1}/${name2}
+
+call_check_file ${name1} 0
+call_check_file ${dir1}/${name2} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Add 1 local dupe file"
 
-call_create_file jjj jjj
-call_create_file kkk jjj
+name1=file1-test${label}
+name2=file2-test${label}
 
-call_check_file jjj 1
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
 
-call_check_link kkk 1
+call_check_file ${name1} 1
 
-call_compare_file jjj kkk 1
+call_check_link ${name2} 1
+
+call_compare_file ${name1} ${name2} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Add 2 local dupe file"
 
-call_create_file lll lll
-call_create_file mmm lll
-call_create_file nnn lll
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
 
-call_check_file lll 1
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
 
-call_check_link mmm 1
+call_check_file ${name1} 1
 
-call_check_link nnn 1
+call_check_link ${name2} 1
+call_check_link ${name3} 1
 
-call_compare_file lll mmm 1
-
-call_compare_file lll nnn 1
+call_compare_file ${name1} ${name2} 1
+call_compare_file ${name1} ${name3} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Add 3 local dupe file"
 
-call_create_file ooo ooo
-call_create_file ppp ooo
-call_create_file qqq ooo
-call_create_file rrr ooo
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
+name4=file4-test${label}
 
-call_check_file ooo 1
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
 
-call_check_link ppp 1
-call_check_link qqq 1
-call_check_link rrr 1
+call_check_file ${name1} 1
 
-call_compare_file ooo ppp 1
-call_compare_file ooo qqq 1
-call_compare_file ooo rrr 1
+call_check_link ${name2} 1
+call_check_link ${name3} 1
+call_check_link ${name4} 1
+
+call_compare_file ${name1} ${name2} 1
+call_compare_file ${name1} ${name3} 1
+call_compare_file ${name1} ${name4} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Delete 1 local link file"
 
-call_create_file sss sss
-call_create_file ttt sss
+name1=file1-test${label}
+name2=file2-test${label}
 
-call_remove_file ttt
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
 
-call_check_file sss 1
+call_remove_file ${name2}
 
-call_check_link ttt 0
+call_check_file ${name1} 1
+
+call_check_link ${name2} 0
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Move 1 local link file to other name"
 
-call_create_file uuu uuu
-call_create_file vvv uuu
-call_move_file vvv xxx
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
 
-call_check_file uuu 1
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
 
-call_check_link vvv 0
-call_check_link xxx 1
+call_move_file ${name2} ${name3}
+
+call_check_file ${name1} 1
+
+call_check_link ${name2} 0
+call_check_link ${name3} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Move 1 local link file to other directory same link name"
 
-call_create_file yyy yyy
-call_create_file zzz yyy
+name1=fileOri1-test${label}
+name2=fileRen1-test${label}
 
-call_create_dir mydir2
+dir1=dir1-test${label}
 
-call_move_file zzz mydir2/zzz
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
 
-call_check_file yyy 1
+call_create_dir ${dir1}
 
-call_check_link zzz 0
+call_move_file ${name2} ${dir1}/${name2}
 
-call_check_link mydir2/zzz 1
+call_check_file ${name1} 1
+
+call_check_link ${name2} 0
+call_check_link ${dir1}/${name2} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Move 1 local link file to other directory other link name"
 
-call_create_file aaaa aaaa
-call_create_file bbbb aaaa
+name1=fileOri1-test${label}
+name2=fileOri2-test${label}
+name3=fileRen2-test${label}
 
-call_create_dir mydir3
+dir1=dir1-test${label}
 
-call_move_file bbbb mydir3/cccc
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
 
-call_check_file aaaa 1
+call_create_dir ${dir1}
 
-call_check_link bbbb 0
+call_move_file ${name2} ${dir1}/${name3}
 
-call_check_link mydir3/cccc 1
+call_check_file ${name1} 1
+
+call_check_link ${name2} 0
+call_check_link ${dir1}/${name3} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Delete 1 local parent file"
 
-call_create_file dddd dddd
-call_create_file eeee dddd
-call_create_file ffff dddd
-call_create_file gggg dddd
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
+name4=file4-test${label}
 
-call_remove_file dddd
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
 
-call_check_file dddd 0
+call_remove_file ${name1}
 
-call_check_link eeee 0
-call_check_link ffff 0
-call_check_link gggg 0
+call_check_file ${name1} 0
+
+call_check_link ${name2} 0
+call_check_link ${name3} 0
+call_check_link ${name4} 0
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Move 1 local parent file to other name"
 
-call_create_file eeee eeee
-call_create_file ffff eeee
+name1=fileOri1-test${label}
+name2=file2-test${label}
+name3=fileRen1-test${label}
 
-call_move_file eeee gggg
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
 
-call_check_file eeee 0
+call_move_file ${name1} ${name3}
 
-call_check_link ffff 1
+call_check_file ${name1} 0
 
-call_check_file gggg 1
+call_check_link ${name2} 1
+
+call_check_file ${name3} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Move 1 local parent file to other directory same file name"
 
-call_create_file hhhh hhhh
-call_create_file iiii hhhh
+name1=file1-test${label}
+name2=file2-test${label}
 
-call_create_dir mydir4
+dir1=dir1-test${label}
 
-call_move_file hhhh mydir4/hhhh
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
 
-call_check_file hhhh 0
+call_create_dir ${dir1}
 
-call_check_link iiii 1
+call_move_file ${name1} ${dir1}/${name1}
 
-call_check_file mydir4/hhhh 1
+call_check_file ${name1} 0
+
+call_check_link ${name2} 1
+
+call_check_file ${dir1}/${name1} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Move 1 local parent file to other directory other file name"
 
-call_create_file jjjj jjjj
-call_create_file kkkk jjjj
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file2-test${label}
 
-call_create_dir mydir5
+dir1=dir1-test${label}
 
-call_move_file jjjj mydir5/llll
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
 
-call_check_file jjjj 0
+call_create_dir ${dir1}
 
-call_check_link kkkk 1
+call_move_file ${name1} ${dir1}/${name3}
 
-call_check_file mydir5/llll 1
+call_check_file ${name1} 0
+
+call_check_link ${name2} 1
+
+call_check_file ${dir1}/${name3} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Recover 1 local file with no links"
-call_create_file mmmm mmmm
 
-call_check_file mmmm 1
+name1=file1-test${label}
 
-call_remove_file mmmm
+call_create_file ${name1} ${name1}
 
-call_check_file mmmm 0
+call_check_file ${name1} 1
 
-call_create_file mmmm mmmm
+call_remove_file ${name1}
 
-call_check_file mmmm 1
+call_check_file ${name1} 0
+
+call_create_file ${name1} ${name1}
+
+call_check_file ${name1} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 1 link"
 
-call_create_file nnnn nnnn
-call_create_file oooo nnnn
+name1=file1-test${label}
+name2=file2-test${label}
 
-call_check_file nnnn 1
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
 
-call_check_link oooo 1
+call_check_file ${name1} 1
 
-call_remove_file nnnn
+call_check_link ${name2} 1
 
-call_check_file nnnn 0
+call_remove_file ${name1}
 
-call_check_link oooo 0
+call_check_file ${name1} 0
 
-call_create_file nnnn nnnn
+call_check_link ${name2} 0
 
-call_check_file nnnn 1
+call_create_file ${name1} ${name1}
 
-call_check_link oooo 1
+call_check_file ${name1} 1
+
+call_check_link ${name2} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 2 links"
 
-call_create_file pppp pppp
-call_create_file qqqq pppp
-call_create_file rrrr pppp
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
 
-call_check_file pppp 1
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
 
-call_check_link qqqq 1
-call_check_link rrrr 1
+call_check_file ${name1} 1
 
-call_remove_file pppp
+call_check_link ${name2} 1
+call_check_link ${name3} 1
 
-call_check_file pppp 0
+call_remove_file ${name1}
 
-call_check_link qqqq 0
+call_check_file ${name1} 0
 
-call_check_link rrrr 0
+call_check_link ${name2} 0
+call_check_link ${name3} 0
 
-call_create_file pppp pppp
+call_create_file ${name1} ${name1}
 
-call_check_file pppp 1
+call_check_file ${name1} 1
 
-call_check_link qqqq 1
-
-call_check_link rrrr 1
+call_check_link ${name2} 1
+call_check_link ${name3} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 3 links"
 
-call_create_file aaaaa aaaaa
-call_create_file bbbbb aaaaa
-call_create_file ccccc aaaaa
-call_create_file ddddd aaaaa
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
+name4=file4-test${label}
 
-call_check_file aaaaa 1
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
 
-call_check_link bbbbb 1
-call_check_link ccccc 1
-call_check_link ddddd 1
+call_check_file ${name1} 1
 
-call_remove_file aaaaa
+call_check_link ${name2} 1
+call_check_link ${name3} 1
+call_check_link ${name4} 1
 
-call_check_file aaaaa 0
+call_remove_file ${name1}
 
-call_check_link bbbbb 0
-call_check_link ccccc 0
-call_check_link ddddd 0
+call_check_file ${name1} 0
 
-call_create_file aaaaa aaaaa
+call_check_link ${name2} 0
+call_check_link ${name3} 0
+call_check_link ${name4} 0
 
-call_check_file aaaaa 1
+call_create_file ${name1} ${name1}
 
-call_check_link bbbbb 1
-call_check_link ccccc 1
-call_check_link ddddd 1
+call_check_file ${name1} 1
+
+call_check_link ${name2} 1
+call_check_link ${name3} 1
+call_check_link ${name4} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 1 link in other directory"
 
-call_create_file aaaaaa aaaaaa
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
 
-call_create_dir mydir6
+dir1=dir1-test${label}
 
-call_create_file mydir6/bbbbbb aaaaaa
+call_create_file ${name1} ${name1}
 
-call_check_file aaaaaa 1
+call_create_dir ${dir1}
 
-call_check_link mydir6/bbbbbb 1
+call_create_file ${dir1}/${name2} ${name1}
 
-call_remove_file aaaaaa
+call_check_file ${name1} 1
 
-call_check_file aaaaaa 0
+call_check_link ${dir1}/${name2} 1
 
-call_check_link mydir6/bbbbbb 0
+call_remove_file ${name1}
 
-call_create_file aaaaaa aaaaaa
+call_check_file ${name1} 0
 
-call_check_file aaaaaa 1
+call_check_link ${dir1}/${name2} 0
 
-call_check_link mydir6/bbbbbb 1
+call_create_file ${name1} ${name1}
+
+call_check_file ${name1} 1
+
+call_check_link ${dir1}/${name2} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 2 links in different directories"
 
-call_create_file aaaaaaa aaaaaaa
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
 
-call_create_dir mydir7
+dir1=dir1-test${label}
 
-call_create_file mydir7/bbbbbbb aaaaaaa
-call_create_file mydir7/ccccccc aaaaaaa
+call_create_file ${name1} ${name1}
 
-call_check_file aaaaaaa 1
+call_create_dir ${dir1}
 
-call_check_link mydir7/bbbbbbb 1
-call_check_link mydir7/ccccccc 1
+call_create_file ${dir1}/${name2} ${name1}
+call_create_file ${dir1}/${name3} ${name1}
 
-call_remove_file aaaaaaa
+call_check_file ${name1} 1
 
-call_check_file aaaaaaa 0
+call_check_link ${dir1}/${name2} 1
+call_check_link ${dir1}/${name3} 1
 
-call_check_link mydir7/bbbbbbb 0
-call_check_link mydir7/ccccccc 0
+call_remove_file ${name1}
 
-call_create_file aaaaaaa aaaaaaa
+call_check_file ${name1} 0
 
-call_check_file aaaaaaa 1
+call_check_link ${dir1}/${name2} 0
+call_check_link ${dir1}/${name3} 0
 
-call_check_link mydir7/bbbbbbb 1
-call_check_link mydir7/ccccccc 1
+call_create_file ${name1} ${name1}
+
+call_check_file ${name1} 1
+
+call_check_link ${dir1}/${name2} 1
+call_check_link ${dir1}/${name3} 1
 
 call_end_test
 
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 3 links in different directories"
 
-call_create_file aaaaaaaa aaaaaaaa
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
+name4=file4-test${label}
 
-call_create_dir mydir8
+dir1=dir1-test${label}
 
-call_create_file mydir8/bbbbbbbb aaaaaaaa
-call_create_file mydir8/cccccccc aaaaaaaa
-call_create_file mydir8/dddddddd aaaaaaaa
+call_create_file ${name1} ${name1}
 
-call_check_file aaaaaaaa 1
+call_create_dir ${dir1}
 
-call_check_link mydir8/bbbbbbbb 1
-call_check_link mydir8/cccccccc 1
-call_check_link mydir8/dddddddd 1
+call_create_file ${dir1}/${name2} ${name1}
+call_create_file ${dir1}/${name3} ${name1}
+call_create_file ${dir1}/${name4} ${name1}
 
-call_remove_file aaaaaaaa
+call_check_file ${name1} 1
 
-call_check_file aaaaaaaa 0
+call_check_link ${dir1}/${name2} 1
+call_check_link ${dir1}/${name3} 1
+call_check_link ${dir1}/${name4} 1
 
-call_check_link mydir8/bbbbbbbb 0
+call_remove_file ${name1}
 
-call_check_link mydir8/cccccccc 0
-call_check_link mydir8/dddddddd 0
+call_check_file ${name1} 0
 
-call_create_file aaaaaaaa aaaaaaaa
+call_check_link ${dir1}/${name2} 0
+call_check_link ${dir1}/${name3} 0
+call_check_link ${dir1}/${name4} 0
 
-call_check_file aaaaaaaa 1
+call_create_file ${name1} ${name1}
 
-call_check_link mydir8/bbbbbbbb 1
-call_check_link mydir8/cccccccc 1
-call_check_link mydir8/dddddddd 1
+call_check_file ${name1} 1
+
+call_check_link ${dir1}/${name2} 1
+call_check_link ${dir1}/${name3} 1
+call_check_link ${dir1}/${name4} 1
+
+call_end_test
+
+REM ##############################################################
+call_start_test "Recover 1 parent from dir1 to dir2 with same name"
+
+name1=file1-test${label}
+
+dir1=dir1-test${label}
+dir2=dir2-test${label}
+
+call_create_dir ${dir1}
+call_create_dir ${dir2}
+
+call_create_file ${dir1}/${name1} ${name1}
+
+call_check_file ${dir1}/${name1} 1
+call_check_file ${dir2}/${name1} 0
+
+call_remove_file ${dir1}/${name1}
+
+call_create_file ${dir2}/${name1} ${name1}
+
+call_check_file ${dir1}/${name1} 0
+call_check_file ${dir2}/${name1} 1
+
+call_end_test
+
+REM ##############################################################
+call_start_test "Recover 1 parent from dir1 to dir2 with same name and 1 child link"
+
+name1=file1-test${label}
+name2=file2-test${label}
+
+dir1=dir1-test${label}
+dir2=dir2-test${label}
+
+call_create_dir ${dir1}
+call_create_dir ${dir2}
+
+call_create_file ${dir1}/${name1} ${name1}
+call_create_file ${dir1}/${name2} ${name1}
+
+call_check_file ${dir1}/${name1} 1
+
+call_check_link ${dir1}/${name2} 1
+
+call_remove_file ${dir1}/${name1}
+
+call_check_file ${dir1}/${name1} 0
+
+call_check_link ${dir1}/${name2} 0
+
+call_create_file ${dir2}/${name1} ${name1}
+
+call_check_file ${dir1}/${name1} 0
+
+call_check_link ${dir1}/${name2} 1
+
+call_check_file ${dir2}/${name1} 1
+
+call_check_link ${dir2}/${name2} 0
+
+call_end_test
+
+REM ##############################################################
+call_start_test "Recover 1 parent from dir1 to dir2 with same name and 2 child link"
+
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
+
+dir1=dir1-test${label}
+dir2=dir2-test${label}
+
+call_create_dir ${dir1}
+call_create_dir ${dir2}
+
+call_create_file ${dir1}/${name1} ${name1}
+call_create_file ${dir1}/${name2} ${name1}
+call_create_file ${dir1}/${name3} ${name1}
+
+call_check_file ${dir1}/${name1} 1
+
+call_check_link ${dir1}/${name2} 1
+call_check_link ${dir1}/${name3} 1
+
+call_remove_file ${dir1}/${name1}
+
+call_check_file ${dir1}/${name1} 0
+
+call_check_link ${dir1}/${name2} 0
+call_check_link ${dir1}/${name3} 0
+
+call_create_file ${dir2}/${name1} ${name1}
+
+call_check_file ${dir1}/${name1} 0
+
+call_check_link ${dir1}/${name2} 1
+call_check_link ${dir1}/${name3} 1
+
+call_check_file ${dir2}/${name1} 1
+
+call_check_link ${dir2}/${name2} 0
+call_check_link ${dir2}/${name3} 0
+
+call_end_test
+
+REM ##############################################################
+call_start_test "Recover 1 parent from dir1 to dir2 with different name"
+
+name1=file1-test${label}
+name2=file2-test${label}
+
+dir1=dir1-test${label}
+dir2=dir2-test${label}
+
+call_create_dir ${dir1}
+call_create_dir ${dir2}
+
+call_create_file ${dir1}/${name1} ${name1}
+
+call_check_file ${dir1}/${name1} 1
+
+call_remove_file ${name1}
+
+call_check_file ${dir1}/${name1} 0
+
+call_create_file ${dir2}/${name2} ${name1}
+
+call_check_file ${dir1}/${name1} 0
+call_check_file ${dir1}/${name2} 0
+call_check_file ${dir2}/${name1} 0
+call_check_file ${dir2}/${name2} 1
+
+call_end_test
+
+REM ##############################################################
+call_start_test "Recover 1 parent from dir1 to dir2 with different name and 1 child link"
+
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
+
+dir1=dir1-test${label}
+dir2=dir2-test${label}
+
+call_create_dir ${dir1}
+call_create_dir ${dir2}
+
+call_create_file ${dir1}/${name1} ${name1}
+call_create_file ${dir1}/${name3} ${name1}
+
+call_check_file ${dir1}/${name1} 1
+call_check_link ${dir1}/${name3} 1
+
+call_remove_file ${name1}
+
+call_check_file ${dir1}/${name1} 0
+call_check_link ${dir1}/${name3} 0
+
+call_create_file ${dir2}/${name2} ${name1}
+
+call_check_file ${dir1}/${name1} 0
+call_check_file ${dir1}/${name2} 0
+
+call_check_link ${dir1}/${name3} 1
+
+call_check_file ${dir2}/${name1} 0
+call_check_file ${dir2}/${name2} 1
+
+call_check_link ${dir2}/${name3} 0
+
+call_end_test
+
+REM ##############################################################
+call_start_test "Recover 1 parent from dir1 to dir2 with different name and 2 child link"
+
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
+name4=file4-test${label}
+
+dir1=dir1-test${label}
+dir2=dir2-test${label}
+
+call_create_dir ${dir1}
+call_create_dir ${dir2}
+
+call_create_file ${dir1}/${name1} ${name1}
+call_create_file ${dir1}/${name3} ${name1}
+call_create_file ${dir1}/${name4} ${name1}
+
+call_check_file ${dir1}/${name1} 1
+call_check_link ${dir1}/${name3} 1
+call_check_link ${dir1}/${name4} 1
+
+call_remove_file ${name1}
+
+call_check_file ${dir1}/${name1} 0
+call_check_link ${dir1}/${name3} 0
+call_check_link ${dir1}/${name4} 0
+
+call_create_file ${dir2}/${name2} ${name1}
+
+call_check_file ${dir1}/${name1} 0
+call_check_file ${dir1}/${name2} 0
+
+call_check_link ${dir1}/${name3} 1
+call_check_link ${dir1}/${name4} 1
+
+call_check_file ${dir2}/${name1} 0
+call_check_file ${dir2}/${name2} 1
+
+call_check_link ${dir2}/${name3} 0
+call_check_link ${dir2}/${name4} 0
+
+call_end_test
+
+REM ##############################################################
+call_start_test "Create new unique file which its path is the same of a removed link from a removed parent"
+
+name1=file1-test${label}
+name2=file2-test${label}
+name3=file3-test${label}
+name4=file4-test${label}
+name5=file5-test${label}
+
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
+
+call_check_file ${name1} 1
+
+call_check_link ${name2} 1
+call_check_link ${name3} 1
+call_check_link ${name4} 1
+
+call_remove_file ${name1}
+
+call_check_file ${name1} 0
+
+call_check_link ${name2} 0
+call_check_link ${name3} 0
+call_check_link ${name4} 0
+
+call_create_file ${name1} ${name5}
+
+call_check_file ${name1} 0
+
+call_check_link ${name2} 0
+call_check_link ${name3} 0
+call_check_link ${name4} 0
 
 call_end_test
