@@ -38,6 +38,7 @@ rem call_move_file()
 rem {
 rem     filename1=$1
 rem     filename2=$2    
+rem     echo ${basedir}${filename1} TO ${basedir}${filename2}
 rem     mv ${basedir}${filename1} ${basedir}${filename2}
 rem     read -t ${timeout} -p "${basedir}${filename2}"
 rem     echo -
@@ -46,6 +47,7 @@ rem }
 rem call_create_dir()
 rem {
 rem     filename1=$1
+rem     echo /${basedir}${filename1}/
 rem     mkdir ${basedir}${filename1}
 rem     read -t ${timeout} -p "${basedir}${filename1}"
 rem     echo -
@@ -92,6 +94,7 @@ rem {
 rem     #diff --brief $1 $2
 rem     #comp_value=$?
 rem     #if [ $comp_value -eq 0 ]
+rem     echo $1 == $2
 rem     if [ cmp -s $1 $2 ]
 rem     then
 rem         call_assert 1 $3
@@ -967,7 +970,7 @@ REM ##############################################################
 set filename1=%~1
 set filename2=%~2    
 move !basedir!%filename1% !basedir!%filename2%
-echo !basedir!%filename2%
+echo !basedir!%filename1% TO !basedir!%filename2%
 call:wait_time
 EXIT /B 0
 
@@ -975,7 +978,7 @@ REM ##############################################################
 :create_dir
 set filename1=%~1
 mkdir !basedir!%filename1%
-echo !basedir!%filename1%
+echo \!basedir!%filename1%\
 call:wait_time
 EXIT /B 0
 
@@ -1012,6 +1015,7 @@ EXIT /B 0
 
 REM ##############################################################
 :compare_file
+echo !basedir!%~1 == !basedir!%~2
 fc /b !basedir!%~1 !basedir!%~2 > nul 2>&1
 if %errorlevel% == 0 call:assert 1 %~3
 if %errorlevel% == 1 call:assert 0 %~3

@@ -38,6 +38,7 @@ call_move_file()
 {
     filename1=$1
     filename2=$2    
+    echo ${basedir}${filename1} TO ${basedir}${filename2}
     mv ${basedir}${filename1} ${basedir}${filename2}
     read -t ${timeout} -p "${basedir}${filename2}"
     echo -
@@ -46,6 +47,7 @@ call_move_file()
 call_create_dir()
 {
     filename1=$1
+    echo /${basedir}${filename1}/
     mkdir ${basedir}${filename1}
     read -t ${timeout} -p "${basedir}${filename1}"
     echo -
@@ -92,6 +94,7 @@ call_compare_file()
     #diff --brief $1 $2
     #comp_value=$?
     #if [ $comp_value -eq 0 ]
+    echo $1 == $2
     if [ cmp -s $1 $2 ]
     then
         call_assert 1 $3
