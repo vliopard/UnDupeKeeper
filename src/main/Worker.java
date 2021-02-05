@@ -25,6 +25,7 @@ import tools.UniqueFile;
  */
 public class Worker implements Runnable
 {
+    // TODO: USE MKDIR -P TO CREATE NON EXISTENT DIRECTORIES IF SYSTEM MUST RESTORE A LINK/FILE IN IT
     private long filesIncluded = 0;
     private long filesReplaced = 0;
 
@@ -236,7 +237,17 @@ public class Worker implements Runnable
                                     + fileQueue.getPath( ).toString( ) + "]");
 
                             // TODO: MUST CHECK IF PATH IS NOT NULL
-                            if ( ! hashMapTable.get(filesha).getFilePath( ).toString( ).isEmpty( ))
+                            Path filepath = null;
+                            if (null != hashMapTable.get(filesha))
+                            {
+                                filepath = hashMapTable.get(filesha).getFilePath( );
+                            }
+                            else
+                            {
+                                log(" if (! hashMapTable.get(" + filesha
+                                        + ")) NULL");
+                            }
+                            if (null != filepath && ! filepath.toString( ).isEmpty( ))
                             {
                                 log(" Settings.FileDeleted: hashMapTable.get(" + filesha
                                         + ").unLink(fileQueue.getPath()); ["

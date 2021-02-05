@@ -108,6 +108,11 @@ rem {
 rem     echo ===========================================
 rem     echo TEST #${label}) DONE
 rem     echo ===========================================
+rem     call_pause
+rem }
+
+rem call_pause()
+rem {
 rem     read -p "Press any key to continue..."
 rem }
 
@@ -426,6 +431,8 @@ call:create_file %name2% %name1%
 
 call:create_dir %dir1%
 
+pause
+
 call:move_file %name1% %dir1%\%name1%
 
 call:check_file %name1% 0
@@ -450,6 +457,8 @@ call:create_file %name2% %name1%
 
 call:create_dir %dir1%
 
+pause
+
 call:move_file %name1% %dir1%\%name3%
 
 call:check_file %name1% 0
@@ -469,9 +478,13 @@ call:create_file %name1% %name1%
 
 call:check_file %name1% 1
 
+pause
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
+
+pause
 
 call:create_file %name1% %name1%
 
@@ -492,11 +505,15 @@ call:check_file %name1% 1
 
 call:check_link %name2% 1
 
+pause
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
 
 call:check_link %name2% 0
+
+pause
 
 call:create_file %name1% %name1%
 
@@ -522,12 +539,16 @@ call:check_file %name1% 1
 call:check_link %name2% 1
 call:check_link %name3% 1
 
+pause
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
 
 call:check_link %name2% 0
 call:check_link %name3% 0
+
+pause
 
 call:create_file %name1% %name1%
 
@@ -557,6 +578,8 @@ call:check_link %name2% 1
 call:check_link %name3% 1
 call:check_link %name4% 1
 
+pause
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
@@ -564,6 +587,8 @@ call:check_file %name1% 0
 call:check_link %name2% 0
 call:check_link %name3% 0
 call:check_link %name4% 0
+
+pause
 
 call:create_file %name1% %name1%
 
@@ -594,11 +619,15 @@ call:check_file %name1% 1
 
 call:check_link %dir1%\%name2% 1
 
+pause
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
 
 call:check_link %dir1%\%name2% 0
+
+pause
 
 call:create_file %name1% %name1%
 
@@ -629,12 +658,16 @@ call:check_file %name1% 1
 call:check_link %dir1%\%name2% 1
 call:check_link %dir1%\%name3% 1
 
+pause
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
 
 call:check_link %dir1%\%name2% 0
 call:check_link %dir1%\%name3% 0
+
+pause
 
 call:create_file %name1% %name1%
 
@@ -669,6 +702,8 @@ call:check_link %dir1%\%name2% 1
 call:check_link %dir1%\%name3% 1
 call:check_link %dir1%\%name4% 1
 
+pause
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
@@ -676,6 +711,8 @@ call:check_file %name1% 0
 call:check_link %dir1%\%name2% 0
 call:check_link %dir1%\%name3% 0
 call:check_link %dir1%\%name4% 0
+
+pause
 
 call:create_file %name1% %name1%
 
@@ -703,7 +740,14 @@ call:create_file %dir1%\%name1% %name1%
 call:check_file %dir1%\%name1% 1
 call:check_file %dir2%\%name1% 0
 
+pause
+
 call:remove_file %dir1%\%name1%
+
+call:check_file %dir1%\%name1% 0
+call:check_file %dir2%\%name1% 0
+
+pause
 
 call:create_file %dir2%\%name1% %name1%
 
@@ -731,11 +775,15 @@ call:check_file %dir1%\%name1% 1
 
 call:check_link %dir1%\%name2% 1
 
+pause
+
 call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
 
 call:check_link %dir1%\%name2% 0
+
+pause
 
 call:create_file %dir2%\%name1% %name1%
 
@@ -771,12 +819,16 @@ call:check_file %dir1%\%name1% 1
 call:check_link %dir1%\%name2% 1
 call:check_link %dir1%\%name3% 1
 
+pause
+
 call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
 
 call:check_link %dir1%\%name2% 0
 call:check_link %dir1%\%name3% 0
+
+pause
 
 call:create_file %dir2%\%name1% %name1%
 
@@ -808,9 +860,13 @@ call:create_file %dir1%\%name1% %name1%
 
 call:check_file %dir1%\%name1% 1
 
-call:remove_file %name1%
+pause
+
+call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
+
+pause
 
 call:create_file %dir2%\%name2% %name1%
 
@@ -840,10 +896,14 @@ call:create_file %dir1%\%name3% %name1%
 call:check_file %dir1%\%name1% 1
 call:check_link %dir1%\%name3% 1
 
-call:remove_file %name1%
+pause
+
+call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
 call:check_link %dir1%\%name3% 0
+
+pause
 
 call:create_file %dir2%\%name2% %name1%
 
@@ -881,11 +941,15 @@ call:check_file %dir1%\%name1% 1
 call:check_link %dir1%\%name3% 1
 call:check_link %dir1%\%name4% 1
 
-call:remove_file %name1%
+pause
+
+call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
 call:check_link %dir1%\%name3% 0
 call:check_link %dir1%\%name4% 0
+
+pause
 
 call:create_file %dir2%\%name2% %name1%
 
@@ -923,6 +987,8 @@ call:check_link %name2% 1
 call:check_link %name3% 1
 call:check_link %name4% 1
 
+pause
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
@@ -931,9 +997,11 @@ call:check_link %name2% 0
 call:check_link %name3% 0
 call:check_link %name4% 0
 
-call:create_file %name1% %name5%
+pause
 
-call:check_file %name1% 0
+call:create_file %name2% %name5%
+
+call:check_file %name2% 1
 
 call:check_link %name2% 0
 call:check_link %name3% 0
