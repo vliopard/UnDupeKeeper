@@ -115,7 +115,7 @@ call_end_test()
 # REM ##############################################################
 call_start_test "Add 1 local unique file"
 
-name1=file1-test${label}
+name1=test${label}-file1
 
 call_create_file ${name1} ${name1}
 
@@ -126,8 +126,8 @@ call_end_test
 # REM ##############################################################
 call_start_test "Add 2 local unique files"
 
-name1=file1-test${label}
-name2=file2-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name2}
@@ -140,9 +140,9 @@ call_end_test
 # REM ##############################################################
 call_start_test "Add 3 local unique files"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name2}
@@ -157,7 +157,7 @@ call_end_test
 # REM ##############################################################
 call_start_test "Delete 1 local file"
 
-name1=file1-test${label}
+name1=test${label}-file1
 
 call_create_file ${name1} ${name1}
 
@@ -172,8 +172,8 @@ call_end_test
 # REM ##############################################################
 call_start_test "Move 1 local file to other name"
 
-name1=fileOri1-test${label}
-name2=fileRen1-test${label}
+name1=test${label}-source1
+name2=test${label}-target1
 
 call_create_file ${name1} ${name1}
 
@@ -187,12 +187,15 @@ call_end_test
 # REM ##############################################################
 call_start_test "Move 1 local file to other directory same file name"
 
-name1=file1-test${label}
-dir1=dir1-test${label}
+name1=test${label}-file1
+dir1=test${label}-dir1
 
 call_create_file ${name1} ${name1}
 
 call_create_dir ${dir1}
+
+call_check_file ${name1} 1
+call_check_file ${dir1}/${name1} 0
 
 call_move_file ${name1} ${dir1}/${name1}
 
@@ -204,14 +207,17 @@ call_end_test
 # REM ##############################################################
 call_start_test "Move 1 local file to other directory other file name"
 
-name1=fileOri1-test${label}
-name2=fileRen1-test${label}
+name1=test${label}-source1
+name2=test${label}-target1
 
-dir1=dir1-test${label}
+dir1=test${label}-dir1
 
 call_create_file ${name1} ${name1}
 
 call_create_dir ${dir1}
+
+call_check_file ${name1} 1
+call_check_file ${dir1}/${name2} 0
 
 call_move_file ${name1} ${dir1}/${name2}
 
@@ -223,8 +229,8 @@ call_end_test
 # REM ##############################################################
 call_start_test "Add 1 local dupe file"
 
-name1=file1-test${label}
-name2=file2-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -240,9 +246,9 @@ call_end_test
 # REM ##############################################################
 call_start_test "Add 2 local dupe file"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -261,10 +267,10 @@ call_end_test
 # REM ##############################################################
 call_start_test "Add 3 local dupe file"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
-name4=file4-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -286,8 +292,8 @@ call_end_test
 # REM ##############################################################
 call_start_test "Delete 1 local link file"
 
-name1=file1-test${label}
-name2=file2-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -303,9 +309,9 @@ call_end_test
 # REM ##############################################################
 call_start_test "Move 1 local link file to other name"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
+name1=test${label}-file1
+name2=test${label}-source1
+name3=test${label}-target1
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -322,10 +328,10 @@ call_end_test
 # REM ##############################################################
 call_start_test "Move 1 local link file to other directory same link name"
 
-name1=fileOri1-test${label}
-name2=fileRen1-test${label}
+name1=test${label}-source1
+name2=test${label}-target1
 
-dir1=dir1-test${label}
+dir1=test${label}-dir1
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -344,11 +350,11 @@ call_end_test
 # REM ##############################################################
 call_start_test "Move 1 local link file to other directory other link name"
 
-name1=fileOri1-test${label}
-name2=fileOri2-test${label}
-name3=fileRen2-test${label}
+name1=test${label}-file1
+name2=test${label}-source1
+name3=test${label}-target1
 
-dir1=dir1-test${label}
+dir1=test${label}-dir1
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -367,10 +373,10 @@ call_end_test
 # REM ##############################################################
 call_start_test "Delete 1 local parent file"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
-name4=file4-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -390,9 +396,9 @@ call_end_test
 # REM ##############################################################
 call_start_test "Move 1 local parent file to other name"
 
-name1=fileOri1-test${label}
-name2=file2-test${label}
-name3=fileRen1-test${label}
+name1=test${label}-source1
+name2=test${label}-file1
+name3=test${label}-target1
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -410,10 +416,10 @@ call_end_test
 # REM ##############################################################
 call_start_test "Move 1 local parent file to other directory same file name"
 
-name1=file1-test${label}
-name2=file2-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
 
-dir1=dir1-test${label}
+dir1=test${label}-dir1
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -433,11 +439,11 @@ call_end_test
 # REM ##############################################################
 call_start_test "Move 1 local parent file to other directory other file name"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file2-test${label}
+name1=test${label}-source1
+name2=test${label}-file1
+name3=test${label}-target2
 
-dir1=dir1-test${label}
+dir1=test${label}-dir1
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -457,7 +463,7 @@ call_end_test
 # REM ##############################################################
 call_start_test "Recover 1 local file with no links"
 
-name1=file1-test${label}
+name1=test${label}-file1
 
 call_create_file ${name1} ${name1}
 
@@ -476,8 +482,8 @@ call_end_test
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 1 link"
 
-name1=file1-test${label}
-name2=file2-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -503,9 +509,9 @@ call_end_test
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 2 links"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -535,10 +541,10 @@ call_end_test
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 3 links"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
-name4=file4-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
@@ -572,11 +578,11 @@ call_end_test
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 1 link in other directory"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
 
-dir1=dir1-test${label}
+dir1=test${label}-dir1
 
 call_create_file ${name1} ${name1}
 
@@ -605,11 +611,11 @@ call_end_test
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 2 links in different directories"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
 
-dir1=dir1-test${label}
+dir1=test${label}-dir1
 
 call_create_file ${name1} ${name1}
 
@@ -642,12 +648,12 @@ call_end_test
 # REM ##############################################################
 call_start_test "Recover 1 local parent file with 3 links in different directories"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
-name4=file4-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
 
-dir1=dir1-test${label}
+dir1=test${label}-dir1
 
 call_create_file ${name1} ${name1}
 
@@ -684,10 +690,10 @@ call_end_test
 REM ##############################################################
 call_start_test "Recover 1 parent from dir1 to dir2 with same name"
 
-name1=file1-test${label}
+name1=test${label}-file1
 
-dir1=dir1-test${label}
-dir2=dir2-test${label}
+dir1=test${label}-dir1
+dir2=test${label}-dir2
 
 call_create_dir ${dir1}
 call_create_dir ${dir2}
@@ -709,11 +715,11 @@ call_end_test
 REM ##############################################################
 call_start_test "Recover 1 parent from dir1 to dir2 with same name and 1 child link"
 
-name1=file1-test${label}
-name2=file2-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
 
-dir1=dir1-test${label}
-dir2=dir2-test${label}
+dir1=test${label}-dir1
+dir2=test${label}-dir2
 
 call_create_dir ${dir1}
 call_create_dir ${dir2}
@@ -746,12 +752,12 @@ call_end_test
 REM ##############################################################
 call_start_test "Recover 1 parent from dir1 to dir2 with same name and 2 child link"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
 
-dir1=dir1-test${label}
-dir2=dir2-test${label}
+dir1=test${label}-dir1
+dir2=test${label}-dir2
 
 call_create_dir ${dir1}
 call_create_dir ${dir2}
@@ -789,11 +795,11 @@ call_end_test
 REM ##############################################################
 call_start_test "Recover 1 parent from dir1 to dir2 with different name"
 
-name1=file1-test${label}
-name2=file2-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
 
-dir1=dir1-test${label}
-dir2=dir2-test${label}
+dir1=test${label}-dir1
+dir2=test${label}-dir2
 
 call_create_dir ${dir1}
 call_create_dir ${dir2}
@@ -818,12 +824,12 @@ call_end_test
 REM ##############################################################
 call_start_test "Recover 1 parent from dir1 to dir2 with different name and 1 child link"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
 
-dir1=dir1-test${label}
-dir2=dir2-test${label}
+dir1=test${label}-dir1
+dir2=test${label}-dir2
 
 call_create_dir ${dir1}
 call_create_dir ${dir2}
@@ -856,13 +862,13 @@ call_end_test
 REM ##############################################################
 call_start_test "Recover 1 parent from dir1 to dir2 with different name and 2 child link"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
-name4=file4-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
 
-dir1=dir1-test${label}
-dir2=dir2-test${label}
+dir1=test${label}-dir1
+dir2=test${label}-dir2
 
 call_create_dir ${dir1}
 call_create_dir ${dir2}
@@ -900,11 +906,11 @@ call_end_test
 REM ##############################################################
 call_start_test "Create new unique file which its path is the same of a removed link from a removed parent"
 
-name1=file1-test${label}
-name2=file2-test${label}
-name3=file3-test${label}
-name4=file4-test${label}
-name5=file5-test${label}
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
+name5=test${label}-file5
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}

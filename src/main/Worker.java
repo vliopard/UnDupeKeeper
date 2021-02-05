@@ -282,7 +282,8 @@ public class Worker implements Runnable
             default:
         }
 
-        Logger.msg("===========================================================");
+        Logger.msg("-- [ LOG END    ] ----------------------------------------------------------------------------------------------------------------------------------------\n");
+        Logger.msg("\n== [ FILE TABLE ] ========================================================================================================================================");
         Iterator <Entry <String, UniqueFile>> it = hashMapTable.entrySet( ).iterator( );
         while (it.hasNext( ))
         {
@@ -290,13 +291,14 @@ public class Worker implements Runnable
             pair.getValue( ).show( );
         }
 
-        Logger.msg("___________________________________________________________");
+        Logger.msg("__ [ LINK TABLE ] ________________________________________________________________________________________________________________________________________");
         Iterator <Entry <Path, String>> lm = linkMapTable.entrySet( ).iterator( );
         while (lm.hasNext( ))
         {
             Map.Entry <Path, String> pair = (Map.Entry <Path, String>) lm.next( );
-            Logger.msg("[" + pair.getValue( ) + "][" + pair.getKey( ) + "]");
+            Logger.msg("[" + pair.getValue( ) + "] [" + pair.getKey( ) + "]");
         }
+        Logger.msg("\n__ [ LOG START  ] ________________________________________________________________________________________________________________________________________");
     }
 
     /**

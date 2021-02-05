@@ -115,7 +115,7 @@ rem }
 REM ##############################################################
 call:start_test "Add 1 local unique file"
 
-set name1=file1-test%label%
+set name1=test%label%-file1
 
 call:create_file %name1% %name1%
 
@@ -126,8 +126,8 @@ call:end_test
 REM ##############################################################
 call:start_test "Add 2 local unique files"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name2%
@@ -140,9 +140,9 @@ call:end_test
 REM ##############################################################
 call:start_test "Add 3 local unique files"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name2%
@@ -157,7 +157,7 @@ call:end_test
 REM ##############################################################
 call:start_test "Delete 1 local file"
 
-set name1=file1-test%label%
+set name1=test%label%-file1
 
 call:create_file %name1% %name1%
 
@@ -172,8 +172,8 @@ call:end_test
 REM ##############################################################
 call:start_test "Move 1 local file to other name"
 
-set name1=fileOri1-test%label%
-set name2=fileRen1-test%label%
+set name1=test%label%-source1
+set name2=test%label%-target1
 
 call:create_file %name1% %name1%
 
@@ -187,12 +187,15 @@ call:end_test
 REM ##############################################################
 call:start_test "Move 1 local file to other directory same file name"
 
-set name1=file1-test%label%
-set dir1=dir1-test%label%
+set name1=test%label%-file1
+set dir1=test%label%-dir1
 
 call:create_file %name1% %name1%
 
 call:create_dir %dir1%
+
+call:check_file %name1% 1
+call:check_file %dir1%\%name1% 0
 
 call:move_file %name1% %dir1%\%name1%
 
@@ -204,14 +207,17 @@ call:end_test
 REM ##############################################################
 call:start_test "Move 1 local file to other directory other file name"
 
-set name1=fileOri1-test%label%
-set name2=fileRen1-test%label%
+set name1=test%label%-source1
+set name2=test%label%-target1
 
-set dir1=dir1-test%label%
+set dir1=test%label%-dir1
 
 call:create_file %name1% %name1%
 
 call:create_dir %dir1%
+
+call:check_file %name1% 1
+call:check_file %dir1%\%name2% 2
 
 call:move_file %name1% %dir1%\%name2%
 
@@ -223,8 +229,8 @@ call:end_test
 REM ##############################################################
 call:start_test "Add 1 local dupe file"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -240,9 +246,9 @@ call:end_test
 REM ##############################################################
 call:start_test "Add 2 local dupe file"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -261,10 +267,10 @@ call:end_test
 REM ##############################################################
 call:start_test "Add 3 local dupe file"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
-set name4=file4-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -286,8 +292,8 @@ call:end_test
 REM ##############################################################
 call:start_test "Delete 1 local link file"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -303,9 +309,9 @@ call:end_test
 REM ##############################################################
 call:start_test "Move 1 local link file to other name"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
+set name1=test%label%-file1
+set name2=test%label%-source1
+set name3=test%label%-target1
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -322,10 +328,10 @@ call:end_test
 REM ##############################################################
 call:start_test "Move 1 local link file to other directory same link name"
 
-set name1=fileOri1-test%label%
-set name2=fileRen1-test%label%
+set name1=test%label%-source1
+set name2=test%label%-target1
 
-set dir1=dir1-test%label%
+set dir1=test%label%-dir1
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -344,11 +350,11 @@ call:end_test
 REM ##############################################################
 call:start_test "Move 1 local link file to other directory other link name"
 
-set name1=fileOri1-test%label%
-set name2=fileOri2-test%label%
-set name3=fileRen2-test%label%
+set name1=test%label%-file1
+set name2=test%label%-source1
+set name3=test%label%-target1
 
-set dir1=dir1-test%label%
+set dir1=test%label%-dir1
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -367,10 +373,10 @@ call:end_test
 REM ##############################################################
 call:start_test "Delete 1 local parent file"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
-set name4=file4-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -390,9 +396,9 @@ call:end_test
 REM ##############################################################
 call:start_test "Move 1 local parent file to other name"
 
-set name1=fileOri1-test%label%
-set name2=file2-test%label%
-set name3=fileRen1-test%label%
+set name1=test%label%-source1
+set name2=test%label%-file1
+set name3=test%label%-target1
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -410,10 +416,10 @@ call:end_test
 REM ##############################################################
 call:start_test "Move 1 local parent file to other directory same file name"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
 
-set dir1=dir1-test%label%
+set dir1=test%label%-dir1
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -433,11 +439,11 @@ call:end_test
 REM ##############################################################
 call:start_test "Move 1 local parent file to other directory other file name"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file2-test%label%
+set name1=test%label%-source1
+set name2=test%label%-file1
+set name3=test%label%-target2
 
-set dir1=dir1-test%label%
+set dir1=test%label%-dir1
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -457,7 +463,7 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 local file with no links"
 
-set name1=file1-test%label%
+set name1=test%label%-file1
 
 call:create_file %name1% %name1%
 
@@ -476,8 +482,8 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 local parent file with 1 link"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -503,9 +509,9 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 local parent file with 2 links"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -535,10 +541,10 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 local parent file with 3 links"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
-set name4=file4-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
@@ -572,11 +578,11 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 local parent file with 1 link in other directory"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
 
-set dir1=dir1-test%label%
+set dir1=test%label%-dir1
 
 call:create_file %name1% %name1%
 
@@ -605,11 +611,11 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 local parent file with 2 links in different directories"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
 
-set dir1=dir1-test%label%
+set dir1=test%label%-dir1
 
 call:create_file %name1% %name1%
 
@@ -642,12 +648,12 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 local parent file with 3 links in different directories"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
-set name4=file4-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
 
-set dir1=dir1-test%label%
+set dir1=test%label%-dir1
 
 call:create_file %name1% %name1%
 
@@ -684,10 +690,10 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 parent from dir1 to dir2 with same name"
 
-set name1=file1-test%label%
+set name1=test%label%-file1
 
-set dir1=dir1-test%label%
-set dir2=dir2-test%label%
+set dir1=test%label%-dir1
+set dir2=test%label%-dir2
 
 call:create_dir %dir1%
 call:create_dir %dir2%
@@ -709,11 +715,11 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 parent from dir1 to dir2 with same name and 1 child link"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
 
-set dir1=dir1-test%label%
-set dir2=dir2-test%label%
+set dir1=test%label%-dir1
+set dir2=test%label%-dir2
 
 call:create_dir %dir1%
 call:create_dir %dir2%
@@ -746,12 +752,12 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 parent from dir1 to dir2 with same name and 2 child link"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
 
-set dir1=dir1-test%label%
-set dir2=dir2-test%label%
+set dir1=test%label%-dir1
+set dir2=test%label%-dir2
 
 call:create_dir %dir1%
 call:create_dir %dir2%
@@ -789,11 +795,11 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 parent from dir1 to dir2 with different name"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
 
-set dir1=dir1-test%label%
-set dir2=dir2-test%label%
+set dir1=test%label%-dir1
+set dir2=test%label%-dir2
 
 call:create_dir %dir1%
 call:create_dir %dir2%
@@ -818,12 +824,12 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 parent from dir1 to dir2 with different name and 1 child link"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
 
-set dir1=dir1-test%label%
-set dir2=dir2-test%label%
+set dir1=test%label%-dir1
+set dir2=test%label%-dir2
 
 call:create_dir %dir1%
 call:create_dir %dir2%
@@ -856,13 +862,13 @@ call:end_test
 REM ##############################################################
 call:start_test "Recover 1 parent from dir1 to dir2 with different name and 2 child link"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
-set name4=file4-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
 
-set dir1=dir1-test%label%
-set dir2=dir2-test%label%
+set dir1=test%label%-dir1
+set dir2=test%label%-dir2
 
 call:create_dir %dir1%
 call:create_dir %dir2%
@@ -900,11 +906,11 @@ call:end_test
 REM ##############################################################
 call:start_test "Create new unique file which its path is the same of a removed link from a removed parent"
 
-set name1=file1-test%label%
-set name2=file2-test%label%
-set name3=file3-test%label%
-set name4=file4-test%label%
-set name5=file5-test%label%
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
+set name5=test%label%-file5
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
