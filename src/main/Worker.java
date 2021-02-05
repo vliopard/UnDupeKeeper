@@ -173,8 +173,20 @@ public class Worker implements Runnable
                 {
                     if (FileOperations.isFile(fileQueue.getPath( )))
                     {
-                        // TODO: CHECK LINK PATHS TO SEE IF FILE PATH IS DUPLICATED THEN REMOVE LINK FROM TABLE BEFORE ADDING NEW FILE PATH
                         UniqueFile newfile = new UniqueFile(fileQueue.getPath( ));
+                        String     linksha = linkMapTable.get(newfile.getFilePath( ));
+                        log("if (" + linksha + " != " + newfile.getSha( ) + ")");
+                        if (null != linksha && linksha != newfile.getSha( ))
+                        {
+                            linkMapTable.remove(newfile.getFilePath( ));
+                            UniqueFile oldfile = hashMapTable.get(linksha);
+                            oldfile.unLink(newfile.getFilePath( ));
+                        }
+                        else
+                        {
+                            log("if(linksha != newfile.getSha( )) FALSE");
+                        }
+
                         if ( ! hashMapTable.containsKey(newfile.getSha( )))
                         {
                             log(" case Settings.FileModified: manageNewSha(" + newfile.getFileStr( ) + ")");
