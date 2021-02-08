@@ -87,6 +87,8 @@ public class Settings
             (byte)'e',
             (byte)'f'
                                                           };
+    public static final char     cRootDir                 ='/';
+    public static final char     cSlash                   = os.indexOf("win") >= 0 ? '\\' : cRootDir;
     public static final String   Empty                    ="";
     public static final String   Blank                    =" ";
     public static final String   Dot                      =".";
@@ -102,8 +104,10 @@ public class Settings
     public static final String   CompareAsc               ="keep_first";
     public static final String   CompareDesc              ="keep_last";
     public static final String   CompareRecursive         ="recursive";
-    public static final String   DosCompareCommand        ="fc /B ";
-    public static final String   DosCompareCommandResult  ="FC: no differences encountered";
+    public static final String   SysNatCompareCommand     =os.indexOf("win") >= 0 ? "fc /B " : "cmp -b ";
+    public static final String   SysExeCompareCommand     =os.indexOf("win") >= 0 ? "comp /m " : "diff --brief ";
+    public static final String   CompareNatCommandResult  =os.indexOf("win") >= 0 ? "FC: no differences encountered" : "";
+    public static final String   CompareExeCommandResult  =os.indexOf("win") >= 0 ? "Files compare OK" : "";
     public static final String   WorkerPrepareToExit      ="ExitSignal";
     public static final String   HexHashValues            ="0123456789ABCDEF";
     public static final String   WatchedDirectoryName     ="UnDupeKeeper.dir";

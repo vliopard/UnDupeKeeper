@@ -5,10 +5,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
+
 import settings.Settings;
 import settings.Strings;
 
@@ -62,6 +64,29 @@ public class CheckSum
         }
     }
 
+    public static String getBestChecksum(Path fileName)
+    {
+
+        long fsize = 0;
+        try
+        {
+            fsize = Files.size(fileName);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace( );
+        }
+        if (fsize < 5000000)
+        {
+            return getChecksumSimple(fileName);
+        }
+        if (fsize >= 5000000 && fsize < 350000000)
+        {
+            return getChecksumFaster(fileName);
+        }
+        return getChecksumElegant(fileName);
+    }
+
     /**
      * This method creates a <code>String</code> checksum value from a given filename through a simple method
      * calculation.
@@ -100,7 +125,7 @@ public class CheckSum
      *                                          This exception will be raised in case the return value could not be
      *                                          converted to the ASCII.
      */
-    public static String getChecksumFaster(Path fileName) throws UnsupportedEncodingException
+    public static String getChecksumFaster(Path fileName)
     {
         waitForFile(fileName);
         byte[ ] rawBytes = createChecksum(fileName);
@@ -112,7 +137,18 @@ public class CheckSum
             hex[index++] = Settings.HEX_CHAR_TABLE[v >>> 4];
             hex[index++] = Settings.HEX_CHAR_TABLE[v & 0xF];
         }
-        return new String(hex, "ASCII").toUpperCase( );
+        String retval = null;
+        try
+        {
+            retval = new String(hex, "ASCII").toUpperCase( );
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            // TODO: CREATE INDEXED ERROR MESSAGE
+            log("UnsupportedEncodingException:" + e);
+            e.printStackTrace( );
+        }
+        return retval;
     }
 
     /**

@@ -186,7 +186,8 @@ public class UniqueFile
 
     public void makeLink(Path uri)
     {
-        if (Comparison.isFileEqual(uri, fileUri))
+        // TODO: COMPARE BY CHECKSUM
+        if (Comparison.compareBySize(uri, fileUri))
         {
             FileOperations.deleteFile(uri);
             Linker.createLink(uri, fileUri);

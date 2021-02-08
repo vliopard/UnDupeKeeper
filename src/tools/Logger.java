@@ -18,6 +18,7 @@ public class Logger
     public static final int MONITOR       = 5;
     public static final int USERINTERFACE = 6;
     public static final int TRAYIMAGE     = 7;
+    public static final int TESTS         = 8;
     /* ========================================================= */
     private static boolean COMPLETE_DISABLED = false;
     /* ========================================================= */
@@ -30,6 +31,7 @@ public class Logger
     private static boolean MONITOR_ENABLED       = false;
     private static boolean USERINTERFACE_ENABLED = false;
     private static boolean TRAYIMAGE_ENABLED     = false;
+    private static boolean TESTS_ENABLED         = false;
     private static boolean undo                  = false;
 
     /**
@@ -94,9 +96,10 @@ public class Logger
             if (logMessage.startsWith(Settings.Blank) || logMessage.startsWith("!"))
             {
                 debugModuleName = threadStackTrace.getStackTrace( )[2].getClassName( );
-                debugModuleName = "[" + debugModuleName.substring(debugModuleName.lastIndexOf(".") + 1) +
-                        "." + threadStackTrace.getStackTrace( )[3].getMethodName( ) + "]("
-                        + threadStackTrace.getStackTrace( )[3].getLineNumber( ) + ")" + Settings.Tab;
+                debugModuleName = "[" + debugModuleName.substring(debugModuleName.lastIndexOf(".") + 1) + "."
+                        + threadStackTrace.getStackTrace( )[3].getMethodName( ) + "]("
+                        + String.format("%05d", threadStackTrace.getStackTrace( )[3].getLineNumber( )) + ")"
+                        + Settings.Tab;
             }
             else
             {
@@ -148,6 +151,13 @@ public class Logger
 
                 case TRAYIMAGE:
                     if (TRAYIMAGE_ENABLED || ALL_SOFTWARE_ENABLED)
+                    {
+                        messageFormat(debugModuleName, logMessage);
+                    }
+                break;
+
+                case TESTS:
+                    if (TESTS_ENABLED || ALL_SOFTWARE_ENABLED)
                     {
                         messageFormat(debugModuleName, logMessage);
                     }

@@ -4,8 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,6 +41,25 @@ import org.apache.commons.io.FileUtils;
 public class Comparison
 {
     static ProgressBarDialog progressBarDialog;
+
+    public static boolean compareBySize(Path f1, Path f2)
+    {
+        long fsize = 0;
+        try
+        {
+            fsize = Files.size(f1);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace( );
+        }
+
+        if (fsize < 350000000)
+        {
+            return isArrayEqual(f1, f2);
+        }
+        return runSystemCompare(f1, f2, 1);
+    }
 
     public static boolean isArrayEqual(Path firstFile, Path secondFile)
     {
@@ -76,18 +97,17 @@ public class Comparison
             }
 
             // Compare character-by-character
-            try (BufferedReader bf1 = Files.newBufferedReader(firstFile);
-                    BufferedReader bf2 = Files.newBufferedReader(secondFile))
-            {
+            BufferedReader bufferedFile1 = Files.newBufferedReader(firstFile, Charset.forName("ISO-8859-1"));
+            BufferedReader bufferedFile2 = Files.newBufferedReader(secondFile, Charset.forName("ISO-8859-1"));
 
-                int ch;
-                while ((ch = bf1.read( )) != -1)
+            int ch = bufferedFile1.read( );
+            while (ch != -1)
+            {
+                if (ch != bufferedFile2.read( ))
                 {
-                    if (ch != bf2.read( ))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
+                ch = bufferedFile1.read( );
             }
             return true;
         }
@@ -109,6 +129,15 @@ public class Comparison
             e.printStackTrace( );
             return false;
         }
+    }
+
+    public static boolean compareFiles(Path f1, Path f2)
+    {
+        if (0 == f1.compareTo(f2))
+        {
+            return true;
+        }
+        return false;
     }
 
     public static boolean isBinaryIdentical(Path binaryFilePath1, Path binaryFilePath2)
@@ -155,19 +184,28 @@ public class Comparison
             }
             /* All checks passed. Files are eligible to be checked. Going ahead! */
             return isFileBinaryEqual(binaryFilePath1, binaryFilePath2);
-            // return runSystemCommand(Settings.DosCompareCommand+
-            // Settings.Quote+
-            // binaryFilePath1+
-            // Settings.Quote+
-            // Settings.Blank+
-            // Settings.Quote+
-            // binaryFilePath2+
-            // Settings.Quote);
         }
         else
         {
             /* There is a problem with some of those files. Maybe not exist, maybe is not a file. Must not proceed. */
             return false;
+        }
+    }
+
+    public static boolean runSystemCompare(Path f1, Path f2, int type)
+    {
+        switch (type)
+        {
+            case 0:
+                return runSystemCommand(Settings.SysNatCompareCommand + Settings.Quote + f1.toString( )
+                        + Settings.Quote + Settings.Blank + Settings.Quote + f2.toString( ) + Settings.Quote);
+
+            case 1:
+                return runSystemCommand(Settings.SysExeCompareCommand + Settings.Quote + f1.toString( )
+                        + Settings.Quote + Settings.Blank + Settings.Quote + f2.toString( ) + Settings.Quote);
+
+            default:
+                return false;
         }
     }
 
@@ -181,7 +219,8 @@ public class Comparison
             String         strLn       = Settings.Empty;
             while ((strLn = inputStream.readLine( )) != null)
             {
-                if (strLn.trim( ).equals(Settings.DosCompareCommandResult))
+                if (strLn.trim( ).equals(Settings.CompareNatCommandResult)
+                        || strLn.trim( ).equals(Settings.CompareExeCommandResult))
                 {
                     return true;
                 }
@@ -220,28 +259,35 @@ public class Comparison
             return -1;
         }
         return lineCount;
-        // DISABLED FAST MODE SINCE LAST LINE DOES NOT HAVE \n SCAPE CODE
-        // InputStream is=new BufferedInputStream(new
-        // FileInputStream(filename));
-        // try
-        // {
-        // byte[] c=new byte[1024];
-        // int count=0;
-        // int readChars=0;
-        // while((readChars=is.read(c))!=-1)
-        // {
-        // for(int i=0; i<readChars; ++i)
-        // {
-        // if(c[i]=='\n')
-        // ++count;
-        // }
-        // }
-        // return count;
-        // }
-        // finally
-        // {
-        // is.close();
-        // }
+    }
+
+    public static long totalLinesFast(String textFileName)
+    {
+        InputStream is;
+        try
+        {
+            is = new BufferedInputStream(new FileInputStream(textFileName));
+            byte[ ] c         = new byte[1024];
+            int     count     = 0;
+            int     readChars = 0;
+            while ((readChars = is.read(c)) != -1)
+            {
+                for (int i = 0; i < readChars; ++i)
+                {
+                    if (c[i] == '\n')
+                    {
+                        ++count;
+                    }
+                }
+            }
+            is.close( );
+            return count;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace( );
+        }
+        return -1;
     }
 
     private static String checkFileName(String fileName)
@@ -328,6 +374,7 @@ public class Comparison
 
     private static void renameDuplicatedFile(Path fileName1, Path fileName2, long fileCounter)
     {
+        // TODO: CHECK A SAFE WAY TO CREATE A SYMBOLIC LINK INSTEAD OF RENAMING FILE
         if (fileName1.toString( ).contains(Settings.UnDupeKeeperNoRename))
         {
             return;
@@ -337,14 +384,7 @@ public class Comparison
                 FileOperations.getFileName(fileName2.toString( )) +
                 FileOperations.getFileExtension(fileName2.toString( )) + ")_";
         originalSourceFileName = originalSourceFileName.replace(':', '#');
-        if (Settings.os.indexOf("win") >= 0)
-        {
-            originalSourceFileName = originalSourceFileName.replace('\\', '-');
-        }
-        else
-        {
-            originalSourceFileName = originalSourceFileName.replace('/', '-');
-        }
+        originalSourceFileName = originalSourceFileName.replace(Settings.cSlash, '-');
         String newFileName1 = FileOperations.getFilePath(fileName1.toString( )) +
                 FileOperations.getFileName(fileName1.toString( )) +
                 FileOperations.getFileExtension(fileName1.toString( )) +
@@ -638,7 +678,9 @@ public class Comparison
                         j = i + 1;
                         while (j < linesUnderComparison.size( ))
                         {
-                            if (isBinaryIdentical(Paths.get(linesUnderComparison.get(i)), Paths.get(linesUnderComparison.get(j))))
+                            // TODO: TEST WHICH IS THE FASTEST BINARY COMPARISON
+                            // if (isBinaryIdentical(Paths.get(linesUnderComparison.get(i)), Paths.get(linesUnderComparison.get(j))))
+                            if (compareBySize(Paths.get(linesUnderComparison.get(i)), Paths.get(linesUnderComparison.get(j))))
                             {
                                 renameDuplicatedFile(Paths.get(linesUnderComparison.get(j)), Paths.get(linesUnderComparison.get(i)), renamedFileCount);
                                 linesUnderComparison.remove(j);
