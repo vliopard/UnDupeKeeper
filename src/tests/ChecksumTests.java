@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import settings.Settings;
@@ -13,6 +14,31 @@ import tools.CheckSum;
 public class ChecksumTests
 {
     String testFilePath = "";
+
+    @BeforeClass
+    public static void setUpBeforeClass( ) throws Exception
+    {
+        String testFilePath = "";
+        if (Settings.os.indexOf("win") >= 0)
+        {
+            testFilePath = "c:\\vliopard\\workspace\\vliopard\\files\\";
+        }
+        else
+        {
+            testFilePath = "/home/vliopard/tests/";
+        }
+        FileSetup.generateFile(testFilePath + "file0000005", 5000);
+        FileSetup.generateFile(testFilePath + "file0000050", 50000);
+        FileSetup.generateFile(testFilePath + "file0000100", 100000);
+        FileSetup.generateFile(testFilePath + "file0000500", 500000);
+        FileSetup.generateFile(testFilePath + "file0001500", 1500000);
+        FileSetup.generateFile(testFilePath + "file0005000", 5000000);
+        FileSetup.generateFile(testFilePath + "file0010000", 10000000);
+        FileSetup.generateFile(testFilePath + "file0050000", 50000000);
+        FileSetup.generateFile(testFilePath + "file0150000", 150000000);
+        FileSetup.generateFile(testFilePath + "file0300000", 300000000);
+        FileSetup.generateFile(testFilePath + "file1000000", 1000000000);
+    }
 
     @Before
     public void setUp( ) throws Exception
@@ -25,18 +51,6 @@ public class ChecksumTests
         {
             testFilePath = "/home/vliopard/tests/";
         }
-
-        FileSetup.generateFile(testFilePath + "file0000005", 5000);
-        FileSetup.generateFile(testFilePath + "file0000050", 50000);
-        FileSetup.generateFile(testFilePath + "file0000100", 100000);
-        FileSetup.generateFile(testFilePath + "file0000500", 500000);
-        FileSetup.generateFile(testFilePath + "file0001500", 1500000);
-        FileSetup.generateFile(testFilePath + "file0005000", 5000000);
-        FileSetup.generateFile(testFilePath + "file0010000", 10000000);
-        FileSetup.generateFile(testFilePath + "file0050000", 50000000);
-        FileSetup.generateFile(testFilePath + "file0150000", 150000000);
-        FileSetup.generateFile(testFilePath + "file0300000", 300000000);
-        FileSetup.generateFile(testFilePath + "file1000000", 1000000000);
     }
 
     @Test

@@ -40,7 +40,7 @@ public class SettingsHandler implements Serializable
         lookAndFeel = Settings.LookNimbus;
         language = Settings.languageValues[0];
         languageIndex = 0;
-        encryptionMethod = Settings.CypherMethodSHA512;
+        encryptionMethod = Settings.CypherMethodSHA;
         comparisonMethod = Settings.comparisonIsON;
         xScreenAxis = (screenSize.width - 320) / 2;
         yScreenAxis = (screenSize.height - 110) / 2;

@@ -260,7 +260,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000100.bin");
         Path f2 = Paths.get(testFilePath + "file0000100_dupe.bin");
-
         assertTrue(Comparison.isFileEqual(f1, f2));
     }
 
@@ -269,7 +268,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000500.bin");
         Path f2 = Paths.get(testFilePath + "file0000500_dupe.bin");
-
         assertTrue(Comparison.isFileEqual(f1, f2));
     }
 
@@ -350,7 +348,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000050.bin");
         Path f2 = Paths.get(testFilePath + "file0000050_dupe.bin");
-
         assertTrue(Comparison.isBinaryIdentical(f1, f2));
     }
 
@@ -359,7 +356,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000100.bin");
         Path f2 = Paths.get(testFilePath + "file0000100_dupe.bin");
-
         assertTrue(Comparison.isBinaryIdentical(f1, f2));
     }
 
@@ -368,7 +364,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000500.bin");
         Path f2 = Paths.get(testFilePath + "file0000500_dupe.bin");
-
         assertTrue(Comparison.isBinaryIdentical(f1, f2));
     }
 
@@ -377,7 +372,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0001500.bin");
         Path f2 = Paths.get(testFilePath + "file0001500_dupe.bin");
-
         assertTrue(Comparison.isBinaryIdentical(f1, f2));
     }
 
@@ -386,7 +380,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0005000.bin");
         Path f2 = Paths.get(testFilePath + "file0005000_dupe.bin");
-
         assertTrue(Comparison.isBinaryIdentical(f1, f2));
     }
 
@@ -395,7 +388,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0010000.bin");
         Path f2 = Paths.get(testFilePath + "file0010000_dupe.bin");
-
         assertTrue(Comparison.isBinaryIdentical(f1, f2));
     }
 
@@ -404,7 +396,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0050000.bin");
         Path f2 = Paths.get(testFilePath + "file0050000_dupe.bin");
-
         assertTrue(Comparison.isBinaryIdentical(f1, f2));
     }
 
@@ -413,7 +404,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0150000.bin");
         Path f2 = Paths.get(testFilePath + "file0150000_dupe.bin");
-
         assertTrue(Comparison.isBinaryIdentical(f1, f2));
     }
 
@@ -422,7 +412,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0300000.bin");
         Path f2 = Paths.get(testFilePath + "file0300000_dupe.bin");
-
         assertTrue(Comparison.isBinaryIdentical(f1, f2));
     }
 
@@ -431,7 +420,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file1000000.bin");
         Path f2 = Paths.get(testFilePath + "file1000000_dupe.bin");
-
         assertTrue(Comparison.isBinaryIdentical(f1, f2));
     }
 
@@ -440,7 +428,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000005.bin");
         Path f2 = Paths.get(testFilePath + "file0000005_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 0));
     }
 
@@ -449,7 +436,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000050.bin");
         Path f2 = Paths.get(testFilePath + "file0000050_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 0));
     }
 
@@ -458,7 +444,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000100.bin");
         Path f2 = Paths.get(testFilePath + "file0000100_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 0));
     }
 
@@ -491,7 +476,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0010000.bin");
         Path f2 = Paths.get(testFilePath + "file0010000_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 0));
     }
 
@@ -500,7 +484,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0050000.bin");
         Path f2 = Paths.get(testFilePath + "file0050000_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 0));
     }
 
@@ -509,7 +492,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0150000.bin");
         Path f2 = Paths.get(testFilePath + "file0150000_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 0));
     }
 
@@ -518,7 +500,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0300000.bin");
         Path f2 = Paths.get(testFilePath + "file0300000_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 0));
     }
 
@@ -535,7 +516,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000005.bin");
         Path f2 = Paths.get(testFilePath + "file0000005_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 1));
     }
 
@@ -544,7 +524,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000050.bin");
         Path f2 = Paths.get(testFilePath + "file0000050_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 1));
     }
 
@@ -553,7 +532,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000100.bin");
         Path f2 = Paths.get(testFilePath + "file0000100_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 1));
     }
 
@@ -562,7 +540,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000500.bin");
         Path f2 = Paths.get(testFilePath + "file0000500_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 1));
     }
 
@@ -571,7 +548,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0001500.bin");
         Path f2 = Paths.get(testFilePath + "file0001500_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 1));
     }
 
@@ -580,7 +556,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0005000.bin");
         Path f2 = Paths.get(testFilePath + "file0005000_dupe.bin");
-
         assertTrue(Comparison.runSystemCompare(f1, f2, 1));
     }
 
@@ -685,7 +660,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0050000.bin");
         Path f2 = Paths.get(testFilePath + "file0050000_dupe.bin");
-
         assertTrue(Comparison.isFileBinaryEqual(f1, f2));
     }
 
@@ -694,7 +668,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0150000.bin");
         Path f2 = Paths.get(testFilePath + "file0150000_dupe.bin");
-
         assertTrue(Comparison.isFileBinaryEqual(f1, f2));
     }
 
@@ -703,7 +676,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0300000.bin");
         Path f2 = Paths.get(testFilePath + "file0300000_dupe.bin");
-
         assertTrue(Comparison.isFileBinaryEqual(f1, f2));
     }
 
@@ -712,7 +684,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file1000000.bin");
         Path f2 = Paths.get(testFilePath + "file1000000_dupe.bin");
-
         assertTrue(Comparison.isFileBinaryEqual(f1, f2));
     }
 
@@ -721,7 +692,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000005.bin");
         Path f2 = Paths.get(testFilePath + "file0000005_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 
@@ -730,7 +700,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000050.bin");
         Path f2 = Paths.get(testFilePath + "file0000050_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 
@@ -739,7 +708,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000100.bin");
         Path f2 = Paths.get(testFilePath + "file0000100_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 
@@ -748,7 +716,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0000500.bin");
         Path f2 = Paths.get(testFilePath + "file0000500_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 
@@ -757,7 +724,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0001500.bin");
         Path f2 = Paths.get(testFilePath + "file0001500_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 
@@ -766,7 +732,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0005000.bin");
         Path f2 = Paths.get(testFilePath + "file0005000_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 
@@ -775,7 +740,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0010000.bin");
         Path f2 = Paths.get(testFilePath + "file0010000_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 
@@ -784,7 +748,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0050000.bin");
         Path f2 = Paths.get(testFilePath + "file0050000_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 
@@ -793,7 +756,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0150000.bin");
         Path f2 = Paths.get(testFilePath + "file0150000_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 
@@ -802,7 +764,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file0300000.bin");
         Path f2 = Paths.get(testFilePath + "file0300000_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 
@@ -811,7 +772,6 @@ public class ComparisonTests
     {
         Path f1 = Paths.get(testFilePath + "file1000000.bin");
         Path f2 = Paths.get(testFilePath + "file1000000_dupe.bin");
-
         assertTrue(Comparison.compareBySize(f1, f2));
     }
 }

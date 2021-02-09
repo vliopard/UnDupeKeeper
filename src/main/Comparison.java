@@ -29,13 +29,6 @@ import tools.TimeControl;
 import tools.Utils;
 import org.apache.commons.io.FileUtils;
 
-// TODO: WINDOWS
-// TODO: CALL fc /b file1 file2
-// TODO: CALL comp file1 file2
-// TODO: LINUX
-// TODO: CALL cmp -b file1 file2
-// TODO: CALL diff --brief file1 file2
-
 // TODO: JAVADOC
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
 public class Comparison
@@ -48,17 +41,17 @@ public class Comparison
         try
         {
             fsize = Files.size(f1);
+            if (fsize < 350000000)
+            {
+                return isArrayEqual(f1, f2);
+            }
         }
         catch (IOException e)
         {
+            // TODO: REPLACE BY INDEXED ERROR MESSAGE
             e.printStackTrace( );
         }
-
-        if (fsize < 350000000)
-        {
-            return isArrayEqual(f1, f2);
-        }
-        return runSystemCompare(f1, f2, 1);
+        return runSystemCompare(f1, f2, 0);
     }
 
     public static boolean isArrayEqual(Path firstFile, Path secondFile)

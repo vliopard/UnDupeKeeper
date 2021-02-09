@@ -168,6 +168,8 @@ call:create_file %name1% %name1%
 
 call:check_file %name1% 1
 
+pause
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
@@ -181,6 +183,8 @@ set name1=test%label%-source1
 set name2=test%label%-target1
 
 call:create_file %name1% %name1%
+
+pause
 
 call:move_file %name1% %name2%
 
@@ -201,6 +205,8 @@ call:create_dir %dir1%
 
 call:check_file %name1% 1
 call:check_file %dir1%\%name1% 0
+
+pause
 
 call:move_file %name1% %dir1%\%name1%
 
@@ -223,6 +229,8 @@ call:create_dir %dir1%
 
 call:check_file %name1% 1
 call:check_file %dir1%\%name2% 2
+
+pause
 
 call:move_file %name1% %dir1%\%name2%
 
@@ -303,6 +311,8 @@ set name2=test%label%-file2
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
 
+pause
+
 call:remove_file %name2%
 
 call:check_file %name1% 1
@@ -320,6 +330,8 @@ set name3=test%label%-target1
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
+
+pause
 
 call:move_file %name2% %name3%
 
@@ -342,6 +354,8 @@ call:create_file %name1% %name1%
 call:create_file %name2% %name1%
 
 call:create_dir %dir1%
+
+pause
 
 call:move_file %name2% %dir1%\%name2%
 
@@ -366,6 +380,8 @@ call:create_file %name2% %name1%
 
 call:create_dir %dir1%
 
+pause
+
 call:move_file %name2% %dir1%\%name3%
 
 call:check_file %name1% 1
@@ -388,6 +404,8 @@ call:create_file %name2% %name1%
 call:create_file %name3% %name1%
 call:create_file %name4% %name1%
 
+pause
+
 call:remove_file %name1%
 
 call:check_file %name1% 0
@@ -407,6 +425,8 @@ set name3=test%label%-target1
 
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
+
+pause
 
 call:move_file %name1% %name3%
 

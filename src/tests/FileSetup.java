@@ -1,8 +1,10 @@
 package tests;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,8 +14,6 @@ import settings.Settings;
 import tools.CheckSum;
 import tools.FileOperations;
 import org.apache.commons.io.FilenameUtils;
-
-import main.Comparison;
 
 public class FileSetup
 {
@@ -52,9 +52,10 @@ public class FileSetup
                 long time = System.currentTimeMillis( ) - start;
                 java.nio.file.Files.copy(f1, Paths.get(dupe));
                 System.out.printf("Took %.1f seconds to create a file of %d bytes\n", time / 1e3, file.length( ));
-                FileOutputStream focs = new FileOutputStream(new File(check));
-                focs.write(CheckSum.getChecksumElegant(f1).getBytes( ));
-                focs.close( );
+
+                FileWriter myWriter = new FileWriter(check);
+                myWriter.write(CheckSum.getChecksumElegant(f1));
+                myWriter.close( );
             }
             catch (IOException e)
             {
@@ -67,16 +68,13 @@ public class FileSetup
     {
         try
         {
-            String          basename = FilenameUtils.getBaseName(fn.toString( ));
-            File            fc       = new File(fn.getParent( ) + Settings.Slash + basename + ".cks");
-            FileInputStream focs     = new FileInputStream(fc);
-            String          retval   = "";
-            int             b;
-            while ((b = focs.read( )) != -1)
-            {
-                retval = retval + (char) b;
-            }
-            return retval;
+            String         basename = FilenameUtils.getBaseName(fn.toString( ));
+            File           fc       = new File(fn.getParent( ) + Settings.Slash + basename + ".cks");
+            FileReader     fr       = new FileReader(fc);
+            BufferedReader br       = new BufferedReader(fr);
+            String         line     = br.readLine( );
+            br.close( );
+            return line;
         }
         catch (IOException e)
         {

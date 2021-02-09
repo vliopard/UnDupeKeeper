@@ -168,6 +168,8 @@ call_create_file ${name1} ${name1}
 
 call_check_file ${name1} 1
 
+call_pause
+
 call_remove_file ${name1}
 
 call_check_file ${name1} 0
@@ -181,6 +183,8 @@ name1=test${label}-source1
 name2=test${label}-target1
 
 call_create_file ${name1} ${name1}
+
+call_pause
 
 call_move_file ${name1} ${name2}
 
@@ -201,6 +205,8 @@ call_create_dir ${dir1}
 
 call_check_file ${name1} 1
 call_check_file ${dir1}/${name1} 0
+
+call_pause
 
 call_move_file ${name1} ${dir1}/${name1}
 
@@ -223,6 +229,8 @@ call_create_dir ${dir1}
 
 call_check_file ${name1} 1
 call_check_file ${dir1}/${name2} 0
+
+call_pause
 
 call_move_file ${name1} ${dir1}/${name2}
 
@@ -303,6 +311,8 @@ name2=test${label}-file2
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
 
+call_pause
+
 call_remove_file ${name2}
 
 call_check_file ${name1} 1
@@ -320,6 +330,8 @@ name3=test${label}-target1
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
+
+call_pause
 
 call_move_file ${name2} ${name3}
 
@@ -342,6 +354,8 @@ call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
 
 call_create_dir ${dir1}
+
+call_pause
 
 call_move_file ${name2} ${dir1}/${name2}
 
@@ -366,6 +380,8 @@ call_create_file ${name2} ${name1}
 
 call_create_dir ${dir1}
 
+call_pause
+
 call_move_file ${name2} ${dir1}/${name3}
 
 call_check_file ${name1} 1
@@ -388,6 +404,8 @@ call_create_file ${name2} ${name1}
 call_create_file ${name3} ${name1}
 call_create_file ${name4} ${name1}
 
+call_pause
+
 call_remove_file ${name1}
 
 call_check_file ${name1} 0
@@ -407,6 +425,8 @@ name3=test${label}-target1
 
 call_create_file ${name1} ${name1}
 call_create_file ${name2} ${name1}
+
+call_pause
 
 call_move_file ${name1} ${name3}
 

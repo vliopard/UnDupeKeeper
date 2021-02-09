@@ -66,7 +66,7 @@ public class CheckSum
 
     public static String getBestChecksum(Path fileName)
     {
-
+/*
         long fsize = 0;
         try
         {
@@ -84,6 +84,7 @@ public class CheckSum
         {
             return getChecksumFaster(fileName);
         }
+*/
         return getChecksumElegant(fileName);
     }
 

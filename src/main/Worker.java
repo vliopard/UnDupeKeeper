@@ -175,7 +175,7 @@ public class Worker implements Runnable
                     {
                         UniqueFile newfile = new UniqueFile(fileQueue.getPath( ));
                         String     linksha = linkMapTable.get(newfile.getFilePath( ));
-                        log("if (" + linksha + " != " + newfile.getSha( ) + ")");
+                        log(" if (" + linksha + " != " + newfile.getSha( ) + ")");
                         if (null != linksha && linksha != newfile.getSha( ))
                         {
                             linkMapTable.remove(newfile.getFilePath( ));
@@ -184,7 +184,7 @@ public class Worker implements Runnable
                         }
                         else
                         {
-                            log("if(linksha != newfile.getSha( )) FALSE");
+                            log(" if(linksha != newfile.getSha( )) FALSE");
                         }
 
                         if ( ! hashMapTable.containsKey(newfile.getSha( )))
