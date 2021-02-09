@@ -197,12 +197,14 @@ public class Comparison
         switch (type)
         {
             case 0:
-                return runSystemCommand(Settings.SysNatCompareCommand + Settings.Quote + f1.toString( )
-                        + Settings.Quote + Settings.Blank + Settings.Quote + f2.toString( ) + Settings.Quote);
+                return runSystemCommand(Settings.SysNatCompareCommand + Settings.QuoteFile + f1.toString( )
+                        + Settings.QuoteFile + Settings.Blank + Settings.QuoteFile + f2.toString( )
+                        + Settings.QuoteFile);
 
             case 1:
-                return runSystemCommand(Settings.SysExeCompareCommand + Settings.Quote + f1.toString( )
-                        + Settings.Quote + Settings.Blank + Settings.Quote + f2.toString( ) + Settings.Quote);
+                return runSystemCommand(Settings.SysExeCompareCommand + Settings.QuoteFile + f1.toString( )
+                        + Settings.QuoteFile + Settings.Blank + Settings.QuoteFile + f2.toString( )
+                        + Settings.QuoteFile);
 
             default:
                 return false;
@@ -216,15 +218,18 @@ public class Comparison
             Process proc = Runtime.getRuntime( ).exec(command);
             proc.waitFor( );
             BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream( )));
-            String         strLn       = Settings.Empty;
-            while ((strLn = inputStream.readLine( )) != null)
+
+            String strLn = inputStream.readLine( );
+            do
             {
-                if (strLn.trim( ).equals(Settings.CompareNatCommandResult)
+                if (null == strLn || strLn.trim( ).equals(Settings.CompareNatCommandResult)
                         || strLn.trim( ).equals(Settings.CompareExeCommandResult))
                 {
                     return true;
                 }
             }
+            while ((strLn = inputStream.readLine( )) != null);
+
             inputStream = new BufferedReader(new InputStreamReader(proc.getErrorStream( )));
             while ((strLn = inputStream.readLine( )) != null)
             {

@@ -88,13 +88,14 @@ public class Settings
             (byte)'f'
                                                           };
     public static final char     cRootDir                 ='/';
-    public static final char     cSlash                   = os.indexOf("win") >= 0 ? '\\' : cRootDir;
+    public static final char     cSlash                   =os.indexOf("win") >= 0 ? '\\' : cRootDir;
     public static final String   Empty                    ="";
     public static final String   Blank                    =" ";
     public static final String   Dot                      =".";
     public static final String   Quote                    ="\"";
+    public static final String   QuoteFile                =os.indexOf("win") >= 0 ? "\"" : "";
     public static final String   RootDir                  ="/";
-    public static final String   Slash                    = os.indexOf("win") >= 0 ? "\\" : RootDir;
+    public static final String   Slash                    =os.indexOf("win") >= 0 ? "\\" : RootDir;
     public static final String   Tab                      ="\t";
     public static final String   endl                     ="\n";
     public static final String   EndLine                  ="\r\n";
@@ -106,8 +107,8 @@ public class Settings
     public static final String   CompareRecursive         ="recursive";
     public static final String   SysNatCompareCommand     =os.indexOf("win") >= 0 ? "fc /B " : "cmp -b ";
     public static final String   SysExeCompareCommand     =os.indexOf("win") >= 0 ? "comp /m " : "diff --brief ";
-    public static final String   CompareNatCommandResult  =os.indexOf("win") >= 0 ? "FC: no differences encountered" : "";
-    public static final String   CompareExeCommandResult  =os.indexOf("win") >= 0 ? "Files compare OK" : "";
+    public static final String   CompareNatCommandResult  =os.indexOf("win") >= 0 ? "FC: no differences encountered" : Empty;
+    public static final String   CompareExeCommandResult  =os.indexOf("win") >= 0 ? "Files compare OK" : Empty;
     public static final String   WorkerPrepareToExit      ="ExitSignal";
     public static final String   HexHashValues            ="0123456789ABCDEF";
     public static final String   WatchedDirectoryName     ="UnDupeKeeper.dir";
