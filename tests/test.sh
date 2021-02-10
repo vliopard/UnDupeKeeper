@@ -13,7 +13,7 @@ call_start_test()
     echo ===========================================
     upperword="$1"
     label=$(printf "%03d" ${testnro})
-    echo TEST #${label}) ${upperword^^}
+    echo TEST \#${label}\) ${upperword^^}
     echo ===========================================
 }
 
@@ -23,7 +23,7 @@ call_create_file()
     fcontent1=$2
     echo ${fcontent1} > ${basedir}${filename1}
     read -t ${timeout} -p "${basedir}${filename1}"
-    echo -
+    echo  
 }
 
 call_remove_file()
@@ -31,7 +31,7 @@ call_remove_file()
     filename1=$1
     rm ${basedir}${filename1}
     read -t ${timeout} -p "${basedir}${filename1}*"
-    echo -
+    echo  
 }
 
 call_move_file()
@@ -41,7 +41,7 @@ call_move_file()
     echo ${basedir}${filename2}
     mv ${basedir}${filename1} ${basedir}${filename2}
     read -t ${timeout} -p "${basedir}${filename2}"
-    echo -
+    echo  
 }
 
 call_create_dir()
@@ -50,7 +50,7 @@ call_create_dir()
     echo /${basedir}${filename1}/
     mkdir ${basedir}${filename1}
     read -t ${timeout} -p "${basedir}${filename1}"
-    echo -
+    echo  
 }
 
 call_check_file()
@@ -106,7 +106,7 @@ call_compare_file()
 call_end_test()
 {
     echo ===========================================
-    echo TEST #${label}) DONE
+    echo TEST \#${label}\) DONE
     echo ===========================================
     call_pause
 }

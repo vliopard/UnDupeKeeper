@@ -25,7 +25,7 @@ import tools.UniqueFile;
  */
 public class Worker implements Runnable
 {
-    // TODO: USE MKDIR -P TO CREATE NON EXISTENT DIRECTORIES IF SYSTEM MUST RESTORE A LINK/FILE IN IT
+    private long savedb        = 0;
     private long filesIncluded = 0;
     private long filesReplaced = 0;
 
@@ -141,6 +141,7 @@ public class Worker implements Runnable
      */
     private void consume(Object fileQueueObject)
     {
+        savedb++;
         FileQueue fileQueue = (FileQueue) fileQueueObject;
         switch (fileQueue.getType( ))
         {
@@ -323,6 +324,13 @@ public class Worker implements Runnable
             Logger.msg("[" + pair.getValue( ) + "] [" + pair.getKey( ) + "]");
         }
         Logger.msg("\n__ [ LOG START  ] ________________________________________________________________________________________________________________________________________");
+
+        // TODO: set savedb max files as configurable parameter
+        if (savedb > 10)
+        {
+            this.save( );
+            savedb = 0;
+        }
     }
 
     /**
@@ -358,7 +366,7 @@ public class Worker implements Runnable
     private void manageExistingSha(UniqueFile newfile)
     {
 
-        // SHA do URI já está cadastrado na base
+        // SHA do URI jï¿½ estï¿½ cadastrado na base
         // Retorna o URI da base com o SHA de entrada
         UniqueFile currentfile = hashMapTable.get(newfile.getSha( ));
         if (null == currentfile)
@@ -371,14 +379,14 @@ public class Worker implements Runnable
         {
             if (0 == currentfile.getFilePath( ).compareTo(newfile.getFilePath( )))
             {
-                // Se o URI da base é igual ao URI de entrada
+                // Se o URI da base ï¿½ igual ao URI de entrada
                 // Mesmo SHA, Mesmo URI
-                // Então Arquivo não mudou
+                // Entï¿½o Arquivo nï¿½o mudou
                 log(" if(0==currentfile.getFilePath().compareTo(" + newfile.getFilePath( ) + ")) TRUE");
             }
             else
             {
-                // Se o URI da base é diferente do URI de entrada
+                // Se o URI da base ï¿½ diferente do URI de entrada
                 // Verifica se a URI de entrada tem algum SHA na base
                 ArrayList <String> oldsha = getShaFromUri(newfile.getFilePath( ));
                 if (oldsha.size( ) > 0)
@@ -389,8 +397,8 @@ public class Worker implements Runnable
                         {
                             log(" if (oldsha.get(i).equals(" + newfile.getSha( ) + ")) TRUE (" + newfile.toString( )
                                     + "): A and B are the same, no changes");
-                            // se o SHA da URI de entrada é igual ao SHA da URI da base
-                            // então o conteúdo do URI foi salvo mas não mudou o conteúdo
+                            // se o SHA da URI de entrada ï¿½ igual ao SHA da URI da base
+                            // entï¿½o o conteï¿½do do URI foi salvo mas nï¿½o mudou o conteï¿½do
                         }
                         else
                         {
@@ -416,8 +424,8 @@ public class Worker implements Runnable
                                         + Strings.wkReplacing + newfile.getFileStr( ));
                                 hashMapTable.get(newfile.getSha( )).addLink(newfile.getFileStr( ));
                             }
-                            // se o SHA da URI de entrada é diferente do SHA da uri de base
-                            // então o conteúdo do URI foi salvo e mudou o conteúdo
+                            // se o SHA da URI de entrada ï¿½ diferente do SHA da uri de base
+                            // entï¿½o o conteï¿½do do URI foi salvo e mudou o conteï¿½do
                             // atualizar SHA do URI
                             Logger.msg("[" + Utils.addLeadingZeros(filesIncluded) + "]["
                                     + Utils.addLeadingZeros(filesReplaced) + "]" +
@@ -429,7 +437,7 @@ public class Worker implements Runnable
                 }
                 else
                 {
-                    // URI de entrada é um arquivo duplicado
+                    // URI de entrada ï¿½ um arquivo duplicado
                     if (FileOperations.isFile(newfile.getFileStr( )))
                     {
                         if (hashMapTable.get(newfile.getSha( )).getFileStr( ).isEmpty( ))

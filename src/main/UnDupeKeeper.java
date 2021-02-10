@@ -27,6 +27,15 @@ import tools.Logger;
 import tools.SettingsHandler;
 import tools.TrayImage;
 
+// TODO: USE MKDIR -P TO CREATE NON EXISTENT DIRECTORIES IF SYSTEM MUST RESTORE A LINK/FILE IN IT
+// TODO: jar installation (with dependencies)
+// TODO: update wordpress content (instructions)
+// TODO: recreate link in removed directory (mkdir -p)
+// TODO: update undupe cleanup w/ symbolic links
+// TODO: popup unique file class - files ! identical
+// TODO: save database frequency
+// TODO: scan files to update database
+
 /**
  * UnDupeKeeper is the main class. It calls and starts everything on the system, regarding to User Interface, and
  * working threads. Also takes care about settings.
