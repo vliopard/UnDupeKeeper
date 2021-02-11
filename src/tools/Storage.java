@@ -2,15 +2,33 @@ package tools;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Storage implements Serializable
+public class Storage
 {
-    private static final long serialVersionUID = 9181206264329886715L;
-    private String            path;
+    private String path;
+
+    @Override
+    public int hashCode( )
+    {
+        return path.hashCode( );
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if ( !(obj instanceof Storage))
+        {
+            return false;
+        }
+        return ((Storage) obj).path.equals(path);
+    }
 
     public Storage( )
     {
@@ -78,9 +96,19 @@ public class Storage implements Serializable
         Logger.msg("Failed to delete the file");
         return false;
     }
-    
+
+    public boolean isEmpty( )
+    {
+        return path.isEmpty( );
+    }
+
+    public boolean isBlank( )
+    {
+        return path.isBlank( );
+    }
+
     @Override
-    public String toString()
+    public String toString( )
     {
         return path;
     }

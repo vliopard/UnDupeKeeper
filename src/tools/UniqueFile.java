@@ -67,6 +67,11 @@ public class UniqueFile implements Serializable
     {
         return fileUri.getPath( );
     }
+    
+    public boolean isEmpty()
+    {
+        return fileUri.isEmpty( );
+    }
 
     public String getString( )
     {
