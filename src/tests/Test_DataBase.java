@@ -17,11 +17,11 @@ import tools.Logger;
 import tools.Storage;
 import tools.UniqueFile;
 
-public class DataBaseTests
+public class Test_DataBase
 {
     private HashMap <Storage, String>    linkMapTable = new HashMap <Storage, String>( );
     private HashMap <String, UniqueFile> hashMapTable = new HashMap <String, UniqueFile>( );
-    private static Path                  dummyfile    = FileSetup.generateDummy( );
+    private static Path                  dummyfile    = FileSetup.generateDummy("./dummyfile.tst");
 
     @Before
     public void setUp( ) throws Exception

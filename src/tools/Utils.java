@@ -4,7 +4,11 @@ import java.awt.AWTException;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.util.Scanner;
+
 import settings.Settings;
 import settings.Strings;
 
@@ -99,5 +103,66 @@ public class Utils
             Logger.err("MSG_036: " + Strings.utBalloonError + e);
         }
         systemTray.remove(trayIcon);
+    }
+    
+    public static boolean runSystemCommand(String command, int option)
+    {
+        try
+        {
+            Process process = Runtime.getRuntime( ).exec(command);
+            process.waitFor( );
+            if (process.exitValue( ) != 0)
+            {
+                // TODO: CHANGE TO INDEXED MESSAGE
+                Logger.msg("Abnormal process termination 1");
+                return false;
+            }
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream( )));
+            String         line;
+            switch (option)
+            {
+                case 0:
+                    line = bufferedReader.readLine( );
+                    do
+                    {
+                        if (null == line || line.trim( ).equals(Settings.CompareNatCommandResult)
+                                || line.trim( ).equals(Settings.CompareExeCommandResult))
+                        {
+                            return true;
+                        }
+                    }
+                    while ((line = bufferedReader.readLine( )) != null);
+                break;
+
+                case 1:
+                    while ((line = bufferedReader.readLine( )) != null)
+                    {
+                        Logger.msg(line);
+                    }
+            }
+
+            Scanner scanner = new Scanner(process.getInputStream( ));
+            scanner.useDelimiter(Settings.delimiter);
+            while (scanner.hasNext( ))
+            {
+                Logger.msg(scanner.next( ));
+            }
+            scanner.close( );
+
+            bufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream( )));
+            while ((line = bufferedReader.readLine( )) != null)
+            {
+                Logger.err(Strings.outputError + line);
+            }
+            bufferedReader.close( );
+
+            process.destroy( );
+        }
+        catch (Exception e)
+        {
+            Logger.err("MSG_023: " + Strings.processRuntimeError + e);
+        }
+        return true;
     }
 }

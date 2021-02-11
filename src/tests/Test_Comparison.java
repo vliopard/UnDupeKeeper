@@ -10,7 +10,7 @@ import org.junit.Test;
 import main.Comparison;
 import settings.Settings;
 
-public class ComparisonTests
+public class Test_Comparison
 {
     String testFilePath = "";
 

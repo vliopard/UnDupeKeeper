@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
@@ -18,14 +19,17 @@ import org.apache.commons.io.FilenameUtils;
 
 public class FileSetup
 {
-    public static Path generateDummy( )
+    public static Path generateDummy(String dummy)
     {
         try
         {
-            FileOutputStream fos = new FileOutputStream("./dummyfile.tmp");
-            fos.write(1);
-            fos.close( );
-            return Paths.get("./dummyfile.tmp");
+            //FileOutputStream fos = new FileOutputStream(dummy);
+            //fos.write(1);
+            //fos.close( );
+            Path dummyPath = Paths.get(dummy);
+            Files.createFile(dummyPath);
+            Files.writeString(dummyPath, "dummyTestContent");
+            return dummyPath;
         }
         catch (IOException e)
         {

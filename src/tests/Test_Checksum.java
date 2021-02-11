@@ -11,7 +11,7 @@ import org.junit.Test;
 import settings.Settings;
 import tools.CheckSum;
 
-public class ChecksumTests
+public class Test_Checksum
 {
     String testFilePath = "";
 

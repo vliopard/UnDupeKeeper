@@ -99,6 +99,7 @@ public class Settings
     public static final String   Tab                      ="\t";
     public static final String   endl                     ="\n";
     public static final String   EndLine                  ="\r\n";
+    public static final String   delimiter                =os.indexOf("win") >= 0 ? EndLine : endl;
     public static final String   Recursive                ="-r";
     public static final String   TextFileList             ="-f";
     public static final String   FileExtension            =".jpg";

@@ -1,6 +1,7 @@
 package main;
 
 import java.io.BufferedInputStream;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class Comparison
         try
         {
             fsize = Files.size(f1);
+            // TODO: replace number for constant (configurable settings)
             if (fsize < 350000000)
             {
                 return isArrayEqual(f1, f2);
@@ -69,6 +71,7 @@ public class Comparison
         }
         catch (IOException e)
         {
+            // TODO: REPLACE BY INDEXED MESSAGE
             e.printStackTrace( );
         }
         return false;
@@ -106,6 +109,7 @@ public class Comparison
         }
         catch (IOException e)
         {
+            // TODO: REPLACE BY INDEXED MESSAGE
             e.printStackTrace( );
         }
         return false;
@@ -119,6 +123,7 @@ public class Comparison
         }
         catch (IOException e)
         {
+            // TODO: REPLACE BY INDEXED MESSAGE
             e.printStackTrace( );
             return false;
         }
@@ -190,51 +195,21 @@ public class Comparison
         switch (type)
         {
             case 0:
-                return runSystemCommand(Settings.SysNatCompareCommand + Settings.QuoteFile + f1.toString( )
+                return Utils.runSystemCommand(Settings.SysNatCompareCommand + Settings.QuoteFile + f1.toString( )
                         + Settings.QuoteFile + Settings.Blank + Settings.QuoteFile + f2.toString( )
-                        + Settings.QuoteFile);
+                        + Settings.QuoteFile, 1);
 
             case 1:
-                return runSystemCommand(Settings.SysExeCompareCommand + Settings.QuoteFile + f1.toString( )
+                return Utils.runSystemCommand(Settings.SysExeCompareCommand + Settings.QuoteFile + f1.toString( )
                         + Settings.QuoteFile + Settings.Blank + Settings.QuoteFile + f2.toString( )
-                        + Settings.QuoteFile);
+                        + Settings.QuoteFile, 1);
 
             default:
                 return false;
         }
     }
 
-    public static boolean runSystemCommand(String command)
-    {
-        try
-        {
-            Process proc = Runtime.getRuntime( ).exec(command);
-            proc.waitFor( );
-            BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream( )));
 
-            String strLn = inputStream.readLine( );
-            do
-            {
-                if (null == strLn || strLn.trim( ).equals(Settings.CompareNatCommandResult)
-                        || strLn.trim( ).equals(Settings.CompareExeCommandResult))
-                {
-                    return true;
-                }
-            }
-            while ((strLn = inputStream.readLine( )) != null);
-
-            inputStream = new BufferedReader(new InputStreamReader(proc.getErrorStream( )));
-            while ((strLn = inputStream.readLine( )) != null)
-            {
-                Logger.err(Strings.outputError + strLn);
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.err("MSG_023: " + Strings.processRuntimeError + e);
-        }
-        return false;
-    }
 
     public static long totalLines(String textFileName)
     {

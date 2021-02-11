@@ -60,7 +60,7 @@ public class UniqueFile implements Serializable
 
     public void setSha( )
     {
-        fileSha = CheckSum.getChecksumElegant(fileUri.getPath( ));
+        fileSha = CheckSum.getChecksumElegant(fileUri);
     }
 
     public Path getPath( )
