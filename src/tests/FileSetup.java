@@ -33,6 +33,7 @@ public class FileSetup
         }
         catch (IOException e)
         {
+            // TODO: INDEX ERROR MESSAGE
             e.printStackTrace( );
         }
         return null;
@@ -80,6 +81,7 @@ public class FileSetup
             }
             catch (IOException e)
             {
+                // TODO: INDEX ERROR MESSAGE
                 e.printStackTrace( );
             }
         }
@@ -89,16 +91,15 @@ public class FileSetup
     {
         try
         {
-            String         basename = FilenameUtils.getBaseName(fn.toString( ));
-            File           fc       = new File(fn.getParent( ) + Settings.Slash + basename + ".cks");
-            FileReader     fr       = new FileReader(fc);
-            BufferedReader br       = new BufferedReader(fr);
-            String         line     = br.readLine( );
+            BufferedReader br   = new BufferedReader(new FileReader(new File(fn.getParent( ) + Settings.Slash
+                    + FilenameUtils.getBaseName(fn.toString( )) + ".cks")));
+            String         line = br.readLine( );
             br.close( );
             return line;
         }
         catch (IOException e)
         {
+            // TODO: INDEX ERROR MESSAGE
             e.printStackTrace( );
         }
         return null;
