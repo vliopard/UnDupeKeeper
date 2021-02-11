@@ -27,6 +27,7 @@ import tools.Logger;
 import tools.SettingsHandler;
 import tools.TrayImage;
 
+// TODO: update readme.md
 // TODO: USE MKDIR -P TO CREATE NON EXISTENT DIRECTORIES IF SYSTEM MUST RESTORE A LINK/FILE IN IT
 // TODO: jar installation (with dependencies)
 // TODO: update wordpress content (instructions)

@@ -1,6 +1,6 @@
 package tools;
 
-import java.nio.file.Path;
+import tools.Storage;
 
 /**
  * FileQueue class is an structure just for helping associate a file path to some action.
@@ -10,8 +10,8 @@ import java.nio.file.Path;
 public class FileQueue
 {
     private int  typeOfAction;
-    private Path pathToFile1;
-    private Path pathToFile2;
+    private Storage pathToFile1;
+    private Storage pathToFile2;
 
     /**
      * File Queue constructor. It does not need to do anything.
@@ -28,13 +28,13 @@ public class FileQueue
      * @param pathAndFile
      *                        A <code>String</code> containing the path to the file related to the action.
      */
-    public void set(int action, Path pathAndFile)
+    public void set(int action, Storage pathAndFile)
     {
         typeOfAction = action;
         pathToFile1 = pathAndFile;
     }
 
-    public void set(int action, Path pathAndFile1, Path pathAndFile2)
+    public void set(int action, Storage pathAndFile1, Storage pathAndFile2)
     {
         typeOfAction = action;
         pathToFile1 = pathAndFile1;
@@ -59,12 +59,12 @@ public class FileQueue
      * @return Returns a <code>String</code> containing the path to the file that is associated to a
      *         <code>typeOfAction</code>.
      */
-    public Path getPath( )
+    public Storage getStorage( )
     {
         return pathToFile1;
     }
 
-    public Path getPath2( )
+    public Storage getStorageTarget( )
     {
         return pathToFile2;
     }

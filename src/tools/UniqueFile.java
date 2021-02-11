@@ -3,27 +3,54 @@ package tools;
 import main.Comparison;
 import settings.Strings;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.ArrayList;
 
-public class UniqueFile
+public class UniqueFile implements Serializable
 {
-
-    private Path             fileUri   = null;
-    private String           fileSha   = null;
-    private ArrayList <Path> fileLinks = new ArrayList <Path>( );
+    private static final long   serialVersionUID = -2472447792902131726L;
+    private Storage             fileUri          = null;
+    private String              fileSha          = null;
+    private ArrayList <Storage> fileLinks        = new ArrayList <Storage>( );
 
     public UniqueFile(String value)
     {
-        fileUri = Paths.get(value);
+        fileUri = new Storage(value);
+        setSha( );
+    }
+
+    public UniqueFile(File value)
+    {
+        fileUri = new Storage(value);
         setSha( );
     }
 
     public UniqueFile(Path value)
     {
+        fileUri = new Storage(value);
+        setSha( );
+    }
+
+    public UniqueFile(Storage value)
+    {
         fileUri = value;
         setSha( );
+    }
+
+    public Storage getStorage( )
+    {
+        return fileUri;
+    }
+
+    public void setStorage(Storage file)
+    {
+        fileUri = file;
     }
 
     public String getSha( )
@@ -33,36 +60,47 @@ public class UniqueFile
 
     public void setSha( )
     {
-        fileSha = CheckSum.getChecksumElegant(fileUri);
+        fileSha = CheckSum.getChecksumElegant(fileUri.getPath( ));
     }
 
-    public Path getFilePath( )
+    public Path getPath( )
     {
-        return fileUri;
+        return fileUri.getPath( );
     }
 
-    public String getFileStr( )
+    public String getString( )
     {
-        return fileUri.toString( );
+        return fileUri.getString( );
     }
 
     public void clearUrl( )
     {
-        fileUri = Paths.get("");
+        fileUri = new Storage( );
     }
 
-    public void setFileStr(String uri)
+    public void setString(String uri)
     {
-        setFilePath(Paths.get(uri));
+        setPath(new Storage(uri));
     }
 
-    public void setFilePath(Path uri)
+    public void setPath(File uri)
     {
-        fileUri = uri;
-        setSha( );
-        if ( ! fileUri.equals(uri))
+        setPath(new Storage(uri));
+    }
+
+    public void setPath(Path uri)
+    {
+        setPath(new Storage(uri));
+    }
+
+    public void setPath(Storage uri)
+    {
+        // TODO: THIS METHOD SHOULD BE REVISED - why remaking links?
+        if ( !fileUri.getString( ).equals(uri.getString( )))
         {
-            if ( ! fileLinks.isEmpty( ))
+            fileUri = uri;
+            setSha( );
+            if ( !fileLinks.isEmpty( ))
             {
                 for (int i = 0; i < fileLinks.size( ); i++)
                 {
@@ -74,30 +112,49 @@ public class UniqueFile
 
     public void remakeLink(String uri)
     {
-        remakeLink(Paths.get(uri));
+        remakeLink(new Storage(uri));
+    }
+
+    public void remakeLink(File uri)
+    {
+        remakeLink(new Storage(uri));
     }
 
     public void remakeLink(Path uri)
     {
+        remakeLink(new Storage(uri));
+    }
 
+    public void remakeLink(Storage uri)
+    {
         if (FileOperations.isLink(uri))
         {
             FileOperations.deleteFile(uri);
         }
-        Linker.createLink(uri, fileUri);
+        // TODO: CREATE TEST SUITE TO CHECK PERFORMANCE BETWEEN THEM
+        //Linker.createLink(uri, fileUri);
+        try
+        {
+            Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
+        }
+        catch (IOException e)
+        {
+            // TODO: index error message
+            e.printStackTrace( );
+        }
     }
 
-    public ArrayList <Path> getFileLinks( )
+    public ArrayList <Storage> getFileLinks( )
     {
         return fileLinks;
     }
 
-    public void setFileLinks(ArrayList <Path> value)
+    public void setFileLinks(ArrayList <Storage> value)
     {
         fileLinks = value;
         for (int i = 0; i < value.size( ); i++)
         {
-            makeLink(value.get(i));
+            makeLink(value.get(i).getPath( ));
         }
     }
 
@@ -106,7 +163,18 @@ public class UniqueFile
         addLink(Paths.get(value));
     }
 
+    public void addLink(File value)
+    {
+        addLink(Paths.get(value.toString( )));
+    }
+
     public void addLink(Path value)
+    {
+        fileLinks.add(new Storage(value));
+        makeLink(value);
+    }
+
+    public void addLink(Storage value)
     {
         fileLinks.add(value);
         makeLink(value);
@@ -114,10 +182,20 @@ public class UniqueFile
 
     public void includeLink(Path value)
     {
+        includeLink(new Storage(value));
+    }
+
+    public void includeLink(Storage value)
+    {
         fileLinks.add(value);
     }
 
     public void renLink(Path oldname, Path newname)
+    {
+        renLink(new Storage(oldname), new Storage(newname));
+    }
+
+    public void renLink(Storage oldname, Storage newname)
     {
         fileLinks.remove(oldname);
         fileLinks.add(newname);
@@ -125,10 +203,20 @@ public class UniqueFile
 
     public void unLink(String link)
     {
-        unLink(Paths.get(link));
+        unLink(new Storage(link));
+    }
+
+    public void unLink(File link)
+    {
+        unLink(new Storage(link));
     }
 
     public void unLink(Path link)
+    {
+        unLink(new Storage(link));
+    }
+
+    public void unLink(Storage link)
     {
         if (fileLinks.contains(link))
         {
@@ -138,15 +226,26 @@ public class UniqueFile
 
     public void delLink(String link)
     {
-        delLink(Paths.get(link));
+        delLink(new Storage(link));
+    }
+
+    public void delLink(File link)
+    {
+        delLink(new Storage(link));
     }
 
     public void delLink(Path link)
     {
+        delLink(new Storage(link));
+    }
+
+    public void delLink(Storage link)
+    {
         if (fileLinks.contains(link))
         {
             fileLinks.remove(link);
-            FileOperations.deleteFile(link);
+            link.deleteFile( );
+            link = null;
         }
     }
 
@@ -155,11 +254,19 @@ public class UniqueFile
         removeLink(Paths.get(link));
     }
 
+    public void removeLink(File link)
+    {
+        removeLink(Paths.get(link.toString( )));
+    }
+
     public void removeLink(Path link)
     {
-        if (fileLinks.contains(link))
+        Storage uri = new Storage(link);
+        if (fileLinks.contains(uri))
         {
-            FileOperations.deleteFile(link);
+            //FileOperations.deleteFile(link);
+            uri.deleteFile( );
+            uri = null;
         }
     }
 
@@ -167,46 +274,75 @@ public class UniqueFile
     {
         for (int i = 0; i < fileLinks.size( ); i++)
         {
-            FileOperations.deleteFile(fileLinks.get(i));
+            //FileOperations.deleteFile(fileLinks.get(i));
+            fileLinks.get(i).deleteFile( );
         }
     }
 
     public void makeLinks( )
     {
-        for (int i = 0; i < fileLinks.size( ); i++)
+        try
         {
-            Linker.createLink(fileLinks.get(i), fileUri);
+            for (int i = 0; i < fileLinks.size( ); i++)
+            {
+                Files.createSymbolicLink(fileLinks.get(i).getPath( ), fileUri.getPath( ));
+                //Linker.createLink(fileLinks.get(i), fileUri);
+            }
+        }
+        catch (IOException e)
+        {
+            // TODO: index error message
+            e.printStackTrace( );
         }
     }
 
     public void makeLink(String uri)
     {
-        makeLink(Paths.get(uri));
+        makeLink(new Storage(uri));
+    }
+
+    public void makeLink(File uri)
+    {
+        makeLink(new Storage(uri));
     }
 
     public void makeLink(Path uri)
     {
-        // TODO: COMPARE BY CHECKSUM
-        if (Comparison.compareBySize(uri, fileUri))
+        makeLink(new Storage(uri));
+    }
+
+    public void makeLink(Storage uri)
+    {
+        try
         {
-            FileOperations.deleteFile(uri);
-            Linker.createLink(uri, fileUri);
+            // TODO: COMPARE BY CHECKSUM
+            if (Comparison.compareBySize(uri.getPath( ), fileUri.getPath( )))
+            {
+                FileOperations.deleteFile(uri);
+                Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
+                //Linker.createLink(uri, fileUri);
+            }
+            else
+            {
+                Logger.err(Strings.wkFatalError);
+                Logger.msg("ERROR: FILE CONTENTS ARE NOT THE SAME");
+            }
         }
-        else
+        catch (IOException e)
         {
-            Logger.err(Strings.wkFatalError);
-            Logger.msg("ERROR: FILE CONTENTS ARE NOT THE SAME");
+            // TODO: index error message
+            e.printStackTrace( );
         }
     }
 
     public void show( )
     {
-        Logger.msg("Checksum: [" + fileSha + "] Filename: [" + fileUri.toString( ) + "]");
+        Logger.msg("Checksum: [" + fileSha + "] Filename: [" + fileUri.getString( ) + "]");
         if (fileLinks.size( ) > 0)
         {
             for (int i = 0; i < fileLinks.size( ); i++)
             {
-                Logger.msg("\t\tFilelink: " + fileLinks.get(i).toString( ));
+                Logger.msg("\t\tFilelink: " + fileLinks.get(i).getString( ));
             }
         }
     }

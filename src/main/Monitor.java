@@ -1,11 +1,11 @@
 package main;
 
-import java.nio.file.Paths;
 import java.util.concurrent.BlockingQueue;
 import settings.Settings;
 import settings.Strings;
 import tools.FileQueue;
 import tools.Logger;
+import tools.Storage;
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
@@ -52,14 +52,14 @@ public class Monitor
             {
                 Thread.sleep(Settings.ThreadSleepTime);
             }
-            while ( ! stopSignal.contains(Settings.StopWorking));
-            if ( ! JNotify.removeWatch(watchID))
+            while ( !stopSignal.contains(Settings.StopWorking));
+            if ( !JNotify.removeWatch(watchID))
             {
                 Logger.err("MSG_002: " + Strings.mtInvalidWatchID);
             }
             fileQueue = new FileQueue( );
             // TODO: EXIT SIGNAL FILE WILL SHUTDOWN SYSTEM - FIX IT
-            fileQueue.set(Settings.WorkerStopSignal, Paths.get(Settings.WorkerPrepareToExit));
+            fileQueue.set(Settings.WorkerStopSignal, new Storage(Settings.WorkerPrepareToExit));
             transferQueue.put(fileQueue);
         }
         catch (JNotifyException | InterruptedException e)
@@ -80,7 +80,7 @@ public class Monitor
         public void fileCreated(int wd, String rootPath, String name)
         {
             fileQueue = new FileQueue( );
-            fileQueue.set(Settings.FileCreated, Paths.get(rootPath + Settings.Slash + name));
+            fileQueue.set(Settings.FileCreated, new Storage(rootPath + Settings.Slash + name));
             try
             {
                 transferQueue.put(fileQueue);
@@ -94,7 +94,7 @@ public class Monitor
         public void fileModified(int wd, String rootPath, String name)
         {
             fileQueue = new FileQueue( );
-            fileQueue.set(Settings.FileModified, Paths.get(rootPath + Settings.Slash + name));
+            fileQueue.set(Settings.FileModified, new Storage(rootPath + Settings.Slash + name));
             try
             {
                 transferQueue.put(fileQueue);
@@ -108,7 +108,7 @@ public class Monitor
         public void fileDeleted(int wd, String rootPath, String name)
         {
             fileQueue = new FileQueue( );
-            fileQueue.set(Settings.FileDeleted, Paths.get(rootPath + Settings.Slash + name));
+            fileQueue.set(Settings.FileDeleted, new Storage(rootPath + Settings.Slash + name));
             try
             {
                 transferQueue.put(fileQueue);
@@ -124,7 +124,7 @@ public class Monitor
             Logger.msg("MOVED FROM [" + rootPath + Settings.Slash + oldName + "]");
             Logger.msg("MOVED TO   [" + rootPath + Settings.Slash + newName + "]");
             fileQueue = new FileQueue( );
-            fileQueue.set(Settings.FileRenamed, Paths.get(rootPath + Settings.Slash + oldName), Paths.get(rootPath
+            fileQueue.set(Settings.FileRenamed, new Storage(rootPath + Settings.Slash + oldName), new Storage(rootPath
                     + Settings.Slash + newName));
             try
             {

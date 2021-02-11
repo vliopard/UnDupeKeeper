@@ -162,8 +162,13 @@ public class CheckSum
      */
     public static String getChecksumElegant(Path fileName)
     {
-        waitForFile(fileName);
-        byte[ ]             rawBytes  = createChecksum(fileName);
+        return getChecksumElegant(new Storage(fileName));
+    }
+
+    public static String getChecksumElegant(Storage fileName)
+    {
+        waitForFile(fileName.getPath( ));
+        byte[ ]             rawBytes  = createChecksum(fileName.getPath( ));
         final StringBuilder hexString = new StringBuilder(2 * rawBytes.length);
         for (final byte b:rawBytes)
         {

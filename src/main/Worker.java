@@ -14,6 +14,7 @@ import tools.DataBase;
 import tools.FileQueue;
 import tools.FileOperations;
 import tools.Logger;
+import tools.Storage;
 import tools.Utils;
 import tools.UniqueFile;
 
@@ -32,7 +33,7 @@ public class Worker implements Runnable
     private final BlockingQueue <Integer>   stopSignal;
     private final BlockingQueue <FileQueue> transferQueue;
 
-    private HashMap <Path, String>       linkMapTable = new HashMap <Path, String>( );
+    private HashMap <Storage, String>    linkMapTable = new HashMap <Storage, String>( );
     private HashMap <String, UniqueFile> hashMapTable = new HashMap <String, UniqueFile>( );
 
     /**
@@ -65,7 +66,7 @@ public class Worker implements Runnable
             {
                 consume(transferQueue.take( ));
             }
-            while ( ! stopSignal.contains(Settings.StopWorking));
+            while ( !stopSignal.contains(Settings.StopWorking));
         }
         catch (InterruptedException e)
         {
@@ -146,16 +147,17 @@ public class Worker implements Runnable
         switch (fileQueue.getType( ))
         {
             case Settings.FileCreated:
-                log(" case Settings.FileCreated: [" + fileQueue.getPath( ) + "]");
-                if (FileOperations.isLink(fileQueue.getPath( )))
+                log(" case Settings.FileCreated: [" + fileQueue.getStorage( ) + "]");
+                if (FileOperations.isLink(fileQueue.getStorage( )))
                 {
-                    String filesha = linkMapTable.get(fileQueue.getPath( ));
+                    // TODO: BUG linkMapTable is not getting link
+                    String filesha = linkMapTable.get(fileQueue.getStorage( ));
                     if (null == filesha)
                     {
                         log(" case Settings.FileCreated: if(null==filesha) TRUE");
-                        String fileSha = CheckSum.getChecksumElegant(fileQueue.getPath( ));
-                        hashMapTable.get(fileSha).includeLink(fileQueue.getPath( ));
-                        linkMapTable.put(fileQueue.getPath( ), fileSha);
+                        String fileSha = CheckSum.getChecksumElegant(fileQueue.getStorage( ));
+                        hashMapTable.get(fileSha).includeLink(fileQueue.getStorage( ));
+                        linkMapTable.put(fileQueue.getStorage( ), fileSha);
                     }
                     else
                     {
@@ -164,57 +166,57 @@ public class Worker implements Runnable
                 }
                 else
                 {
-                    log(" case Settings.FileCreated: if(FileOperations.isLink(" + fileQueue.getPath( ) + ")) FALSE");
+                    log(" case Settings.FileCreated: if(FileOperations.isLink(" + fileQueue.getStorage( ) + ")) FALSE");
                 }
             break;
 
             case Settings.FileModified:
-                log(" case Settings.FileModified: [" + fileQueue.getPath( ).toString( ) + "]");
-                if ( ! FileOperations.isLink(fileQueue.getPath( )))
+                log(" case Settings.FileModified: [" + fileQueue.getStorage( ) + "]");
+                if ( !FileOperations.isLink(fileQueue.getStorage( )))
                 {
-                    if (FileOperations.isFile(fileQueue.getPath( )))
+                    if (FileOperations.isFile(fileQueue.getStorage( )))
                     {
-                        UniqueFile newfile = new UniqueFile(fileQueue.getPath( ));
-                        String     linksha = linkMapTable.get(newfile.getFilePath( ));
+                        UniqueFile newfile = new UniqueFile(fileQueue.getStorage( ));
+                        String     linksha = linkMapTable.get(newfile.getStorage( ));
                         log(" if (" + linksha + " != " + newfile.getSha( ) + ")");
                         if (null != linksha && linksha != newfile.getSha( ))
                         {
-                            linkMapTable.remove(newfile.getFilePath( ));
+                            linkMapTable.remove(newfile.getStorage( ));
                             UniqueFile oldfile = hashMapTable.get(linksha);
-                            oldfile.unLink(newfile.getFilePath( ));
+                            oldfile.unLink(newfile.getPath( ));
                         }
                         else
                         {
                             log(" if(linksha != newfile.getSha( )) FALSE");
                         }
 
-                        if ( ! hashMapTable.containsKey(newfile.getSha( )))
+                        if ( !hashMapTable.containsKey(newfile.getSha( )))
                         {
-                            log(" case Settings.FileModified: manageNewSha(" + newfile.getFileStr( ) + ")");
+                            log(" case Settings.FileModified: manageNewSha(" + newfile.getString( ) + ")");
                             manageNewSha(newfile);
                         }
                         else
                         {
-                            log(" case Settings.FileModified: manageExistingSha(" + newfile.getFileStr( ) + ")");
+                            log(" case Settings.FileModified: manageExistingSha(" + newfile.getString( ) + ")");
                             manageExistingSha(newfile);
                         }
                     }
                     else
                     {
                         log(" case Settings.FileModified: if(FileOperations.isFile(fileQueue.getPath())) FALSE ["
-                                + fileQueue.getPath( ) + "]");
+                                + fileQueue.getStorage( ) + "]");
                     }
                 }
                 else
                 {
                     log(" case Settings.FileModified: if(!FileOperations.isLink(fileQueue.getPath())) FALSE ["
-                            + fileQueue.getPath( ) + "]");
+                            + fileQueue.getStorage( ) + "]");
                 }
             break;
 
             case Settings.FileDeleted:
-                ArrayList <String> shas = getShaFromUri(fileQueue.getPath( ));
-                log(" Settings.FileDeleted: [" + fileQueue.getPath( ) + "] SHASIZE {" + shas.size( ) + "}");
+                ArrayList <String> shas = getShaFromUri(fileQueue.getStorage( ));
+                log(" Settings.FileDeleted: [" + fileQueue.getStorage( ) + "] SHASIZE {" + shas.size( ) + "}");
                 if (shas.size( ) > 0)
                 {
                     for (int i = 0; i < shas.size( ); i++)
@@ -226,50 +228,46 @@ public class Worker implements Runnable
                 }
                 else
                 {
-                    if (FileOperations.isLink(fileQueue.getPath( )))
+                    if (FileOperations.isLink(fileQueue.getStorage( )))
                     {
                         // TODO: WHEN MOVE DO SOMETHING HERE
                         log(" Settings.FileDeleted: if(FileOperations.isLink(fileQueue.getPath())) TRUE ["
-                                + fileQueue.getPath( ).toString( ) + "]");
+                                + fileQueue.getStorage( ) + "]");
                     }
                     else
                     {
-                        log(" Settings.FileDeleted: if(FileOperations.isLink(" + fileQueue.getPath( ) + ")) FALSE ["
-                                + fileQueue.getPath( ).toString( ) + "]");
-                        String filesha = linkMapTable.get(fileQueue.getPath( ));
-                        if (FileOperations.isFile(fileQueue.getPath( )))
+                        log(" Settings.FileDeleted: if(FileOperations.isLink(" + fileQueue.getStorage( ) + ")) FALSE ["
+                                + fileQueue.getStorage( ) + "]");
+                        String filesha = linkMapTable.get(fileQueue.getStorage( ));
+                        if (FileOperations.isFile(fileQueue.getStorage( )))
                         {
-                            log(" Settings.FileDeleted: hashMapTable.get(filesha).delLink(" + fileQueue.getPath( )
-                                    + "); ["
-                                    + fileQueue.getPath( ).toString( ) + "]");
+                            log(" Settings.FileDeleted: hashMapTable.get(filesha).delLink(" + fileQueue.getStorage( )
+                                    + "); [" + fileQueue.getStorage( ) + "]");
                             // TODO: CHECK NULL POINTER
-                            hashMapTable.get(filesha).delLink(fileQueue.getPath( ));
+                            hashMapTable.get(filesha).delLink(fileQueue.getStorage( ));
                         }
                         else
                         {
-                            log(" Settings.FileDeleted: if(FileOperations.isFile(" + fileQueue.getPath( ) + ")) FALSE ["
-                                    + fileQueue.getPath( ).toString( ) + "]");
+                            log(" Settings.FileDeleted: if(FileOperations.isFile(" + fileQueue.getStorage( )
+                                    + ")) FALSE [" + fileQueue.getStorage( ) + "]");
 
                             // TODO: MUST CHECK IF PATH IS NOT NULL
-                            Path filepath = null;
+                            Storage filepath = null;
                             if (null != hashMapTable.get(filesha))
                             {
-                                filepath = hashMapTable.get(filesha).getFilePath( );
+                                filepath = hashMapTable.get(filesha).getStorage( );
                             }
                             else
                             {
-                                log(" if (! hashMapTable.get(" + filesha
-                                        + ")) NULL");
+                                log(" if (! hashMapTable.get(" + filesha + ")) NULL");
                             }
-                            if (null != filepath && ! filepath.toString( ).isEmpty( ))
+                            if (null != filepath.getString( ) && !filepath.getString( ).isEmpty( ))
                             {
                                 log(" Settings.FileDeleted: hashMapTable.get(" + filesha
-                                        + ").unLink(fileQueue.getPath()); ["
-                                        + fileQueue.getPath( ).toString( ) + "]");
-                                log(" Settings.FileDeleted: [" + hashMapTable.get(filesha).getFilePath( ).toString( )
-                                        + "]");
-                                hashMapTable.get(filesha).unLink(fileQueue.getPath( ));
-                                linkMapTable.remove(fileQueue.getPath( ));
+                                        + ").unLink(fileQueue.getPath()); [" + fileQueue.getStorage( ) + "]");
+                                log(" Settings.FileDeleted: [" + hashMapTable.get(filesha).getStorage( ) + "]");
+                                hashMapTable.get(filesha).unLink(fileQueue.getStorage( ));
+                                linkMapTable.remove(fileQueue.getStorage( ));
                             }
                             else
                             {
@@ -282,24 +280,24 @@ public class Worker implements Runnable
             break;
 
             case Settings.FileRenamed:
-                log(" case Settings.FileRenamed: FROM [" + fileQueue.getPath( ).toString( ) + "]");
-                log(" case Settings.FileRenamed: TO   [" + fileQueue.getPath2( ).toString( ) + "]");
-                if (FileOperations.isLink(fileQueue.getPath2( )))
+                log(" case Settings.FileRenamed: FROM [" + fileQueue.getStorage( ) + "]");
+                log(" case Settings.FileRenamed: TO   [" + fileQueue.getStorageTarget( ) + "]");
+                if (FileOperations.isLink(fileQueue.getStorageTarget( )))
                 {
                     // se moveu link, atualizar caminho do link na tabela
-                    String filesha = linkMapTable.get(fileQueue.getPath( ));
-                    linkMapTable.put(fileQueue.getPath2( ), filesha);
-                    linkMapTable.remove(fileQueue.getPath( ));
-                    hashMapTable.get(filesha).renLink(fileQueue.getPath( ), fileQueue.getPath2( ));
+                    String filesha = linkMapTable.get(fileQueue.getStorage( ));
+                    linkMapTable.put(fileQueue.getStorageTarget( ), filesha);
+                    linkMapTable.remove(fileQueue.getStorage( ));
+                    hashMapTable.get(filesha).renLink(fileQueue.getStorage( ), fileQueue.getStorageTarget( ));
                     // se moveu o arquivo, atualizar path no sha do arquivo
                     // se moveu o arquivo, atualizar todos os links do arquivo
                 }
                 else
                 {
-                    ArrayList <String> shaz = getShaFromUri(fileQueue.getPath( ));
+                    ArrayList <String> shaz = getShaFromUri(fileQueue.getStorage( ).getPath( ));
                     for (int i = 0; i < shaz.size( ); i++)
                     {
-                        hashMapTable.get(shaz.get(i)).setFilePath(fileQueue.getPath2( ));
+                        hashMapTable.get(shaz.get(i)).setPath(fileQueue.getStorageTarget( ).getPath( ));
                     }
                 }
             break;
@@ -317,10 +315,10 @@ public class Worker implements Runnable
         }
 
         Logger.msg("__ [ LINK TABLE ] ________________________________________________________________________________________________________________________________________");
-        Iterator <Entry <Path, String>> lm = linkMapTable.entrySet( ).iterator( );
+        Iterator <Entry <Storage, String>> lm = linkMapTable.entrySet( ).iterator( );
         while (lm.hasNext( ))
         {
-            Map.Entry <Path, String> pair = (Map.Entry <Path, String>) lm.next( );
+            Map.Entry <Storage, String> pair = (Map.Entry <Storage, String>) lm.next( );
             Logger.msg("[" + pair.getValue( ) + "] [" + pair.getKey( ) + "]");
         }
         Logger.msg("\n__ [ LOG START  ] ________________________________________________________________________________________________________________________________________");
@@ -342,7 +340,7 @@ public class Worker implements Runnable
      */
     private void manageNewSha(UniqueFile fileName)
     {
-        ArrayList <String> oldsha = getShaFromUri(fileName.getFilePath( ));
+        ArrayList <String> oldsha = getShaFromUri(fileName.getPath( ));
         if (oldsha.size( ) > 0)
         {
             for (int i = 0; i < oldsha.size( ); i++)
@@ -354,7 +352,7 @@ public class Worker implements Runnable
         filesIncluded++;
         Logger.msg("[" + Utils.addLeadingZeros(filesIncluded) + "][" + Utils.addLeadingZeros(filesReplaced) + "]" +
                 Settings.Tab + "[" + fileName.getSha( ) + "]" + Settings.Tab + Strings.wkIncluding
-                + fileName.getFileStr( ));
+                + fileName.getString( ));
     }
 
     /**
@@ -373,22 +371,22 @@ public class Worker implements Runnable
         {
             newfile.makeLinks( );
             hashMapTable.put(newfile.getSha( ), newfile);
-            linkMapTable.put(newfile.getFilePath( ), newfile.getSha( ));
+            linkMapTable.put(newfile.getStorage( ), newfile.getSha( ));
         }
         else
         {
-            if (0 == currentfile.getFilePath( ).compareTo(newfile.getFilePath( )))
+            if (0 == currentfile.getPath( ).compareTo(newfile.getPath( )))
             {
                 // Se o URI da base � igual ao URI de entrada
                 // Mesmo SHA, Mesmo URI
                 // Ent�o Arquivo n�o mudou
-                log(" if(0==currentfile.getFilePath().compareTo(" + newfile.getFilePath( ) + ")) TRUE");
+                log(" if(0==currentfile.getFilePath().compareTo(" + newfile.getPath( ) + ")) TRUE");
             }
             else
             {
                 // Se o URI da base � diferente do URI de entrada
                 // Verifica se a URI de entrada tem algum SHA na base
-                ArrayList <String> oldsha = getShaFromUri(newfile.getFilePath( ));
+                ArrayList <String> oldsha = getShaFromUri(newfile.getPath( ));
                 if (oldsha.size( ) > 0)
                 {
                     for (int i = 0; i < oldsha.size( ); i++)
@@ -413,7 +411,7 @@ public class Worker implements Runnable
                                 log(" if (hashMapTable.get(" + oldsha.get(i) + ").getSha().equals(" + newfile.getSha( )
                                         + ")) TRUE ("
                                         + newfile.toString( ) + "): FILE: "
-                                        + hashMapTable.get(oldsha.get(i)).getFileStr( ));
+                                        + hashMapTable.get(oldsha.get(i)).getString( ));
                             }
                             else
                             {
@@ -421,15 +419,15 @@ public class Worker implements Runnable
                                 Logger.msg("[" + Utils.addLeadingZeros(filesIncluded) + "]["
                                         + Utils.addLeadingZeros(filesReplaced) + "]" +
                                         Settings.Tab + "[" + newfile.getSha( ) + "]" + Settings.Tab
-                                        + Strings.wkReplacing + newfile.getFileStr( ));
-                                hashMapTable.get(newfile.getSha( )).addLink(newfile.getFileStr( ));
+                                        + Strings.wkReplacing + newfile.getString( ));
+                                hashMapTable.get(newfile.getSha( )).addLink(newfile.getString( ));
                             }
                             // se o SHA da URI de entrada � diferente do SHA da uri de base
                             // ent�o o conte�do do URI foi salvo e mudou o conte�do
                             // atualizar SHA do URI
                             Logger.msg("[" + Utils.addLeadingZeros(filesIncluded) + "]["
                                     + Utils.addLeadingZeros(filesReplaced) + "]" +
-                                    Settings.Tab + Strings.wkRemoving + newfile.getFileStr( ));
+                                    Settings.Tab + Strings.wkRemoving + newfile.getString( ));
                             filesIncluded--;
                             hashMapTable.remove(oldsha.get(i));
                         }
@@ -438,25 +436,25 @@ public class Worker implements Runnable
                 else
                 {
                     // URI de entrada � um arquivo duplicado
-                    if (FileOperations.isFile(newfile.getFileStr( )))
+                    if (FileOperations.isFile(newfile.getStorage( )))
                     {
-                        if (hashMapTable.get(newfile.getSha( )).getFileStr( ).isEmpty( ))
+                        if (hashMapTable.get(newfile.getSha( )).getString( ).isEmpty( ))
                         {
-                            hashMapTable.get(newfile.getSha( )).setFilePath(newfile.getFilePath( ));
+                            hashMapTable.get(newfile.getSha( )).setPath(newfile.getStorage( ));
                             hashMapTable.get(newfile.getSha( )).makeLinks( );
                         }
                         else
                         {
-                            hashMapTable.get(newfile.getSha( )).addLink(newfile.getFileStr( ));
-                            linkMapTable.put(newfile.getFilePath( ), newfile.getSha( ));
+                            hashMapTable.get(newfile.getSha( )).addLink(newfile.getStorage( ));
+                            linkMapTable.put(newfile.getStorage( ), newfile.getSha( ));
                         }
                     }
                     else
                     {
-                        log(" if (FileOperations.isFile(" + newfile.getFileStr( ) + ")) FALSE "
-                                + "): FROM {" + hashMapTable.get(newfile.getSha( )).getFileStr( ) + "} TO:");
-                        log(" if (FileOperations.isFile(" + newfile.getFileStr( ) + ")) FALSE "
-                                + "): dupelist[{" + newfile.getSha( ) + "}] = {" + newfile.getFileStr( ) + "}");
+                        log(" if (FileOperations.isFile(" + newfile.getString( ) + ")) FALSE "
+                                + "): FROM {" + hashMapTable.get(newfile.getSha( )).getString( ) + "} TO:");
+                        log(" if (FileOperations.isFile(" + newfile.getString( ) + ")) FALSE "
+                                + "): dupelist[{" + newfile.getSha( ) + "}] = {" + newfile.getString( ) + "}");
                     }
                 }
             }
@@ -465,12 +463,17 @@ public class Worker implements Runnable
 
     private ArrayList <String> getShaFromUri(Path uri)
     {
+        return getShaFromUri(new Storage(uri));
+    }
+
+    private ArrayList <String> getShaFromUri(Storage uri)
+    {
         ArrayList <String>                    shas = new ArrayList <String>( );
         Iterator <Entry <String, UniqueFile>> it   = hashMapTable.entrySet( ).iterator( );
         while (it.hasNext( ))
         {
             Map.Entry <String, UniqueFile> pair = (Map.Entry <String, UniqueFile>) it.next( );
-            if (0 == pair.getValue( ).getFilePath( ).compareTo(uri))
+            if (0 == pair.getValue( ).getPath( ).compareTo(uri.getPath( )))
             {
                 shas.add(pair.getKey( ));
             }
