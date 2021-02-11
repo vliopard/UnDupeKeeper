@@ -19,6 +19,7 @@ public class Logger
     public static final int USERINTERFACE = 6;
     public static final int TRAYIMAGE     = 7;
     public static final int TESTS         = 8;
+    public static final int OPERATIONS    = 9;
     /* ========================================================= */
     private static boolean COMPLETE_DISABLED = false;
     /* ========================================================= */
@@ -32,6 +33,7 @@ public class Logger
     private static boolean USERINTERFACE_ENABLED = false;
     private static boolean TRAYIMAGE_ENABLED     = false;
     private static boolean TESTS_ENABLED         = false;
+    private static boolean OPERATIONS_ENABLED    = false;
     private static boolean undo                  = false;
 
     /**
@@ -158,6 +160,13 @@ public class Logger
 
                 case TESTS:
                     if (TESTS_ENABLED || ALL_SOFTWARE_ENABLED)
+                    {
+                        messageFormat(debugModuleName, logMessage);
+                    }
+                break;
+
+                case OPERATIONS:
+                    if (OPERATIONS_ENABLED || ALL_SOFTWARE_ENABLED)
                     {
                         messageFormat(debugModuleName, logMessage);
                     }

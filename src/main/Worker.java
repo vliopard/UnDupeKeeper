@@ -57,8 +57,8 @@ public class Worker implements Runnable
      */
     public void run( )
     {
-        hashMapTable = DataBase.loadMap( );
-        linkMapTable = DataBase.loadMap1( );
+        hashMapTable = DataBase.loadHashMap( );
+        linkMapTable = DataBase.loadLinkMap( );
         Logger.msg(Strings.wkStartup);
         try
         {
@@ -66,7 +66,7 @@ public class Worker implements Runnable
             {
                 consume(transferQueue.take( ));
             }
-            while ( !stopSignal.contains(Settings.StopWorking));
+            while ( ! stopSignal.contains(Settings.StopWorking));
         }
         catch (InterruptedException e)
         {
@@ -91,8 +91,8 @@ public class Worker implements Runnable
     {
         synchronized (this)
         {
-            DataBase.saveMap(hashMapTable);
-            DataBase.saveMap1(linkMapTable);
+            DataBase.saveHashMap(hashMapTable);
+            DataBase.saveLinkMap(linkMapTable);
         }
     }
 
@@ -127,8 +127,8 @@ public class Worker implements Runnable
     {
         synchronized (this)
         {
-            hashMapTable = DataBase.loadMap( );
-            linkMapTable = DataBase.loadMap1( );
+            hashMapTable = DataBase.loadHashMap( );
+            linkMapTable = DataBase.loadLinkMap( );
         }
     }
 
@@ -173,7 +173,7 @@ public class Worker implements Runnable
 
             case Settings.FileModified:
                 log(" case Settings.FileModified: [" + fileQueue.getStorage( ) + "]");
-                if ( !FileOperations.isLink(fileQueue.getStorage( )))
+                if ( ! FileOperations.isLink(fileQueue.getStorage( )))
                 {
                     if (FileOperations.isFile(fileQueue.getStorage( )))
                     {
@@ -191,7 +191,7 @@ public class Worker implements Runnable
                             log(" if(linksha != newfile.getSha( )) FALSE");
                         }
 
-                        if ( !hashMapTable.containsKey(newfile.getSha( )))
+                        if ( ! hashMapTable.containsKey(newfile.getSha( )))
                         {
                             log(" case Settings.FileModified: manageNewSha(" + newfile.getStorage( ) + ")");
                             manageNewSha(newfile);
@@ -262,7 +262,7 @@ public class Worker implements Runnable
                             {
                                 log(" if (! hashMapTable.get(" + filesha + ")) NULL");
                             }
-                            if (null != filepath.getString( ) && !filepath.isEmpty( ))
+                            if (null != filepath.getString( ) && ! filepath.isEmpty( ))
                             {
                                 log(" Settings.FileDeleted: hashMapTable.get(" + filesha
                                         + ").unLink(fileQueue.getPath()); [" + fileQueue.getStorage( ) + "]");

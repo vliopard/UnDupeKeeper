@@ -1,7 +1,5 @@
 package tools;
 
-import tools.Storage;
-
 /**
  * FileQueue class is an structure just for helping associate a file path to some action.
  * 

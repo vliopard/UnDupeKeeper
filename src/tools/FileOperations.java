@@ -104,10 +104,10 @@ public class FileOperations
     {
         try
         {
-            Files.deleteIfExists(filename);
-            Logger.msg("File deleted successfully");
-            //Files.delete(filename);
             // if (filename.toFile( ).delete( ))
+            // Files.delete(filename);
+            Files.deleteIfExists(filename);
+            log(" File deleted successfully");
             return true;
         }
         catch (IOException e)
@@ -115,7 +115,7 @@ public class FileOperations
             // TODO: index error message
             e.printStackTrace( );
         }
-        Logger.msg("Failed to delete the file");
+        Logger.err("Failed to delete the file");
         return false;
     }
 
@@ -198,5 +198,16 @@ public class FileOperations
             return (file(dirName).list( ).length == 0);
         }
         return true;
+    }
+    
+    /**
+     * This method displays a log message through the embedded log system.
+     * 
+     * @param logMessage
+     *                       A <code>String</code> containing the log message to display.
+     */
+    private static void log(String logMessage)
+    {
+        Logger.log(Thread.currentThread( ), logMessage, Logger.OPERATIONS);
     }
 }

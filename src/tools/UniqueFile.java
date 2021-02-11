@@ -140,7 +140,9 @@ public class UniqueFile implements Serializable
         //Linker.createLink(uri, fileUri);
         try
         {
+            // TODO: TEST AND BENCHMARK: Files.createLink(getPath(), getPath())
             Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
+            // TODO: BENCHMARK TO Linker.createLink(uri, fileUri);
         }
         catch (IOException e)
         {
@@ -290,8 +292,9 @@ public class UniqueFile implements Serializable
         {
             for (int i = 0; i < fileLinks.size( ); i++)
             {
+                // TODO: TEST AND BENCHMARK: Files.createLink(getPath(), getPath())
                 Files.createSymbolicLink(fileLinks.get(i).getPath( ), fileUri.getPath( ));
-                //Linker.createLink(fileLinks.get(i), fileUri);
+                // TODO: BENCHMARK TO Linker.createLink(uri, fileUri);
             }
         }
         catch (IOException e)
@@ -324,8 +327,9 @@ public class UniqueFile implements Serializable
             if (Comparison.compareBySize(uri.getPath( ), fileUri.getPath( )))
             {
                 FileOperations.deleteFile(uri);
+                // TODO: TEST AND BENCHMARK: Files.createLink(getPath(), getPath())
                 Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
-                //Linker.createLink(uri, fileUri);
+                // TODO: BENCHMARK TO Linker.createLink(uri, fileUri);
             }
             else
             {

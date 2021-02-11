@@ -2,13 +2,15 @@ package tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Storage
+public class Storage implements Serializable
 {
-    private String path;
+    private static final long serialVersionUID = 4814143809492206886L;
+    private String            path;
 
     @Override
     public int hashCode( )
@@ -23,7 +25,7 @@ public class Storage
         {
             return true;
         }
-        if ( !(obj instanceof Storage))
+        if ( ! (obj instanceof Storage))
         {
             return false;
         }

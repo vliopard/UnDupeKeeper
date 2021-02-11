@@ -8,21 +8,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Random;
-import java.util.Map.Entry;
 
 import settings.Settings;
 import tools.CheckSum;
 import tools.FileOperations;
-import tools.Logger;
-import tools.Storage;
-import tools.UniqueFile;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.SerializationUtils;
 
 public class FileSetup
 {
@@ -106,41 +98,5 @@ public class FileSetup
             e.printStackTrace( );
         }
         return null;
-    }
-
-    public static void main(String[ ] args)
-    {
-        Path    dummyfile = FileSetup.generateDummy( );
-        Storage sto       = new Storage(dummyfile.toFile( ));
-
-        HashMap <Storage, String> linkMapTable = new HashMap <Storage, String>( );
-        linkMapTable.put(sto, "SFDA4R3FA423");
-        byte[ ]                   featureTransformerBytes = SerializationUtils.serialize(linkMapTable);
-
-        @SuppressWarnings("unchecked")
-        HashMap <Storage, String> linkMapTable1           = (HashMap <Storage, String>) SerializationUtils.deserialize(featureTransformerBytes);
-
-        Iterator <Entry <Storage, String>> lm = linkMapTable1.entrySet( ).iterator( );
-        while (lm.hasNext( ))
-        {
-            Map.Entry <Storage, String> pair = (Map.Entry <Storage, String>) lm.next( );
-            Logger.msg("[" + pair.getValue( ) + "] [" + pair.getKey( ).getString( ) + "]");
-        }
-
-        HashMap <String, UniqueFile> hashMapTable = new HashMap <String, UniqueFile>( );
-        hashMapTable.put("SFDA4R3FA423", new UniqueFile(dummyfile));
-        byte[ ] featureTransformerBytes1 = SerializationUtils.serialize(hashMapTable);
-
-        @SuppressWarnings("unchecked")
-        HashMap <String, UniqueFile> hashMapTable1 = (HashMap <String, UniqueFile>) SerializationUtils.deserialize(featureTransformerBytes1);
-
-        Iterator <Entry <String, UniqueFile>> lm1 = hashMapTable1.entrySet( ).iterator( );
-        while (lm1.hasNext( ))
-        {
-            Map.Entry <String, UniqueFile> pair = (Map.Entry <String, UniqueFile>) lm1.next( );
-            Logger.msg("[" + pair.getValue( ).getString( ) + "] [" + pair.getKey( ) + "]");
-        }
-
-        dummyfile.toFile( ).delete( );
     }
 }

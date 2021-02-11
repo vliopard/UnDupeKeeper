@@ -43,10 +43,10 @@ public class DataBase
         Logger.msg(Strings.dbEraseDatabase);
 
         HashMap <String, UniqueFile> hashMapToClear = new HashMap <String, UniqueFile>( );
-        saveMap(hashMapToClear);
+        saveHashMap(hashMapToClear);
 
         HashMap <Storage, String> hashMapToClear1 = new HashMap <Storage, String>( );
-        saveMap1(hashMapToClear1);
+        saveLinkMap(hashMapToClear1);
     }
 
     /**
@@ -56,18 +56,14 @@ public class DataBase
      *                          A <code>HashMap</code> of <code>Strings</code> containing the values to be written to
      *                          the disk.
      */
-    public static void saveMap(HashMap <String, UniqueFile> hashMapToSave)
+    public static void saveHashMap(HashMap <String, UniqueFile> hashMapToSave)
     {
-        log(" Saving1 [" + Settings.UnDupeKeeperDatabaseName + "]");
         Logger.msg(Strings.dbSaveDatabase);
         try
         {
-            log(" Saving2 [" + Settings.UnDupeKeeperDatabaseName + "]");
             ObjectOutputStream hashMapObjectOutput = new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperDatabaseName));
-            log(" Saving3 [" + Settings.UnDupeKeeperDatabaseName + "]");
             Logger.msg(Strings.dbDatabaseContains + hashMapToSave.size( ) + Strings.dbItems);
             hashMapObjectOutput.writeObject(hashMapToSave);
-            log(" Saving4 [" + Settings.UnDupeKeeperDatabaseName + "]");
             hashMapObjectOutput.close( );
             hashMapObjectOutput = null;
             Logger.msg(Strings.dbDatabaseSaved);
@@ -78,18 +74,14 @@ public class DataBase
         }
     }
 
-    public static void saveMap1(HashMap <Storage, String> hashMapToSave)
+    public static void saveLinkMap(HashMap <Storage, String> hashMapToSave)
     {
-        log(" SavingA [" + Settings.UnDupeKeeperDatabaseMap + "]");
         Logger.msg(Strings.dbSaveDatabase);
         try
         {
-            log(" SavingB [" + Settings.UnDupeKeeperDatabaseMap + "]");
             ObjectOutputStream hashMapObjectOutput = new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperDatabaseMap));
-            log(" SavingC [" + Settings.UnDupeKeeperDatabaseMap + "]");
             Logger.msg(Strings.dbDatabaseContains + hashMapToSave.size( ) + Strings.dbItems);
             hashMapObjectOutput.writeObject(hashMapToSave);
-            log(" SavingD [" + Settings.UnDupeKeeperDatabaseMap + "]");
             hashMapObjectOutput.close( );
             hashMapObjectOutput = null;
             Logger.msg(Strings.dbDatabaseSaved);
@@ -106,18 +98,14 @@ public class DataBase
      * @return Returns a <code>HashMap</code> of Strings containing an Encrypted representation and its file path
      *         location.
      */
-    public static HashMap <String, UniqueFile> loadMap( )
+    public static HashMap <String, UniqueFile> loadHashMap( )
     {
-        log(" Loading1 [" + Settings.UnDupeKeeperDatabaseName + "]");
         if (new File(Settings.UnDupeKeeperDatabaseName).exists( ))
         {
-            log(" Loading2 [" + Settings.UnDupeKeeperDatabaseName + "]");
             Logger.msg(Strings.dbLoadingDatabase);
             try
             {
-                log(" Loading3 [" + Settings.UnDupeKeeperDatabaseName + "]");
                 FileInputStream              fileInputStream = new FileInputStream(Settings.UnDupeKeeperDatabaseName);
-                log(" Loading4 [" + Settings.UnDupeKeeperDatabaseName + "]");
                 @SuppressWarnings("unchecked")
                 HashMap <String, UniqueFile> hashMapToLoad   = (HashMap <String, UniqueFile>) new ObjectInputStream(fileInputStream).readObject( );
                 Logger.msg(Strings.dbDatabaseContains + hashMapToLoad.size( ) + Strings.dbItems);
@@ -133,16 +121,13 @@ public class DataBase
         return new HashMap <String, UniqueFile>( );
     }
 
-    public static HashMap <Storage, String> loadMap1( )
+    public static HashMap <Storage, String> loadLinkMap( )
     {
-        log(" LoadingA [" + Settings.UnDupeKeeperDatabaseMap + "]");
         if (new File(Settings.UnDupeKeeperDatabaseMap).exists( ))
         {
-            log(" LoadingB [" + Settings.UnDupeKeeperDatabaseMap + "]");
             Logger.msg(Strings.dbLoadingDatabase);
             try
             {
-                log(" LoadingC [" + Settings.UnDupeKeeperDatabaseMap + "]");
                 FileInputStream        fileInputStream = new FileInputStream(Settings.UnDupeKeeperDatabaseMap);
                 @SuppressWarnings("unchecked")
                 HashMap <Storage, String> hashMapToLoad   = (HashMap <Storage, String>) new ObjectInputStream(fileInputStream).readObject( );
@@ -332,16 +317,5 @@ public class DataBase
             return directoryToLoad;
         }
         return null;
-    }
-    
-    /**
-     * This method displays a log message through the embedded log system.
-     * 
-     * @param logMessage
-     *                       A <code>String</code> containing the log message to display.
-     */
-    private static void log(String logMessage)
-    {
-        Logger.log(Thread.currentThread( ), logMessage, Logger.DATABASE);
     }
 }
