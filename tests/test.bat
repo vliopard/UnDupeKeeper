@@ -4,6 +4,7 @@ cls
 setlocal enabledelayedexpansion
 
 set basedir=c:\vliopard\tests\
+set delaytm=1
 set testnro=0
 set label=
 
@@ -1030,6 +1031,152 @@ call:check_link %name4% 0
 call:end_test
 
 REM ##############################################################
+call:start_test "Bulk creation of massive files"
+
+set /A delaytm=0
+
+set name01=test%label%-file01
+set name02=test%label%-file02
+set name03=test%label%-file03
+set name04=test%label%-file04
+set name05=test%label%-file05
+set name06=test%label%-file06
+set name07=test%label%-file07
+set name08=test%label%-file08
+set name09=test%label%-file09
+set name10=test%label%-file10
+set name11=test%label%-file11
+set name12=test%label%-file12
+set name13=test%label%-file13
+set name14=test%label%-file14
+set name15=test%label%-file15
+set name16=test%label%-file16
+set name17=test%label%-file17
+set name18=test%label%-file18
+set name19=test%label%-file19
+set name20=test%label%-file20
+set name21=test%label%-file21
+set name22=test%label%-file22
+set name23=test%label%-file23
+set name24=test%label%-file24
+set name25=test%label%-file25
+set name26=test%label%-file26
+set name27=test%label%-file27
+set name28=test%label%-file28
+set name29=test%label%-file29
+set name30=test%label%-file30
+set name31=test%label%-file31
+set name32=test%label%-file32
+set name33=test%label%-file33
+set name34=test%label%-file34
+set name35=test%label%-file35
+set name36=test%label%-file36
+set name37=test%label%-file37
+set name38=test%label%-file38
+set name39=test%label%-file39
+set name40=test%label%-file40
+
+set dir1=test%label%-dir1
+set dir2=test%label%-dir2
+set dir3=test%label%-dir3
+set dir4=test%label%-dir4
+
+call:create_dir %dir1%
+call:create_dir %dir2%
+call:create_dir %dir3%
+call:create_dir %dir4%
+
+call:create_file %name01% %name01%
+call:create_file %name02% %name01%
+call:create_file %name03% %name01%
+call:create_file %name04% %name01%
+call:create_file %name05% %name01%
+call:create_file %name06% %name01%
+call:create_file %name07% %name01%
+call:create_file %name08% %name01%
+call:create_file %name09% %name01%
+call:create_file %name10% %name01%
+
+call:create_file %dir1%\%name11% %name02%
+call:create_file %dir1%\%name12% %name02%
+call:create_file %dir1%\%name13% %name02%
+call:create_file %dir1%\%name14% %name02%
+call:create_file %dir1%\%name15% %name02%
+call:create_file %dir1%\%name16% %name02%
+call:create_file %dir1%\%name17% %name02%
+call:create_file %dir1%\%name18% %name02%
+call:create_file %dir1%\%name19% %name02%
+call:create_file %dir1%\%name20% %name02%
+
+call:create_file %name21% %name03%
+call:create_file %dir2%\%name22% %name03%
+call:create_file %dir2%\%name23% %name03%
+call:create_file %dir2%\%name24% %name03%
+call:create_file %dir2%\%name25% %name03%
+call:create_file %dir2%\%name26% %name03%
+call:create_file %dir2%\%name27% %name03%
+call:create_file %dir2%\%name28% %name03%
+call:create_file %dir2%\%name29% %name03%
+call:create_file %dir2%\%name30% %name03%
+
+call:create_file %dir3%\%name31% %name04%
+call:create_file %name32% %name04%
+call:create_file %dir3%\%name33% %name04%
+call:create_file %name34% %name04%
+call:create_file %dir3%\%name35% %name04%
+call:create_file %name36% %name04%
+call:create_file %dir3%\%name37% %name04%
+call:create_file %name38% %name04%
+call:create_file %dir3%\%name39% %name04%
+call:create_file %name40% %name04%
+
+call:check_file %name01% 1
+call:check_link %name02% 1
+call:check_link %name03% 1
+call:check_link %name04% 1
+call:check_link %name05% 1
+call:check_link %name06% 1
+call:check_link %name07% 1
+call:check_link %name08% 1
+call:check_link %name09% 1
+call:check_link %name10% 1
+
+call:check_file %dir1%\%name11% 1
+call:check_link %dir1%\%name12% 1
+call:check_link %dir1%\%name13% 1
+call:check_link %dir1%\%name14% 1
+call:check_link %dir1%\%name15% 1
+call:check_link %dir1%\%name16% 1
+call:check_link %dir1%\%name17% 1
+call:check_link %dir1%\%name18% 1
+call:check_link %dir1%\%name19% 1
+call:check_link %dir1%\%name20% 1
+
+call:check_file %name21% 1
+call:check_link %dir2%\%name22% 1
+call:check_link %dir2%\%name23% 1
+call:check_link %dir2%\%name24% 1
+call:check_link %dir2%\%name25% 1
+call:check_link %dir2%\%name26% 1
+call:check_link %dir2%\%name27% 1
+call:check_link %dir2%\%name28% 1
+call:check_link %dir2%\%name29% 1
+call:check_link %dir2%\%name30% 1
+
+call:check_file %dir3%\%name31% 1
+call:check_link %name32% 1
+call:check_link %dir3%\%name33% 1
+call:check_link %name34% 1
+call:check_link %dir3%\%name35% 1
+call:check_link %name36% 1
+call:check_link %dir3%\%name37% 1
+call:check_link %name38% 1
+call:check_link %dir3%\%name39% 1
+call:check_link %name40% 1
+
+call:end_test
+
+REM ##############################################################
 GOTO EOF
 
 REM ##############################################################
@@ -1125,7 +1272,9 @@ EXIT /B 0
 
 REM ##############################################################
 :wait_time
-timeout 1 > NUL
+if %delaytm% gtr 0 (
+    timeout 1 > NUL
+)
 EXIT /B 0
 
 REM ##############################################################
