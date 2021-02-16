@@ -1031,6 +1031,91 @@ call:check_link %name4% 0
 call:end_test
 
 REM ##############################################################
+call:start_test "Remove a directory with links"
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
+
+set dir1=test%label%-dir1
+
+call:create_dir %dir1%
+
+call:create_file %name1% %name1%
+call:create_file %dir1%\%name2% %name1%
+call:create_file %dir1%\%name3% %name1%
+call:create_file %dir1%\%name4% %name1%
+
+call:check_file %name1% 1
+
+call:check_link %dir1%\%name2% 1
+call:check_link %dir1%\%name3% 1
+call:check_link %dir1%\%name4% 1
+
+pause
+
+call:remove_dir %dir1%
+
+pause
+
+call:check_file %name1% 1
+
+call:check_link %dir1%\%name2% 0
+call:check_link %dir1%\%name3% 0
+call:check_link %dir1%\%name4% 0
+
+call:end_test
+
+REM ##############################################################
+call:start_test "Recover a removed directory with links"
+
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
+
+set dir1=test%label%-dir1
+
+call:create_dir %dir1%
+
+call:create_file %name1% %name1%
+call:create_file %dir1%\%name2% %name1%
+call:create_file %dir1%\%name3% %name1%
+call:create_file %dir1%\%name4% %name1%
+
+call:check_file %name1% 1
+
+call:check_link %dir1%\%name2% 1
+call:check_link %dir1%\%name3% 1
+call:check_link %dir1%\%name4% 1
+
+pause
+
+call:remove_file %name1%
+
+call:remove_dir %dir1%
+
+pause
+
+call:check_file %name1% 1
+
+call:check_link %dir1%\%name2% 1
+call:check_link %dir1%\%name3% 1
+call:check_link %dir1%\%name4% 1
+
+pause
+
+call:create_file %name1% %name1%
+
+call:check_file %name1% 1
+
+call:check_link %dir1%\%name2% 1
+call:check_link %dir1%\%name3% 1
+call:check_link %dir1%\%name4% 1
+
+call:end_test
+
+REM ##############################################################
 call:start_test "Bulk creation of massive files"
 
 set /A delaytm=0
@@ -1202,6 +1287,14 @@ REM ##############################################################
 :remove_file
 set filename1=%~1
 del !basedir!%filename1%
+echo !basedir!%filename1%*
+call:wait_time
+EXIT /B 0
+
+REM ##############################################################
+:remove_dir
+set filename1=%~1
+rmdir !basedir!%filename1%
 echo !basedir!%filename1%*
 call:wait_time
 EXIT /B 0

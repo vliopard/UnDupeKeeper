@@ -1031,6 +1031,91 @@ call_check_link ${name4} 0
 call_end_test
 
 # REM ##############################################################
+call_start_test "Remove a directory with links"
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
+
+dir1=test${label}-dir1
+
+call_create_dir ${dir1}
+
+call_create_file ${name1} ${name1}
+call_create_file ${dir1}/${name2} ${name1}
+call_create_file ${dir1}/${name3} ${name1}
+call_create_file ${dir1}/${name4} ${name1}
+
+call_check_file ${name1} 1
+
+call_check_link ${dir1}/${name2} 1
+call_check_link ${dir1}/${name3} 1
+call_check_link ${dir1}/${name4} 1
+
+pause
+
+call_remove_dir ${dir1}
+
+pause
+
+call_check_file ${name1} 1
+
+call_check_link ${dir1}/${name2} 0
+call_check_link ${dir1}/${name3} 0
+call_check_link ${dir1}/${name4} 0
+
+call_end_test
+
+# REM ##############################################################
+call_start_test "Recover a removed directory with links"
+
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
+
+dir1=test${label}-dir1
+
+call_create_dir ${dir1}
+
+call_create_file ${name1} ${name1}
+call_create_file ${dir1}/${name2} ${name1}
+call_create_file ${dir1}/${name3} ${name1}
+call_create_file ${dir1}/${name4} ${name1}
+
+call_check_file ${name1} 1
+
+call_check_link ${dir1}/${name2} 1
+call_check_link ${dir1}/${name3} 1
+call_check_link ${dir1}/${name4} 1
+
+pause
+
+call_remove_file ${name1}
+
+call_remove_dir ${dir1}
+
+pause
+
+call_check_file ${name1} 1
+
+call_check_link ${dir1}/${name2} 1
+call_check_link ${dir1}/${name3} 1
+call_check_link ${dir1}/${name4} 1
+
+pause
+
+call_create_file ${name1} ${name1}
+
+call_check_file ${name1} 1
+
+call_check_link ${dir1}/${name2} 1
+call_check_link ${dir1}/${name3} 1
+call_check_link ${dir1}/${name4} 1
+
+call_end_test
+
+# REM ##############################################################
 call_start_test "Bulk creation of massive files"
 
 delaytm=0
