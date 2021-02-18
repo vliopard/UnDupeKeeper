@@ -209,8 +209,6 @@ public class Comparison
         }
     }
 
-
-
     public static long totalLines(String textFileName)
     {
         long lineCount = 0;
@@ -347,40 +345,37 @@ public class Comparison
 
     private static void renameDuplicatedFile(Path fileName1, Path fileName2, long fileCounter)
     {
-        // TODO: CHECK A SAFE WAY TO CREATE A SYMBOLIC LINK INSTEAD OF RENAMING FILE
         if (fileName1.toString( ).contains(Settings.UnDupeKeeperNoRename))
         {
             return;
         }
         String removeMarker           = Settings.UnDupeKeeperMarker + "_[" + fileCounter + "]_";
-        String originalSourceFileName = FileOperations.getFilePath(fileName2.toString( )) + "_(" +
-                FileOperations.getFileName(fileName2.toString( )) +
-                FileOperations.getFileExtension(fileName2.toString( )) + ")_";
+        String originalSourceFileName = FileOperations.getFilePath(fileName2.toString( )) + "_("
+                + FileOperations.getFileName(fileName2.toString( ))
+                + FileOperations.getFileExtension(fileName2.toString( )) + ")_";
         originalSourceFileName = originalSourceFileName.replace(':', '#');
         originalSourceFileName = originalSourceFileName.replace(Settings.cSlash, '-');
-        String newFileName1 = FileOperations.getFilePath(fileName1.toString( )) +
-                FileOperations.getFileName(fileName1.toString( )) +
-                FileOperations.getFileExtension(fileName1.toString( )) +
-                "@@" +
-                originalSourceFileName +
-                removeMarker;
+        String newFileName1 = FileOperations.getFilePath(fileName1.toString( ))
+                + FileOperations.getFileName(fileName1.toString( ))
+                + FileOperations.getFileExtension(fileName1.toString( )) + "@@" + originalSourceFileName + removeMarker;
         if (fileName1.toString( ).lastIndexOf(Settings.Dot) > fileName1.toString( ).lastIndexOf(Settings.Slash))
         {
             newFileName1 = newFileName1 + FileOperations.getFileExtension(fileName1.toString( ));
         }
-        // FileUtils.file(fileName1).renameTo(FileUtils.file(newFileName1));
         try
         {
+            // TODO: CHECK A SAFE WAY TO CREATE A SYMBOLIC LINK INSTEAD OF RENAMING FILE
             newFileName1 = checkFileName(newFileName1);
             java.nio.file.Files.move(fileName1, Paths.get(newFileName1));
+            // FileUtils.file(fileName1).renameTo(FileUtils.file(newFileName1));
         }
         catch (IOException e)
         {
             Logger.err(Settings.Separator + Settings.Separator);
-            Logger.err(Strings.sourceFileName + "[" + fileName1.toString( ).length( ) + "] " + fileName1.toString( ) +
-                    Settings.endl + Settings.SeparatorSingle + Settings.SeparatorSingle);
-            Logger.err(Strings.targetFileName + "[" + newFileName1.length( ) + "] " + newFileName1 +
-                    Settings.endl + Settings.SeparatorDouble + Settings.SeparatorDouble);
+            Logger.err(Strings.sourceFileName + "[" + fileName1.toString( ).length( ) + "] " + fileName1.toString( )
+                    + Settings.endl + Settings.SeparatorSingle + Settings.SeparatorSingle);
+            Logger.err(Strings.targetFileName + "[" + newFileName1.length( ) + "] " + newFileName1 + Settings.endl
+                    + Settings.SeparatorDouble + Settings.SeparatorDouble);
             Logger.err("MSG_045: " + Strings.unableToRenameFile + e);
         }
     }
@@ -388,58 +383,37 @@ public class Comparison
     private static void displayProgress(double currentFile, long percentage, double totalFileCount, long renamedFileCount, long elapsedTime)
     {
         progressBarDialog.setProgress((int) percentage);
-        progressBarDialog.setMessage(percentage +
-                Strings.percentageFrom +
-                (long) totalFileCount +
-                Strings.filec +
-                renamedFileCount +
-                Strings.renamed +
-                Strings.current +
-                (long) currentFile +
-                " - [" +
-                TimeControl.getTotal(TimeControl.getElapsedNano(elapsedTime)) +
-                "]");
-        Logger.msg(Settings.Tab +
-                Utils.addCustomLeadingZeros("03", percentage) +
-                Strings.percentageFrom +
-                (long) totalFileCount +
-                Strings.filec +
-                renamedFileCount +
-                Strings.renamed +
-                Strings.current +
-                (long) currentFile);
+        progressBarDialog.setMessage(percentage + Strings.percentageFrom + (long) totalFileCount + Strings.filec
+                + renamedFileCount + Strings.renamed + Strings.current + (long) currentFile + " - ["
+                + TimeControl.getTotal(TimeControl.getElapsedNano(elapsedTime)) + "]");
+        Logger.msg(Settings.Tab + Utils.addCustomLeadingZeros("03", percentage) + Strings.percentageFrom
+                + (long) totalFileCount + Strings.filec + renamedFileCount + Strings.renamed + Strings.current
+                + (long) currentFile);
     }
 
     private static long showProgress(double currentFile, double totalFileCount, long displayFactorControl, long renamedFileCount, int displaySteps, long elapsedTime)
     {
         long percentage = (long) (((double) currentFile / (double) totalFileCount) * 100.0);
-        if ((percentage >= displayFactorControl) &&
-                (percentage <= displayFactorControl +
-                        displaySteps))
+        if ((percentage >= displayFactorControl) && (percentage <= displayFactorControl + displaySteps))
         {
             displayProgress(currentFile, percentage, totalFileCount, renamedFileCount, elapsedTime);
-            displayFactorControl = displayFactorControl +
-                    displaySteps;
+            displayFactorControl = displayFactorControl + displaySteps;
             return displayFactorControl;
         }
         if (percentage > displayFactorControl +
                 displaySteps)
         {
-            double delta = percentage -
-                    (displayFactorControl + displaySteps);
-            double fac   = (displayFactorControl +
-                    displaySteps + delta) / 5.0;
-            displayFactorControl = (int) (Math.floor(fac) * displayFactorControl) +
-                    displaySteps;
+            double delta = percentage - (displayFactorControl + displaySteps);
+            double fac   = (displayFactorControl + displaySteps + delta) / 5.0;
+            displayFactorControl = (int) (Math.floor(fac) * displayFactorControl) + displaySteps;
         }
         return displayFactorControl;
     }
 
     private static boolean isAscending(String orderType)
     {
-        return (null == orderType) ||
-                (orderType.trim( ).equals(Settings.Empty)) ||
-                (orderType.toLowerCase( ).equals(Settings.CompareAsc));
+        return (null == orderType) || (orderType.trim( ).equals(Settings.Empty))
+                || (orderType.toLowerCase( ).equals(Settings.CompareAsc));
     }
 
     private static boolean sortTextFile(String textFileName, String sortMethodType)
@@ -503,9 +477,7 @@ public class Comparison
             }
             catch (IOException e)
             {
-                Logger.err("MSG_024: " +
-                        Strings.problemSortingTextFile +
-                        e);
+                Logger.err("MSG_024: " + Strings.problemSortingTextFile + e);
                 return false;
             }
             return true;
@@ -521,16 +493,14 @@ public class Comparison
                 ( ! FileOperations.isEmpty(textFileList)))
         {
             arrayFileList = ReportGenerator.generateFileList(FileOperations.file(textFileList).listFiles( ), Settings.Empty);
-            textFileList = FileOperations.getFilePath(textFileList) +
-                    FileOperations.getFileName(textFileList) +
-                    Settings.UnDupeKeeperTextFile;
+            textFileList = FileOperations.getFilePath(textFileList) + FileOperations.getFileName(textFileList)
+                    + Settings.UnDupeKeeperTextFile;
             textFileType = Strings.directory;
             FileOperations.file(textFileList).deleteOnExit( );
         }
         else
         {
-            if (FileOperations.isFile(textFileList) &&
-                    ( ! FileOperations.isEmpty(textFileList)))
+            if (FileOperations.isFile(textFileList) && ( ! FileOperations.isEmpty(textFileList)))
             {
                 try
                 {
@@ -546,9 +516,7 @@ public class Comparison
                 }
                 catch (IOException e)
                 {
-                    Logger.err("MSG_038: " +
-                            Strings.cannotOpenTextFile +
-                            e);
+                    Logger.err("MSG_038: " + Strings.cannotOpenTextFile + e);
                     textFileList = null;
                     arrayFileList = null;
                 }
@@ -559,8 +527,7 @@ public class Comparison
                 arrayFileList = null;
             }
         }
-        if ((null != textFileList) &&
-                (null != arrayFileList))
+        if ((null != textFileList) && (null != arrayFileList))
         {
             try
             {
@@ -581,9 +548,7 @@ public class Comparison
             }
             catch (IOException e)
             {
-                Logger.err("MSG_025: " +
-                        Strings.couldNotWriteOrderedFileList +
-                        e);
+                Logger.err("MSG_025: " + Strings.couldNotWriteOrderedFileList + e);
                 textFileList = null;
             }
         }
@@ -618,13 +583,8 @@ public class Comparison
             try
             {
                 totalFileCount = totalLines(fileListToCompare);
-                progressBarDialog.setMessage("0" + Strings.percentageFrom +
-                        totalFileCount + Strings.files);
-                Logger.msg(Settings.Tab +
-                        "000" +
-                        Strings.percentageFrom +
-                        totalFileCount +
-                        Strings.files);
+                progressBarDialog.setMessage("0" + Strings.percentageFrom + totalFileCount + Strings.files);
+                Logger.msg(Settings.Tab + "000" + Strings.percentageFrom + totalFileCount + Strings.files);
                 // Fourth
                 InputStreamReader fileListToCompareInputStreamReader = StreamManager.InputStreamReader(fileListToCompare);
                 BufferedReader    fileListToCompareBufferedReader    = new BufferedReader(fileListToCompareInputStreamReader);
@@ -633,8 +593,8 @@ public class Comparison
                 {
                     currentFile++;
                     linesUnderComparison.add(fileListToCompareLine1);
-                    while (( ! stop) &&
-                            ((FileOperations.file(fileListToCompareLine1).length( )) == (FileOperations.file(fileListToCompareLine2).length( ))))
+                    while (( ! stop)
+                            && ((FileOperations.file(fileListToCompareLine1).length( )) == (FileOperations.file(fileListToCompareLine2).length( ))))
                     {
                         linesUnderComparison.add(fileListToCompareLine2);
                         fileListToCompareLine1 = fileListToCompareLine2;
@@ -651,8 +611,6 @@ public class Comparison
                         j = i + 1;
                         while (j < linesUnderComparison.size( ))
                         {
-                            // TODO: TEST WHICH IS THE FASTEST BINARY COMPARISON
-                            // if (isBinaryIdentical(Paths.get(linesUnderComparison.get(i)), Paths.get(linesUnderComparison.get(j))))
                             if (compareBySize(Paths.get(linesUnderComparison.get(i)), Paths.get(linesUnderComparison.get(j))))
                             {
                                 renameDuplicatedFile(Paths.get(linesUnderComparison.get(j)), Paths.get(linesUnderComparison.get(i)), renamedFileCount);
@@ -677,22 +635,18 @@ public class Comparison
             {
                 Logger.err("MSG_026: " + Strings.problemDuringComparisonProcess + e);
             }
-            progressBarDialog.setMessage("100" +
-                    Strings.percentageFrom +
-                    totalFileCount +
-                    Strings.filec +
-                    renamedFileCount +
-                    Strings.renamed);
-            Logger.msg(Settings.Tab + "100" + Strings.percentageFrom + totalFileCount +
-                    Strings.filec + renamedFileCount + Strings.renamed);
+            progressBarDialog.setMessage("100" + Strings.percentageFrom + totalFileCount + Strings.filec
+                    + renamedFileCount + Strings.renamed);
+            Logger.msg(Settings.Tab + "100" + Strings.percentageFrom + totalFileCount + Strings.filec + renamedFileCount
+                    + Strings.renamed);
             Logger.msg(Settings.endl + renamedFileCount + Strings.renamedAndMarked);
             Logger.msg(Strings.finishingExecution);
             Logger.msg(Strings.done + Settings.Dot);
             long totalProcessTime = TimeControl.getElapsedNano(processStartTime);
             Logger.msg(Settings.Tab + Strings.totalTime + TimeControl.getTotal(totalProcessTime));
             progressBarDialog.setProgress(100);
-            progressBarDialog.setMessage(progressBarDialog.getMessage( ) + " - " +
-                    Strings.totalTime + TimeControl.getTotal(totalProcessTime));
+            progressBarDialog.setMessage(progressBarDialog.getMessage( ) + " - " + Strings.totalTime
+                    + TimeControl.getTotal(totalProcessTime));
             progressBarDialog.setDismiss( );
             progressBarDialog.keep( );
         }

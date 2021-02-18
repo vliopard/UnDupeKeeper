@@ -355,4 +355,16 @@ public class UniqueFile implements Serializable
             }
         }
     }
+
+    public void file(String filename)
+    {
+        Utils.file("Checksum: [" + fileSha + "] Filename: [" + fileUri.getString( ) + "]", filename);
+        if (fileLinks.size( ) > 0)
+        {
+            for (int i = 0; i < fileLinks.size( ); i++)
+            {
+                Utils.file("Filelink: " + fileLinks.get(i).getString( ), filename);
+            }
+        }
+    }
 }

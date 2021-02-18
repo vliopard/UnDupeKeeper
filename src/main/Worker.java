@@ -32,6 +32,9 @@ public class Worker implements Runnable
 
     private final BlockingQueue <Integer>   stopSignal;
     private final BlockingQueue <FileQueue> transferQueue;
+    
+    private String filename_table = "file_table.txt";
+    private String filename_links = "file_links.txt";
 
     private HashMap <Storage, String>    linkMapTable = new HashMap <Storage, String>( );
     private HashMap <String, UniqueFile> hashMapTable = new HashMap <String, UniqueFile>( );
@@ -313,6 +316,7 @@ public class Worker implements Runnable
         {
             Map.Entry <String, UniqueFile> pair = (Map.Entry <String, UniqueFile>) it.next( );
             pair.getValue( ).show( );
+            pair.getValue( ).file(filename_table);
         }
 
         Logger.msg("__ [ LINK TABLE ] ________________________________________________________________________________________________________________________________________");
@@ -320,7 +324,9 @@ public class Worker implements Runnable
         while (lm.hasNext( ))
         {
             Map.Entry <Storage, String> pair = (Map.Entry <Storage, String>) lm.next( );
-            Logger.msg("[" + pair.getValue( ) + "] [" + pair.getKey( ) + "]");
+            String links = "[" + pair.getValue( ) + "] [" + pair.getKey( ) + "]";
+            Logger.msg(links);
+            Utils.file(links, filename_links);
         }
         Logger.msg("\n__ [ LOG START  ] ________________________________________________________________________________________________________________________________________");
 

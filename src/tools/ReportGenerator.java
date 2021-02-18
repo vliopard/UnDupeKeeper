@@ -167,9 +167,7 @@ public class ReportGenerator
             }
             else
             {
-                if ((null == fileExtension) ||
-                        (fileExtension.equals(Settings.Empty)) ||
-                        (file.getAbsolutePath( ).endsWith(fileExtension)))
+                if ((null == fileExtension) || (fileExtension.equals(Settings.Empty)) || (file.getAbsolutePath( ).endsWith(fileExtension)))
                 {
                     fileList.add(file.getAbsolutePath( ));
                 }

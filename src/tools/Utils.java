@@ -5,7 +5,11 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
@@ -104,7 +108,7 @@ public class Utils
         }
         systemTray.remove(trayIcon);
     }
-    
+
     public static boolean runSystemCommand(String command, int option)
     {
         try
@@ -164,5 +168,20 @@ public class Utils
             Logger.err("MSG_023: " + Strings.processRuntimeError + e);
         }
         return true;
+    }
+
+    public static void file(String text, String filename)
+    {
+        try
+        {
+            // Files.createFile(dummyPath);
+            text = text + "\n";
+            Files.write(Paths.get(filename), text.getBytes( ), StandardOpenOption.APPEND);
+        }
+        catch (IOException e)
+        {
+            // TODO: REPLACE BY INDEXED MESSAGE
+            e.printStackTrace( );
+        }
     }
 }

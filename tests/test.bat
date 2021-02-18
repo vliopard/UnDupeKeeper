@@ -229,7 +229,7 @@ call:create_file %name1% %name1%
 call:create_dir %dir1%
 
 call:check_file %name1% 1
-call:check_file %dir1%\%name2% 2
+call:check_file %dir1%\%name2% 0
 
 pause
 

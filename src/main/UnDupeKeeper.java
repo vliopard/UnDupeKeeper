@@ -79,7 +79,7 @@ public class UnDupeKeeper
         String parameter = (arguments.length > 0) ? arguments[0] : "";
         String filename  = (arguments.length > 1) ? arguments[1] : "";
         String sortorder = (arguments.length > 2) ? arguments[2] : "";
-        if (parameter.trim( ).equals("") || filename.trim( ).equals("") || ! FileOperations.exist(Paths.get(filename)))
+        if (parameter.trim( ).equals("") || filename.trim( ).equals("") || ! FileOperations.exist(filename))
         {
             usage( );
         }
