@@ -1390,4 +1390,20 @@ set label=%retval%
 EXIT /B 0
 
 REM ##############################################################
+:check_hard
+set txt=%~1
+findstr /C:%txt% file_table.txt  >nul 2>&1
+if %errorlevel% equ 0 call:assert 1 %~2
+if %errorlevel% equ 1 call:assert 0 %~2
+EXIT /B 0
+
+REM ##############################################################
+:check_soft
+set txt=%~1
+findstr /C:%txt% file_links.txt  >nul 2>&1
+if %errorlevel% equ 0 call:assert 1 %~2
+if %errorlevel% equ 1 call:assert 0 %~2
+EXIT /B 0
+
+REM ##############################################################
 :EOF
