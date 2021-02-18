@@ -1,6 +1,9 @@
 package main;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,8 +36,8 @@ public class Worker implements Runnable
     private final BlockingQueue <Integer>   stopSignal;
     private final BlockingQueue <FileQueue> transferQueue;
     
-    private String filename_table = "file_table.txt";
-    private String filename_links = "file_links.txt";
+    private String filename_table = "tests/file_table.txt";
+    private String filename_links = "tests/file_links.txt";
 
     private HashMap <Storage, String>    linkMapTable = new HashMap <Storage, String>( );
     private HashMap <String, UniqueFile> hashMapTable = new HashMap <String, UniqueFile>( );
@@ -309,6 +312,17 @@ public class Worker implements Runnable
             default:
         }
 
+        try
+        {
+            Files.deleteIfExists(Paths.get(filename_table));
+            Files.deleteIfExists(Paths.get(filename_links));
+        }
+        catch (IOException e)
+        {
+            // TODO: REPLACE BY INDEXED MESSAGE
+            e.printStackTrace();
+        }
+        
         Logger.msg("-- [ LOG END    ] ----------------------------------------------------------------------------------------------------------------------------------------\n");
         Logger.msg("\n== [ FILE TABLE ] ========================================================================================================================================");
         Iterator <Entry <String, UniqueFile>> it = hashMapTable.entrySet( ).iterator( );
