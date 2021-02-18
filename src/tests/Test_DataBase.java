@@ -37,25 +37,25 @@ public class Test_DataBase
     }
 
     @Test
-    public void DataBaseSave( )
+    public void dataBaseHshSave( )
     {
         DataBase.saveHashMap(hashMapTable);
     }
 
     @Test
-    public void DataBase1Save( )
+    public void dataBaseLnkSave( )
     {
         DataBase.saveLinkMap(linkMapTable);
     }
 
     @Test
-    public void DataBaseLoad( )
+    public void dataBaseHshLoad( )
     {
         hashMapTable = DataBase.loadHashMap( );
     }
 
     @Test
-    public void DataBase1Load( )
+    public void dataBaseLnkLoad( )
     {
         // TODO: LOAD LINK MAP DOES NOT WORK
         linkMapTable = DataBase.loadLinkMap( );
