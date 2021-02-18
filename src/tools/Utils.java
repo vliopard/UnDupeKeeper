@@ -176,7 +176,7 @@ public class Utils
         {
             // Files.createFile(dummyPath);
             text = text + "\n";
-            Files.write(Paths.get(filename), text.getBytes( ), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            Files.write(Paths.get(filename), text.toLowerCase( ).getBytes( ), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         }
         catch (IOException e)
         {

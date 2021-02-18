@@ -268,7 +268,7 @@ public class Worker implements Runnable
                             {
                                 log(" if (! hashMapTable.get(" + filesha + ")) NULL");
                             }
-                            if (null != filepath.getString( ) && ! filepath.isEmpty( ))
+                            if (null != filepath && null != filepath.getString( ) && ! filepath.isEmpty( ))
                             {
                                 log(" Settings.FileDeleted: hashMapTable.get(" + filesha
                                         + ").unLink(fileQueue.getPath()); [" + fileQueue.getStorage( ) + "]");

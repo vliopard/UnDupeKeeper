@@ -57,7 +57,36 @@ call_create_dir()
 call_check_file()
 {
     filename1=$1
+    echo _
+    echo REAL FILE ${basedir}${filename1}
     if [ -e ${basedir}${filename1} ]
+    then
+        call_assert 1 $2
+    else
+        call_assert 0 $2
+    fi
+    call_check_hard ${basedir}${filename1} $2
+}
+
+call_check_link()
+{
+    filename1=$1
+    echo _
+    echo LINK FILE ${basedir}${filename1}
+    if [ -h ${basedir}${filename1} ]
+    then
+        call_assert 1 $2
+    else
+        call_assert 0 $2
+    fi
+    call_check_soft ${basedir}${filename1} $2
+}
+
+call_check_hard()
+{
+    echo _
+    echo HARD FILE $1
+    if grep -r $1 file_table.txt
     then
         call_assert 1 $2
     else
@@ -65,10 +94,11 @@ call_check_file()
     fi
 }
 
-call_check_link()
+call_check_soft()
 {
-    filename1=$1
-    if [ -h ${basedir}${filename1} ]
+    echo _
+    echo SOFT FILE $1
+    if grep -r $1 file_links.txt
     then
         call_assert 1 $2
     else

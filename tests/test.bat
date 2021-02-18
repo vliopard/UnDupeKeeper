@@ -57,7 +57,36 @@ rem }
 rem call_check_file()
 rem {
 rem     filename1=$1
+rem     echo _
+rem     echo REAL FILE ${basedir}${filename1}
 rem     if [ -e ${basedir}${filename1} ]
+rem     then
+rem         call_assert 1 $2
+rem     else
+rem         call_assert 0 $2
+rem     fi
+rem     call_check_hard ${basedir}${filename1} $2
+rem }
+
+rem call_check_link()
+rem {
+rem     filename1=$1
+rem     echo _
+rem     echo LINK FILE ${basedir}${filename1}
+rem     if [ -h ${basedir}${filename1} ]
+rem     then
+rem         call_assert 1 $2
+rem     else
+rem         call_assert 0 $2
+rem     fi
+rem     call_check_soft ${basedir}${filename1} $2
+rem }
+
+rem call_check_hard()
+rem {
+rem     echo _
+rem     echo HARD FILE $1
+rem     if grep -r $1 file_table.txt
 rem     then
 rem         call_assert 1 $2
 rem     else
@@ -65,10 +94,11 @@ rem         call_assert 0 $2
 rem     fi
 rem }
 
-rem call_check_link()
+rem call_check_soft()
 rem {
-rem     filename1=$1
-rem     if [ -h ${basedir}${filename1} ]
+rem     echo _
+rem     echo SOFT FILE $1
+rem     if grep -r $1 file_links.txt
 rem     then
 rem         call_assert 1 $2
 rem     else
@@ -1318,20 +1348,26 @@ EXIT /B 0
 
 REM ##############################################################
 :check_file
+echo _
+echo REAL FILE !basedir!%~1
 if exist !basedir!%~1 (
     call:assert 1 %~2
 ) else (
     call:assert 0 %~2
 )
+call:check_hard !basedir!%~1 %~2
 EXIT /B 0
 
 REM ##############################################################
 :check_link
+echo _
+echo LINK FILE !basedir!%~1
 set tmpfile=temp_file.tmp
 fsutil reparsepoint query "!basedir!%~1" > "%tmpfile%"
 if %errorlevel% == 0 call:assert 1 %~2
 if %errorlevel% == 1 call:assert 0 %~2
 del temp_file.tmp
+call:check_soft !basedir!%~1 %~2
 EXIT /B 0
 
 REM ##############################################################
@@ -1392,7 +1428,9 @@ EXIT /B 0
 REM ##############################################################
 :check_hard
 set txt=%~1
-findstr /C:%txt% file_table.txt  >nul 2>&1
+echo _
+echo HARD FILE %txt%
+findstr /C:%txt% file_table.txt >nul 2>&1
 if %errorlevel% equ 0 call:assert 1 %~2
 if %errorlevel% equ 1 call:assert 0 %~2
 EXIT /B 0
@@ -1400,7 +1438,9 @@ EXIT /B 0
 REM ##############################################################
 :check_soft
 set txt=%~1
-findstr /C:%txt% file_links.txt  >nul 2>&1
+echo _
+echo SOFT FILE %txt%
+findstr /C:%txt% file_links.txt >nul 2>&1
 if %errorlevel% equ 0 call:assert 1 %~2
 if %errorlevel% equ 1 call:assert 0 %~2
 EXIT /B 0
