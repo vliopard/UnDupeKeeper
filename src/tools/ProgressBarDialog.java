@@ -11,8 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import settings.Strings;
 
-// TODO: JAVADOC
-// TODO: METHOD AND VARIABLE NAMES REFACTORING
 public class ProgressBarDialog
 {
     private JFrame       parentFrame;

@@ -18,87 +18,92 @@ import settings.Strings;
 // TODO: Files.isSameFile(file, file)
 // TODO: Files.move(file, file, null)
 
-// TODO: JAVADOC
-// TODO: METHOD AND VARIABLE NAMES REFACTORING
 public class FileOperations
 {
-    public static boolean exist(String file)
+    public static boolean exist(String path)
     {
-        return exist(new Storage(file));
+        return exist(file(path));
     }
 
-    public static boolean exist(File file)
+    public static boolean exist(File path)
     {
-        return exist(new Storage(file));
+        return path.exists( );
     }
 
-    public static boolean exist(Path file)
+    public static boolean exist(Path path)
     {
-        return exist(new Storage(file));
+        return exist(path.toFile( ));
     }
 
-    public static boolean exist(Storage file)
+    public static boolean exist(Storage path)
     {
-        return file.getFile( ).exists( );
+        return exist(path.getFile( ));
     }
 
-    public static boolean isFile(String file)
+    public static boolean isFile(String path)
     {
-        return isFile(new Storage(file));
+        return isFile(file(path));
     }
 
-    public static boolean isFile(File file)
+    public static boolean isFile(File path)
     {
-        return isFile(new Storage(file));
-    }
-
-    public static boolean isFile(Path file)
-    {
-        return isFile(new Storage(file));
-    }
-
-    public static boolean isFile(Storage file)
-    {
-        if (null == file.getString( ))
+        if (null == path)
         {
             return false;
         }
+        return (exist(path)) && (path.isFile( ));
+    }
+
+    public static boolean isFile(Path path)
+    {
+        return isFile(path.toFile( ));
+    }
+
+    public static boolean isFile(Storage path)
+    {
         // TODO: CHECK Files.isRegularFile();
-        return (exist(file)) && (file.getFile( ).isFile( ));
+        return isFile(path.getFile( ));
     }
 
-    public static boolean isLink(String file)
+    public static boolean isLink(String path)
     {
-        return isLink(new Storage(file));
+        return isLink(path(path));
     }
 
-    public static boolean isLink(File file)
+    public static boolean isLink(File path)
     {
-        return isLink(new Storage(file));
+        return isLink(path(path));
     }
 
-    public static boolean isLink(Path file)
+    public static boolean isLink(Path path)
     {
-        return isLink(new Storage(file));
-    }
-
-    public static boolean isLink(Storage file)
-    {
-        if (null == file.getString( ))
+        if (null == path)
         {
             return false;
         }
-        return (file.getFile( ).exists( ) && Files.isSymbolicLink(file.getPath( )));
+        return (path.toFile( ).exists( ) && Files.isSymbolicLink(path));
+    }
+
+    public static boolean isLink(Storage path)
+    {
+        return isLink(path.getPath( ));
     }
 
     public static boolean deleteFile(String filename)
     {
-        return deleteFile(Paths.get(filename));
+        return deleteFile(path(filename));
     }
 
     public static boolean deleteFile(File filename)
     {
-        return deleteFile(Paths.get(filename.toString( )));
+        // if (filename.delete( ))
+        // {
+        //     Logger.msg("File deleted successfully");
+        //     return true;
+        // }
+        // Logger.msg("Failed to delete the file");
+        // return false;
+        return deleteFile(filename.toPath( ));
     }
 
     public static boolean deleteFile(Path filename)
@@ -116,6 +121,7 @@ public class FileOperations
             // TODO: REPLACE GENERIC EXCEPTION
             Logger.err("MSG_055: " + Strings.generic + e);
         }
+        // TODO: REPLACE GENERIC EXCEPTION
         Logger.err("Failed to delete the file");
         return false;
     }
@@ -126,37 +132,56 @@ public class FileOperations
     }
 
     //////////////////////////////////
-    /////////REVIEW CODE BELOW////////
+    // TODO: ////REVIEW CODE BELOW////
     //////////////////////////////////
 
-    public static String getFilePath(String file)
+    public static String getFilename(String file)
     {
-        return file.substring(0, file.lastIndexOf(Settings.Slash) + 1);
+        return getFilename(path(file));
     }
 
-    public static String getFileName(String file)
+    public static String getFilename(File file)
     {
-        if ((file.lastIndexOf(Settings.Dot) > 0) &&
-                (file.lastIndexOf(Settings.Slash) > 0) &&
-                (file.lastIndexOf(Settings.Dot) > file.lastIndexOf(Settings.Slash)))
+        return getFilename(file.toPath( ));
+    }
+
+    public static String getFilename(Path file)
+    {
+        return file.getFileName( ).toString( );
+    }
+
+    public static String getDirectory(String path)
+    {
+        return path.substring(0, path.lastIndexOf(Settings.Slash) + 1);
+    }
+
+    public static String getFileName(String path)
+    {
+        if ((path.lastIndexOf(Settings.Dot) > 0) && (path.lastIndexOf(Settings.Slash) > 0)
+                && (path.lastIndexOf(Settings.Dot) > path.lastIndexOf(Settings.Slash)))
         {
-            return file.substring(file.lastIndexOf(Settings.Slash) + 1, file.lastIndexOf(Settings.Dot));
+            return path.substring(path.lastIndexOf(Settings.Slash) + 1, path.lastIndexOf(Settings.Dot));
         }
-        if (file.lastIndexOf(Settings.Slash) > 0)
+        if (path.lastIndexOf(Settings.Slash) > 0)
         {
-            return file.substring(file.lastIndexOf(Settings.Slash) + 1);
+            return path.substring(path.lastIndexOf(Settings.Slash) + 1);
         }
-        Logger.err("FATAL: " + file);
+        Logger.err("FATAL: " + path);
         return Settings.Empty;
     }
 
-    public static String getFileExtension(String file)
+    public static String getFileExtension(String path)
     {
-        if ((file.lastIndexOf(Settings.Dot) > 0) && (file.lastIndexOf(Settings.Dot) > file.lastIndexOf(Settings.Slash)))
+        if ((path.lastIndexOf(Settings.Dot) > 0) && (path.lastIndexOf(Settings.Dot) > path.lastIndexOf(Settings.Slash)))
         {
-            return file.substring(file.lastIndexOf(Settings.Dot));
+            return path.substring(path.lastIndexOf(Settings.Dot));
         }
         return Settings.Empty;
+    }
+
+    public static String getFileNameAndExtension(String file)
+    {
+        return getFileName(file) + getFileExtension(file);
     }
 
     public static File file(String file)
@@ -169,55 +194,75 @@ public class FileOperations
         return file.toFile( );
     }
 
-    public static boolean isDir(String dirName)
+    public static Path path(String path)
     {
-        return isDir(Paths.get(dirName));
+        return Paths.get(path);
     }
 
-    public static boolean isDir(File dirName)
+    public static Path path(File path)
     {
-        return isDir(Paths.get(dirName.toString( )));
+        return path.toPath( );
     }
 
-    public static boolean isDir(Path dirName)
+    public static boolean isDirectory(String directory)
     {
-        if (null == dirName)
+        return isDirectory(file(directory));
+    }
+
+    public static boolean isDirectory(File directory)
+    {
+        if (null == directory)
         {
             return false;
         }
-        return (dirName.toFile( ).exists( )) && (dirName.toFile( ).isDirectory( ));
+        return (directory.exists( )) && (directory.isDirectory( ));
     }
 
-    public static boolean isEmpty(String dirName)
+    public static boolean isDirectory(Path directory)
     {
-        if (isFile(dirName))
+        return isDirectory(directory.toFile( ));
+    }
+
+    public static boolean isEmpty(String path)
+    {
+        return isEmpty(path(path));
+    }
+
+    public static boolean isEmpty(File path)
+    {
+        if (isFile(path))
         {
-            return (file(dirName).length( ) == 0);
+            return (path.length( ) == 0);
         }
-        if (isDir(dirName))
+        if (isDirectory(path))
         {
-            return (file(dirName).list( ).length == 0);
+            return (path.list( ).length == 0);
         }
         return true;
     }
 
-    public static void createDir(String dir)
+    public static boolean isEmpty(Path path)
     {
-        createDir(Paths.get(dir));
+        return isEmpty(path.toFile( ));
     }
 
-    public static void createDir(File dir)
+    public static void createDirectory(String directory)
     {
-        createDir(Paths.get(dir.toString( )));
+        createDirectory(Paths.get(directory));
     }
 
-    public static void createDir(Path path)
+    public static void createDirectory(File directory)
     {
-        Path dir = path.getParent( );
+        createDirectory(Paths.get(directory.toString( )));
+    }
+
+    public static void createDirectory(Path directory)
+    {
+        Path dir = directory.getParent( );
         try
         {
             Logger.msg(dir.toString( ));
-            if ( ! FileOperations.exist(dir) && ! FileOperations.isDir(dir))
+            if ( ! FileOperations.exist(dir) && ! FileOperations.isDirectory(dir))
             {
                 Logger.msg("CREATING " + dir.toString( ));
                 Files.createDirectories(dir);
@@ -230,17 +275,146 @@ public class FileOperations
         }
     }
 
-    public static void createDir(Storage dir)
+    public static void createDirectory(Storage directory)
     {
-        createDir(dir.getPath( ));
+        createDirectory(directory.getPath( ));
+    }
+
+    /**
+     *Delete all files and directories in directory but do not delete the directory itself.
+     *
+     *@param directory
+     *                     - string that specifies directory to delete
+     *
+     *@return boolean - success flag
+     */
+    public static boolean deleteDirectoryContent(String directory)
+    {
+        return ((directory != null) && (directory.length( ) > 0)) ? deleteDirectoryContent(file(directory)) : false;
+    }
+
+    /**
+     *Delete all files and directories in directory but do not delete the directory itself.
+     *
+     *@param directory
+     *                     - directory to delete
+     *
+     *@return boolean - success flag
+     */
+    public static boolean deleteDirectoryContent(File directory)
+    {
+        boolean returnValue = false;
+        if ((directory != null) && (directory.isDirectory( )))
+        {
+            File[ ] files = directory.listFiles( );
+            if (files != null)
+            {
+                returnValue = true;
+                for (int index = 0; index < files.length; index++)
+                {
+                    if (files[index].isDirectory( ))
+                    {
+                        // TODO: RESEARCH: Performance - Implement this as a queue where you add to the end and take from the beginning, it will be more efficient than the recursion
+                        if (deleteDirectoryContent(files[index]))
+                        {
+                            returnValue = returnValue && files[index].delete( );
+                        }
+                        else
+                        {
+                            returnValue = false;
+                        }
+                    }
+                    else
+                    {
+                        returnValue = returnValue && files[index].delete( );
+                    }
+                }
+            }
+        }
+        return returnValue;
+    }
+
+    public static boolean deleteDirectoryContent(Path directory)
+    {
+        return deleteDirectoryContent(file(directory));
+    }
+
+    /**
+     *Deletes all files and sub directories under the specified directory including the specified directory
+     *
+     *@param directory
+     *                     - string that specifies directory to be deleted
+     *
+     *@return boolean - true if directory was successfully deleted
+     */
+    public static boolean deleteDirectory(String directory)
+    {
+        return ((directory != null) && (directory.length( ) > 0)) ? deleteDirectory(file(directory)) : false;
+    }
+
+    /**
+     *Deletes all files and sub directories under the specified directory including the specified directory
+     *
+     *@param directory
+     *                     - directory to be deleted
+     *
+     *@return boolean - true if directory was successfully deleted
+     */
+    public static boolean deleteDirectory(File directory)
+    {
+        boolean returnValue = false;
+        if ((directory != null) && (directory.exists( )))
+        {
+            returnValue = deleteDirectoryContent(directory);
+            if (returnValue)
+            {
+                returnValue = returnValue && directory.delete( );
+            }
+        }
+        return returnValue;
+    }
+
+    public static boolean deleteDirectory(Path directory)
+    {
+        return deleteDirectory(file(directory));
     }
 
     /**
      * This method displays a log message through the embedded log system.
-     * 
+     *
      * @param logMessage
      *                       A <code>String</code> containing the log message to display.
      */
+    public static boolean createLink(Path current, Path target, int option)
+    {
+        String command = "";
+        if (Settings.os.startsWith("windows"))
+        {
+            switch (option)
+            {
+                case 0:
+                    command = "cmd /c mklink " + current + " " + target;
+                break;
+
+                case 1:
+                    command = "cmd /c mklink /h " + current + " " + target;
+            }
+        }
+        else
+        {
+            switch (option)
+            {
+                case 0:
+                    command = "ln -s " + target + " " + current;
+                break;
+
+                case 1:
+                    command = "ln " + target + " " + current;
+            }
+        }
+        return Utils.runSystemCommand(command, 0);
+    }
+
     private static void log(String logMessage)
     {
         Logger.log(Thread.currentThread( ), logMessage, Logger.OPERATIONS);

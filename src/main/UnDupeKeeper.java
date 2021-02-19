@@ -27,14 +27,14 @@ import tools.Logger;
 import tools.SettingsHandler;
 import tools.TrayImage;
 
-// TODO: Change String to CharBuffer (for performance)
-// TODO: update readme.md
-// TODO: jar installation (with dependencies)
-// TODO: update wordpress content (instructions)
-// TODO: update undupe cleanup w/ symbolic links
-// TODO: popup unique file class - files ! identical
-// TODO: save database frequency
-// TODO: scan files to update database
+// TODO: CHANGE STRING TO CHARBUFFER (FOR PERFORMANCE)
+// TODO: UPDATE README.MD
+// TODO: JAR INSTALLATION (WITH DEPENDENCIES)
+// TODO: UPDATE WORDPRESS CONTENT (INSTRUCTIONS)
+// TODO: UPDATE UNDUPE CLEANUP W/ SYMBOLIC LINKS
+// TODO: POPUP UNIQUEFILE CLASS - FILES ! IDENTICAL
+// TODO: SAVE DATABASE FREQUENCY (TIME OR EPOCHS)
+// TODO: SCAN FILES TO UPDATE DATABASE
 
 /**
  * UnDupeKeeper is the main class. It calls and starts everything on the system, regarding to User Interface, and
@@ -108,7 +108,7 @@ public class UnDupeKeeper
         Path directoryToWatch = null;
         if (args.length > 0)
         {
-            // TODO: MUST GET $pwd/directoryToWatch. Now it just gets the dir name with dir path. FATAL getFileName
+            // TODO: MUST GET $pwd/directoryToWatch. NOW IT JUST GETS THE DIR NAME WITH DIR PATH. FATAL getFileName
             directoryToWatch = checkPromptArguments(args);
             if ( ! fileOrder.equals(Settings.CompareRecursive))
             {
@@ -119,7 +119,7 @@ public class UnDupeKeeper
             DataBase.saveDir(directoryToWatch.toString( ));
             DataBase.saveSettings(settingsHandler);
         }
-        while ( ! FileOperations.isDir(directoryToWatch))
+        while ( ! FileOperations.isDirectory(directoryToWatch))
         {
             String directoryName = null;
             recursiveFolderScan = true;

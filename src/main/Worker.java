@@ -344,7 +344,7 @@ public class Worker implements Runnable
         }
         Logger.msg("\n__ [ LOG START  ] ________________________________________________________________________________________________________________________________________");
 
-        // TODO: set savedb max files as configurable parameter
+        // TODO: SET SAVEDB MAX FILES AS CONFIGURABLE PARAMETER
         if (savedb > 10)
         {
             this.save( );

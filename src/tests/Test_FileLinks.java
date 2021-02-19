@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
-import deprecated.Linker;
 import settings.Strings;
 import tools.FileOperations;
 import tools.Logger;
@@ -23,7 +22,7 @@ public class Test_FileLinks
         Logger.msg("createOSSymbolicLink start");
         Path dummyfile = FileSetup.generateDummy("./ossymb.txt");
         Path symlink   = Paths.get("./ossymb.lnx");
-        Linker.createLink(symlink, dummyfile, 0);
+        FileOperations.createLink(symlink, dummyfile, 0);
         assertTrue(Files.isRegularFile(dummyfile));
         assertTrue(Files.isSymbolicLink(symlink));
         FileOperations.deleteFile(symlink);
@@ -59,7 +58,7 @@ public class Test_FileLinks
         Logger.msg("createOSHardLink start");
         Path dummyfile = FileSetup.generateDummy("./oshard.txt");
         Path symlink   = Paths.get("./oshard.lnx");
-        Linker.createLink(symlink, dummyfile, 1);
+        FileOperations.createLink(symlink, dummyfile, 1);
         assertTrue(Files.isRegularFile(dummyfile));
         assertTrue(Files.isRegularFile(symlink));
         FileOperations.deleteFile(symlink);

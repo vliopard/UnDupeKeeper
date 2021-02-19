@@ -11,8 +11,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import org.mozilla.universalchardet.UniversalDetector;
 
-// TODO: JAVADOC
-// TODO: METHOD AND VARIABLE NAMES REFACTORING
 public class StreamManager
 {
     private static String getEncoding(String file)

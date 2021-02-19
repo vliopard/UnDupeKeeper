@@ -30,8 +30,6 @@ import tools.TimeControl;
 import tools.Utils;
 import org.apache.commons.io.FileUtils;
 
-// TODO: JAVADOC
-// TODO: METHOD AND VARIABLE NAMES REFACTORING
 public class Comparison
 {
     static ProgressBarDialog progressBarDialog;
@@ -42,7 +40,7 @@ public class Comparison
         try
         {
             fsize = Files.size(f1);
-            // TODO: replace number for constant (configurable settings)
+            // TODO: REPLACE NUMBER FOR CONSTANT (CONFIGURABLE SETTINGS)
             if (fsize < 350000000)
             {
                 return isArrayEqual(f1, f2);
@@ -350,12 +348,12 @@ public class Comparison
             return;
         }
         String removeMarker           = Settings.UnDupeKeeperMarker + "_[" + fileCounter + "]_";
-        String originalSourceFileName = FileOperations.getFilePath(fileName2.toString( )) + "_("
+        String originalSourceFileName = FileOperations.getDirectory(fileName2.toString( )) + "_("
                 + FileOperations.getFileName(fileName2.toString( ))
                 + FileOperations.getFileExtension(fileName2.toString( )) + ")_";
         originalSourceFileName = originalSourceFileName.replace(':', '#');
         originalSourceFileName = originalSourceFileName.replace(Settings.cSlash, '-');
-        String newFileName1 = FileOperations.getFilePath(fileName1.toString( ))
+        String newFileName1 = FileOperations.getDirectory(fileName1.toString( ))
                 + FileOperations.getFileName(fileName1.toString( ))
                 + FileOperations.getFileExtension(fileName1.toString( )) + "@@" + originalSourceFileName + removeMarker;
         if (fileName1.toString( ).lastIndexOf(Settings.Dot) > fileName1.toString( ).lastIndexOf(Settings.Slash))
@@ -489,11 +487,11 @@ public class Comparison
     {
         String             textFileType  = Strings.file;
         ArrayList <String> arrayFileList = new ArrayList <String>( );
-        if (FileOperations.isDir(textFileList) &&
+        if (FileOperations.isDirectory(textFileList) &&
                 ( ! FileOperations.isEmpty(textFileList)))
         {
             arrayFileList = ReportGenerator.generateFileList(FileOperations.file(textFileList).listFiles( ), Settings.Empty);
-            textFileList = FileOperations.getFilePath(textFileList) + FileOperations.getFileName(textFileList)
+            textFileList = FileOperations.getDirectory(textFileList) + FileOperations.getFileName(textFileList)
                     + Settings.UnDupeKeeperTextFile;
             textFileType = Strings.directory;
             FileOperations.file(textFileList).deleteOnExit( );

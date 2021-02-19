@@ -100,7 +100,7 @@ public class UniqueFile implements Serializable
 
     public void setPath(Storage uri)
     {
-        // TODO: THIS METHOD SHOULD BE REVISED - why remaking links?
+        // TODO: THIS METHOD SHOULD BE REVISED - WHY REMAKING LINKS?
         if ( ! fileUri.getString( ).equals(uri.getString( )))
         {
             fileUri = uri;
@@ -138,7 +138,7 @@ public class UniqueFile implements Serializable
         }
         try
         {
-            FileOperations.createDir(uri);
+            FileOperations.createDirectory(uri);
             Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
         }
         catch (IOException e)
@@ -289,7 +289,7 @@ public class UniqueFile implements Serializable
         {
             for (int i = 0; i < fileLinks.size( ); i++)
             {
-                FileOperations.createDir(fileLinks.get(i));
+                FileOperations.createDirectory(fileLinks.get(i));
                 Files.createSymbolicLink(fileLinks.get(i).getPath( ), fileUri.getPath( ));
             }
         }
@@ -323,7 +323,7 @@ public class UniqueFile implements Serializable
             if (Comparison.compareBySize(uri.getPath( ), fileUri.getPath( )))
             {
                 FileOperations.deleteFile(uri);
-                FileOperations.createDir(uri);
+                FileOperations.createDirectory(uri);
                 Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
             }
             else
