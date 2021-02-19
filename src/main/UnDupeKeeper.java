@@ -29,10 +29,8 @@ import tools.TrayImage;
 
 // TODO: Change String to CharBuffer (for performance)
 // TODO: update readme.md
-// TODO: USE MKDIR -P TO CREATE NON EXISTENT DIRECTORIES IF SYSTEM MUST RESTORE A LINK/FILE IN IT
 // TODO: jar installation (with dependencies)
 // TODO: update wordpress content (instructions)
-// TODO: recreate link in removed directory (mkdir -p)
 // TODO: update undupe cleanup w/ symbolic links
 // TODO: popup unique file class - files ! identical
 // TODO: save database frequency
@@ -165,7 +163,7 @@ public class UnDupeKeeper
         }
         catch (InterruptedException e)
         {
-            Logger.err("MSG_012: " + Strings.ukProblemStarting + e);
+            Logger.err("MSG_031: " + Strings.ukProblemStarting + e);
         }
         Logger.msg(Strings.ukNormalShutdonw);
         System.exit(0);
@@ -183,7 +181,7 @@ public class UnDupeKeeper
         }
         catch (InterruptedException e)
         {
-            Logger.err("MSG_013: " + Strings.ukCantSendExitToWorker);
+            Logger.err("MSG_032: " + Strings.ukCantSendExitToWorker);
         }
     }
 
@@ -199,7 +197,7 @@ public class UnDupeKeeper
         }
         catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException e)
         {
-            Logger.err("MSG_014: " + Strings.ukErrorLoadingLookAndFeel + e);
+            Logger.err("MSG_033: " + Strings.ukErrorLoadingLookAndFeel + e);
         }
         // UIManager.put("swing.boldMetal", Boolean.FALSE);
         SwingUtilities.invokeLater(new Runnable( )
@@ -263,7 +261,7 @@ public class UnDupeKeeper
         }
         catch (AWTException e)
         {
-            Logger.err("MSG_015: " + Strings.ukSystemTrayIconCantBeAdded);
+            Logger.err("MSG_034: " + Strings.ukSystemTrayIconCantBeAdded);
             return;
         }
         trayIcon.addActionListener(new ActionListener( )

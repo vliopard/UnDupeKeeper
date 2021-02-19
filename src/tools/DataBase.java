@@ -70,7 +70,7 @@ public class DataBase
         }
         catch (IOException e)
         {
-            Logger.err("MSG_027: " + Strings.dbProblemToSaveMap + e);
+            Logger.err("MSG_047: " + Strings.dbProblemToSaveMap + e);
         }
     }
 
@@ -88,7 +88,7 @@ public class DataBase
         }
         catch (IOException e)
         {
-            Logger.err("MSG_027a: " + Strings.dbProblemToSaveMap + e);
+            Logger.err("MSG_048: " + Strings.dbProblemToSaveMap + e);
         }
     }
 
@@ -114,7 +114,7 @@ public class DataBase
             }
             catch (ClassNotFoundException | IOException e)
             {
-                Logger.err("MSG_028: " + Strings.dbProblemDatabaseCreation + e);
+                Logger.err("MSG_049: " + Strings.dbProblemDatabaseCreation + e);
             }
         }
         Logger.msg(Strings.dbWarningNewDatabase);
@@ -137,7 +137,7 @@ public class DataBase
             }
             catch (ClassNotFoundException | IOException e)
             {
-                Logger.err("MSG_028a: " + Strings.dbProblemDatabaseCreation + e);
+                Logger.err("MSG_050: " + Strings.dbProblemDatabaseCreation + e);
             }
         }
         Logger.msg(Strings.dbWarningNewDatabase);
@@ -161,7 +161,7 @@ public class DataBase
         }
         catch (IOException e)
         {
-            Logger.err("MSG_029: " + Strings.dbProblemSavingDir + e);
+            Logger.err("MSG_051: " + Strings.dbProblemSavingDir + e);
         }
     }
 
@@ -183,7 +183,7 @@ public class DataBase
             }
             catch (ClassNotFoundException | IOException e)
             {
-                Logger.err("MSG_030: " + Strings.dbProblemStoringSettings + e);
+                Logger.err("MSG_052: " + Strings.dbProblemStoringSettings + e);
             }
         }
         return null;
@@ -229,7 +229,7 @@ public class DataBase
         }
         catch (IOException e)
         {
-            Logger.err("MSG_031: " + Strings.dbProblemToSaveSettings + e);
+            Logger.err("MSG_053: " + Strings.dbProblemToSaveSettings + e);
         }
     }
 
@@ -253,7 +253,7 @@ public class DataBase
             }
             catch (ClassNotFoundException | IOException e)
             {
-                Logger.err("MSG_032: " + Strings.dbProblemSettingsCreation + e);
+                Logger.err("MSG_054: " + Strings.dbProblemSettingsCreation + e);
             }
         }
         Logger.msg(Strings.dbWarningNewSettings);

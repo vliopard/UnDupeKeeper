@@ -12,8 +12,10 @@ import java.nio.file.Paths;
 import java.util.Random;
 
 import settings.Settings;
+import settings.Strings;
 import tools.CheckSum;
 import tools.FileOperations;
+import tools.Logger;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -33,8 +35,8 @@ public class FileSetup
         }
         catch (IOException e)
         {
-            // TODO: INDEX ERROR MESSAGE
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_039: " + Strings.generic + e);
         }
         return null;
     }
@@ -81,8 +83,8 @@ public class FileSetup
             }
             catch (IOException e)
             {
-                // TODO: INDEX ERROR MESSAGE
-                e.printStackTrace( );
+                // TODO: REPLACE GENERIC EXCEPTION
+                Logger.err("MSG_040: " + Strings.generic + e);
             }
         }
     }
@@ -99,8 +101,8 @@ public class FileSetup
         }
         catch (IOException e)
         {
-            // TODO: INDEX ERROR MESSAGE
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_041: " + Strings.generic + e);
         }
         return null;
     }

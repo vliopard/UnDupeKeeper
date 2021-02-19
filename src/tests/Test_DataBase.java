@@ -57,7 +57,6 @@ public class Test_DataBase
     @Test
     public void dataBaseLnkLoad( )
     {
-        // TODO: LOAD LINK MAP DOES NOT WORK
         linkMapTable = DataBase.loadLinkMap( );
     }
 

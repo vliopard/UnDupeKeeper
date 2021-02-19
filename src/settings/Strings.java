@@ -6,6 +6,7 @@ package settings;
  * 
  * @author vliopard
  */
+
 public class Strings
 {
     public static final String bkTotalItems                    =Messages.getString("StringValue0");                   //$NON-NLS-1$
@@ -178,4 +179,5 @@ public class Strings
     public static final String unableToRenameFile              =Messages.getString("StringValue167");                 //$NON-NLS-1$
     public static final String sourceFileName                  =Messages.getString("StringValue167");                 //$NON-NLS-1$
     public static final String targetFileName                  =Messages.getString("StringValue167");                 //$NON-NLS-1$
+    public static final String generic                         =Messages.getString("StringValue170");                 //$NON-NLS-1$
 }

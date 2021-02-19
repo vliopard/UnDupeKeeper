@@ -58,7 +58,7 @@ public class CheckSum
         }
         catch (IOException | NoSuchAlgorithmException e)
         {
-            Logger.err("MSG_020: " + Strings.csChecksumCreationFailed + e);
+            Logger.err("MSG_044: " + Strings.csChecksumCreationFailed + e);
             return null;
         }
     }
@@ -144,9 +144,8 @@ public class CheckSum
         }
         catch (UnsupportedEncodingException e)
         {
-            // TODO: CREATE INDEXED ERROR MESSAGE
-            log("UnsupportedEncodingException:" + e);
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_045: " + Strings.generic + e);
         }
         return retval;
     }
@@ -198,7 +197,7 @@ public class CheckSum
         }
         catch (NoSuchAlgorithmException | UnsupportedEncodingException e)
         {
-            Logger.err("MSG_021: " + Strings.csPasswordEncryptionFailed + e);
+            Logger.err("MSG_046: " + Strings.csPasswordEncryptionFailed + e);
         }
         return cypherSha1Method;
     }

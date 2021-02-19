@@ -104,7 +104,7 @@ public class Utils
         }
         catch (AWTException | InterruptedException e)
         {
-            Logger.err("MSG_036: " + Strings.utBalloonError + e);
+            Logger.err("MSG_065: " + Strings.utBalloonError + e);
         }
         systemTray.remove(trayIcon);
     }
@@ -117,8 +117,9 @@ public class Utils
             process.waitFor( );
             if (process.exitValue( ) != 0)
             {
-                // TODO: CHANGE TO INDEXED MESSAGE
-                Logger.msg("Abnormal process termination 1");
+                // TODO: Abnormal process termination 1
+                // TODO: REPLACE GENERIC EXCEPTION
+                Logger.err("MSG_066: " + Strings.generic);
                 return false;
             }
 
@@ -165,7 +166,7 @@ public class Utils
         }
         catch (Exception e)
         {
-            Logger.err("MSG_023: " + Strings.processRuntimeError + e);
+            Logger.err("MSG_067: " + Strings.processRuntimeError + e);
         }
         return true;
     }
@@ -180,8 +181,8 @@ public class Utils
         }
         catch (IOException e)
         {
-            // TODO: REPLACE BY INDEXED MESSAGE
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_068: " + Strings.generic + e);
         }
     }
 }

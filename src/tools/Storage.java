@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import settings.Strings;
+
 public class Storage implements Serializable
 {
     private static final long serialVersionUID = 4814143809492206886L;
@@ -92,8 +94,8 @@ public class Storage implements Serializable
         }
         catch (IOException e)
         {
-            // TODO: index error message
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_061: " + Strings.generic + e);
         }
         Logger.msg("Failed to delete the file");
         return false;

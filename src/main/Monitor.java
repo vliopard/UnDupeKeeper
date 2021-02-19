@@ -55,7 +55,7 @@ public class Monitor
             while ( !stopSignal.contains(Settings.StopWorking));
             if ( !JNotify.removeWatch(watchID))
             {
-                Logger.err("MSG_002: " + Strings.mtInvalidWatchID);
+                Logger.err("MSG_019: " + Strings.mtInvalidWatchID);
             }
             fileQueue = new FileQueue( );
             // TODO: EXIT SIGNAL FILE WILL SHUTDOWN SYSTEM - FIX IT
@@ -64,7 +64,7 @@ public class Monitor
         }
         catch (JNotifyException | InterruptedException e)
         {
-            Logger.err("MSG_002a: " + Strings.mtProblemCreatingMonitorObject + e);
+            Logger.err("MSG_020: " + Strings.mtProblemCreatingMonitorObject + e);
         }
         Logger.msg(Strings.mtMonitorShutdown);
     }
@@ -87,7 +87,7 @@ public class Monitor
             }
             catch (InterruptedException e)
             {
-                Logger.err("MSG_003: " + Strings.mtProblemAddingToCreatingQueue + e);
+                Logger.err("MSG_021: " + Strings.mtProblemAddingToCreatingQueue + e);
             }
         }
 
@@ -101,7 +101,7 @@ public class Monitor
             }
             catch (InterruptedException e)
             {
-                Logger.err("MSG_004: " + Strings.mtProblemAddingToModifyingQueue + e);
+                Logger.err("MSG_022: " + Strings.mtProblemAddingToModifyingQueue + e);
             }
         }
 
@@ -115,7 +115,7 @@ public class Monitor
             }
             catch (InterruptedException e)
             {
-                Logger.err("MSG_005: " + Strings.mtProblemAddingToDeletingQueue + e);
+                Logger.err("MSG_023: " + Strings.mtProblemAddingToDeletingQueue + e);
             }
         }
 
@@ -132,7 +132,7 @@ public class Monitor
             }
             catch (InterruptedException e)
             {
-                Logger.err("MSG_005: " + Strings.mtProblemAddingToDeletingQueue + e);
+                Logger.err("MSG_024: " + Strings.mtProblemAddingToDeletingQueue + e);
             }
         }
     }

@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import org.junit.Test;
 
 import deprecated.Linker;
+import settings.Strings;
 import tools.FileOperations;
 import tools.Logger;
 
@@ -46,8 +47,8 @@ public class Test_FileLinks
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_042: " + Strings.generic + e);
         }
         Logger.msg("createJavaSymbolicLink end");
     }
@@ -82,8 +83,8 @@ public class Test_FileLinks
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_043: " + Strings.generic + e);
         }
         Logger.msg("createJavaHardLink end");
     }

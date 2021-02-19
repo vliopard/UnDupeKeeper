@@ -108,7 +108,7 @@ public class ReportGenerator
                 }
                 else
                 {
-                    Logger.err("MSG_038: " + Strings.invalidContent);
+                    Logger.err("MSG_058: " + Strings.invalidContent);
                     return null;
                 }
                 if ( ! treeMap.containsKey(fileName))
@@ -127,7 +127,7 @@ public class ReportGenerator
             }
             catch (IOException e)
             {
-                Logger.err("MSG_034: " + Strings.fbReportError + e);
+                Logger.err("MSG_059: " + Strings.fbReportError + e);
                 return null;
             }
         }
@@ -139,7 +139,7 @@ public class ReportGenerator
             }
             catch (IOException e)
             {
-                Logger.err("MSG_035: " + Strings.rgErrorClosingBuffer + e);
+                Logger.err("MSG_060: " + Strings.rgErrorClosingBuffer + e);
             }
         }
         return treeMap;

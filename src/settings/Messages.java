@@ -40,7 +40,7 @@ public class Messages
         }
         catch (MissingResourceException e)
         {
-            Logger.err("MSG_019: " + Strings.resourseError + e);
+            Logger.err("MSG_038: " + Strings.resourseError + e);
             return '!' + key + '!';
         }
     }

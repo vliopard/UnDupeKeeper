@@ -50,8 +50,8 @@ public class Comparison
         }
         catch (IOException e)
         {
-            // TODO: REPLACE BY INDEXED ERROR MESSAGE
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_002: " + Strings.generic + e);
         }
         return runSystemCompare(f1, f2, 0);
     }
@@ -71,8 +71,8 @@ public class Comparison
         }
         catch (IOException e)
         {
-            // TODO: REPLACE BY INDEXED MESSAGE
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_003: " + Strings.generic + e);
         }
         return false;
     }
@@ -109,8 +109,8 @@ public class Comparison
         }
         catch (IOException e)
         {
-            // TODO: REPLACE BY INDEXED MESSAGE
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_004: " + Strings.generic + e);
         }
         return false;
     }
@@ -123,8 +123,8 @@ public class Comparison
         }
         catch (IOException e)
         {
-            // TODO: REPLACE BY INDEXED MESSAGE
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_005: " + Strings.generic + e);
             return false;
         }
     }
@@ -170,7 +170,7 @@ public class Comparison
                 /* In case of path equality comparison failure, it is safe to return false instead of letting it
                  * continue next steps, otherwise, file could be erroneously marked as duplicate. This is not a
                  * desirable behavior. Better returning false instead. */
-                Logger.err("MSG_022: " + Strings.cannotCompareFiles + binaryFilePath1 +
+                Logger.err("MSG_006: " + Strings.cannotCompareFiles + binaryFilePath1 +
                         Settings.Blank + binaryFilePath2);
                 return false;
             }
@@ -226,7 +226,7 @@ public class Comparison
         }
         catch (IOException e)
         {
-            Logger.err("MSG_039: " + Strings.problemCountingLines + e);
+            Logger.err("MSG_007: " + Strings.problemCountingLines + e);
             return -1;
         }
         return lineCount;
@@ -283,7 +283,7 @@ public class Comparison
                 }
                 else
                 {
-                    Logger.err("MSG_041: " + Strings.fileNameContainsDoubleAt + name1);
+                    Logger.err("MSG_008: " + Strings.fileNameContainsDoubleAt + name1);
                     System.exit( -1);
                 }
                 if (at < start)
@@ -292,7 +292,7 @@ public class Comparison
                 }
                 else
                 {
-                    Logger.err("MSG_042: " + Strings.fileNameWrongDoubleAtPosition + path2);
+                    Logger.err("MSG_009: " + Strings.fileNameWrongDoubleAtPosition + path2);
                     System.exit( -1);
                 }
                 if (start < end)
@@ -301,7 +301,7 @@ public class Comparison
                 }
                 else
                 {
-                    Logger.err("MSG_043: " + Strings.fileNameMismatchStartEnd + name2);
+                    Logger.err("MSG_010: " + Strings.fileNameMismatchStartEnd + name2);
                     System.exit( -1);
                 }
                 tail = fileName.substring(end);
@@ -330,7 +330,7 @@ public class Comparison
                         }
                         else
                         {
-                            Logger.err("MSG_044: " + Strings.cannotShrinkFilename);
+                            Logger.err("MSG_011: " + Strings.cannotShrinkFilename);
                             Logger.err("[" + fileName.length( ) + "] " + fileName);
                             break;
                         }
@@ -376,7 +376,7 @@ public class Comparison
                     + Settings.endl + Settings.SeparatorSingle + Settings.SeparatorSingle);
             Logger.err(Strings.targetFileName + "[" + newFileName1.length( ) + "] " + newFileName1 + Settings.endl
                     + Settings.SeparatorDouble + Settings.SeparatorDouble);
-            Logger.err("MSG_045: " + Strings.unableToRenameFile + e);
+            Logger.err("MSG_012: " + Strings.unableToRenameFile + e);
         }
     }
 
@@ -477,7 +477,7 @@ public class Comparison
             }
             catch (IOException e)
             {
-                Logger.err("MSG_024: " + Strings.problemSortingTextFile + e);
+                Logger.err("MSG_013: " + Strings.problemSortingTextFile + e);
                 return false;
             }
             return true;
@@ -516,7 +516,7 @@ public class Comparison
                 }
                 catch (IOException e)
                 {
-                    Logger.err("MSG_038: " + Strings.cannotOpenTextFile + e);
+                    Logger.err("MSG_014: " + Strings.cannotOpenTextFile + e);
                     textFileList = null;
                     arrayFileList = null;
                 }
@@ -548,7 +548,7 @@ public class Comparison
             }
             catch (IOException e)
             {
-                Logger.err("MSG_025: " + Strings.couldNotWriteOrderedFileList + e);
+                Logger.err("MSG_015: " + Strings.couldNotWriteOrderedFileList + e);
                 textFileList = null;
             }
         }
@@ -633,7 +633,7 @@ public class Comparison
             }
             catch (IOException e)
             {
-                Logger.err("MSG_026: " + Strings.problemDuringComparisonProcess + e);
+                Logger.err("MSG_016: " + Strings.problemDuringComparisonProcess + e);
             }
             progressBarDialog.setMessage("100" + Strings.percentageFrom + totalFileCount + Strings.filec
                     + renamedFileCount + Strings.renamed);
@@ -652,7 +652,7 @@ public class Comparison
         }
         else
         {
-            Logger.err("MSG_037: " + Strings.unableToSortInputFile);
+            Logger.err("MSG_017: " + Strings.unableToSortInputFile);
         }
     }
 
@@ -702,7 +702,7 @@ public class Comparison
         }
         catch (IOException e)
         {
-            Logger.err("MSG_040: " + Strings.comparisonFailed + e);
+            Logger.err("MSG_018: " + Strings.comparisonFailed + e);
         }
         return false;
     }

@@ -96,7 +96,7 @@ public class ProgressBarDialog
             }
             catch (InterruptedException e)
             {
-                Logger.err("MSG_033: " + Strings.fatalError + e);
+                Logger.err("MSG_057: " + Strings.fatalError + e);
             }
         }
     }

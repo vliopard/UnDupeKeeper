@@ -76,7 +76,7 @@ public class Worker implements Runnable
         }
         catch (InterruptedException e)
         {
-            Logger.err("MSG_016: " + Strings.wkProblemRunningWorker + e);
+            Logger.err("MSG_035: " + Strings.wkProblemRunningWorker + e);
         }
         save( );
         try
@@ -85,7 +85,7 @@ public class Worker implements Runnable
         }
         catch (InterruptedException e)
         {
-            Logger.err("MSG_017: " + Strings.wkErrorSendingShutdownMessage);
+            Logger.err("MSG_036: " + Strings.wkErrorSendingShutdownMessage);
         }
         Logger.msg(Strings.wkWorkerShutdown);
     }
@@ -319,8 +319,8 @@ public class Worker implements Runnable
         }
         catch (IOException e)
         {
-            // TODO: REPLACE BY INDEXED MESSAGE
-            e.printStackTrace();
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_037: " + Strings.generic + e);
         }
         
         Logger.msg("-- [ LOG END    ] ----------------------------------------------------------------------------------------------------------------------------------------\n");

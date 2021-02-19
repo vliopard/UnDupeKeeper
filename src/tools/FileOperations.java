@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import settings.Settings;
+import settings.Strings;
 
 // TODO: Files.copy(file, file, null)
 // TODO: Files.createLink(file, file)
@@ -112,8 +113,8 @@ public class FileOperations
         }
         catch (IOException e)
         {
-            // TODO: index error message
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_055: " + Strings.generic + e);
         }
         Logger.err("Failed to delete the file");
         return false;
@@ -199,7 +200,41 @@ public class FileOperations
         }
         return true;
     }
-    
+
+    public static void createDir(String dir)
+    {
+        createDir(Paths.get(dir));
+    }
+
+    public static void createDir(File dir)
+    {
+        createDir(Paths.get(dir.toString( )));
+    }
+
+    public static void createDir(Path path)
+    {
+        Path dir = path.getParent( );
+        try
+        {
+            Logger.msg(dir.toString( ));
+            if ( ! FileOperations.exist(dir) && ! FileOperations.isDir(dir))
+            {
+                Logger.msg("CREATING " + dir.toString( ));
+                Files.createDirectories(dir);
+            }
+        }
+        catch (IOException e)
+        {
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_056: " + Strings.generic + e);
+        }
+    }
+
+    public static void createDir(Storage dir)
+    {
+        createDir(dir.getPath( ));
+    }
+
     /**
      * This method displays a log message through the embedded log system.
      * 

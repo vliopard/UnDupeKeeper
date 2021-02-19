@@ -1,10 +1,8 @@
 package main;
 
 // TODO: RESEARCH: SAVE POSITION AND SCREEN SETTINGS
-// TODO: RESEARCH: FIX FILESIZE ORDERING TO ASC/DESC NUMBER (NOT STRING
-// ALPHABET)
-// TODO: RESEARCH: ORDERING REPORT VIEWER FILES DESYNCHRONIZE SELECTED FOCUS
-// FROM DETAIL
+// TODO: RESEARCH: FIX FILESIZE ORDERING TO ASC/DESC NUMBER (NOT STRING ALPHABET)
+// TODO: RESEARCH: ORDERING REPORT VIEWER FILES DESYNCHRONIZE SELECTED FOCUS FROM DETAIL
 // TODO: METHOD AND VARIABLE NAMES REFACTORING
 // TODO: JAVADOC
 import java.awt.BorderLayout;
@@ -188,7 +186,7 @@ public class ReportViewer
                     }
                     catch (Throwable e)
                     {
-                        showThrowable("MSG_006: " + Strings.btAError, Strings.btA, e);
+                        showThrowable("MSG_025: " + Strings.btAError, Strings.btA, e);
                     }
                     guiPanel.repaint( );
                 }
@@ -207,7 +205,7 @@ public class ReportViewer
                     }
                     catch (Throwable e)
                     {
-                        showThrowable("MSG_007: " + Strings.btBError, Strings.btB, e);
+                        showThrowable("MSG_026: " + Strings.btBError, Strings.btB, e);
                     }
                     guiPanel.repaint( );
                 }
@@ -226,7 +224,7 @@ public class ReportViewer
                     }
                     catch (Throwable e)
                     {
-                        showThrowable("MSG_008: " + Strings.btCError, Strings.btC, e);
+                        showThrowable("MSG_027: " + Strings.btCError, Strings.btC, e);
                     }
                 }
             });
@@ -241,8 +239,7 @@ public class ReportViewer
                     {
                         Logger.msg(Strings.btDMessage + currentFile);
                         // TODO: RESEARCH: LOOK FOR A WAY TO DELETE FILE
-                        // TODO: RESEARCH: AFTER DELETE FILE, REFRESH GUI
-                        // FILE TREE
+                        // TODO: RESEARCH: AFTER DELETE FILE, REFRESH GUI FILE TREE
                         currentFile.setReadable(true);
                         currentFile.setWritable(true);
                         if (currentFile.delete( ))
@@ -252,7 +249,7 @@ public class ReportViewer
                     }
                     catch (Throwable e)
                     {
-                        showThrowable("MSG_009: " + Strings.btDError, Strings.btD, e);
+                        showThrowable("MSG_028: " + Strings.btDError, Strings.btD, e);
                     }
                 }
             });
@@ -494,7 +491,7 @@ public class ReportViewer
         }
         catch (Exception e)
         {
-            Logger.err("MSG_010: " + Strings.fbErrorLoadingLookAndFeel + e);
+            Logger.err("MSG_029: " + Strings.fbErrorLoadingLookAndFeel + e);
         }
         JFrame mainFrame = new JFrame(Strings.fbTitleCheck);
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -527,7 +524,7 @@ public class ReportViewer
         }
         catch (Exception e)
         {
-            Logger.err("MSG_011: " + Strings.fbErrorLoadingIcons + e);
+            Logger.err("MSG_030: " + Strings.fbErrorLoadingIcons + e);
         }
         mainFrame.pack( );
         // f.setLocationByPlatform(true);

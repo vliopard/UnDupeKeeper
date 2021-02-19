@@ -136,25 +136,15 @@ public class UniqueFile implements Serializable
         {
             FileOperations.deleteFile(uri);
         }
-        // TODO: CREATE TEST SUITE TO CHECK PERFORMANCE BETWEEN THEM
-        //Linker.createLink(uri, fileUri);
         try
         {
-            Path dir = uri.getPath( ).getParent( );
-            Logger.msg(dir.toString( ));
-            if ( ! FileOperations.exist(dir) && ! FileOperations.isDir(dir))
-            {
-                Logger.msg("CREATING " + dir.toString( ));
-                Files.createDirectories(dir);
-            }
-            // TODO: TEST AND BENCHMARK: Files.createLink(getPath(), getPath())
+            FileOperations.createDir(uri);
             Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
-            // TODO: BENCHMARK TO Linker.createLink(uri, fileUri);
         }
         catch (IOException e)
         {
-            // TODO: index error message
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_062: " + Strings.generic + e);
         }
     }
 
@@ -299,22 +289,14 @@ public class UniqueFile implements Serializable
         {
             for (int i = 0; i < fileLinks.size( ); i++)
             {
-                Path dir = fileLinks.get(i).getPath( ).getParent( );
-                Logger.msg(dir.toString( ));
-                if ( ! FileOperations.exist(dir) && ! FileOperations.isDir(dir))
-                {
-                    Logger.msg("CREATING " + dir.toString( ));
-                    Files.createDirectories(dir);
-                }
-                // TODO: TEST AND BENCHMARK: Files.createLink(getPath(), getPath())
+                FileOperations.createDir(fileLinks.get(i));
                 Files.createSymbolicLink(fileLinks.get(i).getPath( ), fileUri.getPath( ));
-                // TODO: BENCHMARK TO Linker.createLink(uri, fileUri);
             }
         }
         catch (IOException e)
         {
-            // TODO: index error message
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_063: " + Strings.generic + e);
         }
     }
 
@@ -341,9 +323,8 @@ public class UniqueFile implements Serializable
             if (Comparison.compareBySize(uri.getPath( ), fileUri.getPath( )))
             {
                 FileOperations.deleteFile(uri);
-                // TODO: TEST AND BENCHMARK: Files.createLink(getPath(), getPath())
+                FileOperations.createDir(uri);
                 Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
-                // TODO: BENCHMARK TO Linker.createLink(uri, fileUri);
             }
             else
             {
@@ -353,8 +334,8 @@ public class UniqueFile implements Serializable
         }
         catch (IOException e)
         {
-            // TODO: index error message
-            e.printStackTrace( );
+            // TODO: REPLACE GENERIC EXCEPTION
+            Logger.err("MSG_064: " + Strings.generic + e);
         }
     }
 
