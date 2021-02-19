@@ -67,8 +67,8 @@ public class UniqueFile implements Serializable
     {
         return fileUri.getPath( );
     }
-    
-    public boolean isEmpty()
+
+    public boolean isEmpty( )
     {
         return fileUri.isEmpty( );
     }
@@ -101,11 +101,11 @@ public class UniqueFile implements Serializable
     public void setPath(Storage uri)
     {
         // TODO: THIS METHOD SHOULD BE REVISED - why remaking links?
-        if ( !fileUri.getString( ).equals(uri.getString( )))
+        if ( ! fileUri.getString( ).equals(uri.getString( )))
         {
             fileUri = uri;
             setSha( );
-            if ( !fileLinks.isEmpty( ))
+            if ( ! fileLinks.isEmpty( ))
             {
                 for (int i = 0; i < fileLinks.size( ); i++)
                 {
@@ -140,6 +140,13 @@ public class UniqueFile implements Serializable
         //Linker.createLink(uri, fileUri);
         try
         {
+            Path dir = uri.getPath( ).getParent( );
+            Logger.msg(dir.toString( ));
+            if ( ! FileOperations.exist(dir) && ! FileOperations.isDir(dir))
+            {
+                Logger.msg("CREATING " + dir.toString( ));
+                Files.createDirectories(dir);
+            }
             // TODO: TEST AND BENCHMARK: Files.createLink(getPath(), getPath())
             Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
             // TODO: BENCHMARK TO Linker.createLink(uri, fileUri);
@@ -292,6 +299,13 @@ public class UniqueFile implements Serializable
         {
             for (int i = 0; i < fileLinks.size( ); i++)
             {
+                Path dir = fileLinks.get(i).getPath( ).getParent( );
+                Logger.msg(dir.toString( ));
+                if ( ! FileOperations.exist(dir) && ! FileOperations.isDir(dir))
+                {
+                    Logger.msg("CREATING " + dir.toString( ));
+                    Files.createDirectories(dir);
+                }
                 // TODO: TEST AND BENCHMARK: Files.createLink(getPath(), getPath())
                 Files.createSymbolicLink(fileLinks.get(i).getPath( ), fileUri.getPath( ));
                 // TODO: BENCHMARK TO Linker.createLink(uri, fileUri);

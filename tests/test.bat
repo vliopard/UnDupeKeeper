@@ -147,7 +147,6 @@ rem {
 rem     read -p "Press any key to continue..."
 rem }
 
-
 REM ##############################################################
 call:start_test "Add 1 local unique file"
 
@@ -214,6 +213,9 @@ set name1=test%label%-source1
 set name2=test%label%-target1
 
 call:create_file %name1% %name1%
+
+call:check_file %name1% 1
+call:check_file %name2% 0
 
 pause
 
@@ -441,9 +443,9 @@ call:remove_file %name1%
 
 call:check_file %name1% 0
 
-call:check_link %name2% 0
-call:check_link %name3% 0
-call:check_link %name4% 0
+call:check_link %name2% 2
+call:check_link %name3% 2
+call:check_link %name4% 2
 
 call:end_test
 
@@ -562,7 +564,7 @@ call:remove_file %name1%
 
 call:check_file %name1% 0
 
-call:check_link %name2% 0
+call:check_link %name2% 2
 
 pause
 
@@ -596,8 +598,8 @@ call:remove_file %name1%
 
 call:check_file %name1% 0
 
-call:check_link %name2% 0
-call:check_link %name3% 0
+call:check_link %name2% 2
+call:check_link %name3% 2
 
 pause
 
@@ -635,9 +637,9 @@ call:remove_file %name1%
 
 call:check_file %name1% 0
 
-call:check_link %name2% 0
-call:check_link %name3% 0
-call:check_link %name4% 0
+call:check_link %name2% 2
+call:check_link %name3% 2
+call:check_link %name4% 2
 
 pause
 
@@ -676,7 +678,7 @@ call:remove_file %name1%
 
 call:check_file %name1% 0
 
-call:check_link %dir1%\%name2% 0
+call:check_link %dir1%\%name2% 2
 
 pause
 
@@ -715,8 +717,8 @@ call:remove_file %name1%
 
 call:check_file %name1% 0
 
-call:check_link %dir1%\%name2% 0
-call:check_link %dir1%\%name3% 0
+call:check_link %dir1%\%name2% 2
+call:check_link %dir1%\%name3% 2
 
 pause
 
@@ -759,9 +761,9 @@ call:remove_file %name1%
 
 call:check_file %name1% 0
 
-call:check_link %dir1%\%name2% 0
-call:check_link %dir1%\%name3% 0
-call:check_link %dir1%\%name4% 0
+call:check_link %dir1%\%name2% 2
+call:check_link %dir1%\%name3% 2
+call:check_link %dir1%\%name4% 2
 
 pause
 
@@ -832,7 +834,7 @@ call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
 
-call:check_link %dir1%\%name2% 0
+call:check_link %dir1%\%name2% 2
 
 pause
 
@@ -876,8 +878,8 @@ call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
 
-call:check_link %dir1%\%name2% 0
-call:check_link %dir1%\%name3% 0
+call:check_link %dir1%\%name2% 2
+call:check_link %dir1%\%name3% 2
 
 pause
 
@@ -952,7 +954,7 @@ pause
 call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
-call:check_link %dir1%\%name3% 0
+call:check_link %dir1%\%name3% 2
 
 pause
 
@@ -997,8 +999,8 @@ pause
 call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
-call:check_link %dir1%\%name3% 0
-call:check_link %dir1%\%name4% 0
+call:check_link %dir1%\%name3% 2
+call:check_link %dir1%\%name4% 2
 
 pause
 
@@ -1044,9 +1046,9 @@ call:remove_file %name1%
 
 call:check_file %name1% 0
 
-call:check_link %name2% 0
-call:check_link %name3% 0
-call:check_link %name4% 0
+call:check_link %name2% 2
+call:check_link %name3% 2
+call:check_link %name4% 2
 
 pause
 
@@ -1055,8 +1057,8 @@ call:create_file %name2% %name5%
 call:check_file %name2% 1
 
 call:check_link %name2% 0
-call:check_link %name3% 0
-call:check_link %name4% 0
+call:check_link %name3% 2
+call:check_link %name4% 2
 
 call:end_test
 
@@ -1127,11 +1129,11 @@ call:remove_dir %dir1%
 
 pause
 
-call:check_file %name1% 1
+call:check_file %name1% 0
 
-call:check_link %dir1%\%name2% 1
-call:check_link %dir1%\%name3% 1
-call:check_link %dir1%\%name4% 1
+call:check_link %dir1%\%name2% 2
+call:check_link %dir1%\%name3% 2
+call:check_link %dir1%\%name4% 2
 
 pause
 
@@ -1245,6 +1247,8 @@ call:create_file %name38% %name04%
 call:create_file %dir3%\%name39% %name04%
 call:create_file %name40% %name04%
 
+pause
+
 call:check_file %name01% 1
 call:check_link %name02% 1
 call:check_link %name03% 1
@@ -1324,6 +1328,7 @@ EXIT /B 0
 REM ##############################################################
 :remove_dir
 set filename1=%~1
+del !basedir!%filename1%\*
 rmdir !basedir!%filename1%
 echo !basedir!%filename1%*
 call:wait_time
@@ -1363,11 +1368,18 @@ REM ##############################################################
 echo _
 echo LINK FILE !basedir!%~1
 set tmpfile=temp_file.tmp
+if %~2==2 (
+    set mark=0
+    set marq=1
+) else (
+    set mark=%~2
+    set marq=%~2
+)
 fsutil reparsepoint query "!basedir!%~1" > "%tmpfile%"
-if %errorlevel% == 0 call:assert 1 %~2
-if %errorlevel% == 1 call:assert 0 %~2
+if %errorlevel% == 0 call:assert 1 %mark%
+if %errorlevel% == 1 call:assert 0 %mark%
 del temp_file.tmp
-call:check_soft !basedir!%~1 %~2
+call:check_soft !basedir!%~1 %marq%
 EXIT /B 0
 
 REM ##############################################################
