@@ -73,13 +73,21 @@ rem {
 rem     filename1=$1
 rem     echo _
 rem     echo LINK FILE ${basedir}${filename1}
+rem     if $2==2
+rem     then
+rem         mark=0
+rem         marq=1
+rem     else
+rem         mark=$2
+rem         marq=$2
+rem     fi
 rem     if [ -h ${basedir}${filename1} ]
 rem     then
-rem         call_assert 1 $2
+rem         call_assert 1 ${mark}
 rem     else
-rem         call_assert 0 $2
+rem         call_assert 0 ${mark}
 rem     fi
-rem     call_check_soft ${basedir}${filename1} $2
+rem     call_check_soft ${basedir}${filename1} ${marq}
 rem }
 
 rem call_check_hard()
@@ -104,6 +112,15 @@ rem         call_assert 1 $2
 rem     else
 rem         call_assert 0 $2
 rem     fi
+rem }
+
+rem call_remove_dir()
+rem {
+rem     set filename1=$1
+rem     rm ${basedir}${filename1}/*
+rem     rmdir ${basedir}${filename1}
+rem     echo ${basedir}${filename1}*
+rem     read -t ${timeout} -p "${basedir}${filename1}"
 rem }
 
 rem call_assert()

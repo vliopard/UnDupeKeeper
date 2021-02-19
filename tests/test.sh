@@ -73,13 +73,21 @@ call_check_link()
     filename1=$1
     echo _
     echo LINK FILE ${basedir}${filename1}
+    if $2==2
+    then
+        mark=0
+        marq=1
+    else
+        mark=$2
+        marq=$2
+    fi
     if [ -h ${basedir}${filename1} ]
     then
-        call_assert 1 $2
+        call_assert 1 ${mark}
     else
-        call_assert 0 $2
+        call_assert 0 ${mark}
     fi
-    call_check_soft ${basedir}${filename1} $2
+    call_check_soft ${basedir}${filename1} ${marq}
 }
 
 call_check_hard()
@@ -104,6 +112,15 @@ call_check_soft()
     else
         call_assert 0 $2
     fi
+}
+
+call_remove_dir()
+{
+    set filename1=$1
+    rm ${basedir}${filename1}/*
+    rmdir ${basedir}${filename1}
+    echo ${basedir}${filename1}*
+    read -t ${timeout} -p "${basedir}${filename1}"
 }
 
 call_assert()
@@ -146,7 +163,6 @@ call_pause()
 {
     read -p "Press any key to continue..."
 }
-
 
 # REM ##############################################################
 call_start_test "Add 1 local unique file"
@@ -214,6 +230,9 @@ name1=test${label}-source1
 name2=test${label}-target1
 
 call_create_file ${name1} ${name1}
+
+call_check_file ${name1} 1
+call_check_file ${name2} 0
 
 call_pause
 
@@ -441,9 +460,9 @@ call_remove_file ${name1}
 
 call_check_file ${name1} 0
 
-call_check_link ${name2} 0
-call_check_link ${name3} 0
-call_check_link ${name4} 0
+call_check_link ${name2} 2
+call_check_link ${name3} 2
+call_check_link ${name4} 2
 
 call_end_test
 
@@ -562,7 +581,7 @@ call_remove_file ${name1}
 
 call_check_file ${name1} 0
 
-call_check_link ${name2} 0
+call_check_link ${name2} 2
 
 call_pause
 
@@ -596,8 +615,8 @@ call_remove_file ${name1}
 
 call_check_file ${name1} 0
 
-call_check_link ${name2} 0
-call_check_link ${name3} 0
+call_check_link ${name2} 2
+call_check_link ${name3} 2
 
 call_pause
 
@@ -635,9 +654,9 @@ call_remove_file ${name1}
 
 call_check_file ${name1} 0
 
-call_check_link ${name2} 0
-call_check_link ${name3} 0
-call_check_link ${name4} 0
+call_check_link ${name2} 2
+call_check_link ${name3} 2
+call_check_link ${name4} 2
 
 call_pause
 
@@ -676,7 +695,7 @@ call_remove_file ${name1}
 
 call_check_file ${name1} 0
 
-call_check_link ${dir1}/${name2} 0
+call_check_link ${dir1}/${name2} 2
 
 call_pause
 
@@ -715,8 +734,8 @@ call_remove_file ${name1}
 
 call_check_file ${name1} 0
 
-call_check_link ${dir1}/${name2} 0
-call_check_link ${dir1}/${name3} 0
+call_check_link ${dir1}/${name2} 2
+call_check_link ${dir1}/${name3} 2
 
 call_pause
 
@@ -759,9 +778,9 @@ call_remove_file ${name1}
 
 call_check_file ${name1} 0
 
-call_check_link ${dir1}/${name2} 0
-call_check_link ${dir1}/${name3} 0
-call_check_link ${dir1}/${name4} 0
+call_check_link ${dir1}/${name2} 2
+call_check_link ${dir1}/${name3} 2
+call_check_link ${dir1}/${name4} 2
 
 call_pause
 
@@ -832,7 +851,7 @@ call_remove_file ${dir1}/${name1}
 
 call_check_file ${dir1}/${name1} 0
 
-call_check_link ${dir1}/${name2} 0
+call_check_link ${dir1}/${name2} 2
 
 call_pause
 
@@ -876,8 +895,8 @@ call_remove_file ${dir1}/${name1}
 
 call_check_file ${dir1}/${name1} 0
 
-call_check_link ${dir1}/${name2} 0
-call_check_link ${dir1}/${name3} 0
+call_check_link ${dir1}/${name2} 2
+call_check_link ${dir1}/${name3} 2
 
 call_pause
 
@@ -952,7 +971,7 @@ call_pause
 call_remove_file ${dir1}/${name1}
 
 call_check_file ${dir1}/${name1} 0
-call_check_link ${dir1}/${name3} 0
+call_check_link ${dir1}/${name3} 2
 
 call_pause
 
@@ -997,8 +1016,8 @@ call_pause
 call_remove_file ${dir1}/${name1}
 
 call_check_file ${dir1}/${name1} 0
-call_check_link ${dir1}/${name3} 0
-call_check_link ${dir1}/${name4} 0
+call_check_link ${dir1}/${name3} 2
+call_check_link ${dir1}/${name4} 2
 
 call_pause
 
@@ -1044,9 +1063,9 @@ call_remove_file ${name1}
 
 call_check_file ${name1} 0
 
-call_check_link ${name2} 0
-call_check_link ${name3} 0
-call_check_link ${name4} 0
+call_check_link ${name2} 2
+call_check_link ${name3} 2
+call_check_link ${name4} 2
 
 call_pause
 
@@ -1055,8 +1074,8 @@ call_create_file ${name2} ${name5}
 call_check_file ${name2} 1
 
 call_check_link ${name2} 0
-call_check_link ${name3} 0
-call_check_link ${name4} 0
+call_check_link ${name3} 2
+call_check_link ${name4} 2
 
 call_end_test
 
@@ -1127,11 +1146,11 @@ call_remove_dir ${dir1}
 
 pause
 
-call_check_file ${name1} 1
+call_check_file ${name1} 0
 
-call_check_link ${dir1}/${name2} 1
-call_check_link ${dir1}/${name3} 1
-call_check_link ${dir1}/${name4} 1
+call_check_link ${dir1}/${name2} 2
+call_check_link ${dir1}/${name3} 2
+call_check_link ${dir1}/${name4} 2
 
 pause
 
@@ -1244,6 +1263,8 @@ call_create_file ${dir3}/${name37} ${name04}
 call_create_file ${name38} ${name04}
 call_create_file ${dir3}/${name39} ${name04}
 call_create_file ${name40} ${name04}
+
+call_pause
 
 call_check_file ${name01} 1
 call_check_link ${name02} 1
