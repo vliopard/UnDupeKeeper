@@ -1,4 +1,5 @@
 package tools;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,162 +15,186 @@ import settings.Settings;
 import settings.Strings;
 
 /**
- * DataBase class is responsible for managing all the serialized information
- * related to the UnDupeKeeper for later use.
+ * DataBase class is responsible for managing all the serialized information related to the UnDupeKeeper for later use.
  * 
  * @author vliopard
  */
 public class DataBase
 {
-    private static int    systemLanguage =0;
+    private static int    systemLanguage = 0;
     private static Worker workerThread;
 
     /**
-     * This method receives a running worker to handle their information that
-     * will be persisted.
+     * This method receives a running worker to handle their information that will be persisted.
      * 
      * @param worker
-     *            A <code>Worker</code> thread to get its hash map of processing
-     *            values.
+     *                   A <code>Worker</code> thread to get its hash map of processing values.
      */
     public static void useWorker(Worker worker)
     {
-        workerThread=worker;
+        workerThread = worker;
     }
 
     /**
-     * This method just clear the hash map serialized data with a new fresh
-     * object without any values.
+     * This method just clear the hash map serialized data with a new fresh object without any values.
      */
-    public static void clear()
+    public static void clear( )
     {
-        msg(Strings.dbEraseDatabase);
-        HashMap<String,String> hashMapToClear=new HashMap<String,String>();
-        saveMap(hashMapToClear);
+        Logger.msg(Strings.dbEraseDatabase);
+
+        HashMap <String, UniqueFile> hashMapToClear = new HashMap <String, UniqueFile>( );
+        saveHashMap(hashMapToClear);
+
+        HashMap <Storage, String> hashMapToClear1 = new HashMap <Storage, String>( );
+        saveLinkMap(hashMapToClear1);
     }
 
     /**
-     * This method saves a hash map of working values to the file system for
-     * later use.
+     * This method saves a hash map of working values to the file system for later use.
      * 
      * @param hashMapToSave
-     *            A <code>HashMap</code> of <code>Strings</code> containing the
-     *            values to be written to the disk.
+     *                          A <code>HashMap</code> of <code>Strings</code> containing the values to be written to
+     *                          the disk.
      */
-    public static void saveMap(HashMap<String,String> hashMapToSave)
+    public static void saveHashMap(HashMap <String, UniqueFile> hashMapToSave)
     {
-        msg(Strings.dbSaveDatabase);
+        Logger.msg(Strings.dbSaveDatabase);
         try
         {
-            ObjectOutputStream hashMapObjectOutput=new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperDatabaseName));
-            msg(Strings.dbDatabaseContains+
-                hashMapToSave.size()+
-                Strings.dbItems);
+            ObjectOutputStream hashMapObjectOutput = new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperDatabaseName));
+            Logger.msg(Strings.dbDatabaseContains + hashMapToSave.size( ) + Strings.dbItems);
             hashMapObjectOutput.writeObject(hashMapToSave);
-            hashMapObjectOutput.close();
-            hashMapObjectOutput=null;
-            msg(Strings.dbDatabaseSaved);
+            hashMapObjectOutput.close( );
+            hashMapObjectOutput = null;
+            Logger.msg(Strings.dbDatabaseSaved);
         }
-        catch(IOException e)
+        catch (IOException e)
         {
-            err("MSG_027: "+
-                Strings.dbProblemToSaveMap+
-                e);
+            Logger.err("MSG_027: " + Strings.dbProblemToSaveMap + e);
+        }
+    }
+
+    public static void saveLinkMap(HashMap <Storage, String> hashMapToSave)
+    {
+        Logger.msg(Strings.dbSaveDatabase);
+        try
+        {
+            ObjectOutputStream hashMapObjectOutput = new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperDatabaseMap));
+            Logger.msg(Strings.dbDatabaseContains + hashMapToSave.size( ) + Strings.dbItems);
+            hashMapObjectOutput.writeObject(hashMapToSave);
+            hashMapObjectOutput.close( );
+            hashMapObjectOutput = null;
+            Logger.msg(Strings.dbDatabaseSaved);
+        }
+        catch (IOException e)
+        {
+            Logger.err("MSG_027a: " + Strings.dbProblemToSaveMap + e);
         }
     }
 
     /**
-     * This method restores a previous saved session containing all the data
-     * already worked.
+     * This method restores a previous saved session containing all the data already worked.
      * 
-     * @return Returns a <code>HashMap</code> of Strings containing an Encrypted
-     *         representation and its file path location.
+     * @return Returns a <code>HashMap</code> of Strings containing an Encrypted representation and its file path
+     *         location.
      */
-    public static HashMap<String,String> loadMap()
+    public static HashMap <String, UniqueFile> loadHashMap( )
     {
-        if(new File(Settings.UnDupeKeeperDatabaseName).exists())
+        if (new File(Settings.UnDupeKeeperDatabaseName).exists( ))
         {
-            msg(Strings.dbLoadingDatabase);
+            Logger.msg(Strings.dbLoadingDatabase);
             try
             {
-                FileInputStream fileInputStream=new FileInputStream(Settings.UnDupeKeeperDatabaseName);
+                FileInputStream              fileInputStream = new FileInputStream(Settings.UnDupeKeeperDatabaseName);
                 @SuppressWarnings("unchecked")
-                HashMap<String,String> hashMapToLoad=(HashMap<String,String>)new ObjectInputStream(fileInputStream).readObject();
-                msg(Strings.dbDatabaseContains+
-                    hashMapToLoad.size()+
-                    Strings.dbItems);
-                fileInputStream.close();
+                HashMap <String, UniqueFile> hashMapToLoad   = (HashMap <String, UniqueFile>) new ObjectInputStream(fileInputStream).readObject( );
+                Logger.msg(Strings.dbDatabaseContains + hashMapToLoad.size( ) + Strings.dbItems);
+                fileInputStream.close( );
                 return hashMapToLoad;
             }
-            catch(ClassNotFoundException|IOException e)
+            catch (ClassNotFoundException | IOException e)
             {
-                err("MSG_028: "+
-                    Strings.dbProblemDatabaseCreation+
-                    e);
+                Logger.err("MSG_028: " + Strings.dbProblemDatabaseCreation + e);
             }
         }
-        msg(Strings.dbWarningNewDatabase);
-        return new HashMap<String,String>();
+        Logger.msg(Strings.dbWarningNewDatabase);
+        return new HashMap <String, UniqueFile>( );
+    }
+
+    public static HashMap <Storage, String> loadLinkMap( )
+    {
+        if (new File(Settings.UnDupeKeeperDatabaseMap).exists( ))
+        {
+            Logger.msg(Strings.dbLoadingDatabase);
+            try
+            {
+                FileInputStream        fileInputStream = new FileInputStream(Settings.UnDupeKeeperDatabaseMap);
+                @SuppressWarnings("unchecked")
+                HashMap <Storage, String> hashMapToLoad   = (HashMap <Storage, String>) new ObjectInputStream(fileInputStream).readObject( );
+                Logger.msg(Strings.dbDatabaseContains + hashMapToLoad.size( ) + Strings.dbItems);
+                fileInputStream.close( );
+                return hashMapToLoad;
+            }
+            catch (ClassNotFoundException | IOException e)
+            {
+                Logger.err("MSG_028a: " + Strings.dbProblemDatabaseCreation + e);
+            }
+        }
+        Logger.msg(Strings.dbWarningNewDatabase);
+        return new HashMap <Storage, String>( );
     }
 
     /**
-     * This method saves the dialog chooser's directory to remember the last
-     * place you visit.
+     * This method saves the dialog chooser's directory to remember the last place you visit.
      * 
      * @param folderName
-     *            A <code>String</code> containing the path to the dialog
-     *            chooser's directory.
+     *                       A <code>String</code> containing the path to the dialog chooser's directory.
      */
     public static void saveDir(String folderName)
     {
         try
         {
-            ObjectOutputStream directoryToSaveOutput=new ObjectOutputStream(new FileOutputStream(Settings.WatchedDirectoryName));
+            ObjectOutputStream directoryToSaveOutput = new ObjectOutputStream(new FileOutputStream(Settings.WatchedDirectoryName));
             directoryToSaveOutput.writeObject(folderName);
-            directoryToSaveOutput.close();
-            directoryToSaveOutput=null;
+            directoryToSaveOutput.close( );
+            directoryToSaveOutput = null;
         }
-        catch(IOException e)
+        catch (IOException e)
         {
-            err("MSG_029: "+
-                Strings.dbProblemSavingDir+
-                e);
+            Logger.err("MSG_029: " + Strings.dbProblemSavingDir + e);
         }
     }
 
     /**
-     * This method restores the last saved directory selected by the dialog
-     * chooser.
+     * This method restores the last saved directory selected by the dialog chooser.
      * 
-     * @return Returns a <code>String</code> that contains the path to a saved
-     *         serialized Directory.
+     * @return Returns a <code>String</code> that contains the path to a saved serialized Directory.
      */
-    public static String loadDir()
+    public static String loadDir( )
     {
-        if(new File(Settings.WatchedDirectoryName).exists())
+        if (new File(Settings.WatchedDirectoryName).exists( ))
         {
             try
             {
-                return (String)new ObjectInputStream(new FileInputStream(Settings.WatchedDirectoryName)).readObject();
+                ObjectInputStream ois      = new ObjectInputStream(new FileInputStream(Settings.WatchedDirectoryName));
+                String            filename = (String) ois.readObject( );
+                ois.close( );
+                return filename;
             }
-            catch(ClassNotFoundException|IOException e)
+            catch (ClassNotFoundException | IOException e)
             {
-                err("MSG_030: "+
-                    Strings.dbProblemStoringSettings+
-                    e);
+                Logger.err("MSG_030: " + Strings.dbProblemStoringSettings + e);
             }
         }
         return null;
     }
 
     /**
-     * This method informs the last language index selected by the settings
-     * dialog.
+     * This method informs the last language index selected by the settings dialog.
      * 
-     * @return Returns an <code>int</code> that contains the language index to
-     *         be used.
+     * @return Returns an <code>int</code> that contains the language index to be used.
      */
-    public static int loadLanguageIndex()
+    public static int loadLanguageIndex( )
     {
         return systemLanguage;
     }
@@ -177,10 +202,9 @@ public class DataBase
     /**
      * This method informs the last language selected by the settings dialog.
      * 
-     * @return Returns a <code>String</code> that contains the language to be
-     *         used.
+     * @return Returns a <code>String</code> that contains the language to be used.
      */
-    public static String loadLanguage()
+    public static String loadLanguage( )
     {
         return Settings.languageValues[systemLanguage];
     }
@@ -189,81 +213,75 @@ public class DataBase
      * This method saves all settings obtained from the settings dialog.
      * 
      * @param settingsTransfer
-     *            A <code>SettingsHandler</code> object containing the software
-     *            settings to be saved to disk.
+     *                             A <code>SettingsHandler</code> object containing the software settings to be saved to
+     *                             disk.
      */
     public static void saveSettings(SettingsHandler settingsTransfer)
     {
-        // msg(Strings.dbSaveSettings);
+        // Logger.msg(Strings.dbSaveSettings);
         try
         {
-            ObjectOutputStream hashMapObjectOutput=new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperSettings));
+            ObjectOutputStream hashMapObjectOutput = new ObjectOutputStream(new FileOutputStream(Settings.UnDupeKeeperSettings));
             hashMapObjectOutput.writeObject(settingsTransfer);
-            hashMapObjectOutput.close();
-            hashMapObjectOutput=null;
-            // msg(Strings.dbSettingsSaved);
+            hashMapObjectOutput.close( );
+            hashMapObjectOutput = null;
+            // Logger.msg(Strings.dbSettingsSaved);
         }
-        catch(IOException e)
+        catch (IOException e)
         {
-            err("MSG_031: "+
-                Strings.dbProblemToSaveSettings+
-                e);
+            Logger.err("MSG_031: " + Strings.dbProblemToSaveSettings + e);
         }
     }
 
     /**
      * This method restores all dialog settings previously saved to the disk.
      * 
-     * @return Returns a <code>SettingsHandler</code> object that contains
-     *         previous serialized saved settings.
+     * @return Returns a <code>SettingsHandler</code> object that contains previous serialized saved settings.
      */
-    public static SettingsHandler loadSettings()
+    public static SettingsHandler loadSettings( )
     {
-        if(new File(Settings.UnDupeKeeperSettings).exists())
+        if (new File(Settings.UnDupeKeeperSettings).exists( ))
         {
-            // msg(Strings.dbLoadingSettings);
+            // Logger.msg(Strings.dbLoadingSettings);
             try
             {
-                FileInputStream fileInputStream=new FileInputStream(Settings.UnDupeKeeperSettings);
-                SettingsHandler settingsTransfer=(SettingsHandler)new ObjectInputStream(fileInputStream).readObject();
-                systemLanguage=settingsTransfer.getLanguageIndex();
-                fileInputStream.close();
+                FileInputStream fileInputStream  = new FileInputStream(Settings.UnDupeKeeperSettings);
+                SettingsHandler settingsTransfer = (SettingsHandler) new ObjectInputStream(fileInputStream).readObject( );
+                systemLanguage = settingsTransfer.getLanguageIndex( );
+                fileInputStream.close( );
                 return settingsTransfer;
             }
-            catch(ClassNotFoundException|IOException e)
+            catch (ClassNotFoundException | IOException e)
             {
-                err("MSG_032: "+
-                    Strings.dbProblemSettingsCreation+
-                    e);
+                Logger.err("MSG_032: " + Strings.dbProblemSettingsCreation + e);
             }
         }
-        msg(Strings.dbWarningNewSettings);
-        return new SettingsHandler();
+        Logger.msg(Strings.dbWarningNewSettings);
+        return new SettingsHandler( );
     }
 
     /**
-     * This method displays the settings dialog window containing all changeable
-     * UndupeKeeper settings.
+     * This method displays the settings dialog window containing all changeable UndupeKeeper settings.
      * 
-     * @return Returns <code>true</code> if settings were changed and confirmed.
-     *         Returns <code>false</code> if dialog is canceled or closed.
+     * @return Returns <code>true</code> if settings were changed and confirmed. Returns <code>false</code> if dialog is
+     *         canceled or closed.
      */
-    public static boolean openSettings()
+    public static boolean openSettings( )
     {
-        SettingsHandler transferSettings=loadSettings();
-        Options settingsWindow=new Options(transferSettings);
+        SettingsHandler transferSettings = loadSettings( );
+        Options         settingsWindow   = new Options(transferSettings);
         settingsWindow.setTitle(Strings.ssSettingsTitle);
-        settingsWindow.pack();
+        settingsWindow.pack( );
         settingsWindow.setModal(true);
         settingsWindow.setResizable(false);
         settingsWindow.setVisible(true);
-        if(transferSettings.isChanged())
+        if (transferSettings.isChanged( ))
         {
-            if(transferSettings.isEncryptionChanged())
+            if (transferSettings.isEncryptionChanged( ))
             {
-                transferSettings.resetEncryptionChanged();
-                workerThread.clear();
-                workerThread.load();
+                transferSettings.resetEncryptionChanged( );
+                workerThread.clear( );
+                workerThread.load( );
             }
             transferSettings.setChanged(false);
             saveSettings(transferSettings);
@@ -274,55 +292,30 @@ public class DataBase
     }
 
     /**
-     * This method displays the Directory Chooser Dialog for selecting a
-     * directory to be handled by UnDupeKeeper.
+     * This method displays the Directory Chooser Dialog for selecting a directory to be handled by UnDupeKeeper.
      * 
-     * @return Returns a <code>String</code> that contains the selected
-     *         directory path from dialog box. Returns <code>null</code> if
-     *         dialog box is closed without selecting a Directory.
+     * @return Returns a <code>String</code> that contains the selected directory path from dialog box. Returns
+     *         <code>null</code> if dialog box is closed without selecting a Directory.
      */
-    public static String chooseDir()
+    public static String chooseDir( )
     {
-        JFrame frame=new JFrame();
-        JFileChooser chooser=new JFileChooser();
-        String directoryToLoad=DataBase.loadDir();
-        if(null==directoryToLoad)
+        JFrame       frame           = new JFrame( );
+        JFileChooser chooser         = new JFileChooser( );
+        String       directoryToLoad = DataBase.loadDir( );
+        if (null == directoryToLoad)
         {
-            directoryToLoad=Settings.RootDir;
+            directoryToLoad = Settings.RootDir;
         }
         chooser.setCurrentDirectory(new java.io.File(directoryToLoad));
         chooser.setDialogTitle(Strings.ukSelectFolder);
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
-        if(chooser.showOpenDialog(frame)==JFileChooser.APPROVE_OPTION)
+        if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
         {
-            directoryToLoad=chooser.getSelectedFile()
-                                   .toString();
+            directoryToLoad = chooser.getSelectedFile( ).toString( );
             DataBase.saveDir(directoryToLoad);
             return directoryToLoad;
         }
         return null;
-    }
-
-    /**
-     * This method displays a message through the embedded log system.
-     * 
-     * @param message
-     *            A <code>String</code> containing the message to display.
-     */
-    private static void msg(String message)
-    {
-        Logger.msg(message);
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }

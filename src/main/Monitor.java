@@ -1,200 +1,139 @@
 package main;
+
 import java.util.concurrent.BlockingQueue;
 import settings.Settings;
 import settings.Strings;
 import tools.FileQueue;
 import tools.Logger;
+import tools.Storage;
 import net.contentobjects.jnotify.JNotify;
 import net.contentobjects.jnotify.JNotifyException;
 import net.contentobjects.jnotify.JNotifyListener;
 
 /**
- * Monitor class is responsible for watching file system changes and notify
- * Worker class about that changes through a shared queue.
+ * Monitor class is responsible for watching file system changes and notify Worker class about that changes through a
+ * shared queue.
  * 
  * @author vliopard
  */
 public class Monitor
 {
-    private FileQueue                      fileQueue;
-    private final BlockingQueue<Integer>   stopSignal;
-    private final BlockingQueue<FileQueue> transferQueue;
+    private FileQueue                       fileQueue;
+    private final BlockingQueue <Integer>   stopSignal;
+    private final BlockingQueue <FileQueue> transferQueue;
 
     /**
-     * Monitor Constructor - Initialize a Monitor object for watching file
-     * system changes.
+     * Monitor Constructor - Initialize a Monitor object for watching file system changes.
      * 
      * @param directoryPath
-     *            - A <code>String</code> containing the path to a file system
-     *            directory to be observed.
+     *                           - A <code>String</code> containing the path to a file system directory to be observed.
      * @param transferData
-     *            - A shared <code>BlockingQueue&lt;FileQueue&gt;</code> to
-     *            write notifications about file changes.
+     *                           - A shared <code>BlockingQueue&lt;FileQueue&gt;</code> to write notifications about
+     *                           file changes.
      * @param stopCommand
-     *            - A shared signaling queue to notify all threads the system is
-     *            shutting down.
+     *                           - A shared signaling queue to notify all threads the system is shutting down.
      * @param watchRecursive
-     *            - A <code>boolean</code> flag that indicates whether a
-     *            directory will be recursively observed.
+     *                           - A <code>boolean</code> flag that indicates whether a directory will be recursively
+     *                           observed.
      */
-    Monitor(String directoryPath,
-            BlockingQueue<FileQueue> transferData,
-            BlockingQueue<Integer> stopCommand,
-            boolean watchRecursive)
+    Monitor(String directoryPath, BlockingQueue <FileQueue> transferData, BlockingQueue <Integer> stopCommand, boolean watchRecursive)
     {
-        msg(Strings.mtMonitorStartup);
-        transferQueue=transferData;
-        stopSignal=stopCommand;
-        int jNotifyMask=JNotify.FILE_CREATED|
-                        JNotify.FILE_DELETED|
-                        JNotify.FILE_MODIFIED|
-                        JNotify.FILE_RENAMED;
-        boolean watchSubtree=watchRecursive;
-        int watchID;
+        Logger.msg(Strings.mtMonitorStartup);
+        transferQueue = transferData;
+        stopSignal = stopCommand;
+        int     jNotifyMask  = JNotify.FILE_CREATED | JNotify.FILE_DELETED | JNotify.FILE_MODIFIED
+                | JNotify.FILE_RENAMED;
+        boolean watchSubtree = watchRecursive;
+        int     watchID;
         try
         {
-            watchID=JNotify.addWatch(directoryPath,
-                                     jNotifyMask,
-                                     watchSubtree,
-                                     new Listener());
+            watchID = JNotify.addWatch(directoryPath, jNotifyMask, watchSubtree, new Listener( ));
             do
             {
                 Thread.sleep(Settings.ThreadSleepTime);
             }
-            while(!stopSignal.contains(Settings.StopWorking));
-            if(!JNotify.removeWatch(watchID))
+            while ( !stopSignal.contains(Settings.StopWorking));
+            if ( !JNotify.removeWatch(watchID))
             {
-                log(Strings.mtInvalidWatchID);
+                Logger.err("MSG_002: " + Strings.mtInvalidWatchID);
             }
-            fileQueue=new FileQueue();
-            fileQueue.set(Settings.WorkerStopSignal,
-                          Settings.WorkerPrepareToExit);
+            fileQueue = new FileQueue( );
+            // TODO: EXIT SIGNAL FILE WILL SHUTDOWN SYSTEM - FIX IT
+            fileQueue.set(Settings.WorkerStopSignal, new Storage(Settings.WorkerPrepareToExit));
             transferQueue.put(fileQueue);
         }
-        catch(JNotifyException|InterruptedException e)
+        catch (JNotifyException | InterruptedException e)
         {
-            err("MSG_002: "+
-                Strings.mtProblemCreatingMonitorObject+
-                e);
+            Logger.err("MSG_002a: " + Strings.mtProblemCreatingMonitorObject + e);
         }
-        msg(Strings.mtMonitorShutdown);
+        Logger.msg(Strings.mtMonitorShutdown);
     }
 
     /**
-     * Listener class is responsible for watching Operating System events
-     * regarding to file access and add notifications to a
-     * <code>BlockingQueue&lt;FileQueue&gt;</code>.
+     * Listener class is responsible for watching Operating System events regarding to file access and add notifications
+     * to a <code>BlockingQueue&lt;FileQueue&gt;</code>.
      * 
      * @author vliopard
      */
-    class Listener implements
-                  JNotifyListener
+    class Listener implements JNotifyListener
     {
-        public void fileCreated(int wd,
-                                String rootPath,
-                                String name)
+        public void fileCreated(int wd, String rootPath, String name)
         {
-            fileQueue=new FileQueue();
-            fileQueue.set(Settings.FileCreated,
-                          rootPath+
-                                  "\\"+
-                                  name);
+            fileQueue = new FileQueue( );
+            fileQueue.set(Settings.FileCreated, new Storage(rootPath + Settings.Slash + name));
             try
             {
                 transferQueue.put(fileQueue);
             }
-            catch(InterruptedException e)
+            catch (InterruptedException e)
             {
-                err("MSG_003: "+
-                    Strings.mtProblemAddingToCreatingQueue+
-                    e);
+                Logger.err("MSG_003: " + Strings.mtProblemAddingToCreatingQueue + e);
             }
         }
 
-        public void fileModified(int wd,
-                                 String rootPath,
-                                 String name)
+        public void fileModified(int wd, String rootPath, String name)
         {
-            fileQueue=new FileQueue();
-            fileQueue.set(Settings.FileModified,
-                          rootPath+
-                                  "\\"+
-                                  name);
+            fileQueue = new FileQueue( );
+            fileQueue.set(Settings.FileModified, new Storage(rootPath + Settings.Slash + name));
             try
             {
                 transferQueue.put(fileQueue);
             }
-            catch(InterruptedException e)
+            catch (InterruptedException e)
             {
-                err("MSG_004: "+
-                    Strings.mtProblemAddingToModifyingQueue+
-                    e);
+                Logger.err("MSG_004: " + Strings.mtProblemAddingToModifyingQueue + e);
             }
         }
 
-        public void fileDeleted(int wd,
-                                String rootPath,
-                                String name)
+        public void fileDeleted(int wd, String rootPath, String name)
         {
-            fileQueue=new FileQueue();
-            fileQueue.set(Settings.FileDeleted,
-                          rootPath+
-                                  "\\"+
-                                  name);
+            fileQueue = new FileQueue( );
+            fileQueue.set(Settings.FileDeleted, new Storage(rootPath + Settings.Slash + name));
             try
             {
                 transferQueue.put(fileQueue);
             }
-            catch(InterruptedException e)
+            catch (InterruptedException e)
             {
-                err("MSG_005: "+
-                    Strings.mtProblemAddingToDeletingQueue+
-                    e);
+                Logger.err("MSG_005: " + Strings.mtProblemAddingToDeletingQueue + e);
             }
         }
 
-        public void fileRenamed(int wd,
-                                String rootPath,
-                                String oldName,
-                                String newName)
+        public void fileRenamed(int wd, String rootPath, String oldName, String newName)
         {
-            // TODO: [Feed queue with renamed file information]
-            // print("renamed "+rootPath+"\\"+oldName+" -> "+newName);
+            Logger.msg("MOVED FROM [" + rootPath + Settings.Slash + oldName + "]");
+            Logger.msg("MOVED TO   [" + rootPath + Settings.Slash + newName + "]");
+            fileQueue = new FileQueue( );
+            fileQueue.set(Settings.FileRenamed, new Storage(rootPath + Settings.Slash + oldName), new Storage(rootPath
+                    + Settings.Slash + newName));
+            try
+            {
+                transferQueue.put(fileQueue);
+            }
+            catch (InterruptedException e)
+            {
+                Logger.err("MSG_005: " + Strings.mtProblemAddingToDeletingQueue + e);
+            }
         }
-    }
-
-    /**
-     * This method displays a log message through the embedded log system.
-     * 
-     * @param logMessage
-     *            A <code>String</code> containing the log message to display.
-     */
-    private static void log(String logMessage)
-    {
-        Logger.log(Thread.currentThread(),
-                   logMessage,
-                   Logger.MONITOR);
-    }
-
-    /**
-     * This method displays a message through the embedded log system.
-     * 
-     * @param message
-     *            A <code>String</code> containing the message to display.
-     */
-    private static void msg(String message)
-    {
-        Logger.msg(message);
-    }
-
-    /**
-     * This method displays an error message through the embedded log system.
-     * 
-     * @param errorMessage
-     *            A <code>String</code> containing the error message to display.
-     */
-    private static void err(String errorMessage)
-    {
-        Logger.err(errorMessage);
     }
 }
