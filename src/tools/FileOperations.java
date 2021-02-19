@@ -191,6 +191,10 @@ public class FileOperations
 
     public static File file(Path file)
     {
+        if (null == file)
+        {
+            return null;
+        }
         return file.toFile( );
     }
 
@@ -220,7 +224,7 @@ public class FileOperations
 
     public static boolean isDirectory(Path directory)
     {
-        return isDirectory(directory.toFile( ));
+        return isDirectory(file(directory));
     }
 
     public static boolean isEmpty(String path)
@@ -281,12 +285,12 @@ public class FileOperations
     }
 
     /**
-     *Delete all files and directories in directory but do not delete the directory itself.
+     * Delete all files and directories in directory but do not delete the directory itself.
      *
-     *@param directory
-     *                     - string that specifies directory to delete
+     * @param directory
+     *                      - string that specifies directory to delete
      *
-     *@return boolean - success flag
+     * @return boolean - success flag
      */
     public static boolean deleteDirectoryContent(String directory)
     {
@@ -294,12 +298,12 @@ public class FileOperations
     }
 
     /**
-     *Delete all files and directories in directory but do not delete the directory itself.
+     * Delete all files and directories in directory but do not delete the directory itself.
      *
-     *@param directory
-     *                     - directory to delete
+     * @param directory
+     *                      - directory to delete
      *
-     *@return boolean - success flag
+     * @return boolean - success flag
      */
     public static boolean deleteDirectoryContent(File directory)
     {
@@ -340,12 +344,12 @@ public class FileOperations
     }
 
     /**
-     *Deletes all files and sub directories under the specified directory including the specified directory
+     * Deletes all files and sub directories under the specified directory including the specified directory
      *
-     *@param directory
-     *                     - string that specifies directory to be deleted
+     * @param directory
+     *                      - string that specifies directory to be deleted
      *
-     *@return boolean - true if directory was successfully deleted
+     * @return boolean - true if directory was successfully deleted
      */
     public static boolean deleteDirectory(String directory)
     {
@@ -353,12 +357,12 @@ public class FileOperations
     }
 
     /**
-     *Deletes all files and sub directories under the specified directory including the specified directory
+     * Deletes all files and sub directories under the specified directory including the specified directory
      *
-     *@param directory
-     *                     - directory to be deleted
+     * @param directory
+     *                      - directory to be deleted
      *
-     *@return boolean - true if directory was successfully deleted
+     * @return boolean - true if directory was successfully deleted
      */
     public static boolean deleteDirectory(File directory)
     {

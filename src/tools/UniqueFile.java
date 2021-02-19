@@ -6,6 +6,7 @@ import settings.Strings;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -139,12 +140,18 @@ public class UniqueFile implements Serializable
         try
         {
             FileOperations.createDirectory(uri);
+            Logger.msg(uri.getPath( ) + " <==> " + fileUri.getPath( ));
             Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
+        }
+        catch (FileSystemException e)
+        {
+            Logger.err("MSG_062: " + Strings.generic + e);
+            e.printStackTrace( );
         }
         catch (IOException e)
         {
             // TODO: REPLACE GENERIC EXCEPTION
-            Logger.err("MSG_062: " + Strings.generic + e);
+            Logger.err("MSG_069: " + Strings.generic + e);
         }
     }
 
