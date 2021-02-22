@@ -102,6 +102,7 @@ public class UniqueFile implements Serializable
     public void setPath(Storage uri)
     {
         // TODO: THIS METHOD SHOULD BE REVISED - WHY REMAKING LINKS?
+        log(" if ( ! " + fileUri.getString( ) + ".equals(" + uri.getString( ) + "))");
         if ( ! fileUri.getString( ).equals(uri.getString( )))
         {
             fileUri = uri;
@@ -110,7 +111,8 @@ public class UniqueFile implements Serializable
             {
                 for (int i = 0; i < fileLinks.size( ); i++)
                 {
-                    remakeLink(uri);
+                    log(" remakeLink(" + uri + ");");
+                    remakeLink(fileLinks.get(i).getPath( ));
                 }
             }
         }
@@ -136,11 +138,12 @@ public class UniqueFile implements Serializable
         if (FileOperations.isLink(uri))
         {
             FileOperations.deleteFile(uri);
-        }
+        } // TODO: MAYBE IT MUST BE AT THE END OF FUNCTION
         try
         {
             FileOperations.createDirectory(uri);
             Logger.msg(uri.getPath( ) + " <==> " + fileUri.getPath( ));
+            log(" Files.createSymbolicLink(" + uri.getPath( ) + ", " + fileUri.getPath( ) + ");");
             Files.createSymbolicLink(uri.getPath( ), fileUri.getPath( ));
         }
         catch (FileSystemException e)
@@ -297,6 +300,11 @@ public class UniqueFile implements Serializable
             for (int i = 0; i < fileLinks.size( ); i++)
             {
                 FileOperations.createDirectory(fileLinks.get(i));
+                log(" Files.createSymbolicLink(" + fileLinks.get(i).getPath( ) + ", " + fileUri.getPath( ) + ");");
+                if (FileOperations.isLink(fileLinks.get(i).getPath( )))
+                {
+                    FileOperations.deleteFile(fileLinks.get(i).getPath( ));
+                }
                 Files.createSymbolicLink(fileLinks.get(i).getPath( ), fileUri.getPath( ));
             }
         }
@@ -304,6 +312,7 @@ public class UniqueFile implements Serializable
         {
             // TODO: REPLACE GENERIC EXCEPTION
             Logger.err("MSG_063: " + Strings.generic + e);
+            e.getStackTrace( );
         }
     }
 
@@ -368,5 +377,16 @@ public class UniqueFile implements Serializable
                 Utils.file("Filelink: " + fileLinks.get(i).getString( ), filename);
             }
         }
+    }
+
+    /**
+     * This method displays a log message through the embedded log system.
+     *
+     * @param logMessage
+     *                       A <code>String</code> containing the log message to display.
+     */
+    private static void log(String logMessage)
+    {
+        Logger.log(Thread.currentThread( ), logMessage, Logger.WORKER);
     }
 }

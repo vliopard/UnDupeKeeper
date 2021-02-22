@@ -458,7 +458,11 @@ public class Worker implements Runnable
                     {
                         if (hashMapTable.get(newfile.getSha( )).isEmpty( ))
                         {
+                            log(" hashMapTable.get("+newfile.getSha( )+").setPath("+newfile.getStorage( )+");");
                             hashMapTable.get(newfile.getSha( )).setPath(newfile.getStorage( ));
+
+                            log(" hashMapTable.get("+newfile.getSha( )+").makeLinks( );");
+                            // TODO: RESEARCH: SETPATH ALREADY REMAKELINKS. SO, WHY MAKING LINKS LINE BELOW?
                             hashMapTable.get(newfile.getSha( )).makeLinks( );
                         }
                         else

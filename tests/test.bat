@@ -164,7 +164,7 @@ rem {
 rem     read -p "Press any key to continue..."
 rem }
 
-REM ##############################################################
+REM ############################################################## 01
 call:start_test "Add 1 local unique file"
 
 set name1=test%label%-file1
@@ -175,7 +175,7 @@ call:check_file %name1% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 02
 call:start_test "Add 2 local unique files"
 
 set name1=test%label%-file1
@@ -189,7 +189,7 @@ call:check_file %name2% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 03
 call:start_test "Add 3 local unique files"
 
 set name1=test%label%-file1
@@ -206,7 +206,7 @@ call:check_file %name3% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 04
 call:start_test "Delete 1 local file"
 
 set name1=test%label%-file1
@@ -223,7 +223,7 @@ call:check_file %name1% 0
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 05
 call:start_test "Move 1 local file to other name"
 
 set name1=test%label%-source1
@@ -243,7 +243,7 @@ call:check_file %name2% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 06
 call:start_test "Move 1 local file to other directory same file name"
 
 set name1=test%label%-file1
@@ -265,7 +265,7 @@ call:check_file %dir1%\%name1% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 07
 call:start_test "Move 1 local file to other directory other file name"
 
 set name1=test%label%-source1
@@ -289,7 +289,7 @@ call:check_file %dir1%\%name2% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 08
 call:start_test "Add 1 local dupe file"
 
 set name1=test%label%-file1
@@ -306,7 +306,7 @@ call:compare_file %name1% %name2% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 09
 call:start_test "Add 2 local dupe file"
 
 set name1=test%label%-file1
@@ -327,7 +327,7 @@ call:compare_file %name1% %name3% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 10
 call:start_test "Add 3 local dupe file"
 
 set name1=test%label%-file1
@@ -352,7 +352,7 @@ call:compare_file %name1% %name4% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 11
 call:start_test "Delete 1 local link file"
 
 set name1=test%label%-file1
@@ -371,7 +371,7 @@ call:check_link %name2% 0
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 12
 call:start_test "Move 1 local link file to other name"
 
 set name1=test%label%-file1
@@ -392,7 +392,7 @@ call:check_link %name3% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 13
 call:start_test "Move 1 local link file to other directory same link name"
 
 set name1=test%label%-source1
@@ -416,7 +416,7 @@ call:check_link %dir1%\%name2% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 14
 call:start_test "Move 1 local link file to other directory other link name"
 
 set name1=test%label%-file1
@@ -441,7 +441,7 @@ call:check_link %dir1%\%name3% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 15
 call:start_test "Delete 1 local parent file"
 
 set name1=test%label%-file1
@@ -466,7 +466,7 @@ call:check_link %name4% 2
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 16
 call:start_test "Move 1 local parent file to other name"
 
 set name1=test%label%-source1
@@ -488,7 +488,7 @@ call:check_file %name3% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 17
 call:start_test "Move 1 local parent file to other directory same file name"
 
 set name1=test%label%-file1
@@ -513,7 +513,7 @@ call:check_file %dir1%\%name1% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 18
 call:start_test "Move 1 local parent file to other directory other file name"
 
 set name1=test%label%-source1
@@ -539,7 +539,7 @@ call:check_file %dir1%\%name3% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 19
 call:start_test "Recover 1 local file with no links"
 
 set name1=test%label%-file1
@@ -562,7 +562,7 @@ call:check_file %name1% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 20
 call:start_test "Recover 1 local parent file with 1 link"
 
 set name1=test%label%-file1
@@ -593,7 +593,7 @@ call:check_link %name2% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 21
 call:start_test "Recover 1 local parent file with 2 links"
 
 set name1=test%label%-file1
@@ -629,7 +629,7 @@ call:check_link %name3% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 22
 call:start_test "Recover 1 local parent file with 3 links"
 
 set name1=test%label%-file1
@@ -670,7 +670,7 @@ call:check_link %name4% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 23
 call:start_test "Recover 1 local parent file with 1 link in other directory"
 
 set name1=test%label%-file1
@@ -707,7 +707,7 @@ call:check_link %dir1%\%name2% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 24
 call:start_test "Recover 1 local parent file with 2 links in different directories"
 
 set name1=test%label%-file1
@@ -748,7 +748,7 @@ call:check_link %dir1%\%name3% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 25
 call:start_test "Recover 1 local parent file with 3 links in different directories"
 
 set name1=test%label%-file1
@@ -794,7 +794,7 @@ call:check_link %dir1%\%name4% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 26
 call:start_test "Recover 1 parent from dir1 to dir2 with same name"
 
 set name1=test%label%-file1
@@ -826,7 +826,7 @@ call:check_file %dir2%\%name1% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 27
 call:start_test "Recover 1 parent from dir1 to dir2 with same name and 1 child link"
 
 set name1=test%label%-file1
@@ -867,7 +867,7 @@ call:check_link %dir2%\%name2% 0
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 28
 call:start_test "Recover 1 parent from dir1 to dir2 with same name and 2 child link"
 
 set name1=test%label%-file1
@@ -914,7 +914,7 @@ call:check_link %dir2%\%name3% 0
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 29
 call:start_test "Recover 1 parent from dir1 to dir2 with different name"
 
 set name1=test%label%-file1
@@ -947,7 +947,7 @@ call:check_file %dir2%\%name2% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 30
 call:start_test "Recover 1 parent from dir1 to dir2 with different name and 1 child link"
 
 set name1=test%label%-file1
@@ -989,7 +989,7 @@ call:check_link %dir2%\%name3% 0
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 31
 call:start_test "Recover 1 parent from dir1 to dir2 with different name and 2 child link"
 
 set name1=test%label%-file1
@@ -1037,7 +1037,7 @@ call:check_link %dir2%\%name4% 0
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 32
 call:start_test "Create new unique file which its path is the same of a removed link from a removed parent"
 
 set name1=test%label%-file1
@@ -1079,7 +1079,7 @@ call:check_link %name4% 2
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 33
 call:start_test "Remove a directory with links"
 set name1=test%label%-file1
 set name2=test%label%-file2
@@ -1115,7 +1115,7 @@ call:check_link %dir1%\%name4% 0
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 34
 call:start_test "Recover a removed directory with links"
 
 set name1=test%label%-file1
@@ -1164,7 +1164,7 @@ call:check_link %dir1%\%name4% 1
 
 call:end_test
 
-REM ##############################################################
+REM ############################################################## 35
 call:start_test "Bulk creation of massive files"
 
 set /A delaytm=0

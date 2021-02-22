@@ -265,11 +265,15 @@ public class FileOperations
         Path dir = directory.getParent( );
         try
         {
-            Logger.msg(dir.toString( ));
+            log(" CHECKING DIRECTORY: " + dir.toString( ));
             if ( ! FileOperations.exist(dir) && ! FileOperations.isDirectory(dir))
             {
-                Logger.msg("CREATING " + dir.toString( ));
+                log(" CREATING: " + dir.toString( ));
                 Files.createDirectories(dir);
+            }
+            else
+            {
+                log(" DIRECTORY EXISTS: " + dir.toString( ));
             }
         }
         catch (IOException e)
