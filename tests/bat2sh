@@ -3,6 +3,7 @@ result=sedresult.sh
 cp $1 ${result}
 sed -i 's/set //g' ${result}
 sed -i 's/call:/call_/g' ${result}
+sed -i 's/pause/call_pause/g' ${result}
 sed -i 's/\%label\%/\$\{label\}/g' ${result}
 sed -i 's/REM/\# REM/g' ${result}
 sed -i 's/\\/\//g' ${result}

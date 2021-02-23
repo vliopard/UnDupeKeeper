@@ -164,7 +164,7 @@ call_pause()
     read -p "Press any key to continue..."
 }
 
-# REM ##############################################################
+# REM ############################################################## 01
 call_start_test "Add 1 local unique file"
 
 name1=test${label}-file1
@@ -175,7 +175,7 @@ call_check_file ${name1} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 02
 call_start_test "Add 2 local unique files"
 
 name1=test${label}-file1
@@ -189,7 +189,7 @@ call_check_file ${name2} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 03
 call_start_test "Add 3 local unique files"
 
 name1=test${label}-file1
@@ -206,7 +206,7 @@ call_check_file ${name3} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 04
 call_start_test "Delete 1 local file"
 
 name1=test${label}-file1
@@ -223,7 +223,7 @@ call_check_file ${name1} 0
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 05
 call_start_test "Move 1 local file to other name"
 
 name1=test${label}-source1
@@ -243,7 +243,7 @@ call_check_file ${name2} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 06
 call_start_test "Move 1 local file to other directory same file name"
 
 name1=test${label}-file1
@@ -265,7 +265,7 @@ call_check_file ${dir1}/${name1} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 07
 call_start_test "Move 1 local file to other directory other file name"
 
 name1=test${label}-source1
@@ -289,7 +289,7 @@ call_check_file ${dir1}/${name2} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 08
 call_start_test "Add 1 local dupe file"
 
 name1=test${label}-file1
@@ -306,7 +306,7 @@ call_compare_file ${name1} ${name2} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 09
 call_start_test "Add 2 local dupe file"
 
 name1=test${label}-file1
@@ -327,7 +327,7 @@ call_compare_file ${name1} ${name3} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 10
 call_start_test "Add 3 local dupe file"
 
 name1=test${label}-file1
@@ -352,7 +352,7 @@ call_compare_file ${name1} ${name4} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 11
 call_start_test "Delete 1 local link file"
 
 name1=test${label}-file1
@@ -371,7 +371,7 @@ call_check_link ${name2} 0
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 12
 call_start_test "Move 1 local link file to other name"
 
 name1=test${label}-file1
@@ -392,7 +392,7 @@ call_check_link ${name3} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 13
 call_start_test "Move 1 local link file to other directory same link name"
 
 name1=test${label}-source1
@@ -416,7 +416,7 @@ call_check_link ${dir1}/${name2} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 14
 call_start_test "Move 1 local link file to other directory other link name"
 
 name1=test${label}-file1
@@ -441,7 +441,7 @@ call_check_link ${dir1}/${name3} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 15
 call_start_test "Delete 1 local parent file"
 
 name1=test${label}-file1
@@ -466,7 +466,7 @@ call_check_link ${name4} 2
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 16
 call_start_test "Move 1 local parent file to other name"
 
 name1=test${label}-source1
@@ -488,7 +488,7 @@ call_check_file ${name3} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 17
 call_start_test "Move 1 local parent file to other directory same file name"
 
 name1=test${label}-file1
@@ -513,7 +513,7 @@ call_check_file ${dir1}/${name1} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 18
 call_start_test "Move 1 local parent file to other directory other file name"
 
 name1=test${label}-source1
@@ -539,7 +539,7 @@ call_check_file ${dir1}/${name3} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 19
 call_start_test "Recover 1 local file with no links"
 
 name1=test${label}-file1
@@ -562,7 +562,7 @@ call_check_file ${name1} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 20
 call_start_test "Recover 1 local parent file with 1 link"
 
 name1=test${label}-file1
@@ -593,7 +593,7 @@ call_check_link ${name2} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 21
 call_start_test "Recover 1 local parent file with 2 links"
 
 name1=test${label}-file1
@@ -629,7 +629,7 @@ call_check_link ${name3} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 22
 call_start_test "Recover 1 local parent file with 3 links"
 
 name1=test${label}-file1
@@ -670,7 +670,7 @@ call_check_link ${name4} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 23
 call_start_test "Recover 1 local parent file with 1 link in other directory"
 
 name1=test${label}-file1
@@ -707,7 +707,7 @@ call_check_link ${dir1}/${name2} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 24
 call_start_test "Recover 1 local parent file with 2 links in different directories"
 
 name1=test${label}-file1
@@ -748,7 +748,7 @@ call_check_link ${dir1}/${name3} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 25
 call_start_test "Recover 1 local parent file with 3 links in different directories"
 
 name1=test${label}-file1
@@ -794,7 +794,7 @@ call_check_link ${dir1}/${name4} 1
 
 call_end_test
 
-REM ##############################################################
+# REM ############################################################## 26
 call_start_test "Recover 1 parent from dir1 to dir2 with same name"
 
 name1=test${label}-file1
@@ -810,7 +810,7 @@ call_create_file ${dir1}/${name1} ${name1}
 call_check_file ${dir1}/${name1} 1
 call_check_file ${dir2}/${name1} 0
 
-pause
+call_pause
 
 call_remove_file ${dir1}/${name1}
 
@@ -826,7 +826,7 @@ call_check_file ${dir2}/${name1} 1
 
 call_end_test
 
-REM ##############################################################
+# REM ############################################################## 27
 call_start_test "Recover 1 parent from dir1 to dir2 with same name and 1 child link"
 
 name1=test${label}-file1
@@ -867,7 +867,7 @@ call_check_link ${dir2}/${name2} 0
 
 call_end_test
 
-REM ##############################################################
+# REM ############################################################## 28
 call_start_test "Recover 1 parent from dir1 to dir2 with same name and 2 child link"
 
 name1=test${label}-file1
@@ -914,7 +914,7 @@ call_check_link ${dir2}/${name3} 0
 
 call_end_test
 
-REM ##############################################################
+# REM ############################################################## 29
 call_start_test "Recover 1 parent from dir1 to dir2 with different name"
 
 name1=test${label}-file1
@@ -947,7 +947,7 @@ call_check_file ${dir2}/${name2} 1
 
 call_end_test
 
-REM ##############################################################
+# REM ############################################################## 30
 call_start_test "Recover 1 parent from dir1 to dir2 with different name and 1 child link"
 
 name1=test${label}-file1
@@ -989,7 +989,7 @@ call_check_link ${dir2}/${name3} 0
 
 call_end_test
 
-REM ##############################################################
+# REM ############################################################## 31
 call_start_test "Recover 1 parent from dir1 to dir2 with different name and 2 child link"
 
 name1=test${label}-file1
@@ -1037,7 +1037,7 @@ call_check_link ${dir2}/${name4} 0
 
 call_end_test
 
-REM ##############################################################
+# REM ############################################################## 32
 call_start_test "Create new unique file which its path is the same of a removed link from a removed parent"
 
 name1=test${label}-file1
@@ -1079,7 +1079,7 @@ call_check_link ${name4} 2
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 33
 call_start_test "Remove a directory with links"
 name1=test${label}-file1
 name2=test${label}-file2
@@ -1101,11 +1101,11 @@ call_check_link ${dir1}/${name2} 1
 call_check_link ${dir1}/${name3} 1
 call_check_link ${dir1}/${name4} 1
 
-pause
+call_pause
 
 call_remove_dir ${dir1}
 
-pause
+call_pause
 
 call_check_file ${name1} 1
 
@@ -1115,7 +1115,7 @@ call_check_link ${dir1}/${name4} 0
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 34
 call_start_test "Recover a removed directory with links"
 
 name1=test${label}-file1
@@ -1138,13 +1138,13 @@ call_check_link ${dir1}/${name2} 1
 call_check_link ${dir1}/${name3} 1
 call_check_link ${dir1}/${name4} 1
 
-pause
+call_pause
 
 call_remove_file ${name1}
 
 call_remove_dir ${dir1}
 
-pause
+call_pause
 
 call_check_file ${name1} 0
 
@@ -1152,7 +1152,7 @@ call_check_link ${dir1}/${name2} 2
 call_check_link ${dir1}/${name3} 2
 call_check_link ${dir1}/${name4} 2
 
-pause
+call_pause
 
 call_create_file ${name1} ${name1}
 
@@ -1164,56 +1164,56 @@ call_check_link ${dir1}/${name4} 1
 
 call_end_test
 
-# REM ##############################################################
+# REM ############################################################## 35
 call_start_test "Bulk creation of massive files"
 
 delaytm=0
 
-name01=test%label%-file01
-name02=test%label%-file02
-name03=test%label%-file03
-name04=test%label%-file04
-name05=test%label%-file05
-name06=test%label%-file06
-name07=test%label%-file07
-name08=test%label%-file08
-name09=test%label%-file09
-name10=test%label%-file10
-name11=test%label%-file11
-name12=test%label%-file12
-name13=test%label%-file13
-name14=test%label%-file14
-name15=test%label%-file15
-name16=test%label%-file16
-name17=test%label%-file17
-name18=test%label%-file18
-name19=test%label%-file19
-name20=test%label%-file20
-name21=test%label%-file21
-name22=test%label%-file22
-name23=test%label%-file23
-name24=test%label%-file24
-name25=test%label%-file25
-name26=test%label%-file26
-name27=test%label%-file27
-name28=test%label%-file28
-name29=test%label%-file29
-name30=test%label%-file30
-name31=test%label%-file31
-name32=test%label%-file32
-name33=test%label%-file33
-name34=test%label%-file34
-name35=test%label%-file35
-name36=test%label%-file36
-name37=test%label%-file37
-name38=test%label%-file38
-name39=test%label%-file39
-name40=test%label%-file40
+name01=test${label}-file01
+name02=test${label}-file02
+name03=test${label}-file03
+name04=test${label}-file04
+name05=test${label}-file05
+name06=test${label}-file06
+name07=test${label}-file07
+name08=test${label}-file08
+name09=test${label}-file09
+name10=test${label}-file10
+name11=test${label}-file11
+name12=test${label}-file12
+name13=test${label}-file13
+name14=test${label}-file14
+name15=test${label}-file15
+name16=test${label}-file16
+name17=test${label}-file17
+name18=test${label}-file18
+name19=test${label}-file19
+name20=test${label}-file20
+name21=test${label}-file21
+name22=test${label}-file22
+name23=test${label}-file23
+name24=test${label}-file24
+name25=test${label}-file25
+name26=test${label}-file26
+name27=test${label}-file27
+name28=test${label}-file28
+name29=test${label}-file29
+name30=test${label}-file30
+name31=test${label}-file31
+name32=test${label}-file32
+name33=test${label}-file33
+name34=test${label}-file34
+name35=test${label}-file35
+name36=test${label}-file36
+name37=test${label}-file37
+name38=test${label}-file38
+name39=test${label}-file39
+name40=test${label}-file40
 
-dir1=test%label%-dir1
-dir2=test%label%-dir2
-dir3=test%label%-dir3
-dir4=test%label%-dir4
+dir1=test${label}-dir1
+dir2=test${label}-dir2
+dir3=test${label}-dir3
+dir4=test${label}-dir4
 
 call_create_dir ${dir1}
 call_create_dir ${dir2}
