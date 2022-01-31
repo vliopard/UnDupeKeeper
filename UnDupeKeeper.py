@@ -513,6 +513,7 @@ if __name__ == "__main__":
             time.sleep(0.25)
             kb = tools.KBHit()
             if kb.check():
+                file_list.save_data()
                 logger.info(f'{tools.lineno()} - Terminating UnDupyKeeper System...')
                 WORKING = False
 
