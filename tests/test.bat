@@ -3,7 +3,8 @@ cls
 
 setlocal enabledelayedexpansion
 
-set basedir=c:\vliopard\tests\
+set basedir=c:\Users\fabi\vliopard\UnDupyKeeper\test\
+set delaycount=1
 set delaytm=1
 set testnro=0
 set label=
@@ -215,7 +216,7 @@ call:create_file %name1% %name1%
 
 call:check_file %name1% 1
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
@@ -234,7 +235,7 @@ call:create_file %name1% %name1%
 call:check_file %name1% 1
 call:check_file %name2% 0
 
-pause
+call:delay_pause
 
 call:move_file %name1% %name2%
 
@@ -256,7 +257,7 @@ call:create_dir %dir1%
 call:check_file %name1% 1
 call:check_file %dir1%\%name1% 0
 
-pause
+call:delay_pause
 
 call:move_file %name1% %dir1%\%name1%
 
@@ -280,7 +281,7 @@ call:create_dir %dir1%
 call:check_file %name1% 1
 call:check_file %dir1%\%name2% 0
 
-pause
+call:delay_pause
 
 call:move_file %name1% %dir1%\%name2%
 
@@ -361,7 +362,7 @@ set name2=test%label%-file2
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
 
-pause
+call:delay_pause
 
 call:remove_file %name2%
 
@@ -381,7 +382,7 @@ set name3=test%label%-target1
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
 
-pause
+call:delay_pause
 
 call:move_file %name2% %name3%
 
@@ -405,7 +406,7 @@ call:create_file %name2% %name1%
 
 call:create_dir %dir1%
 
-pause
+call:delay_pause
 
 call:move_file %name2% %dir1%\%name2%
 
@@ -430,7 +431,7 @@ call:create_file %name2% %name1%
 
 call:create_dir %dir1%
 
-pause
+call:delay_pause
 
 call:move_file %name2% %dir1%\%name3%
 
@@ -454,7 +455,7 @@ call:create_file %name2% %name1%
 call:create_file %name3% %name1%
 call:create_file %name4% %name1%
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
@@ -476,7 +477,7 @@ set name3=test%label%-target1
 call:create_file %name1% %name1%
 call:create_file %name2% %name1%
 
-pause
+call:delay_pause
 
 call:move_file %name1% %name3%
 
@@ -501,7 +502,7 @@ call:create_file %name2% %name1%
 
 call:create_dir %dir1%
 
-pause
+call:delay_pause
 
 call:move_file %name1% %dir1%\%name1%
 
@@ -527,7 +528,7 @@ call:create_file %name2% %name1%
 
 call:create_dir %dir1%
 
-pause
+call:delay_pause
 
 call:move_file %name1% %dir1%\%name3%
 
@@ -548,13 +549,13 @@ call:create_file %name1% %name1%
 
 call:check_file %name1% 1
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
 call:check_file %name1% 0
 
-pause
+call:delay_pause
 
 call:create_file %name1% %name1%
 
@@ -575,7 +576,7 @@ call:check_file %name1% 1
 
 call:check_link %name2% 1
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
@@ -583,7 +584,7 @@ call:check_file %name1% 0
 
 call:check_link %name2% 2
 
-pause
+call:delay_pause
 
 call:create_file %name1% %name1%
 
@@ -609,7 +610,7 @@ call:check_file %name1% 1
 call:check_link %name2% 1
 call:check_link %name3% 1
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
@@ -618,7 +619,7 @@ call:check_file %name1% 0
 call:check_link %name2% 2
 call:check_link %name3% 2
 
-pause
+call:delay_pause
 
 call:create_file %name1% %name1%
 
@@ -648,7 +649,7 @@ call:check_link %name2% 1
 call:check_link %name3% 1
 call:check_link %name4% 1
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
@@ -658,7 +659,7 @@ call:check_link %name2% 2
 call:check_link %name3% 2
 call:check_link %name4% 2
 
-pause
+call:delay_pause
 
 call:create_file %name1% %name1%
 
@@ -689,7 +690,7 @@ call:check_file %name1% 1
 
 call:check_link %dir1%\%name2% 1
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
@@ -697,7 +698,7 @@ call:check_file %name1% 0
 
 call:check_link %dir1%\%name2% 2
 
-pause
+call:delay_pause
 
 call:create_file %name1% %name1%
 
@@ -728,7 +729,7 @@ call:check_file %name1% 1
 call:check_link %dir1%\%name2% 1
 call:check_link %dir1%\%name3% 1
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
@@ -737,7 +738,7 @@ call:check_file %name1% 0
 call:check_link %dir1%\%name2% 2
 call:check_link %dir1%\%name3% 2
 
-pause
+call:delay_pause
 
 call:create_file %name1% %name1%
 
@@ -772,7 +773,7 @@ call:check_link %dir1%\%name2% 1
 call:check_link %dir1%\%name3% 1
 call:check_link %dir1%\%name4% 1
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
@@ -782,7 +783,7 @@ call:check_link %dir1%\%name2% 2
 call:check_link %dir1%\%name3% 2
 call:check_link %dir1%\%name4% 2
 
-pause
+call:delay_pause
 
 call:create_file %name1% %name1%
 
@@ -810,14 +811,14 @@ call:create_file %dir1%\%name1% %name1%
 call:check_file %dir1%\%name1% 1
 call:check_file %dir2%\%name1% 0
 
-pause
+call:delay_pause
 
 call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
 call:check_file %dir2%\%name1% 0
 
-pause
+call:delay_pause
 
 call:create_file %dir2%\%name1% %name1%
 
@@ -845,7 +846,7 @@ call:check_file %dir1%\%name1% 1
 
 call:check_link %dir1%\%name2% 1
 
-pause
+call:delay_pause
 
 call:remove_file %dir1%\%name1%
 
@@ -853,7 +854,7 @@ call:check_file %dir1%\%name1% 0
 
 call:check_link %dir1%\%name2% 2
 
-pause
+call:delay_pause
 
 call:create_file %dir2%\%name1% %name1%
 
@@ -889,7 +890,7 @@ call:check_file %dir1%\%name1% 1
 call:check_link %dir1%\%name2% 1
 call:check_link %dir1%\%name3% 1
 
-pause
+call:delay_pause
 
 call:remove_file %dir1%\%name1%
 
@@ -898,7 +899,7 @@ call:check_file %dir1%\%name1% 0
 call:check_link %dir1%\%name2% 2
 call:check_link %dir1%\%name3% 2
 
-pause
+call:delay_pause
 
 call:create_file %dir2%\%name1% %name1%
 
@@ -930,13 +931,13 @@ call:create_file %dir1%\%name1% %name1%
 
 call:check_file %dir1%\%name1% 1
 
-pause
+call:delay_pause
 
 call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
 
-pause
+call:delay_pause
 
 call:create_file %dir2%\%name2% %name1%
 
@@ -966,14 +967,14 @@ call:create_file %dir1%\%name3% %name1%
 call:check_file %dir1%\%name1% 1
 call:check_link %dir1%\%name3% 1
 
-pause
+call:delay_pause
 
 call:remove_file %dir1%\%name1%
 
 call:check_file %dir1%\%name1% 0
 call:check_link %dir1%\%name3% 2
 
-pause
+call:delay_pause
 
 call:create_file %dir2%\%name2% %name1%
 
@@ -1011,7 +1012,7 @@ call:check_file %dir1%\%name1% 1
 call:check_link %dir1%\%name3% 1
 call:check_link %dir1%\%name4% 1
 
-pause
+call:delay_pause
 
 call:remove_file %dir1%\%name1%
 
@@ -1019,7 +1020,7 @@ call:check_file %dir1%\%name1% 0
 call:check_link %dir1%\%name3% 2
 call:check_link %dir1%\%name4% 2
 
-pause
+call:delay_pause
 
 call:create_file %dir2%\%name2% %name1%
 
@@ -1057,7 +1058,7 @@ call:check_link %name2% 1
 call:check_link %name3% 1
 call:check_link %name4% 1
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
@@ -1067,13 +1068,13 @@ call:check_link %name2% 2
 call:check_link %name3% 2
 call:check_link %name4% 2
 
-pause
+call:delay_pause
 
 call:create_file %name2% %name5%
 
 call:check_file %name2% 1
 
-call:check_link %name2% 0
+call:check_link %name2% 2
 call:check_link %name3% 2
 call:check_link %name4% 2
 
@@ -1101,11 +1102,11 @@ call:check_link %dir1%\%name2% 1
 call:check_link %dir1%\%name3% 1
 call:check_link %dir1%\%name4% 1
 
-pause
+call:delay_pause
 
 call:remove_dir %dir1%
 
-pause
+call:delay_pause
 
 call:check_file %name1% 1
 
@@ -1138,13 +1139,13 @@ call:check_link %dir1%\%name2% 1
 call:check_link %dir1%\%name3% 1
 call:check_link %dir1%\%name4% 1
 
-pause
+call:delay_pause
 
 call:remove_file %name1%
 
 call:remove_dir %dir1%
 
-pause
+call:delay_pause
 
 call:check_file %name1% 0
 
@@ -1152,7 +1153,7 @@ call:check_link %dir1%\%name2% 2
 call:check_link %dir1%\%name3% 2
 call:check_link %dir1%\%name4% 2
 
-pause
+call:delay_pause
 
 call:create_file %name1% %name1%
 
@@ -1264,7 +1265,7 @@ call:create_file %name38% %name04%
 call:create_file %dir3%\%name39% %name04%
 call:create_file %name40% %name04%
 
-pause
+call:delay_pause
 
 call:check_file %name01% 1
 call:check_link %name02% 1
@@ -1403,11 +1404,11 @@ REM ##############################################################
 :assert
 if %~1==%~2 (
     echo -------------------------------------------
-        echo =============== [ [42mPASSED[0m ] ================
+        %Windir%\System32\WindowsPowerShell\v1.0\Powershell.exe write-host -foregroundcolor Black -backgroundcolor Green =============== [ PASSED ] ================
         echo -------------------------------------------
 ) else (
         echo -------------------------------------------
-        echo =============== [ [41mFAILED[0m ] ================
+        %Windir%\System32\WindowsPowerShell\v1.0\Powershell.exe write-host -foregroundcolor Black -backgroundcolor Red =============== [ FAILED ] ================
     echo -------------------------------------------
 )
 EXIT /B 0
@@ -1415,9 +1416,14 @@ EXIT /B 0
 REM ##############################################################
 :compare_file
 echo !basedir!%~1 == !basedir!%~2
-fc /b !basedir!%~1 !basedir!%~2 > nul 2>&1
+REM fc /b !basedir!%~1 !basedir!%~2 > nul 2>&1
+type !basedir!%~1 > temp0.tmp
+type !basedir!%~2 > temp1.tmp
+fc /b temp0.tmp temp1.tmp > nul 2>&1
 if %errorlevel% == 0 call:assert 1 %~3
 if %errorlevel% == 1 call:assert 0 %~3
+del temp0.tmp
+del temp1.tmp
 EXIT /B 0
 
 REM ##############################################################
@@ -1425,13 +1431,13 @@ REM ##############################################################
 echo ===========================================
 echo TEST #%label%) DONE
 echo ===========================================
-pause
+call:delay_pause
 EXIT /B 0
 
 REM ##############################################################
 :wait_time
 if %delaytm% gtr 0 (
-    timeout 1 > NUL
+    timeout %delaycount% > NUL
 )
 EXIT /B 0
 
@@ -1472,6 +1478,13 @@ echo SOFT FILE %txt%
 findstr /C:%txt% file_links.txt >nul 2>&1
 if %errorlevel% equ 0 call:assert 1 %~2
 if %errorlevel% equ 1 call:assert 0 %~2
+EXIT /B 0
+
+REM ##############################################################
+:delay_pause
+set /A delaycount=5
+call:wait_time
+set /A delaycount=1
 EXIT /B 0
 
 REM ##############################################################
