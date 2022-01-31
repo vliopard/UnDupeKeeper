@@ -485,7 +485,7 @@ if __name__ == "__main__":
     log_format = '%(asctime)s,%(msecs)03d %(name)s\t %(levelname)s %(message)s'
     log_formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
     date_format = '%H:%M:%S'
-    debug_level = "INFO"
+    debug_level = "WARNING"
 
     logging.basicConfig(format=log_format,
                         datefmt=date_format,
