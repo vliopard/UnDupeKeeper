@@ -7,7 +7,10 @@ import pandas as pd
 from filecmp import cmp as is_equal
 from os import remove as delete_file
 
+from os import makedirs
 from os.path import exists
+from os.path import abspath
+from os.path import dirname
 from os.path import isfile as is_file
 from os.path import islink as is_link
 
@@ -51,6 +54,9 @@ def execute(target, source):
     source_is_file = is_file(source)
     target_exists = exists(target)
     if source_is_file and not target_exists:
+        path = dirname(abspath(target))
+        if not exists(path):
+            makedirs(path) 
         platform = {"Linux": f'ln -s {source} {target}',
                     "Windows": f'mklink {target} {source}'}
         command = platform[get_platform()]
@@ -69,6 +75,13 @@ def execute(target, source):
         logger.error(f'ERROR: Source is File? [{source_is_file}], Target Exists? [{target_exists}]')
 
     return ret_val
+
+
+def delete_row(row):
+    try:
+        delete_file(row)
+    except FileNotFoundError as fnfe:
+        logger.error(f'FileNotFoundError: {row} {fnfe}')
 
 
 class FileList:
@@ -189,8 +202,8 @@ class FileList:
                     if new_file.file_uri != line and is_equal(new_file.file_uri, line, False):
                         self.new_row(new_file, kind=LINK)
                         self.new_row(new_file, kind=REMO)
-                        logger.debug(f'delete_file({new_file.file_uri})')
-                        delete_file(new_file.file_uri)
+                        logger.debug(f'delete_row({new_file.file_uri})')
+                        delete_row(new_file.file_uri)
                         execute(new_file.file_uri, line)
                 else:
                     logger.debug(f'else:')
@@ -224,6 +237,10 @@ class FileList:
                     logger.debug(f'OLD: {gotten_by_uri[SHA].values[0]}')
                     logger.debug(f'NEW: {new_file.file_sha}')
                     self._file_list.loc[(self._file_list[SHA] == gotten_by_uri[SHA].values[0]), SHA] = new_file.file_sha
+
+            if gotten_by_sha is None and gotten_by_uri is None:
+                self.add_file(uri)
+
         self.save_data()
 
     def move_file(self, source, target):
@@ -267,8 +284,8 @@ class FileList:
                     if line is not None:
                         logger.debug(f'if line is not None:')
                         for row in line:
-                            logger.debug(f'delete_file({row})')
-                            delete_file(row)
+                            logger.debug(f'delete_row({row})')
+                            delete_row(row)
                             logger.debug(f'CREATING LINK ({new_file.file_uri})')
                             execute(row, new_file.file_uri)
         self.save_data()
@@ -299,7 +316,7 @@ class FileList:
             idx = self.get_files(sha, LINK, SHA)
             if idx is not None:
                 for row in idx:
-                    delete_file(row)
+                    delete_row(row)
                 self._file_list.loc[(self._file_list[SHA] == sha) &
                                     (self._file_list[KIND] == LINK), KIND] = LYNK
         self.save_data()

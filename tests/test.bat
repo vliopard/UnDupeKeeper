@@ -4,8 +4,8 @@ cls
 setlocal enabledelayedexpansion
 
 set basedir=c:\vliopard\download\undupe\
-set file_links=..\file_links.txt
-set file_table=..\file_table.txt
+set file_links=file_links.txt
+set file_table=file_table.txt
 set delaycount=1
 set delaytm=1
 set testnro=0
