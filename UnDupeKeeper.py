@@ -134,7 +134,7 @@ class FileList:
             command = platform[self.get_platform()]
 
             try:
-                logger.info(f'{tools.lineno()} - process = run_command({command},')
+                logger.warning(f'{tools.lineno()} - process = run_command({command},')
                 process = run_command(command,
                                       shell=True,
                                       check=True,
@@ -198,15 +198,14 @@ class FileList:
         return None
 
     def add_file(self, uri):
-        logger.info(f'{tools.lineno()} - ==============================================')
-        logger.info(f'{tools.lineno()} - def add_file(self, {uri}):')
+        logger.warning(f'{tools.lineno()} - ==============================================')
+        logger.warning(f'{tools.lineno()} - def add_file(self, {uri}):')
 
         if is_link(uri):
             logger.info(f'{tools.lineno()} - if is_link({uri}):')
             new_file = FileHolder(uri)
             logger.info(f'{tools.lineno()} - line = self.get_files({new_file.file_sha}, FILE, SHA)')
             line = self.get_files(new_file.file_sha, FILE, SHA)
-            logger.info(f'if {line} is None:')
             if line is not None:
                 logger.info(f'{tools.lineno()} - if line is not None:')
                 logger.info(f'{tools.lineno()} - line = self.get_files({new_file.file_uri}, SYMLINK, URI)')
@@ -244,7 +243,7 @@ class FileList:
                 line_uri = self.get_file(new_file.file_uri, SYMLINK)
                 if line_uri is None:
                     logger.info(f'{tools.lineno()} - if line_uri is None:')
-                    logger.info(f'and is_equal(new_file.file_uri, line_uri, False):')
+                    logger.info(f'{tools.lineno()} - and is_equal(new_file.file_uri, line_uri, False):')
                     if new_file.file_uri != line and is_equal(new_file.file_uri, line, False):
                         logger.info(f'{tools.lineno()} - if {new_file.file_uri} != {line}')
                         logger.info(f'{tools.lineno()} - if is_equal({new_file.file_uri}, {line}, False):')
@@ -266,8 +265,8 @@ class FileList:
         logger.info(f'{tools.lineno()} - return')
 
     def mod_file(self, uri):
-        logger.info(f'{tools.lineno()} - ==============================================')
-        logger.info(f'{tools.lineno()} - def mod_file(self, {uri}):')
+        logger.warning(f'{tools.lineno()} - ==============================================')
+        logger.warning(f'{tools.lineno()} - def mod_file(self, {uri}):')
         if is_link(uri):
             logger.warning(f'{tools.lineno()} - if is_link({uri}):')
             logger.info(f'{tools.lineno()} - return')
@@ -306,8 +305,8 @@ class FileList:
         logger.info(f'{tools.lineno()} - return')
 
     def move_file(self, source_file, target_file):
-        logger.info(f'{tools.lineno()} - ==============================================')
-        logger.info(f'{tools.lineno()} - def move_file(self, {source_file}, {target_file}):')
+        logger.warning(f'{tools.lineno()} - ==============================================')
+        logger.warning(f'{tools.lineno()} - def move_file(self, {source_file}, {target_file}):')
 
         if is_link(target_file):
             logger.info(f'{tools.lineno()} - TRUE is_link({target_file}):')
@@ -362,8 +361,8 @@ class FileList:
         logger.info(f'{tools.lineno()} - return')
 
     def del_file(self, uri):
-        logger.info(f'{tools.lineno()} - ==============================================')
-        logger.info(f'{tools.lineno()} - def del_file(self, {uri}):')
+        logger.warning(f'{tools.lineno()} - ==============================================')
+        logger.warning(f'{tools.lineno()} - def del_file(self, {uri}):')
 
         logger.info(f'{tools.lineno()} - delete_index = self.get_file_index(uri, REMOVED)')
         delete_index = self.get_file_index(uri, REMOVED)
@@ -506,7 +505,7 @@ if __name__ == "__main__":
 
     observer.start()
 
-    logger.info(f'{tools.lineno()} - Starting UnDupyKeeper System...')
+    logger.warning(f'{tools.lineno()} - Starting UnDupyKeeper System...')
     WORKING = True
     try:
         while WORKING:
@@ -514,7 +513,7 @@ if __name__ == "__main__":
             kb = tools.KBHit()
             if kb.check():
                 file_list.save_data()
-                logger.info(f'{tools.lineno()} - Terminating UnDupyKeeper System...')
+                logger.warning(f'{tools.lineno()} - Terminating UnDupyKeeper System...')
                 WORKING = False
 
         observer.stop()
