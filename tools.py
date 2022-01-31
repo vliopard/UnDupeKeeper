@@ -1,14 +1,10 @@
 import os
-import ssl
 import inspect
-import smtplib
-
-from email.mime.text import MIMEText
-
-import parameters
 
 import logging
 logger = logging.getLogger('TOOLS')
+
+SLASH = 92
 
 
 if os.name == 'nt':
@@ -67,7 +63,7 @@ class KBHit:
     def check(self):
         if self.kbhit():
             c = self.getch()
-            if ord(c) == parameters.SLASH:
+            if ord(c) == SLASH:
                 self.set_normal_term()
                 return True
         return False
@@ -75,16 +71,3 @@ class KBHit:
 
 def lineno():
     return f"{inspect.currentframe().f_back.f_lineno:04d}"
-
-
-def send_mail(title, body):
-    with smtplib.SMTP_SSL(parameters.SMTP_SERV, parameters.SMTP_PORT, context=ssl.create_default_context()) as server:
-        server.login(parameters.EMAIL_FROM, parameters.EMAIL_PASS)
-
-        msg = body
-        msg = MIMEText(msg)
-        msg['Subject'] = title
-        msg['To'] = f'{parameters.SEND_NAME} {parameters.SEND_TO}'
-        msg['From'] = f'{parameters.EMAIL_NAME} {parameters.EMAIL_FROM}'
-
-        server.sendmail(parameters.EMAIL_FROM, parameters.SEND_TO, msg.as_string())
