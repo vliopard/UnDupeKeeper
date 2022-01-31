@@ -6,10 +6,13 @@ import pandas as pd
 
 from filecmp import cmp as is_equal
 from os import remove as delete_file
+
+from os.path import exists
 from os.path import isfile as is_file
 from os.path import islink as is_link
 
 from subprocess import PIPE
+from subprocess import CalledProcessError
 from subprocess import run as run_command
 
 from watchdog.observers import Observer
@@ -42,13 +45,30 @@ def get_platform():
     return platforms[sys.platform]
 
 
-def execute(command):
-    process = run_command(command,
-                          shell=True,
-                          check=True,
-                          stdout=PIPE,
-                          universal_newlines=True)
-    return process.stdout
+def execute(target, source):
+    ret_val = None
+
+    source_is_file = is_file(source)
+    target_exists = exists(target)
+    if source_is_file and not target_exists:
+        platform = {"Linux": f'ln -s {source} {target}',
+                    "Windows": f'mklink {target} {source}'}
+        command = platform[get_platform()]
+
+        try:
+            process = run_command(command,
+                                  shell=True,
+                                  check=True,
+                                  stdout=PIPE,
+                                  universal_newlines=True)
+            ret_val = process.stdout
+        except CalledProcessError as cp:
+            logger.error(f'CalledProcessError {cp}')
+            logger.error(f'Source is File? [{source_is_file}], Target Exists? [{target_exists}]')
+    else:
+        logger.error(f'ERROR: Source is File? [{source_is_file}], Target Exists? [{target_exists}]')
+
+    return ret_val
 
 
 class FileList:
@@ -153,9 +173,7 @@ class FileList:
                 line = self.get_files(new_file.file_sha, LYNK, SHA)
                 if line is not None:
                     for row in line:
-                        platform = {"Linux": f'ln -s {new_file.file_uri} {row}',
-                                    "Windows": f'mklink {row} {new_file.file_uri}'}
-                        execute(platform[get_platform()])
+                        execute(row, new_file.file_uri)
 
                 self._file_list.loc[(self._file_list[SHA] == new_file.file_sha) &
                                     (self._file_list[KIND] == LYNK), KIND] = LINK
@@ -173,9 +191,7 @@ class FileList:
                         self.new_row(new_file, kind=REMO)
                         logger.debug(f'delete_file({new_file.file_uri})')
                         delete_file(new_file.file_uri)
-                        platform = {"Linux": f'ln -s {line} {new_file.file_uri}',
-                                    "Windows": f'mklink {new_file.file_uri} {line}'}
-                        execute(platform[get_platform()])
+                        execute(new_file.file_uri, line)
                 else:
                     logger.debug(f'else:')
                     logger.debug(f'{line_uri}')
@@ -253,10 +269,8 @@ class FileList:
                         for row in line:
                             logger.debug(f'delete_file({row})')
                             delete_file(row)
-                            platform = {"Linux": f'ln -s {new_file.file_uri} {row}',
-                                        "Windows": f'mklink {row} {new_file.file_uri}'}
                             logger.debug(f'CREATING LINK ({new_file.file_uri})')
-                            execute(platform[get_platform()])
+                            execute(row, new_file.file_uri)
         self.save_data()
 
     def del_file(self, file_uri):
@@ -317,10 +331,16 @@ class FileHolder:
             # digest_method = hashlib.sha256()
             # digest_method = hashlib.sha512()
             memory_view = memoryview(bytearray(128*1024))
-            with open(self._file_uri, 'rb', buffering=0) as uri:
-                for element in iter(lambda: uri.readinto(memory_view), 0):
-                    digest_method.update(memory_view[:element])
-            self._file_sha = digest_method.hexdigest()
+            retry = True
+            while retry:
+                try:
+                    with open(self._file_uri, 'rb', buffering=0) as uri:
+                        for element in iter(lambda: uri.readinto(memory_view), 0):
+                            digest_method.update(memory_view[:element])
+                    self._file_sha = digest_method.hexdigest()
+                    retry = False
+                except PermissionError as pe:
+                    time.sleep(1)
 
     def __repr__(self):
         return self._file_uri

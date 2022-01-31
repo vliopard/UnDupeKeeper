@@ -3,7 +3,9 @@ cls
 
 setlocal enabledelayedexpansion
 
-set basedir=c:\Users\fabi\vliopard\UnDupyKeeper\test\
+set basedir=c:\vliopard\download\undupe\
+set file_links=..\file_links.txt
+set file_table=..\file_table.txt
 set delaycount=1
 set delaytm=1
 set testnro=0
@@ -1465,7 +1467,7 @@ REM ##############################################################
 set txt=%~1
 echo _
 echo HARD FILE %txt%
-findstr /C:%txt% file_table.txt >nul 2>&1
+findstr /C:%txt% %file_table% >nul 2>&1
 if %errorlevel% equ 0 call:assert 1 %~2
 if %errorlevel% equ 1 call:assert 0 %~2
 EXIT /B 0
@@ -1475,7 +1477,7 @@ REM ##############################################################
 set txt=%~1
 echo _
 echo SOFT FILE %txt%
-findstr /C:%txt% file_links.txt >nul 2>&1
+findstr /C:%txt% %file_links% >nul 2>&1
 if %errorlevel% equ 0 call:assert 1 %~2
 if %errorlevel% equ 1 call:assert 0 %~2
 EXIT /B 0
