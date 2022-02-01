@@ -39,8 +39,8 @@ DELETED_PARENT = 'lynk'
 FILE = 'file'
 MOVED_FILE = 'move'
 
-FILE_TABLE = 'file_table.txt'
-LINK_TABLE = 'link_table.txt'
+FILE_TABLE = 'tests/file_table.txt'
+LINK_TABLE = 'tests/link_table.txt'
 DATA_TABLE = 'UnDupyKeeper.pkl'
 
 
