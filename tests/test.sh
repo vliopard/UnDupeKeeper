@@ -162,6 +162,7 @@ call_pause()
 {
     # read -p "Press any key to continue..."
     read -t ${timeout} -p "Next..."
+    echo ""
 }
 
 # REM ############################################################## 01
