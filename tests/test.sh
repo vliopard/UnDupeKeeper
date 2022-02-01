@@ -2,8 +2,7 @@
 
 timeout=1
 
-
-basedir="/home/vliopard/tests/"
+basedir="/home/vliopard/UnDupeDir/"
 delaytm=1
 testnro=0
 label=""
@@ -128,11 +127,11 @@ call_assert()
     if [ $1 == $2 ]
     then
         echo -------------------------------------------
-        echo =============== [ PASSED ] ================
+        echo -e \\"e[0;30;42m=============== [ PASSED ] ================\\e[0m"
         echo -------------------------------------------
     else
         echo -------------------------------------------
-        echo =============== [ FAILED ] ================
+        echo -e \\"e[0;30;41m=============== [ FAILED ] ================\\e[0m"
         echo -------------------------------------------
     fi
 }
@@ -161,7 +160,8 @@ call_end_test()
 
 call_pause()
 {
-    read -p "Press any key to continue..."
+    # read -p "Press any key to continue..."
+    read -t ${timeout} -p "Next..."
 }
 
 # REM ############################################################## 01

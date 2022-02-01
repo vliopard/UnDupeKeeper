@@ -1,2 +1,3 @@
 #!/bin/sh
-python UnDupeKeeper.py $1 > UnDupyKeeper.log
+python3 UnDupeKeeper.py /home/vliopard/UnDupeDir/ > UnDupyKeeper.log
+

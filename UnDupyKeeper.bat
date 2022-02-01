@@ -1,2 +1,2 @@
 @echo off
-python UnDupeKeeper.py %1
+python UnDupeKeeper.py %1 > UnDupyKeeper.log
