@@ -2,7 +2,11 @@
 
 timeout=1
 
+
 basedir="/home/vliopard/UnDupeDir/"
+file_links=file_links.txt
+file_table=file_table.txt
+delaycount=2
 delaytm=1
 testnro=0
 label=""
@@ -93,7 +97,7 @@ call_check_hard()
 {
     echo _
     echo HARD FILE $1
-    if grep -r $1 file_table.txt
+    if grep -r $1 ${file_table}
     then
         call_assert 1 $2
     else
@@ -105,7 +109,7 @@ call_check_soft()
 {
     echo _
     echo SOFT FILE $1
-    if grep -r $1 file_links.txt
+    if grep -r $1 ${file_links}
     then
         call_assert 1 $2
     else
@@ -161,7 +165,7 @@ call_end_test()
 call_pause()
 {
     # read -p "Press any key to continue..."
-    read -t ${timeout} -p "Next..."
+    read -t ${delaycount} -p "Next..."
     echo ""
 }
 

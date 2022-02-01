@@ -17,7 +17,7 @@ rem     let testnro=testnro+1
 rem     echo ===========================================
 rem     upperword="$1"
 rem     label=$(printf "%03d" ${testnro})
-rem     echo TEST #${label}) ${upperword^^}
+rem     echo TEST \#${label}\) ${upperword^^}
 rem     echo ===========================================
 rem }
 
@@ -97,7 +97,7 @@ rem call_check_hard()
 rem {
 rem     echo _
 rem     echo HARD FILE $1
-rem     if grep -r $1 file_table.txt
+rem     if grep -r $1 ${file_table}
 rem     then
 rem         call_assert 1 $2
 rem     else
@@ -109,7 +109,7 @@ rem call_check_soft()
 rem {
 rem     echo _
 rem     echo SOFT FILE $1
-rem     if grep -r $1 file_links.txt
+rem     if grep -r $1 ${file_links}
 rem     then
 rem         call_assert 1 $2
 rem     else
@@ -157,14 +157,16 @@ rem }
 rem call_end_test()
 rem {
 rem     echo ===========================================
-rem     echo TEST #${label}) DONE
+rem     echo TEST \#${label}\) DONE
 rem     echo ===========================================
 rem     call_pause
 rem }
 
 rem call_pause()
 rem {
-rem     read -p "Press any key to continue..."
+rem     # read -p "Press any key to continue..."
+rem     read -t ${delaycount} -p "Next..."
+rem     echo ""
 rem }
 
 REM ############################################################## 01
