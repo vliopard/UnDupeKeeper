@@ -28,7 +28,7 @@ call_create_file()
     fcontent1=$2
     echo ${fcontent1} > ${basedir}${filename1}
     read -t ${timeout} -p "${basedir}${filename1}"
-    echo ""
+    echo  
 }
 
 call_remove_file()
@@ -36,7 +36,7 @@ call_remove_file()
     filename1=$1
     rm ${basedir}${filename1}
     read -t ${timeout} -p "${basedir}${filename1}*"
-    echo ""
+    echo  
 }
 
 call_move_file()
@@ -128,7 +128,7 @@ call_remove_dir()
     fi
     rmdir "${basedir}${dirname1}"
     read -t ${timeout} -p "${basedir}${dirname1}*"
-    echo ""
+    echo  
 }
 
 call_assert()

@@ -28,7 +28,7 @@ rem     filename1=$1
 rem     fcontent1=$2
 rem     echo ${fcontent1} > ${basedir}${filename1}
 rem     read -t ${timeout} -p "${basedir}${filename1}"
-rem     echo -
+rem     echo  
 rem }
 
 rem call_remove_file()
@@ -36,7 +36,7 @@ rem {
 rem     filename1=$1
 rem     rm ${basedir}${filename1}
 rem     read -t ${timeout} -p "${basedir}${filename1}*"
-rem     echo -
+rem     echo  
 rem }
 
 rem call_move_file()
@@ -46,7 +46,7 @@ rem     filename2=$2
 rem     echo ${basedir}${filename2}
 rem     mv ${basedir}${filename1} ${basedir}${filename2}
 rem     read -t ${timeout} -p "${basedir}${filename2}"
-rem     echo -
+rem     echo  
 rem }
 
 rem call_create_dir()
@@ -55,7 +55,7 @@ rem     filename1=$1
 rem     echo /${basedir}${filename1}/
 rem     mkdir ${basedir}${filename1}
 rem     read -t ${timeout} -p "${basedir}${filename1}"
-rem     echo -
+rem     echo  
 rem }
 
 rem call_check_file()
@@ -120,11 +120,15 @@ rem }
 
 rem call_remove_dir()
 rem {
-rem     set filename1=$1
-rem     rm ${basedir}${filename1}/*
-rem     rmdir ${basedir}${filename1}
-rem     echo ${basedir}${filename1}*
-rem     read -t ${timeout} -p "${basedir}${filename1}"
+rem    dirname1=$1
+rem    if [ "$(ls -A ${basedir}${dirname1})" ]
+rem    then
+rem        file_list=${basedir}${dirname1}/'*'
+rem        rm ${file_list}
+rem    fi
+rem    rmdir "${basedir}${dirname1}"
+rem    read -t ${timeout} -p "${basedir}${dirname1}*"
+rem    echo  
 rem }
 
 rem call_assert()
