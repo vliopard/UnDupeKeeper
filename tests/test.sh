@@ -4,21 +4,22 @@ timeout=1
 
 
 basedir="/home/vliopard/UnDupeDir/"
-file_links=file_links.txt
+file_links=link_table.txt
 file_table=file_table.txt
 delaycount=2
 delaytm=1
 testnro=0
+last_test="035"
 label=""
 
 call_start_test()
 {
     let testnro=testnro+1
-    echo ===========================================
+    echo -e \\"e[1;37;44m===========================================\\e[0m"
     upperword="$1"
     label=$(printf "%03d" ${testnro})
-    echo TEST \#${label}\) ${upperword^^}
-    echo ===========================================
+    echo TEST \#${label}/${last_test}\) ${upperword^^}
+    echo -e \\"e[1;37;44m===========================================\\e[0m"
 }
 
 call_create_file()
@@ -76,7 +77,7 @@ call_check_link()
     filename1=$1
     echo _
     echo LINK FILE ${basedir}${filename1}
-    if $2==2
+    if [ $2 -eq 2 ]
     then
         mark=0
         marq=1
@@ -145,8 +146,8 @@ call_compare_file()
     #diff --brief $1 $2
     #comp_value=$?
     #if [ $comp_value -eq 0 ]
-    echo $1 == $2
-    if [ cmp -s $1 $2 ]
+    echo ${basedir}$1 == ${basedir}$2
+    if cmp -s ${basedir}$1 ${basedir}$2
     then
         call_assert 1 $3
     else
@@ -157,7 +158,7 @@ call_compare_file()
 call_end_test()
 {
     echo ===========================================
-    echo TEST \#${label}\) DONE
+    echo TEST \#${label}/${last_test}\) DONE
     echo ===========================================
     call_pause
 }

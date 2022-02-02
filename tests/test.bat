@@ -4,11 +4,12 @@ cls
 setlocal enabledelayedexpansion
 
 set basedir=c:\vliopard\download\undupe\
-set file_links=file_links.txt
+set file_links=link_table.txt
 set file_table=file_table.txt
 set delaycount=1
 set delaytm=1
 set testnro=0
+set last_test="035"
 set label=
 
 rem call_start_test()
@@ -1323,11 +1324,11 @@ GOTO EOF
 REM ##############################################################
 :start_test
 set /A testnro=testnro+1
-echo ===========================================
+%Windir%\System32\WindowsPowerShell\v1.0\Powershell.exe write-host -foregroundcolor White -backgroundcolor Blue ===========================================
 call:to_upper "%~1" upperword
 call:leading %testnro%
-echo TEST #%label%) %upperword%
-echo ===========================================
+echo TEST #%label%/%last_test%) %upperword%
+%Windir%\System32\WindowsPowerShell\v1.0\Powershell.exe write-host -foregroundcolor White -backgroundcolor Blue ===========================================
 EXIT /B 0
 
 REM ##############################################################
@@ -1433,7 +1434,7 @@ EXIT /B 0
 REM ##############################################################
 :end_test
 echo ===========================================
-echo TEST #%label%) DONE
+echo TEST #%label%/%last_test%) DONE
 echo ===========================================
 call:delay_pause
 EXIT /B 0
