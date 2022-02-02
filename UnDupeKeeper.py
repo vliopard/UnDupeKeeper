@@ -443,10 +443,11 @@ class FileHolder:
     def set_sha(self):
         logger.info(f'{tools.lineno()} - set_sha')
         if self._file_uri:
+            # TODO: SAVE SHA TO FILETABLE (USE PREVIOUS IF EXIST)
             # digest_method = hashlib.md5()
-            digest_method = hashlib.sha1()
+            # digest_method = hashlib.sha1()
             # digest_method = hashlib.sha256()
-            # digest_method = hashlib.sha512()
+            digest_method = hashlib.sha512()
             memory_view = memoryview(bytearray(128*1024))
             retry = True
             while retry:
