@@ -9,17 +9,17 @@ set file_table=file_table.txt
 set delaycount=1
 set delaytm=1
 set testnro=0
-set last_test="035"
+set last_test=035
 set label=
 
 rem call_start_test()
 rem {
 rem     let testnro=testnro+1
-rem     echo ===========================================
+rem     echo -e \\"e[1;37;44m===========================================\\e[0m"
 rem     upperword="$1"
 rem     label=$(printf "%03d" ${testnro})
-rem     echo TEST \#${label}\) ${upperword^^}
-rem     echo ===========================================
+rem     echo TEST \#${label}/${last_test}\) ${upperword^^}
+rem     echo -e \\"e[1;37;44m===========================================\\e[0m"
 rem }
 
 rem call_create_file()
@@ -77,7 +77,7 @@ rem {
 rem     filename1=$1
 rem     echo _
 rem     echo LINK FILE ${basedir}${filename1}
-rem     if $2==2
+rem     if [ $2 -eq 2 ]
 rem     then
 rem         mark=0
 rem         marq=1
@@ -132,11 +132,11 @@ rem {
 rem     if [ $1 == $2 ]
 rem     then
 rem         echo -------------------------------------------
-rem         echo =============== [ PASSED ] ================
+rem         echo -e \\"e[0;30;42m=============== [ PASSED ] ================\\e[0m"
 rem         echo -------------------------------------------
 rem     else
 rem         echo -------------------------------------------
-rem         echo =============== [ FAILED ] ================
+rem         echo -e \\"e[0;30;41m=============== [ FAILED ] ================\\e[0m"
 rem         echo -------------------------------------------
 rem     fi
 rem }
@@ -146,8 +146,8 @@ rem {
 rem     #diff --brief $1 $2
 rem     #comp_value=$?
 rem     #if [ $comp_value -eq 0 ]
-rem     echo $1 == $2
-rem     if [ cmp -s $1 $2 ]
+rem     echo ${basedir}$1 == ${basedir}$2
+rem     if cmp -s ${basedir}$1 ${basedir}$2
 rem     then
 rem         call_assert 1 $3
 rem     else
@@ -158,7 +158,7 @@ rem }
 rem call_end_test()
 rem {
 rem     echo ===========================================
-rem     echo TEST \#${label}\) DONE
+rem     echo TEST \#${label}/${last_test}\) DONE
 rem     echo ===========================================
 rem     call_pause
 rem }
