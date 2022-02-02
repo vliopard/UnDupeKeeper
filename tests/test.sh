@@ -28,7 +28,7 @@ call_create_file()
     fcontent1=$2
     echo ${fcontent1} > ${basedir}${filename1}
     read -t ${timeout} -p "${basedir}${filename1}"
-    echo  
+    echo ""
 }
 
 call_remove_file()
@@ -36,7 +36,7 @@ call_remove_file()
     filename1=$1
     rm ${basedir}${filename1}
     read -t ${timeout} -p "${basedir}${filename1}*"
-    echo  
+    echo ""
 }
 
 call_move_file()
@@ -120,11 +120,15 @@ call_check_soft()
 
 call_remove_dir()
 {
-    set filename1=$1
-    rm ${basedir}${filename1}/*
-    rmdir ${basedir}${filename1}
-    echo ${basedir}${filename1}*
-    read -t ${timeout} -p "${basedir}${filename1}"
+    dirname1=$1
+    if [ "$(ls -A ${basedir}${dirname1})" ]
+    then
+        file_list=${basedir}${dirname1}/'*'
+        rm ${file_list}
+    fi
+    rmdir "${basedir}${dirname1}"
+    read -t ${timeout} -p "${basedir}${dirname1}*"
+    echo ""
 }
 
 call_assert()
@@ -1079,7 +1083,7 @@ call_create_file ${name2} ${name5}
 
 call_check_file ${name2} 1
 
-call_check_link ${name2} 0
+call_check_link ${name2} 2
 call_check_link ${name3} 2
 call_check_link ${name4} 2
 

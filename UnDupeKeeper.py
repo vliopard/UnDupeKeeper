@@ -14,6 +14,7 @@ from os.path import abspath as abs_path
 from os.path import dirname as dir_name
 from os.path import isfile as is_file
 from os.path import islink as is_link
+from os.path import isdir as is_dir
 
 from subprocess import PIPE
 from subprocess import CalledProcessError
@@ -162,7 +163,10 @@ class FileList:
         logger.info(f'{tools.lineno()} - def delete_row(self, {row}):')
         try:
             logger.info(f'{tools.lineno()} - delete_file({row})')
-            delete_file(row)
+            if not is_dir(row):
+                delete_file(row)
+            else:
+                logger.error(f'{tools.lineno()} - CRITICAL ERROR: TRYING TO DELETE DIRECTORY: {row}')
         except FileNotFoundError as file_not_found_error:
             logger.error(f'{tools.lineno()} - FileNotFoundError: {row} {file_not_found_error}')
 
@@ -217,6 +221,9 @@ class FileList:
 
             self._file_allocation_table.loc[(self._file_allocation_table[URI] == uri) &
                                             (self._file_allocation_table[KIND] == MOVED_FILE), KIND] = SYMLINK
+        elif is_dir(uri):
+            logger.warning(f'{tools.lineno()} - elif is_dir({uri}):')
+            logger.warning(f'{tools.lineno()} - return')
         elif is_file(uri):
             logger.info(f'{tools.lineno()} - elif is_file({uri}):')
             new_file = FileHolder(uri)
@@ -270,6 +277,9 @@ class FileList:
         if is_link(uri):
             logger.warning(f'{tools.lineno()} - if is_link({uri}):')
             logger.info(f'{tools.lineno()} - return')
+        elif is_dir(uri):
+            logger.warning(f'{tools.lineno()} - if is_dir({uri}):')
+            logger.warning(f'{tools.lineno()} - return')
         elif is_file(uri):
             logger.info(f'{tools.lineno()} - elif is_file({uri}):')
             new_file = FileHolder(uri)
@@ -398,7 +408,7 @@ class FileList:
             logger.info(f'{tools.lineno()} - if delete_index is not None: {delete_index is not None}')
             if delete_index is not None:
                 for row in delete_index:
-                    logger.info(f'{tools.lineno()} - self.delete_row({row})')
+                    logger.warning(f'{tools.lineno()} - self.delete_row({row})')
                     self.delete_row(row)
                 self._file_allocation_table.loc[(self._file_allocation_table[SHA] == sha) &
                                                 (self._file_allocation_table[KIND] == SYMLINK), KIND] = DELETED_PARENT
@@ -485,7 +495,7 @@ if __name__ == "__main__":
     log_format = '%(asctime)s,%(msecs)03d %(name)s\t %(levelname)s %(message)s'
     log_formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
     date_format = '%H:%M:%S'
-    debug_level = "WARNING"
+    debug_level = "DEBUG"
 
     logging.basicConfig(format=log_format,
                         datefmt=date_format,
