@@ -87,9 +87,9 @@ class FileList:
                 for value in save_data_index[URI].values:
                     link_table_handler.write(value + '\n')
                 link_table_handler.flush()
+
         logger.warning(f'{tools.line_number()} - SAVED DATA:')
-        logger.warning(f'{tools.line_number()} - TOTAL        FILES: {len(self._file_allocation_table.index)}')
-        logger.warning(f'{tools.line_number()} - TOTAL UNIQUE FILES: {self._file_allocation_table[SHA].nunique()}')
+        self.report_data()
 
         self._save_count += 1
         if self._save_count > MAX_FILES or now:
@@ -105,8 +105,7 @@ class FileList:
             self._file_allocation_table = pd.read_pickle(DATA_TABLE)
 
             logger.warning(f'{tools.line_number()} - LOADED DATA:')
-            logger.warning(f'{tools.line_number()} - TOTAL        FILES: {len(self._file_allocation_table.index)}')
-            logger.warning(f'{tools.line_number()} - TOTAL UNIQUE FILES: {self._file_allocation_table[SHA].nunique()}')
+            self.report_data()
 
         except Exception as exception:
             logger.info(f'{tools.line_number()} - FILE NOT FOUND: {exception}')
@@ -211,8 +210,11 @@ class FileList:
         return None
 
     def report_data(self):
-        logger.warning(f'{tools.line_number()} - TOTAL        FILES: {len(self._file_allocation_table.index)}')
-        logger.warning(f'{tools.line_number()} - TOTAL UNIQUE FILES: {self._file_allocation_table[SHA].nunique()}')
+        total = len(self._file_allocation_table.index)
+        unique = self._file_allocation_table[SHA].nunique()
+        logger.warning(f'{tools.line_number()} - TOTAL        FILES: {total}')
+        logger.warning(f'{tools.line_number()} - TOTAL DUPE   FILES: {total - unique}')
+        logger.warning(f'{tools.line_number()} - TOTAL UNIQUE FILES: {unique}')
 
     def update_junk(self):
         logger.info(f'{tools.line_number()} - def update_junk(self):')
