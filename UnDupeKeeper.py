@@ -53,6 +53,7 @@ FILE_TABLE = config.get('PATHS', 'FILE_TABLE')
 LINK_TABLE = config.get('PATHS', 'LINK_TABLE')
 LOG_FILE = config.get('PATHS', 'LOG_FILE')
 DEBUG_LEVEL = config.get('DEBUG', 'DEBUG_LEVEL')
+DEBUG_TEST = config.getboolean('DEBUG', 'DEBUG_TEST')
 
 
 if os.name == NT:
@@ -141,26 +142,28 @@ class FileList:
 
     def save_data(self, now=False):
         logger.info(f'{line_number()} - def save_data(self):')
-        logger.info(f'{line_number()} - with open(FILE_TABLE, "w") as file_table_handler:')
-        with open(FILE_TABLE, 'w') as file_table_handler:
-            save_data_index = self._file_allocation_table.loc[self._file_allocation_table[KIND] == FILE]
-            if save_data_index is not None and not save_data_index.empty:
-                for value in save_data_index[URI].values:
-                    file_table_handler.write(value + '\n')
-                file_table_handler.flush()
 
-        logger.info(f'{line_number()} - with open(LINK_TABLE, "w") as link_table_handler:')
-        with open(LINK_TABLE, 'w') as link_table_handler:
-            save_data_index = self._file_allocation_table.loc[self._file_allocation_table[KIND] == SYMLINK]
-            if save_data_index is not None and not save_data_index.empty:
-                for value in save_data_index[URI].values:
-                    link_table_handler.write(value + '\n')
-                link_table_handler.flush()
-            save_data_index = self._file_allocation_table.loc[self._file_allocation_table[KIND] == DELETED_PARENT]
-            if save_data_index is not None and not save_data_index.empty:
-                for value in save_data_index[URI].values:
-                    link_table_handler.write(value + '\n')
-                link_table_handler.flush()
+        if DEBUG_TEST:
+            logger.info(f'{line_number()} - with open(FILE_TABLE, "w") as file_table_handler:')
+            with open(FILE_TABLE, 'w') as file_table_handler:
+                save_data_index = self._file_allocation_table.loc[self._file_allocation_table[KIND] == FILE]
+                if save_data_index is not None and not save_data_index.empty:
+                    for value in save_data_index[URI].values:
+                        file_table_handler.write(value + '\n')
+                    file_table_handler.flush()
+
+            logger.info(f'{line_number()} - with open(LINK_TABLE, "w") as link_table_handler:')
+            with open(LINK_TABLE, 'w') as link_table_handler:
+                save_data_index = self._file_allocation_table.loc[self._file_allocation_table[KIND] == SYMLINK]
+                if save_data_index is not None and not save_data_index.empty:
+                    for value in save_data_index[URI].values:
+                        link_table_handler.write(value + '\n')
+                    link_table_handler.flush()
+                save_data_index = self._file_allocation_table.loc[self._file_allocation_table[KIND] == DELETED_PARENT]
+                if save_data_index is not None and not save_data_index.empty:
+                    for value in save_data_index[URI].values:
+                        link_table_handler.write(value + '\n')
+                    link_table_handler.flush()
 
         logger.warning(f'{line_number()} - SAVED DATA:')
         self.report_data()
