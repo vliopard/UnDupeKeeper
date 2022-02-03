@@ -4,10 +4,11 @@ import inspect
 import logging
 logger = logging.getLogger('TOOLS')
 
+NT = 'nt'
 SLASH = 92
 
 
-if os.name == 'nt':
+if os.name == NT:
     import msvcrt
 else:
     import sys
@@ -19,7 +20,7 @@ else:
 class KBHit:
 
     def __init__(self):
-        if os.name == 'nt':
+        if os.name == NT:
             pass
         else:
             self.fd = sys.stdin.fileno()
@@ -30,31 +31,30 @@ class KBHit:
             atexit.register(self.set_normal_term)
 
     def set_normal_term(self):
-        if os.name == 'nt':
+        if os.name == NT:
             pass
         else:
             termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.old_term)
 
     def getch(self):
         s = ''
-        # TODO: TRY EXCEPT UnicodeDecodeError:
-        if os.name == 'nt':
+        if os.name == NT:
             return msvcrt.getch().decode('utf-8')
         else:
             return sys.stdin.read(1)
 
     def getarrow(self):
-        if os.name == 'nt':
-            msvcrt.getch()  # skip 0xE0
+        if os.name == NT:
+            msvcrt.getch()
             c = msvcrt.getch()
-            vals = [72, 77, 80, 75]
+            arrows = [72, 77, 80, 75]
         else:
             c = sys.stdin.read(3)[2]
-            vals = [65, 67, 66, 68]
-        return vals.index(ord(c.decode('utf-8')))
+            arrows = [65, 67, 66, 68]
+        return arrows.index(ord(c.decode('utf-8')))
 
     def kbhit(self):
-        if os.name == 'nt':
+        if os.name == NT:
             return msvcrt.kbhit()
         else:
             dr, dw, de = select([sys.stdin], [], [], 0)
@@ -69,5 +69,5 @@ class KBHit:
         return False
 
 
-def lineno():
+def line_number():
     return f"{inspect.currentframe().f_back.f_lineno:04d}"
