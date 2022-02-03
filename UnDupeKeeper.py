@@ -210,6 +210,10 @@ class FileList:
         logger.info(f'{tools.line_number()} - return None')
         return None
 
+    def report_data(self):
+        logger.warning(f'{tools.line_number()} - TOTAL        FILES: {len(self._file_allocation_table.index)}')
+        logger.warning(f'{tools.line_number()} - TOTAL UNIQUE FILES: {self._file_allocation_table[SHA].nunique()}')
+
     def update_junk(self):
         logger.info(f'{tools.line_number()} - def update_junk(self):')
         index_file = self._file_allocation_table.loc[(self._file_allocation_table[KIND] == REMOVED)]
@@ -219,8 +223,6 @@ class FileList:
                 if delete_index is not None:
                     logger.warning(f'{tools.line_number()} - DROP JUNK: {uri_index}')
                     self._file_allocation_table.drop(delete_index.index, inplace=True)
-        logger.warning(f'{tools.line_number()} - TOTAL        FILES: {len(self._file_allocation_table.index)}')
-        logger.warning(f'{tools.line_number()} - TOTAL UNIQUE FILES: {self._file_allocation_table[SHA].nunique()}')
         logger.info(f'{tools.line_number()} - def update_junk(self): RETURN')
 
     def update_files(self):
@@ -573,6 +575,12 @@ if __name__ == "__main__":
             if uri_exists(uri):
                 file_list.add_file(uri)
     file_list.update_junk()
+
+    logger.warning(f'=============================================')
+    logger.warning(f'========== Initialized... ===================')
+    logger.warning(f'=============================================')
+    file_list.report_data()
+    logger.warning(f'=============================================')
 
     event_handler = MonitorFolder()
     observer = Observer()
