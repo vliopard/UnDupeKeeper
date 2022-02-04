@@ -7,10 +7,14 @@ import configparser
 
 import pandas as pd
 
-from filecmp import cmp as is_equal
-from os import remove as delete_file
+from itertools import zip_longest
 
+from filecmp import cmp as file_compare
+from filecmp import clear_cache as clear_cache
+
+from os import remove as delete_file
 from os import makedirs as make_dirs
+
 from os.path import exists as uri_exists
 from os.path import abspath as abs_path
 from os.path import dirname as dir_name
@@ -19,6 +23,7 @@ from os.path import islink as is_link
 from os.path import isdir as is_dir
 
 from subprocess import PIPE
+from subprocess import STDOUT
 from subprocess import CalledProcessError
 from subprocess import run as run_command
 
@@ -30,8 +35,31 @@ from logging.handlers import RotatingFileHandler
 import logging
 logger = logging.getLogger('MAIN')
 
+OS_X = 'OS X'
+LINUX = 'Linux'
+WINDOWS = 'Windows'
+WINDOWS_NT = 'nt'
 
-NT = 'nt'
+NATIVE = 'Operating_SystemNative'
+EXECUTABLE = 'OperatingSystem_Executable'
+
+BUFFER = 'Python_Buffer'
+ZIP_LONGEST = 'Python_Zip'
+COMPARE = 'Python_FileCmp'
+
+HASH_MD5 = 'Hash_MD5'
+HASH_SHA = 'Hash_SHA'
+HASH_SHA256 = 'Hash_SHA256'
+HASH_SHA512 = 'Hash_SHA512'
+
+LINUX_LINK = 'ln -s'
+LINUX_DIFF = 'diff --brief'
+LINUX_CMP = 'cmp -b'
+
+WINDOWS_LINK = 'mklink'
+WINDOWS_FC = 'fc /B'
+WINDOWS_COMP = 'comp /m'
+
 SLASH = 92
 
 SHA = 'SHA'
@@ -49,14 +77,18 @@ config = configparser.ConfigParser()
 config.read('UnDupeKeeper.ini')
 
 MAX_FILES = config.getint('VALUES', 'MAX_FILES')
-FILE_TABLE = config.get('PATHS', 'FILE_TABLE')
-LINK_TABLE = config.get('PATHS', 'LINK_TABLE')
+BUFFER_SIZE = config.getint('VALUES', 'BUFFER_SIZE')
+COMPARISON_METHOD = config.get('VALUES', 'COMPARISON_METHOD')
+
 LOG_FILE = config.get('PATHS', 'LOG_FILE')
+LINK_TABLE = config.get('PATHS', 'LINK_TABLE')
+FILE_TABLE = config.get('PATHS', 'FILE_TABLE')
+
 DEBUG_LEVEL = config.get('DEBUG', 'DEBUG_LEVEL')
 DEBUG_TEST = config.getboolean('DEBUG', 'DEBUG_TEST')
 
 
-if os.name == NT:
+if os.name == WINDOWS_NT:
     import msvcrt
 else:
     import sys
@@ -68,7 +100,7 @@ else:
 class KBHit:
 
     def __init__(self):
-        if os.name == NT:
+        if os.name == WINDOWS_NT:
             pass
         else:
             self.fd = sys.stdin.fileno()
@@ -79,20 +111,20 @@ class KBHit:
             atexit.register(self.set_normal_term)
 
     def set_normal_term(self):
-        if os.name == NT:
+        if os.name == WINDOWS_NT:
             pass
         else:
             termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.old_term)
 
     def getch(self):
         s = ''
-        if os.name == NT:
+        if os.name == WINDOWS_NT:
             return msvcrt.getch().decode('utf-8')
         else:
             return sys.stdin.read(1)
 
     def getarrow(self):
-        if os.name == NT:
+        if os.name == WINDOWS_NT:
             msvcrt.getch()
             c = msvcrt.getch()
             arrows = [72, 77, 80, 75]
@@ -102,7 +134,7 @@ class KBHit:
         return arrows.index(ord(c.decode('utf-8')))
 
     def kbhit(self):
-        if os.name == NT:
+        if os.name == WINDOWS_NT:
             return msvcrt.kbhit()
         else:
             dr, dw, de = select([sys.stdin], [], [], 0)
@@ -119,6 +151,132 @@ class KBHit:
 
 def line_number():
     return f"{inspect.currentframe().f_back.f_lineno:04d}"
+
+
+def get_platform():
+    logger.info(f'{line_number()} - def get_platform():')
+    platforms = {'linux' : LINUX,
+                 'linux1': LINUX,
+                 'linux2': LINUX,
+                 'darwin': OS_X,
+                 'win32' : WINDOWS}
+    if sys.platform not in platforms:
+        logger.info(f'{line_number()} - if sys.platform not in platforms:')
+        logger.info(f'{line_number()} - return sys.platform')
+        return sys.platform
+    logger.info(f'{line_number()} - platforms[sys.platform]')
+    return platforms[sys.platform]
+
+
+def get_hash(uri_file, digest):
+    sha_file = None
+    if digest == HASH_SHA:
+        digest_method = hashlib.sha1()
+    elif digest == HASH_SHA256:
+        digest_method = hashlib.sha256()
+    elif digest == HASH_SHA256:
+        digest_method = hashlib.sha512()
+    else:
+        digest_method = hashlib.md5()
+    memory_view = memoryview(bytearray(128 * 1024))
+    retry = True
+    while retry:
+        try:
+            with open(uri_file, 'rb', buffering=0) as uri_locator:
+                for element in iter(lambda: uri_locator.readinto(memory_view), 0):
+                    digest_method.update(memory_view[:element])
+            sha_file = digest_method.hexdigest()
+            retry = False
+        except PermissionError as permission_error:
+            logger.error(f'{line_number()} - ERROR: PermissionError - {permission_error}')
+            time.sleep(1)
+    return sha_file
+
+
+def hash_comparison(first_file, second_file, hash_method):
+    return get_hash(first_file, hash_method) == get_hash(second_file, hash_method)
+
+
+def buffer_comparison(first_file, second_file):
+    with open(first_file, 'rb') as first_file_descriptor, open(second_file, 'rb') as second_file_descriptor:
+        while True:
+            first_file_bytes = first_file_descriptor.read(BUFFER_SIZE)
+            second_file_bytes = second_file_descriptor.read(BUFFER_SIZE)
+            if first_file_bytes != second_file_bytes:
+                return False
+            if not first_file_bytes:
+                return True
+
+
+def compare_binaries(first_file, second_file):
+    with open(first_file, 'rb') as first_file_descriptor, open(second_file, 'rb') as second_file_descriptor:
+        for first_file_line, second_file_line in zip_longest(first_file_descriptor, second_file_descriptor, fillvalue=None):
+            if first_file_line == second_file_line:
+                continue
+            else:
+                return False
+        return True
+
+
+def file_equals(first_file, second_file, comparison_method):
+    if os.stat(first_file).st_size != os.stat(second_file).st_size:
+        return False
+
+    if comparison_method == NATIVE:
+        validation_string = {LINUX: "",
+                             WINDOWS: "FC: no differences encountered"}
+        comparison_command = {LINUX  : f'{LINUX_CMP} "{second_file}" "{first_file}"',
+                              WINDOWS: f'{WINDOWS_FC} "{first_file}" "{second_file}"'}
+
+    elif comparison_method == EXECUTABLE:
+        validation_string = {LINUX: "",
+                             WINDOWS: "Files compare OK"}
+        comparison_command = {LINUX  : f'{LINUX_DIFF} "{second_file}" "{first_file}"',
+                              WINDOWS: f'{WINDOWS_COMP} "{first_file}" "{second_file}"'}
+
+    elif comparison_method == ZIP_LONGEST:
+        return compare_binaries(first_file, second_file)
+
+    elif comparison_method == BUFFER:
+        return buffer_comparison(first_file, second_file)
+
+    elif comparison_method == HASH_MD5:
+        return hash_comparison(first_file, second_file, HASH_MD5)
+
+    elif comparison_method == HASH_SHA:
+        return hash_comparison(first_file, second_file, HASH_SHA)
+
+    elif comparison_method == HASH_SHA256:
+        return hash_comparison(first_file, second_file, HASH_SHA256)
+
+    elif comparison_method == HASH_SHA512:
+        return hash_comparison(first_file, second_file, HASH_SHA512)
+
+    else:
+        return file_compare(first_file, second_file, shallow=False)
+
+    current_platform = get_platform()
+    command = comparison_command[current_platform]
+
+    try:
+        logger.warning(f'{line_number()} - process = run_command({command},')
+        process = run_command(command,
+                              shell=True,
+                              check=True,
+                              stdout=PIPE,
+                              stderr=STDOUT,
+                              universal_newlines=True)
+        return_value = process.stdout.split('\n')
+        if return_value[1] == validation_string[current_platform]:
+            return True
+
+    except CalledProcessError as called_process_error:
+        # print(f'CalledProcessError      : {called_process_error}')
+        # print(f'CalledProcessError CMD  : {called_process_error.cmd}')
+        # print(f'CalledProcessError OUTP : {called_process_error.output}')
+        logger.error(f'CalledProcessError RETC : {called_process_error.returncode}')
+        logger.error(f'{line_number()} - Source is File? [{first_file}], Target Exists? [{second_file}]')
+    return False
 
 
 class FileList:
@@ -174,6 +332,7 @@ class FileList:
             logger.info(f'{line_number()} - self._file_allocation_table.to_pickle(DATA_TABLE)')
             self._file_allocation_table.to_pickle(DATA_TABLE)
             self._save_count = 0
+            # clear_cache()
 
     def load_data(self):
         logger.info(f'{line_number()} - def load_data(self):')
@@ -186,20 +345,6 @@ class FileList:
 
         except Exception as exception:
             logger.info(f'{line_number()} - FILE NOT FOUND: {exception}')
-
-    def get_platform(self):
-        logger.info(f'{line_number()} - def get_platform(self):')
-        platforms = {'linux' : 'Linux',
-                     'linux1': 'Linux',
-                     'linux2': 'Linux',
-                     'darwin': 'OS X',
-                     'win32' : 'Windows'}
-        if sys.platform not in platforms:
-            logger.info(f'{line_number()} - if sys.platform not in platforms:')
-            logger.info(f'{line_number()} - return sys.platform')
-            return sys.platform
-        logger.info(f'{line_number()} - platforms[sys.platform]')
-        return platforms[sys.platform]
 
     def execute(self, target_link, source_file):
         logger.info(f'{line_number()} - def execute(self, {target_link}, {source_file}):')
@@ -215,9 +360,9 @@ class FileList:
                 logger.info(f'{line_number()} - make_dirs({dir_name_path})')
                 make_dirs(dir_name_path)
 
-            platform = {"Linux"  : f'ln -s "{source_file}" "{target_link}"',
-                        "Windows": f'mklink "{target_link}" "{source_file}"'}
-            command = platform[self.get_platform()]
+            link_command = {LINUX  : f'{LINUX_LINK} "{source_file}" "{target_link}"',
+                            WINDOWS: f'{WINDOWS_LINK} "{target_link}" "{source_file}"'}
+            command = link_command[get_platform()]
 
             try:
                 logger.warning(f'{line_number()} - process = run_command({command},')
@@ -385,10 +530,10 @@ class FileList:
                 line_uri = self.get_file(new_file.file_uri, SYMLINK)
                 if line_uri is None:
                     logger.info(f'{line_number()} - if line_uri is None:')
-                    logger.info(f'{line_number()} - and is_equal(new_file.file_uri, line_uri, False):')
-                    if new_file.file_uri != line and is_equal(new_file.file_uri, line, False):
+                    logger.info(f'{line_number()} - and file_equals(new_file.file_uri, line, COMPARISON_METHOD):')
+                    if new_file.file_uri != line and file_equals(new_file.file_uri, line, COMPARISON_METHOD):
                         logger.info(f'{line_number()} - if {new_file.file_uri} != {line}')
-                        logger.info(f'{line_number()} - if is_equal({new_file.file_uri}, {line}, False):')
+                        logger.info(f'{line_number()} - if file_equals({new_file.file_uri}, {line}, {COMPARISON_METHOD}):')
 
                         logger.info(f'{line_number()} - self.new_row({new_file}, kind=SYMLINK)')
                         self.new_row(new_file, kind=SYMLINK)
@@ -578,24 +723,7 @@ class FileHolder:
     def set_sha(self):
         logger.info(f'{line_number()} - set_sha')
         if self._file_uri:
-            # TODO: SAVE SHA TO FILETABLE (USE PREVIOUS IF EXIST)
-            # digest_method = hashlib.md5()
-            # digest_method = hashlib.sha1()
-            # digest_method = hashlib.sha256()
-            digest_method = hashlib.sha512()
-            memory_view = memoryview(bytearray(128*1024))
-            retry = True
-            while retry:
-                try:
-                    logger.info(f'{line_number()} - Getting file HASH CODE...')
-                    with open(self._file_uri, 'rb', buffering=0) as uri_locator:
-                        for element in iter(lambda: uri_locator.readinto(memory_view), 0):
-                            digest_method.update(memory_view[:element])
-                    self._file_sha = digest_method.hexdigest()
-                    retry = False
-                except PermissionError as permission_error:
-                    logger.error(f'{line_number()} - PermissionError: {permission_error}')
-                    time.sleep(1)
+            self._file_sha = get_hash(self._file_uri, HASH_SHA512)
 
     def __repr__(self):
         logger.info(f'{line_number()} - def __repr__(self):')

@@ -1491,7 +1491,7 @@ EXIT /B 0
 
 REM ##############################################################
 :delay_pause
-set /A delaycount=5
+set /A delaycount=2
 call:wait_time
 set /A delaycount=1
 EXIT /B 0

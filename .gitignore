@@ -3,4 +3,9 @@ UnDupeKeeper.dir
 UnDupeKeeper.set
 UnDupeKeeper.hdb
 UnDupeKeeper.log
+UnDupyKeeper.log
+UnDupyKeeper.out
+UnDupyKeeper.pkl
 /bin/
+/reports/
+/__pycache__/
