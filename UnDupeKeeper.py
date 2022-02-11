@@ -6,6 +6,7 @@ import inspect
 import configparser
 
 import pandas as pd
+import argparse as ap
 
 from itertools import zip_longest
 
@@ -768,19 +769,26 @@ if __name__ == "__main__":
 
     logging.getLogger("watchdog").setLevel(logging.CRITICAL)
 
-    src_path = sys.argv[1]
+    argument_parser = ap.ArgumentParser()
+    argument_parser.add_argument('--path', required=True)
+    argument_parser.add_argument('--scan', required=False, default=False)
+    arguments = argument_parser.parse_args()
+
+    src_path = arguments.path
+    src_scan = arguments.scan
 
     logger.warning(f'{line_number()} - Starting UnDupyKeeper System...')
     file_list = FileList()
 
-    file_list.update_links()
-    file_list.update_files()
-    for root, dirs, files in os.walk(src_path, topdown=True):
-        for name in files:
-            uri = str(os.path.join(root, name))
-            if uri_exists(uri):
-                file_list.add_file(uri)
-    file_list.update_junk()
+    if src_scan:
+        file_list.update_links()
+        file_list.update_files()
+        for root, dirs, files in os.walk(src_path, topdown=True):
+            for name in files:
+                uri = str(os.path.join(root, name))
+                if uri_exists(uri):
+                    file_list.add_file(uri)
+        file_list.update_junk()
 
     logger.warning(f'=============================================')
     logger.warning(f'========== Initialized... ===================')
