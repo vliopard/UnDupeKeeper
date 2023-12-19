@@ -6,6 +6,8 @@ UnDupeKeeper.log
 UnDupyKeeper.log
 UnDupyKeeper.out
 UnDupyKeeper.pkl
+_*
 /bin/
 /reports/
 /__pycache__/
+/archived/

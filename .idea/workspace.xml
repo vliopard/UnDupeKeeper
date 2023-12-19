@@ -1,11 +1,386 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="2864829d-74a4-44f5-a0aa-9fbbd71873af" name="Default Changelist" comment="" />
+    <list default="true" id="2864829d-74a4-44f5-a0aa-9fbbd71873af" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/.classpath" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/.project" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/.settings/org.eclipse.jdt.core.prefs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/.settings/org.eclipse.jdt.ui.prefs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/Manifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/UnDupeKeeper" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/UnDupeKeeper.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/UnDupeKeeper.lnk" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/UnDupeMarker.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/UnDupeRoot.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/build_ant.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/code_format.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/dependencies/jnotify-lib-0.94.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/allclasses-frame.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/allclasses-noframe.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/constant-values.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/deprecated-list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/help-doc.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-1.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-10.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-11.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-12.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-13.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-14.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-15.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-16.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-17.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-18.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-19.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-2.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-20.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-21.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-22.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-23.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-3.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-4.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-5.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-6.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-7.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-8.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index-files/index-9.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/Blinker.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/Comparison.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/Monitor.Listener.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/Monitor.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/Options.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/OptionsLayout.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/ReportViewer.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/UnDupeKeeper.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/Worker.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/class-use/Blinker.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/class-use/Comparison.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/class-use/Monitor.Listener.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/class-use/Monitor.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/class-use/Options.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/class-use/OptionsLayout.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/class-use/ReportViewer.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/class-use/UnDupeKeeper.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/class-use/Worker.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/package-frame.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/package-summary.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/package-tree.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/main/package-use.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/overview-frame.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/overview-summary.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/overview-tree.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/package-list" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/resources/background.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/resources/tab.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/resources/titlebar.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/resources/titlebar_end.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/serialized-form.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/settings/Messages.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/settings/Settings.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/settings/Strings.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/settings/class-use/Messages.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/settings/class-use/Settings.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/settings/class-use/Strings.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/settings/package-frame.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/settings/package-summary.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/settings/package-tree.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/settings/package-use.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/stylesheet.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/CheckSum.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/DataBase.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/FileQueue.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/FileTableModel.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/FileTreeCellRenderer.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/Logger.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/ReportGenerator.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/SettingsHandler.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/TrayImage.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/Utils.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/class-use/CheckSum.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/class-use/DataBase.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/class-use/FileQueue.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/class-use/FileTableModel.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/class-use/FileTreeCellRenderer.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/class-use/Logger.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/class-use/ReportGenerator.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/class-use/SettingsHandler.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/class-use/TrayImage.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/class-use/Utils.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/package-frame.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/package-summary.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/package-tree.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/doc/tools/package-use.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/jar-in-jar-loader.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/javadoc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/lib/commons-io-2.8.0.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/lib/commons-lang-2.4.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/lib/hamcrest-core-1.3.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/lib/jnotify-0.94.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/lib/junit-4.13.1.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/lib/juniversalchardet-2.2.0.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/16/dnaGray16.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/16/dnaGreen16.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/16/dnaMini16.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/16/dnaRed16.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/16/dupeCalc16.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/16/yellow16.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/32/dnaGray32.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/32/dnaGreen32.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/32/dnaMini32.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/32/dnaRed32.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/32/dupeCalc32.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/images/32/yellow32.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/languages/en_us.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/languages/pt_br.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/main/Blinker.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/main/Comparison.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/main/Monitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/main/Options.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/main/ReportViewer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/main/UnDupeKeeper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/main/Worker.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/settings/Messages.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/settings/Settings.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/settings/Strings.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tests/FileSetup.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tests/Test_Checksum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tests/Test_Comparison.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tests/Test_DataBase.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tests/Test_FileLinks.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tests/Test_UndupeRoutines.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/CheckSum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/DataBase.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/FileOperations.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/FileQueue.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/FileTableModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/FileTreeCellRenderer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/Logger.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/ProgressBarDialog.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/ReportGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/SettingsHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/Storage.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/StreamManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/TimeControl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/TrayImage.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/UniqueFile.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/tools/Utils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/undupekeeper1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/undupekeeper2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/UnDupeClean.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/UnDupeClean.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/UnDupeKeeper.ini" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/UnDupeKeeper.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/UnDupyKeeper" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/UnDupyKeeper.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/generate_binary_files.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/icons/UnDupyKeeper01.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/icons/UnDupyKeeper02.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/icons/UnDupyKeeper03.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/icons/UnDupyKeeper04.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/icons/done.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/icons/error.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/icons/pause.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/requirements.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/requirements.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python/test_comparison_methods.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/bat2sh.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.classpath" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/UnDupeKeeper.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/UnDupeKeeper.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.project" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/org.eclipse.jdt.core.prefs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.settings/org.eclipse.jdt.ui.prefs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Manifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupeClean.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupeClean.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupeKeeper" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupeKeeper.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupeKeeper.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupeKeeper.lnk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupeKeeper.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupeMarker.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupeRoot.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupyKeeper" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnDupyKeeper.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_ant.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code_format.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dependencies/jnotify-lib-0.94.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/allclasses-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/allclasses-noframe.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/constant-values.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/deprecated-list.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/help-doc.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-1.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-10.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-11.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-12.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-13.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-14.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-15.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-16.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-17.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-18.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-19.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-2.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-20.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-21.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-22.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-23.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-3.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-4.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-5.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-6.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-7.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-8.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-9.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/Blinker.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/Comparison.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/Monitor.Listener.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/Monitor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/Options.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/OptionsLayout.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/ReportViewer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/UnDupeKeeper.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/Worker.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/class-use/Blinker.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/class-use/Comparison.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/class-use/Monitor.Listener.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/class-use/Monitor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/class-use/Options.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/class-use/OptionsLayout.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/class-use/ReportViewer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/class-use/UnDupeKeeper.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/class-use/Worker.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/package-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/package-summary.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/package-tree.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/main/package-use.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/overview-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/overview-summary.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/overview-tree.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/package-list" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/resources/background.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/resources/tab.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/resources/titlebar.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/resources/titlebar_end.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/serialized-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/settings/Messages.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/settings/Settings.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/settings/Strings.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/settings/class-use/Messages.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/settings/class-use/Settings.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/settings/class-use/Strings.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/settings/package-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/settings/package-summary.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/settings/package-tree.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/settings/package-use.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/stylesheet.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/CheckSum.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/DataBase.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/FileQueue.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/FileTableModel.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/FileTreeCellRenderer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/Logger.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/ReportGenerator.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/SettingsHandler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/TrayImage.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/Utils.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/class-use/CheckSum.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/class-use/DataBase.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/class-use/FileQueue.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/class-use/FileTableModel.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/class-use/FileTreeCellRenderer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/class-use/Logger.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/class-use/ReportGenerator.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/class-use/SettingsHandler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/class-use/TrayImage.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/class-use/Utils.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/package-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/package-summary.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/package-tree.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/tools/package-use.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_binary_files.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jar-in-jar-loader.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/javadoc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/commons-io-2.8.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/commons-lang-2.4.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/hamcrest-core-1.3.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/jnotify-0.94.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/junit-4.13.1.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/juniversalchardet-2.2.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/16/dnaGray16.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/16/dnaGreen16.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/16/dnaMini16.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/16/dnaRed16.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/16/dupeCalc16.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/16/yellow16.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/32/dnaGray32.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/32/dnaGreen32.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/32/dnaMini32.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/32/dnaRed32.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/32/dupeCalc32.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/32/yellow32.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/languages/en_us.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/languages/pt_br.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Blinker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Comparison.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Monitor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Options.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/ReportViewer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/UnDupeKeeper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Worker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/settings/Messages.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/settings/Settings.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/settings/Strings.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/FileSetup.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Test_Checksum.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Test_Comparison.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Test_DataBase.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Test_FileLinks.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Test_UndupeRoutines.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/CheckSum.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/DataBase.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/FileOperations.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/FileQueue.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/FileTableModel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/FileTreeCellRenderer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/Logger.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/ProgressBarDialog.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/ReportGenerator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/SettingsHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/Storage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/StreamManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/TimeControl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/TrayImage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/UniqueFile.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/Utils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_comparison_methods.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.bat" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.sh" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/undupekeeper1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/undupekeeper2.png" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="24TVZAIQengAdDusQC1xaOM2D0G" />
   <component name="ProjectViewState">
@@ -17,11 +392,40 @@
     <option name="showMembers" value="true" />
     <option name="sortByType" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last_opened_file_path": "C:/vliopard/workspace/vliopard/UnDupeKeeper",
+    "settings.editor.selected.configurable": "preferences.sourceCode"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="UnDupeKeeper" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="UnDupeKeeper" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python/UnDupeKeeper.py" />
+      <option name="PARAMETERS" value="--path test_path" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="2864829d-74a4-44f5-a0aa-9fbbd71873af" name="Default Changelist" comment="" />
