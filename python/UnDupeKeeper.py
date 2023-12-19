@@ -418,7 +418,8 @@ class DataBase:
         self._file_allocation_table = pandas_dataframe.read_pickle(DATA_TABLE)
 
     def add_file_to_database(self, file_name):
-        self._file_allocation_table = self._file_allocation_table.append(file_name, ignore_index=True)
+        self._file_allocation_table = pandas_dataframe.concat([pandas_dataframe.DataFrame([file_name]), self._file_allocation_table], ignore_index=True)
+        # self._file_allocation_table = self._file_allocation_table._append(file_name, ignore_index=True)
 
     def delete_file_from_database(self, file_index):
         self._file_allocation_table.drop(file_index.index, inplace=True)
@@ -984,6 +985,12 @@ class MonitorFolder(FileSystemEventHandler):
 def tray_icon_click(_, selected_tray_item):
     global system_tray_icon
     logger.warning(f'{line_number()} - Tray Icon Click: [{str(selected_tray_item)}]')
+    if str(selected_tray_item) == "Done":
+        system_tray_icon.icon = Image.open('icons/done.png')
+    if str(selected_tray_item) == "Error":
+        system_tray_icon.icon = Image.open('icons/error.png')
+    if str(selected_tray_item) == "Pause":
+        system_tray_icon.icon = Image.open('icons/pause.png')
     if str(selected_tray_item) == "Exit":
         file_list.save_data(True)
         file_list.terminate()
@@ -1027,7 +1034,6 @@ if __name__ == "__main__":
                                         pystray.MenuItem("Done", tray_icon_click, checked=lambda item: state),
                                         pystray.MenuItem("Pause", tray_icon_click, checked=lambda item: state),
                                         pystray.MenuItem("Error", tray_icon_click, checked=lambda item: state),
-                                        pystray.MenuItem("Resume", tray_icon_click, checked=lambda item: state),
                                         pystray.MenuItem("Exit", tray_icon_click, checked=lambda item: state)))
 
     logger.warning(f'{line_number()} - Starting UnDupyKeeper System...')
