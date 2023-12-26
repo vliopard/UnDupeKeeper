@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2864829d-74a4-44f5-a0aa-9fbbd71873af" name="Default Changelist" comment="" />
+    <list default="true" id="2864829d-74a4-44f5-a0aa-9fbbd71873af" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/UnDupeKeeper.ini" beforeDir="false" afterPath="$PROJECT_DIR$/python/UnDupeKeeper.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/UnDupeKeeper.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/UnDupeKeeper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/UnDupyKeeper" beforeDir="false" afterPath="$PROJECT_DIR$/python/UnDupyKeeper" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/UnDupyKeeper.bat" beforeDir="false" afterPath="$PROJECT_DIR$/python/UnDupyKeeper.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.bat" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.sh" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.sh" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

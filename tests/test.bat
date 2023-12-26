@@ -3,7 +3,7 @@ cls
 
 setlocal enabledelayedexpansion
 
-set basedir=c:\vliopard\workspace\vliopard\UnDupeKeeper\python\test_path\
+call:read_ini_value "..\python\UnDupeKeeper.ini" "PATHS" "MAIN_PATH" basedir
 set file_links=link_table.txt
 set file_table=file_table.txt
 set delaycount=1
@@ -1494,6 +1494,16 @@ REM ##############################################################
 set /A delaycount=2
 call:wait_time
 set /A delaycount=1
+EXIT /B 0
+
+REM ##############################################################
+:read_ini_value
+set inifile=%~1
+set section=%~2
+set key=%~3
+for /F "delims== tokens=2* usebackq" %%i in (`type %inifile% ^| find "MAIN_PATH ="`) do (set basedir=%%i)
+for /f "tokens=* delims= " %%a in ("%basedir%") do set "basedir=%%a"
+set "basedir=!basedir:/=\!"
 EXIT /B 0
 
 REM ##############################################################

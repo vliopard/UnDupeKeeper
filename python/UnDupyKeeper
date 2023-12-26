@@ -1,8 +1,13 @@
 #!/bin/sh
-if [ -z "$2" ]
-then
-    python3 UnDupeKeeper.py --path "$1" > UnDupyKeeper.out
-else
-    python3 UnDupeKeeper.py --path "$1" --scan "$2" > UnDupyKeeper.out
-fi
 
+if [ -z "$1" ]
+then
+    python3 UnDupeKeeper.py  > UnDupyKeeper.out
+else
+    if [ -z "$2" ]
+    then
+        python3 UnDupeKeeper.py --path "$1" > UnDupyKeeper.out
+    else
+        python3 UnDupeKeeper.py --path "$1" --scan "$2" > UnDupyKeeper.out
+    fi
+fi

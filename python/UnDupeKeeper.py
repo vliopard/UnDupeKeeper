@@ -99,6 +99,7 @@ MAX_FILES = config.getint('VALUES', 'MAX_FILES')
 BUFFER_SIZE = config.getint('VALUES', 'BUFFER_SIZE')
 COMPARISON_METHOD = config.get('VALUES', 'COMPARISON_METHOD')
 
+MAIN_PATH = config.get('PATHS', 'MAIN_PATH')
 LOG_FILE = config.get('PATHS', 'LOG_FILE')
 LINK_TABLE = config.get('PATHS', 'LINK_TABLE')
 FILE_TABLE = config.get('PATHS', 'FILE_TABLE')
@@ -1018,7 +1019,7 @@ if __name__ == "__main__":
     logging.getLogger("watchdog").setLevel(logging.CRITICAL)
 
     argument_parser = arg_parse.ArgumentParser()
-    argument_parser.add_argument('--path', required=True)
+    argument_parser.add_argument('--path', required=False, default=MAIN_PATH)
     argument_parser.add_argument('--scan', required=False, default=False)
     arguments = argument_parser.parse_args()
 

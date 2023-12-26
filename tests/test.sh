@@ -3,7 +3,7 @@
 timeout=1
 
 
-basedir="/home/vliopard/UnDupeDir/"
+basedir=$(awk -F "=" '/MAIN_PATH/ {print $2}' ../python/UnDupeKeeper.ini)
 file_links=link_table.txt
 file_table=file_table.txt
 delaycount=2
