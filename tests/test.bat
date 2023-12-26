@@ -9,7 +9,7 @@ set file_table=file_table.txt
 set delaycount=1
 set delaytm=1
 set testnro=0
-set last_test=035
+set last_test=039
 set label=
 
 rem call_start_test()
@@ -170,7 +170,18 @@ rem }
 rem call_pause()
 rem {
 rem     # read -p "Press any key to continue..."
-rem     read -t ${delaycount} -p "Next..."
+rem     if [ $# -eq 0 ]
+rem         then
+rem             if [ $delaytm -gt 0 ]
+rem                 then
+rem                     read -t ${delaycount} -p "Next..."
+rem             fi
+rem         else
+rem             echo ___________________________________
+rem             echo Waiting for $1 seconds...
+rem             echo -----------------------------------
+rem             read -t $1 -p "Next..."
+rem     fi
 rem     echo ""
 rem }
 
@@ -1274,7 +1285,7 @@ call:create_file %name38% %name04%
 call:create_file %dir3%\%name39% %name04%
 call:create_file %name40% %name04%
 
-call:delay_pause
+call:delay_pause 20
 
 call:check_file %name01% 1
 call:check_link %name02% 1
@@ -1298,8 +1309,8 @@ call:check_link %dir1%\%name18% 1
 call:check_link %dir1%\%name19% 1
 call:check_link %dir1%\%name20% 1
 
-call:check_file %name21% 1
-call:check_link %dir2%\%name22% 1
+call:check_link %name21% 1
+call:check_file %dir2%\%name22% 1
 call:check_link %dir2%\%name23% 1
 call:check_link %dir2%\%name24% 1
 call:check_link %dir2%\%name25% 1
@@ -1322,6 +1333,109 @@ call:check_link %name40% 1
 
 call:end_test
 
+REM ############################################################## TEST_NO_36_TITLE
+call:start_test "Delete second child file"
+
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+call:create_file %name3% %name1%
+call:create_file %name4% %name1%
+
+call:delay_pause
+
+call:remove_file %name2%
+
+call:check_file %name1% 1
+
+call:check_link %name2% 0
+call:check_link %name3% 1
+call:check_link %name4% 1
+
+call:end_test
+
+REM ############################################################## TEST_NO_37_TITLE
+call:start_test "Replace parent file with a different SHA"
+
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
+set name5=test%label%-file5
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+call:create_file %name3% %name1%
+call:create_file %name4% %name1%
+
+call:delay_pause
+
+call:create_file %name1% %name5%
+
+call:check_file %name1% 1
+
+call:check_link %name2% 1
+call:check_link %name3% 1
+call:check_link %name4% 1
+
+call:end_test
+
+REM ############################################################## TEST_NO_38_TITLE
+call:start_test "Replace child file with a diferent SHA"
+
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
+set name5=test%label%-file5
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+call:create_file %name3% %name1%
+call:create_file %name4% %name1%
+
+call:delay_pause
+
+call:create_file %name2% %name5%
+
+call:check_file %name1% 1
+call:check_file %name2% 1
+
+call:check_link %name3% 1
+call:check_link %name4% 1
+
+call:end_test
+
+REM ############################################################## TEST_NO_39_TITLE
+call:start_test "Replace second child file with same SHA"
+
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
+set name5=test%label%-file5
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+call:create_file %name3% %name1%
+call:create_file %name4% %name1%
+
+call:delay_pause
+
+call:create_file %name2% %name1%
+
+call:check_file %name1% 1
+
+call:check_link %name2% 1
+call:check_link %name3% 1
+call:check_link %name4% 1
+
+call:end_test
+
 REM ##############################################################
 GOTO EOF
 
@@ -1339,6 +1453,12 @@ REM ##############################################################
 :create_file
 set filename1=%~1
 set fcontent1=%~2
+
+fsutil reparsepoint query "!basedir!%filename1%" >nul && (
+    echo Replacing [!basedir!%filename1%]
+    del "!basedir!%filename1%"
+)
+
 echo %fcontent1% > !basedir!%filename1%
 echo !basedir!%filename1%
 call:wait_time
@@ -1491,7 +1611,15 @@ EXIT /B 0
 
 REM ##############################################################
 :delay_pause
-set /A delaycount=2
+if "%1"=="" (
+    set /A delaycount=2
+) else (
+    set /A delaytm=1
+    set /A delaycount=%~1
+    echo ___________________________________
+    echo Waiting for %delaycount% seconds...
+    echo -----------------------------------
+)
 call:wait_time
 set /A delaycount=1
 EXIT /B 0

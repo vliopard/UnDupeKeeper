@@ -521,19 +521,30 @@ class FileList:
                 save_data_index = self._file_database.get_file_list()
                 if save_data_index is not None and not save_data_index.empty:
                     for value in save_data_index[URI].values:
+                        if get_platform() == WINDOWS:
+                            value = value.replace('/', '\\')
+                        logger.info(f'{line_number()} ===> FILE_TABLE: [{value}]')
                         file_table_handler.write(value + '\n')
                     file_table_handler.flush()
 
             logger.info(f'{line_number()} - with open(LINK_TABLE, "w") as link_table_handler:')
             with open(LINK_TABLE, 'w', encoding='utf-8') as link_table_handler:
+
                 save_data_index = self._file_database.get_link_list()
                 if save_data_index is not None and not save_data_index.empty:
                     for value in save_data_index[URI].values:
+                        if get_platform() == WINDOWS:
+                            value = value.replace('/', '\\')
+                        logger.info(f'{line_number()} ===> LINK_TABLE LINKED: [{value}]')
                         link_table_handler.write(value + '\n')
                     link_table_handler.flush()
+
                 save_data_index = self._file_database.get_deleted_parents()
                 if save_data_index is not None and not save_data_index.empty:
                     for value in save_data_index[URI].values:
+                        if get_platform() == WINDOWS:
+                            value = value.replace('/', '\\')
+                        logger.info(f'{line_number()} ===> FILE_TABLE DELETED: [{value}]')
                         link_table_handler.write(value + '\n')
                     link_table_handler.flush()
 
@@ -1030,7 +1041,7 @@ if __name__ == "__main__":
     system_tray_image = Image.open("icons/done.png")
     system_tray_icon = pystray.Icon("UnDupyKeeper 1",
                                     system_tray_image,
-                                    "UnDupyKeeper 2",
+                                    "UnDupyKeeper",
                                     menu=pystray.Menu(
                                         pystray.MenuItem("Done", tray_icon_click, checked=lambda item: state),
                                         pystray.MenuItem("Pause", tray_icon_click, checked=lambda item: state),

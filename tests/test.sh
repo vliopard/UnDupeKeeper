@@ -170,7 +170,18 @@ call_end_test()
 call_pause()
 {
     # read -p "Press any key to continue..."
-    read -t ${delaycount} -p "Next..."
+    if [ $# -eq 0 ]
+        then
+            if [ $delaytm -gt 0 ]
+                then
+                    read -t ${delaycount} -p "Next..."
+            fi
+        else
+            echo ___________________________________
+            echo Waiting for $1 seconds...
+            echo -----------------------------------
+            read -t $1 -p "Next..."
+    fi
     echo ""
 }
 
@@ -1274,7 +1285,7 @@ call_create_file ${name38} ${name04}
 call_create_file ${dir3}/${name39} ${name04}
 call_create_file ${name40} ${name04}
 
-call_pause
+call_pause 20
 
 call_check_file ${name01} 1
 call_check_link ${name02} 1
@@ -1298,8 +1309,8 @@ call_check_link ${dir1}/${name18} 1
 call_check_link ${dir1}/${name19} 1
 call_check_link ${dir1}/${name20} 1
 
-call_check_file ${name21} 1
-call_check_link ${dir2}/${name22} 1
+call_check_link ${name21} 1
+call_check_file ${dir2}/${name22} 1
 call_check_link ${dir2}/${name23} 1
 call_check_link ${dir2}/${name24} 1
 call_check_link ${dir2}/${name25} 1
@@ -1319,5 +1330,108 @@ call_check_link ${dir3}/${name37} 1
 call_check_link ${name38} 1
 call_check_link ${dir3}/${name39} 1
 call_check_link ${name40} 1
+
+call_end_test
+
+# REM ############################################################## TEST_NO_36_TITLE
+call_start_test "Delete second child file"
+
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
+
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
+
+call_pause
+
+call_remove_file ${name2}
+
+call_check_file ${name1} 1
+
+call_check_link ${name2} 0
+call_check_link ${name3} 1
+call_check_link ${name4} 1
+
+call_end_test
+
+# REM ############################################################## TEST_NO_37_TITLE
+call_start_test "Replace parent file with a different SHA"
+
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
+name5=test${label}-file5
+
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
+
+call_pause
+
+call_create_file ${name1} ${name5}
+
+call_check_file ${name1} 1
+
+call_check_link ${name2} 1
+call_check_link ${name3} 1
+call_check_link ${name4} 1
+
+call_end_test
+
+# REM ############################################################## TEST_NO_38_TITLE
+call_start_test "Replace child file with a diferent SHA"
+
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
+name5=test${label}-file5
+
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
+
+call_pause
+
+call_create_file ${name2} ${name5}
+
+call_check_file ${name1} 1
+call_check_file ${name2} 1
+
+call_check_link ${name3} 1
+call_check_link ${name4} 1
+
+call_end_test
+
+# REM ############################################################## TEST_NO_39_TITLE
+call_start_test "Replace second child file with same SHA"
+
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
+name5=test${label}-file5
+
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
+
+call_pause
+
+call_create_file ${name2} ${name1}
+
+call_check_file ${name1} 1
+
+call_check_link ${name2} 1
+call_check_link ${name3} 1
+call_check_link ${name4} 1
 
 call_end_test
