@@ -1435,3 +1435,183 @@ call_check_link ${name3} 1
 call_check_link ${name4} 1
 
 call_end_test
+
+# REM ############################################################## TEST_NO_40_TITLE
+call_start_test "Delete parent. Create second child file. Delete second child file. Create parent."
+
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
+
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
+
+call_pause
+
+call_remove_file ${name1}
+
+call_pause 5
+
+call_create_file ${name2} ${name1}
+
+call_pause 5
+
+call_check_file ${name1} 0
+call_check_file ${name2} 1 # REM - CHECK 1) LINK AND FILE URI AT THE SAME TIME 2) # REMOVE LINK AND FILE URI FROM TABLE
+
+call_check_link ${name3} 1
+call_check_link ${name4} 1
+
+call_pause
+
+call_remove_file ${name2}
+
+call_pause 10
+
+call_check_file ${name1} 0
+
+call_check_link ${name2} 0
+call_check_link ${name3} 2
+call_check_link ${name4} 2
+
+call_pause 5
+
+call_create_file ${name1} ${name1}
+
+call_pause 5
+
+call_check_file ${name1} 1
+
+call_check_link ${name2} 0
+call_check_link ${name3} 1
+call_check_link ${name4} 1
+
+call_end_test
+
+# REM ############################################################## TEST_NO_41_TITLE
+call_start_test "Delete parent. Replace second file with different SHA. Delete second file. Create parent."
+
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
+name5=test${label}-file5
+
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
+
+call_pause
+
+call_remove_file ${name1}
+
+call_pause 10
+
+call_create_file ${name2} ${name5}
+
+call_pause 10
+
+call_check_file ${name1} 0
+call_check_file ${name2} 1
+
+call_check_link ${name3} 2
+call_check_link ${name4} 2
+
+call_pause
+
+call_remove_file ${name2}
+
+call_pause 10
+
+call_check_file ${name1} 0
+
+call_check_link ${name2} 0
+call_check_link ${name3} 2
+call_check_link ${name4} 2
+
+call_pause 5
+
+call_create_file ${name1} ${name1}
+
+call_pause 5
+
+call_check_file ${name1} 1
+
+call_check_link ${name2} 0
+call_check_link ${name3} 1
+call_check_link ${name4} 1
+
+call_end_test
+
+# REM ############################################################## TEST_NO_42_TITLE
+call_start_test "Delete parent. Replace second file with different SHA. Create second childen. Delete second file. Create parent."
+
+name1=test${label}-file1
+name2=test${label}-file2
+name3=test${label}-file3
+name4=test${label}-file4
+name5=test${label}-file5
+name6=test${label}-file6
+name7=test${label}-file7
+
+call_create_file ${name1} ${name1}
+call_create_file ${name2} ${name1}
+call_create_file ${name3} ${name1}
+call_create_file ${name4} ${name1}
+
+call_pause
+
+call_remove_file ${name1}
+
+call_pause 10
+
+call_create_file ${name2} ${name5}
+call_create_file ${name6} ${name5}
+call_create_file ${name7} ${name5}
+
+call_pause 10
+
+call_check_file ${name1} 0
+call_check_file ${name2} 1
+
+call_check_link ${name3} 2
+call_check_link ${name4} 2
+
+call_check_link ${name6} 1
+call_check_link ${name7} 1
+
+call_pause
+
+call_remove_file ${name2}
+
+call_pause 10
+
+call_check_file ${name1} 0
+
+call_check_link ${name2} 0
+call_check_link ${name3} 2
+call_check_link ${name4} 2
+
+call_check_link ${name6} 2
+call_check_link ${name7} 2
+
+call_pause 5
+
+call_create_file ${name1} ${name1}
+
+call_pause 5
+
+call_check_file ${name1} 1
+
+call_check_link ${name2} 0
+call_check_link ${name3} 1
+call_check_link ${name4} 1
+
+call_check_link ${name6} 2
+call_check_link ${name7} 2
+
+call_end_test

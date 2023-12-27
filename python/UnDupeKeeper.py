@@ -440,6 +440,12 @@ class DataBase:
     def changed_from_deleted_to_link(self, file_hash):
         self._file_allocation_table.loc[(self._file_allocation_table[SHA] == file_hash) & (self._file_allocation_table[KIND] == DELETED_PARENT), KIND] = SYMLINK
 
+    def changed_from_deleted_to_file(self, file_uri):
+        self._file_allocation_table.loc[(self._file_allocation_table[URI] == file_uri) & (self._file_allocation_table[KIND] == DELETED_PARENT), KIND] = FILE
+
+    def change_hash_file(self, file_uri, file_kind, file_hash):
+        self._file_allocation_table.loc[(self._file_allocation_table[URI] == file_uri) & (self._file_allocation_table[KIND] == file_kind), SHA] = file_hash
+
     def move_hash_location(self, source_hash, target_hash):
         self._file_allocation_table.loc[(self._file_allocation_table[SHA] == source_hash), SHA] = target_hash
         # self._file_allocation_table.loc[(self._file_allocation_table[SHA] == uri_addr), SHA] = sha
@@ -641,7 +647,7 @@ class FileList:
         if index_uri in self._file_database.get_all_uri_rows():
             index_file = self._file_database.get_file_index(index_uri, kind)
             if index_file is not None and not index_file.empty:
-                logger.info(f'{line_number()} - return file_index')
+                logger.info(f'{line_number()} - return file_index [{index_file[SHA].values[0][0:SHA_SIZE]}][{index_file[KIND].values[0]}][{index_file[URI].values[0]}]')
                 return index_file
         logger.info(f'{line_number()} - return None')
         return None
@@ -751,8 +757,17 @@ class FileList:
             line = self.get_files(new_file.file_sha, FILE, SHA)
             if line is None:
                 logger.info(f'{line_number()} - if line is None:')
-                logger.info(f'{line_number()} - self.new_row({new_file}, FILE)')
-                self.new_row(new_file, FILE)
+
+                file_without_parent = self.get_file(new_file.file_uri, DELETED_PARENT)
+                logger.info(f'{line_number()} - self.get_file_index({new_file.file_uri}, DELETED_PARENT) = [{file_without_parent}]')
+                if file_without_parent:
+                    logger.info(f'{line_number()} - self.changed_from_deleted_to_file({new_file.file_uri})')
+                    self._file_database.changed_from_deleted_to_file(new_file.file_uri)
+                    logger.info(f'{line_number()} - self.change_hash_file({new_file.file_uri}, {FILE}, {new_file.file_sha[0:SHA_SIZE]})')
+                    self._file_database.change_hash_file(new_file.file_uri, FILE, new_file.file_sha)
+                else:
+                    logger.info(f'{line_number()} - self.new_row({new_file}, FILE)')
+                    self.new_row(new_file, FILE)
 
                 logger.info(f'{line_number()} - line = self.get_files({new_file.file_sha[0:SHA_SIZE]}, DELETED_PARENT, SHA)')
                 line = self.get_files(new_file.file_sha, DELETED_PARENT, SHA)

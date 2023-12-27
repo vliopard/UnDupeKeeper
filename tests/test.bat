@@ -9,7 +9,7 @@ set file_table=file_table.txt
 set delaycount=1
 set delaytm=1
 set testnro=0
-set last_test=039
+set last_test=042
 set label=
 
 rem call_start_test()
@@ -1436,6 +1436,186 @@ call:check_link %name4% 1
 
 call:end_test
 
+REM ############################################################## TEST_NO_40_TITLE
+call:start_test "Delete parent. Create second child file. Delete second child file. Create parent."
+
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+call:create_file %name3% %name1%
+call:create_file %name4% %name1%
+
+call:delay_pause
+
+call:remove_file %name1%
+
+call:delay_pause 5
+
+call:create_file %name2% %name1%
+
+call:delay_pause 5
+
+call:check_file %name1% 0
+call:check_file %name2% 1 REM - CHECK 1) LINK AND FILE URI AT THE SAME TIME 2) REMOVE LINK AND FILE URI FROM TABLE
+
+call:check_link %name3% 1
+call:check_link %name4% 1
+
+call:delay_pause
+
+call:remove_file %name2%
+
+call:delay_pause 10
+
+call:check_file %name1% 0
+
+call:check_link %name2% 0
+call:check_link %name3% 2
+call:check_link %name4% 2
+
+call:delay_pause 5
+
+call:create_file %name1% %name1%
+
+call:delay_pause 5
+
+call:check_file %name1% 1
+
+call:check_link %name2% 0
+call:check_link %name3% 1
+call:check_link %name4% 1
+
+call:end_test
+
+REM ############################################################## TEST_NO_41_TITLE
+call:start_test "Delete parent. Replace second file with different SHA. Delete second file. Create parent."
+
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
+set name5=test%label%-file5
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+call:create_file %name3% %name1%
+call:create_file %name4% %name1%
+
+call:delay_pause
+
+call:remove_file %name1%
+
+call:delay_pause 10
+
+call:create_file %name2% %name5%
+
+call:delay_pause 10
+
+call:check_file %name1% 0
+call:check_file %name2% 1
+
+call:check_link %name3% 2
+call:check_link %name4% 2
+
+call:delay_pause
+
+call:remove_file %name2%
+
+call:delay_pause 10
+
+call:check_file %name1% 0
+
+call:check_link %name2% 0
+call:check_link %name3% 2
+call:check_link %name4% 2
+
+call:delay_pause 5
+
+call:create_file %name1% %name1%
+
+call:delay_pause 5
+
+call:check_file %name1% 1
+
+call:check_link %name2% 0
+call:check_link %name3% 1
+call:check_link %name4% 1
+
+call:end_test
+
+REM ############################################################## TEST_NO_42_TITLE
+call:start_test "Delete parent. Replace second file with different SHA. Create second childen. Delete second file. Create parent."
+
+set name1=test%label%-file1
+set name2=test%label%-file2
+set name3=test%label%-file3
+set name4=test%label%-file4
+set name5=test%label%-file5
+set name6=test%label%-file6
+set name7=test%label%-file7
+
+call:create_file %name1% %name1%
+call:create_file %name2% %name1%
+call:create_file %name3% %name1%
+call:create_file %name4% %name1%
+
+call:delay_pause
+
+call:remove_file %name1%
+
+call:delay_pause 10
+
+call:create_file %name2% %name5%
+call:create_file %name6% %name5%
+call:create_file %name7% %name5%
+
+call:delay_pause 10
+
+call:check_file %name1% 0
+call:check_file %name2% 1
+
+call:check_link %name3% 2
+call:check_link %name4% 2
+
+call:check_link %name6% 1
+call:check_link %name7% 1
+
+call:delay_pause
+
+call:remove_file %name2%
+
+call:delay_pause 10
+
+call:check_file %name1% 0
+
+call:check_link %name2% 0
+call:check_link %name3% 2
+call:check_link %name4% 2
+
+call:check_link %name6% 2
+call:check_link %name7% 2
+
+call:delay_pause 5
+
+call:create_file %name1% %name1%
+
+call:delay_pause 5
+
+call:check_file %name1% 1
+
+call:check_link %name2% 0
+call:check_link %name3% 1
+call:check_link %name4% 1
+
+call:check_link %name6% 2
+call:check_link %name7% 2
+
+call:end_test
+
 REM ##############################################################
 GOTO EOF
 
@@ -1617,7 +1797,7 @@ if "%1"=="" (
     set /A delaytm=1
     set /A delaycount=%~1
     echo ___________________________________
-    echo Waiting for %delaycount% seconds...
+    echo Waiting for %1 seconds...
     echo -----------------------------------
 )
 call:wait_time
