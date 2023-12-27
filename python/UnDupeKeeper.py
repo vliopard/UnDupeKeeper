@@ -360,7 +360,8 @@ def file_equals(first_file, second_file, comparison_method):
     command = comparison_command[current_platform]
 
     try:
-        logger.warning(f'{line_number()} - process = run_command({command},')
+        logger.info(f'{line_number()} - ___________________________________________________')
+        logger.info(f'{line_number()} - process = run_command({command},')
         process = run_command(command,
                               shell=True,
                               check=True,
@@ -369,14 +370,22 @@ def file_equals(first_file, second_file, comparison_method):
                               universal_newlines=True)
         return_value = process.stdout.split('\n')
         if return_value[1] == validation_string[current_platform]:
+            logger.error(f'{line_number()} - [TRUE] [{return_value[1]}] == [{validation_string[current_platform]}] [{command}]')
             return True
 
     except CalledProcessError as called_process_error:
         # f'CalledProcessError       : {called_process_error}'
-        # f'CalledProcessError CMD   : {called_process_error.cmd}'
-        # f'CalledProcessError OUTPUT: {called_process_error.output}'
-        logger.error(f'CalledProcessError RETURN CODE: {called_process_error.returncode}')
-        logger.error(f'{line_number()} - Source is File? [{first_file}], Target Exists? [{second_file}]')
+        logger.error(f'{line_number()} - [FALSE] CalledProcessError RETURN CODE: [{called_process_error.returncode}] [{called_process_error.cmd}]')
+
+        output = str(called_process_error.output).strip()
+        standard_output = str(called_process_error.stdout).strip()
+
+        compare_text = "Comparing"
+        if not (output.startswith(compare_text) and standard_output.startswith(compare_text)):
+            if output != standard_output:
+                logger.error(f'{line_number()} - [{output}]')
+            logger.error(f'{line_number()} - [{standard_output}]')
+
     return False
 
 
