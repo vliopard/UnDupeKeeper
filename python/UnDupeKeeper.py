@@ -308,21 +308,23 @@ def line_number():
 
 
 def get_platform():
-    show.debug(f'{line_number()} {DEBUG_MARKER} GET PLATFORM: STARTED')
+    function_name = 'GET PLATFORM:'
+    show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} STARTED')
     platforms = {PLATFORM_LINUX0: LINUX,
                  PLATFORM_LINUX1: LINUX,
                  PLATFORM_LINUX2: LINUX,
                  PLATFORM_DARWIN: OS_X,
                  PLATFORM_WIN32: WINDOWS}
     if sys_platform not in platforms:
-        show.debug(f'{line_number()} {DEBUG_MARKER} GET PLATFORM: UNDESIRED END')
-        show.info(f'{line_number()} GET PLATFORM: RETURN [{sys_platform}]')
+        show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} UNDESIRED END')
+        show.info(f'{line_number()} {function_name} RETURN [{sys_platform}]')
         return sys_platform
-    show.debug(f'{line_number()} {DEBUG_MARKER} GET PLATFORM: NORMAL END')
+    show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} NORMAL END')
     return platforms[sys_platform]
 
 
 def get_hash(uri_file, digest):
+    function_name = 'GET HASH:'
     sha_file = None
     if digest == HASH_SHA:
         digest_method = hashlib.sha1()
@@ -343,9 +345,9 @@ def get_hash(uri_file, digest):
                     digest_method.update(memory_view[:element])
             sha_file = digest_method.hexdigest()
             retry = False
-            show.info(f'{line_number()} HASH OBTAINED [{sha_file[0:SHA_SIZE]}] [{uri_file}]')
+            show.info(f'{line_number()} {function_name} HASH OBTAINED [{sha_file[0:SHA_SIZE]}] [{uri_file}]')
         except PermissionError as permission_error:
-            show.error(f'{line_number()} HASH GENERATION ERROR: PermissionError [{permission_error}]')
+            show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - PermissionError [{permission_error}]')
             time.sleep(1)
     return sha_file
 
@@ -376,6 +378,7 @@ def compare_binaries(first_file, second_file):
 
 
 def file_equals(first_file, second_file, comparison_method):
+    function_name = 'FILE EQUALS:'
     file_not_exist = False
     file_name1 = EMPTY
     file_name2 = EMPTY
@@ -391,7 +394,7 @@ def file_equals(first_file, second_file, comparison_method):
         file_not_exist = True
     
     if file_not_exist:
-        show.error(f'{line_number()} {section_message} FILE EQUALS: MISSING [{file_name1}] [{file_name2}] ')
+        show.error(f'{line_number()} {section_message} {function_name} MISSING [{file_name1}] [{file_name2}] ')
         return False
         
     if os_stat(first_file).st_size != os_stat(second_file).st_size:
@@ -436,7 +439,7 @@ def file_equals(first_file, second_file, comparison_method):
     try:
         section_message = section_line(SYMBOL_UNDERLINE, LINE_LEN)
         show.debug(f'{line_number()} {DEBUG_MARKER} {section_message}')
-        show.info(f'{line_number()} FILE EQUALS: RUNNING [{command}]')
+        show.info(f'{line_number()} {function_name} RUNNING [{command}]')
         process = run_command(command,
                               shell=True,
                               check=True,
@@ -445,11 +448,11 @@ def file_equals(first_file, second_file, comparison_method):
                               universal_newlines=True)
         return_value = process.stdout.split(NEW_LINE)
         if return_value[1] == validation_string[current_platform]:
-            show.debug(f'{line_number()} {DEBUG_MARKER} FILE EQUALS: [TRUE] [{return_value[1]}] == [{validation_string[current_platform]}] [{command}]')
+            show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} [TRUE] [{return_value[1]}] == [{validation_string[current_platform]}] [{command}]')
             return True
 
     except CalledProcessError as called_process_error:
-        show.debug(f'{line_number()} {DEBUG_MARKER} FILE EQUALS: [FALSE] CalledProcessError RETURN CODE: [{called_process_error.returncode}] [{called_process_error.cmd}]')
+        show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} [FALSE] CalledProcessError RETURN CODE [{called_process_error.returncode}] [{called_process_error.cmd}]')
 
         output = str(called_process_error.output).strip()
         standard_output = str(called_process_error.stdout).strip()
@@ -565,7 +568,7 @@ class FileList:
     def start_thread(self):
         if not self.running_now:
             section_message = section_line(SYMBOL_GT, LINE_LEN)
-            show.debug(f'{line_number()} {DEBUG_MARKER} {section_message} START THREAD: TRAY NOT RUNNING: STARTING')
+            show.debug(f'{line_number()} {DEBUG_MARKER} {section_message} START THREAD: TRAY NOT RUNNING - STARTING')
             self.running_now = True
             self.thread_start_time = time.time()
             self.jobs.put(PAUSE)
@@ -597,18 +600,20 @@ class FileList:
             self.jobs.put(RECHECK)
 
     def print_table(self):
-        show.debug(f'{line_number()} {DEBUG_MARKER} PRINT TABLE: STARTED')
+        function_name = 'PRINT TABLE:'
+        show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} STARTED')
         return_string = EMPTY
         for index, row in self._file_database.get_all_files_rows():
             return_string += f'FILE TABLE: [{row[KIND]}] [{row[SHA][0:SHA_SIZE]}] [{row[URI]}]{NEW_LINE}'
-        show.debug(f'{line_number()} {DEBUG_MARKER} PRINT TABLE: ENDED')
+        show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} ENDED')
         return return_string
 
     def save_data(self, now=False):
-        show.debug(f'{line_number()} {DEBUG_MARKER} SAVE DATA STARTED')
+        function_name = 'SAVE DATA:'
+        show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} STARTED')
 
         if DEBUG_TEST:
-            show.debug(f'{line_number()} {DEBUG_MARKER} with open(FILE_TABLE, "w") as file_table_handler:')
+            show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} OPEN FILE TABLE')
             with open(FILE_TABLE, WRITE, encoding=UTF8) as file_table_handler:
                 save_data_index = self._file_database.get_file_list()
                 if save_data_index is not None and not save_data_index.empty:
@@ -619,7 +624,7 @@ class FileList:
                         file_table_handler.write(value + NEW_LINE)
                     file_table_handler.flush()
 
-            show.debug(f'{line_number()} {DEBUG_MARKER} with open(LINK_TABLE, "w") as link_table_handler:')
+            show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} OPEN LINK TABLE')
             with open(LINK_TABLE, WRITE, encoding=UTF8) as link_table_handler:
 
                 save_data_index = self._file_database.get_link_list()
@@ -645,41 +650,43 @@ class FileList:
 
         self._save_count += 1
         if self._save_count > MAX_FILES or now:
-            show.debug(f'{line_number()} {DEBUG_MARKER} if self._save_count > {MAX_FILES}:')
-            show.debug(f'{line_number()} {DEBUG_MARKER} self._file_allocation_table.to_pickle(DATA_TABLE)')
+            show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} SAVE COUNT > [{MAX_FILES}]')
+            show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} DUMPING DATA TABLE TO PICKLE FILE')
             self._file_database.save_database()
             self._save_count = 0
             if CLEAR_CACHE:
                 clear_cache()
 
     def load_data(self):
-        show.debug(f'{line_number()} {DEBUG_MARKER} LOAD DATA: STARTED')
+        function_name = "LOAD DATA:"
+        show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} STARTED')
         try:
             if uri_exists(DATA_TABLE):
-                show.debug(f'{line_number()} {DEBUG_MARKER} LOAD DATA: LOADING DATABASE')
+                show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} LOADING DATABASE')
                 self._file_database.load_database()
 
                 show.warning(f'LOADED DATA:')
                 self.report_data()
             else:
-                show.debug(f'{line_number()} {DEBUG_MARKER} LOAD DATA: FIRST EXECUTION - NO DATABASE YET')
+                show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} FIRST EXECUTION - NO DATABASE YET')
 
         except Exception as exception:
-            show.info(f'{line_number()} LOAD DATA: FILE NOT FOUND: [{exception}]')
+            show.info(f'{line_number()} {function_name} FILE NOT FOUND [{exception}]')
 
     @staticmethod
     def execute(target_link, source_file):
-        show.info(f'{line_number()} CREATE LINK: TARGET [{target_link}] SOURCE [{source_file}]')
+        function_name = 'CREATE LINK:'
+        show.info(f'{line_number()} {function_name} TARGET [{target_link}] SOURCE [{source_file}]')
         return_value = None
 
         source_is_file = is_file(source_file)
         target_exists = uri_exists(target_link)
         if source_is_file and not target_exists:
-            show.info(f'{line_number()} CREATE LINK: TARGET FILE DOES NOT EXIST')
+            show.info(f'{line_number()} {function_name} TARGET FILE DOES NOT EXIST')
             dir_name_path = dir_name(abs_path(target_link))
             if not uri_exists(dir_name_path):
-                show.info(f'{line_number()} CREATE LINK: DIRECTORY DOES NOT EXIST [{dir_name_path}]')
-                show.info(f'{line_number()} CREATE LINK: MAKING DIRECTORY [{dir_name_path}]')
+                show.info(f'{line_number()} {function_name} DIRECTORY DOES NOT EXIST [{dir_name_path}]')
+                show.info(f'{line_number()} {function_name} MAKING DIRECTORY [{dir_name_path}]')
                 make_dirs(dir_name_path)
 
             target_dos = DOS_DRIVE + target_link.replace(UNIX_SLASH, DOS_SLASH)
@@ -689,7 +696,7 @@ class FileList:
             command = link_command[get_platform()]
 
             try:
-                show.warning(f'{line_number()} CREATE LINK: RUNNING COMMAND [{command}]')
+                show.warning(f'{line_number()} {function_name} RUNNING COMMAND [{command}]')
                 process = run_command(command,
                                       shell=True,
                                       check=True,
@@ -697,66 +704,71 @@ class FileList:
                                       universal_newlines=True)
                 return_value = process.stdout
             except CalledProcessError as called_process_error:
-                show.error(f'{line_number()} CREATE LINK: ERROR - CalledProcessError {called_process_error}')
-                show.error(f'{line_number()} CREATE LINK: ERROR - SOURCE [{source_is_file}] TARGET [{target_exists}]')
+                show.error(f'{line_number()} {function_name} ERROR - CalledProcessError {called_process_error}')
+                show.error(f'{line_number()} {function_name} ERROR - SOURCE [{source_is_file}] TARGET [{target_exists}]')
         else:
-            show.error(f'{line_number()} CREATE LINK: ERROR - SOURCE [{source_is_file}] TARGET [{target_exists}]')
+            show.error(f'{line_number()} {function_name} ERROR - SOURCE [{source_is_file}] TARGET [{target_exists}]')
 
-        show.info(f'{line_number()} CREATE LINK: ENDED [{return_value}]')
+        show.info(f'{line_number()} {function_name} ENDED [{return_value}]')
         return return_value
 
     def new_row(self, new_file, kind):
-        show.info(f'{line_number()} NEW ROW: [{kind}] [{new_file}]')
+        function_name = 'NEW ROW:'
+        show.info(f'{line_number()} {function_name} [{kind}] [{new_file}]')
         new_row = {SHA: new_file.file_sha,
                    KIND: kind,
                    URI: new_file.file_uri}
-        show.info(f'{line_number()} NEW ROW: ADD FILE TO DATABASE [{new_row[SHA][0:SHA_SIZE]}] [{new_row[KIND]}] [{new_row[URI]}]')
+        show.info(f'{line_number()} {function_name} ADD FILE TO DATABASE [{new_row[SHA][0:SHA_SIZE]}] [{new_row[KIND]}] [{new_row[URI]}]')
         self._file_database.add_file_to_database(new_row)
 
     @staticmethod
     def delete_row(row):
-        show.info(f'{line_number()} DELETE ROW: [{row}]')
+        function_name = 'DELETE ROW:'
+        show.info(f'{line_number()} {function_name} [{row}]')
         try:
-            show.info(f'{line_number()} DELETE ROW: STARTED [{row}]')
+            show.info(f'{line_number()} {function_name} STARTED [{row}]')
             if not is_dir(row):
                 if is_link(row):
-                    show.info(f'{line_number()} DELETE ROW: DELETE LINK [{row}]')
+                    show.info(f'{line_number()} {function_name} DELETE LINK [{row}]')
                     delete_link(row)
                 else:
-                    show.info(f'{line_number()} DELETE ROW: DELETE FILE [{row}]')
+                    show.info(f'{line_number()} {function_name} DELETE FILE [{row}]')
                     delete_file(row)
             else:
-                show.error(f'{line_number()} DELETE ROW: CRITICAL ERROR - TRYING TO DELETE DIRECTORY [{row}]')
+                show.error(f'{line_number()} {function_name} CRITICAL ERROR - TRYING TO DELETE DIRECTORY [{row}]')
         except FileNotFoundError as file_not_found_error:
-            show.error(f'{line_number()} DELETE ROW: FileNotFoundError: [{row}] [{file_not_found_error}]')
+            show.error(f'{line_number()} {function_name} FileNotFoundError [{row}] [{file_not_found_error}]')
 
     def get_file_index(self, index_uri, kind):
-        show.info(f'{line_number()} GET FILE INDEX: [{kind}] [{index_uri}]')
+        function_name = 'GET FILE INDEX:'
+        show.info(f'{line_number()} {function_name} [{kind}] [{index_uri}]')
         if index_uri in self._file_database.get_all_uri_rows():
             index_file = self._file_database.get_file_index(index_uri, kind)
             if index_file is not None and not index_file.empty:
-                show.info(f'{line_number()} GET FILE INDEX: FOUND [{index_file[SHA].values[0][0:SHA_SIZE]}][{index_file[KIND].values[0]}][{index_file[URI].values[0]}]')
+                show.info(f'{line_number()} {function_name} FOUND [{index_file[SHA].values[0][0:SHA_SIZE]}][{index_file[KIND].values[0]}][{index_file[URI].values[0]}]')
                 return index_file
-        show.info(f'{line_number()} GET FILE INDEX: NO FILE FOUND')
+        show.info(f'{line_number()} {function_name} NO FILE FOUND')
         return None
 
     def get_file(self, get_uri, kind):
-        show.info(f'{line_number()} GET FILE: [{kind}] [{get_uri}]')
+        function_name = 'GET FILE:'
+        show.info(f'{line_number()} {function_name} [{kind}] [{get_uri}]')
         index_file = self.get_file_index(get_uri, kind)
         if index_file is not None and not index_file.empty:
-            show.info(f'{line_number()} GET FILE: FOUND [{index_file[URI].values[0]}]')
+            show.info(f'{line_number()} {function_name} FOUND [{index_file[URI].values[0]}]')
             return index_file[URI].values[0]
-        show.info(f'{line_number()} GET FILE: NO FILE FOUND')
+        show.info(f'{line_number()} {function_name} NO FILE FOUND')
         return None
 
     def get_files(self, key_index, kind, index_file):
-        show.info(f'{line_number()} GET FILES: [{key_index[0:SHA_SIZE]}] [{kind}] [{index_file}]')
+        function_name = 'GET FILES:'
+        show.info(f'{line_number()} {function_name} [{key_index[0:SHA_SIZE]}] [{kind}] [{index_file}]')
         if key_index in self._file_database.get_index_values(index_file):
             index_file = self._file_database.get_file_index_by_kind(index_file, key_index, kind)
             if index_file is not None and not index_file.empty:
-                show.info(f'{line_number()} GET FILES: FILES FOUND')
+                show.info(f'{line_number()} {function_name} FILES FOUND')
                 return index_file[URI].values
-        show.info(f'{line_number()} GET FILES: NO FILE FOUND')
+        show.info(f'{line_number()} {function_name} NO FILE FOUND')
         return None
 
     def report_data(self):
@@ -773,18 +785,20 @@ class FileList:
             show.info(f'{section_message}')
 
     def update_junk(self):
-        show.info(f'{line_number()} UPDATE JUNK: STARTED')
+        function_name = 'UPDATE JUNK:'
+        show.info(f'{line_number()} {function_name} STARTED')
         index_file = self._file_database.get_deleted_list()
         if index_file is not None and not index_file.empty:
             for uri_index in index_file[URI].values:
                 delete_index = self.get_file_index(uri_index, REMOVED)
                 if delete_index is not None:
-                    show.warning(f'{line_number()} UPDATE JUNK: DROP JUNK [{uri_index}]')
+                    show.warning(f'{line_number()} {function_name} DROP JUNK [{uri_index}]')
                     self._file_database.delete_file_from_database(delete_index)
-        show.info(f'{line_number()} UPDATE JUNK: END')
+        show.info(f'{line_number()} {function_name} END')
 
     def update_files(self):
-        show.info(f'{line_number()} UPDATE FILES: STARTED')
+        function_name = 'UPDATE FILES:'
+        show.info(f'{line_number()} {function_name} STARTED')
         index_file = self._file_database.get_file_list()
         if index_file is not None and not index_file.empty:
             for uri_index in index_file[URI].values:
@@ -792,265 +806,270 @@ class FileList:
                     delete_index = self.get_file_index(uri_index, FILE)
                     delete_sha = delete_index[SHA].values[0]
                     if delete_index is not None:
-                        show.warning(f'{line_number()} UPDATE FILES: DROP FILE [{uri_index}]')
+                        show.warning(f'{line_number()} {function_name} DROP FILE [{uri_index}]')
                         self._file_database.delete_file_from_database(delete_index)
                         delete_index = self.get_files(delete_sha, SYMLINK, SHA)
                         if delete_index is not None:
                             for row in delete_index:
-                                show.warning(f'{line_number()} UPDATE FILES: DELETE ROW [{row}]')
+                                show.warning(f'{line_number()} {function_name} DELETE ROW [{row}]')
                                 self.delete_row(row)
                         self._file_database.change_from_link_to_deleted(delete_sha)
 
-        show.info(f'{line_number()} UPDATE FILES: END')
+        show.info(f'{line_number()} {function_name} END')
 
     def update_links(self):
-        show.info(f'{line_number()} UPDATE LINKS: STARTED')
+        function_name = 'UPDATE LINKS:'
+        show.info(f'{line_number()} {function_name} STARTED')
         index_file = self._file_database.get_link_list()
         if index_file is not None and not index_file.empty:
             for uri_index in index_file[URI].values:
                 if not is_link(uri_index) and not uri_exists(uri_index):
                     delete_index = self.get_file_index(uri_index, SYMLINK)
                     if delete_index is not None:
-                        show.warning(f'{line_number()} UPDATE LINKS: DROP LINK [{uri_index}]')
+                        show.warning(f'{line_number()} {function_name} DROP LINK [{uri_index}]')
                         self._file_database.delete_file_from_database(delete_index)
-        show.info(f'{line_number()} UPDATE LINKS: ENDED')
+        show.info(f'{line_number()} {function_name} ENDED')
 
     def add_file(self, add_uri):
+        function_name = 'ADD FILE:'
         add_uri = add_uri.replace(DOS_SLASH, UNIX_SLASH)
         self.update_thread_started_time()
         show.warning(f'{line_number()} {section_line(SYMBOL_EQ, LINE_LEN)}')
-        show.warning(f'{line_number()} ADD FILE: [{add_uri}]')
+        show.warning(f'{line_number()} {function_name} [{add_uri}]')
 
         if is_link(add_uri):
-            show.info(f'{line_number()} ADD FILE: IS LINK? [{add_uri}]')
+            show.info(f'{line_number()} {function_name} IS LINK? [{add_uri}]')
             new_file = FileHolder(add_uri)
-            show.info(f'{line_number()} ADD FILE: GET FILES [FILE] [SHA] [{new_file.file_sha[0:SHA_SIZE]}]')
+            show.info(f'{line_number()} {function_name} GET FILES [FILE] [SHA] [{new_file.file_sha[0:SHA_SIZE]}]')
             line = self.get_files(new_file.file_sha, FILE, SHA)
             if line is not None:
-                show.info(f'{line_number()} ADD FILE: FOUND')
-                show.info(f'{line_number()} ADD FILE: GET FILES [SYMLINK] [URI] [{new_file.file_uri}]')
+                show.info(f'{line_number()} {function_name} FOUND')
+                show.info(f'{line_number()} {function_name} GET FILES [SYMLINK] [URI] [{new_file.file_uri}]')
                 line = self.get_files(new_file.file_uri, SYMLINK, URI)
                 if line is None:
-                    show.info(f'{line_number()} ADD FILE: FOUND')
-                    show.info(f'{line_number()} ADD FILE: NEW ROW [SYMLINK] [{new_file}]')
+                    show.info(f'{line_number()} {function_name} FOUND')
+                    show.info(f'{line_number()} {function_name} NEW ROW [SYMLINK] [{new_file}]')
                     self.new_row(new_file, SYMLINK)
             self._file_database.change_from_moved_to_link(add_uri)
 
         elif is_dir(add_uri):
-            show.warning(f'{line_number()} ADD FILE: IS DIRECTORY? [{add_uri}]')
-            show.warning(f'{line_number()} ADD FILE: ENDED')
+            show.warning(f'{line_number()} {function_name} IS DIRECTORY? [{add_uri}]')
+            show.warning(f'{line_number()} {function_name} ENDED')
 
         elif is_file(add_uri):
-            show.info(f'{line_number()} ADD FILE: IS FILE? [{add_uri}]')
+            show.info(f'{line_number()} {function_name} IS FILE? [{add_uri}]')
             new_file = FileHolder(add_uri)
-            show.info(f'{line_number()} ADD FILE: GET FILES [FILE] [SHA] [{new_file.file_sha[0:SHA_SIZE]}]')
+            show.info(f'{line_number()} {function_name} GET FILES [FILE] [SHA] [{new_file.file_sha[0:SHA_SIZE]}]')
             line = self.get_files(new_file.file_sha, FILE, SHA)
             if line is None:
-                show.info(f'{line_number()} ADD FILE: NOT FOUND')
+                show.info(f'{line_number()} {function_name} NOT FOUND')
 
                 file_without_parent = self.get_file(new_file.file_uri, DELETED_PARENT)
-                show.info(f'{line_number()} self.get_file_index({new_file.file_uri}, DELETED_PARENT) = [{file_without_parent}]')
+                show.info(f'{line_number()} {function_name} GET FILE INDEX - URI [{new_file.file_uri}] DELETED_PARENT <= [{file_without_parent}]')
                 if file_without_parent:
-                    show.info(f'{line_number()} self.changed_from_deleted_to_file({new_file.file_uri})')
+                    show.info(f'{line_number()} {function_name} CHANGE FROM DELETED TO FILE [{new_file.file_uri}]')
                     self._file_database.changed_from_deleted_to_file(new_file.file_uri)
-                    show.info(f'{line_number()} self.change_hash_file({new_file.file_uri}, {FILE}, {new_file.file_sha[0:SHA_SIZE]})')
+                    show.info(f'{line_number()} {function_name} CHANGE HASH FILE [{FILE}] [{new_file.file_sha[0:SHA_SIZE]}] [{new_file.file_uri}]')
                     self._file_database.change_hash_file(new_file.file_uri, FILE, new_file.file_sha)
                 else:
-                    show.info(f'{line_number()} self.new_row({new_file}, FILE)')
+                    show.info(f'{line_number()} {function_name} NEW ROW [FILE] [{new_file}]')
                     self.new_row(new_file, FILE)
 
-                show.info(f'{line_number()} line = self.get_files({new_file.file_sha[0:SHA_SIZE]}, DELETED_PARENT, SHA)')
+                show.info(f'{line_number()} {function_name} GET FILES [SHA] [DELETED_PARENT] [{new_file.file_sha[0:SHA_SIZE]}]')
                 line = self.get_files(new_file.file_sha, DELETED_PARENT, SHA)
                 if line is not None:
-                    show.info(f'{line_number()} if line is not None:')
+                    show.info(f'{line_number()} {function_name} GET FILES - NO FILE FOUND')
                     for row in line:
-                        show.info(f'{line_number()} self.execute({row}, {new_file.file_uri})')
+                        show.info(f'{line_number()} {function_name} GET FILES - FILE FOUND [{row}] [{new_file.file_uri}]')
                         self.execute(row, new_file.file_uri)
                 self._file_database.changed_from_deleted_to_link(new_file.file_sha)
             else:
                 line = line[0]
-                show.info(f'{line_number()} line_uri = self.get_file({new_file.file_uri}, SYMLINK)')
+                show.info(f'{line_number()} {function_name} GET FILE [SYMLINK] [{new_file.file_uri}]')
                 line_uri = self.get_file(new_file.file_uri, SYMLINK)
                 if line_uri is None:
-                    show.info(f'{line_number()} if line_uri is None:')
-                    show.info(f'{line_number()} and file_equals({new_file.file_uri}, {line}, COMPARISON_METHOD):')
+                    show.info(f'{line_number()} {function_name} GET FILE - SYMLINK NOT FOUND')
+                    show.info(f'{line_number()} {function_name} FILE COMPARISON [{COMPARISON_METHOD}] [{new_file.file_uri}] [{line}]')
                     if new_file.file_uri != line and file_equals(new_file.file_uri, line, COMPARISON_METHOD):
                         show.info(f'{line_number()} if {new_file.file_uri} != {line}')
-                        show.info(f'{line_number()} if file_equals({new_file.file_uri}, {line}, {COMPARISON_METHOD}):')
-
-                        show.info(f'{line_number()} self.new_row({new_file}, kind=SYMLINK)')
+                        show.info(f'{line_number()} {function_name} FILE COMPARISON [{COMPARISON_METHOD}] [{new_file.file_uri}] [{line}]')
+                        show.info(f'{line_number()} {function_name} NEW ROW [SYMLINK] [{new_file}]')
                         self.new_row(new_file, kind=SYMLINK)
-                        show.info(f'{line_number()} self.new_row({new_file}, kind=REMOVED)')
+                        show.info(f'{line_number()} {function_name} NEW ROW [REMOVED] [{new_file}]')
                         self.new_row(new_file, kind=REMOVED)
 
-                        show.info(f'{line_number()} self.delete_row({new_file.file_uri})')
+                        show.info(f'{line_number()} {function_name} DELETE ROW [{new_file.file_uri}]')
                         self.delete_row(new_file.file_uri)
-                        show.info(f'{line_number()} self.execute({new_file.file_uri}, {line})')
+                        show.info(f'{line_number()} {function_name} CREATE LINK [{new_file.file_uri}] [{line}]')
                         self.execute(new_file.file_uri, line)
                 else:
                     show.error(section_line(SYMBOL_EQ, 100))
-                    show.error(f'{line_number()} =====> ERROR: [{line_uri}] IT SHOULD NEVER HAPPENED! <=====')
+                    show.error(f'{line_number()} {function_name} =====> ERROR: [{line_uri}] IT SHOULD NEVER HAPPENED! <=====')
                     show.error(section_line(SYMBOL_EQ, 100))
 
-        show.debug(f'{line_number()} {DEBUG_MARKER} ADD FILE: SAVE DATA')
+        show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} SAVE DATA')
         self.save_data()
-        show.debug(f'{line_number()} {DEBUG_MARKER} ADD FILE: END')
+        show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} END')
         self.pause_thread()
 
     def mod_file(self, mod_uri):
+        function_name = 'MODIFY FILE:'
         mod_uri = mod_uri.replace(DOS_SLASH, UNIX_SLASH)
         self.update_thread_started_time()
         show.warning(f'{line_number()} {section_line(SYMBOL_EQ, LINE_LEN)}')
-        show.warning(f'{line_number()} def mod_file(self, {mod_uri}):')
+        show.warning(f'{line_number()} {function_name} MODIFY FILE [{mod_uri}]')
         if is_link(mod_uri):
-            show.warning(f'{line_number()} if is_link({mod_uri}):')
-            show.info(f'{line_number()} return')
+            show.warning(f'{line_number()} {function_name} IS FILE LINK? [{mod_uri}]')
+            show.info(f'{line_number()} {function_name} DO NOTHING, YET')
         elif is_dir(mod_uri):
-            show.warning(f'{line_number()} if is_dir({mod_uri}):')
-            show.warning(f'{line_number()} return')
+            show.warning(f'{line_number()} {function_name} IS FILE DIR? [{mod_uri}]')
+            show.warning(f'{line_number()} {function_name} DO NOTHING, YET')
         elif is_file(mod_uri):
-            show.info(f'{line_number()} elif is_file({mod_uri}):')
+            show.info(f'{line_number()} {function_name} IS FILE? [{mod_uri}]')
             new_file = FileHolder(mod_uri)
 
-            show.info(f'{line_number()} gotten_by_sha = self.get_files(new_file.file_sha, FILE, SHA)')
+            show.info(f'{line_number()} {function_name} GET FILES [SHA] [FILE] [{new_file.file_sha[0:SHA_SIZE]}]')
             gotten_by_sha = self.get_files(new_file.file_sha, FILE, SHA)
             if gotten_by_sha is not None:
-                show.info(f'{line_number()} if gotten_by_sha is not None:')
+                show.info(f'{line_number()} {function_name} GET FILES [SHA] FOUND')
                 if new_file.file_uri != gotten_by_sha[0]:
-                    show.info(f'{line_number()} if {new_file.file_uri} == {gotten_by_sha[0]}:')
-                    show.info(f'{line_number()} FILE MOVED - NO HANDLING HERE')
-                    show.info(f'{line_number()} FILE UNCHANGED {new_file.file_uri}')
-                    show.info(f'{line_number()} URI    CHANGED {gotten_by_sha[0]}')
+                    show.info(f'{line_number()} {function_name} FILE MOVED - NO HANDLING HERE')
+                    show.info(f'{line_number()} {function_name} FILE UNCHANGED {new_file.file_uri}')
+                    show.info(f'{line_number()} {function_name} URI    CHANGED {gotten_by_sha[0]}')
 
-            show.info(f'{line_number()} gotten_by_uri = self.get_file_index(new_file.file_uri, FILE)')
+            show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] [{new_file.file_uri}]')
             gotten_by_uri = self.get_file_index(new_file.file_uri, FILE)
             if gotten_by_uri is not None:
-                show.info(f'{line_number()} if gotten_by_uri is not None:')
+                show.info(f'{line_number()} {function_name} if gotten_by_uri is not None:')
                 if new_file.file_sha != gotten_by_uri[SHA].values[0]:
-                    show.info(f'{line_number()} if {new_file.file_sha[0:SHA_SIZE]} != {gotten_by_uri[SHA].values[0][0:SHA_SIZE]}:')
+                    show.info(f'{line_number()} COMPARISON IS DIFFERENT [{new_file.file_sha[0:SHA_SIZE]}] [{gotten_by_uri[SHA].values[0][0:SHA_SIZE]}]')
                     show.info(f'{line_number()} CONTENT CHANGED - MUST UPDATE LINKS WHEN APPLICABLE')
                     show.info(f'{line_number()} OLD: {gotten_by_uri[SHA].values[0][0:SHA_SIZE]}')
                     show.info(f'{line_number()} NEW: {new_file.file_sha[0:SHA_SIZE]}')
                     self._file_database.move_hash_location(gotten_by_uri[SHA].values[0], new_file.file_sha)
 
             if gotten_by_sha is None and gotten_by_uri is None:
-                show.info(f'{line_number()} if gotten_by_sha is None and gotten_by_uri is None:')
-                show.info(f'{line_number()} self.add_file({mod_uri})')
+                show.info(f'{line_number()} {function_name} GET FILES AND GET FILE INDEX DID NOT FIND RESOURCES')
+                show.info(f'{line_number()} {function_name} ADD FILE [{mod_uri}]')
                 self.add_file(mod_uri)
 
-        show.info(f'{line_number()} MODIFY FILE: SAVE DATA')
+        show.info(f'{line_number()} {function_name} SAVE DATA')
         self.save_data()
-        show.debug(f'{line_number()} {DEBUG_MARKER} MODIFY FILE: END')
+        show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} ENDED')
         self.pause_thread()
 
     def move_file(self, source_file, target_file):
+        function_name = 'MOVE FILE:'
         source_file = source_file.replace(DOS_SLASH, UNIX_SLASH)
         target_file = target_file.replace(DOS_SLASH, UNIX_SLASH)
         self.update_thread_started_time()
         section_message = section_line(SYMBOL_EQ, LINE_LEN)
         show.warning(f'{line_number()} {section_message}')
-        show.warning(f'{line_number()} def move_file(self, {source_file}, {target_file}):')
+        show.warning(f'{line_number()} {function_name} MOVE FILE [{source_file}] [{target_file}]')
 
         if is_link(target_file):
-            show.info(f'{line_number()} TRUE is_link({target_file}):')
-            show.info(f'{line_number()} self._file_allocation_table.loc[(self._file_allocation_table[URI] == source_file), URI] = target_file')
+            show.info(f'{line_number()} {function_name} IS LINK [{target_file}]')
+            show.info(f'{line_number()} {function_name} MOVE FILE LOCATION [URI] [{source_file}] [{target_file}]')
             self._file_database.move_file_location(source_file, target_file)
 
         elif is_file(target_file):
-            show.info(f'{line_number()} TRUE is_file({target_file}):')
+            show.info(f'{line_number()} {function_name} IS FILE [{target_file}]')
             new_file = FileHolder(target_file)
-            show.info(f'{line_number()} gotten_by_uri = self.get_file_index(new_file.file_uri, FILE)')
+            show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] [{new_file.file_uri}]')
             gotten_by_uri = self.get_file_index(new_file.file_uri, FILE)
             if gotten_by_uri is not None:
-                show.info(f'{line_number()} if gotten_by_uri is not None:')
+                show.info(f'{line_number()} {function_name} GET FILE INDEX - NOT FOUND')
                 if new_file.file_sha != gotten_by_uri[SHA].values[0]:
-                    show.info(f'{line_number()} if new_file.file_sha != gotten_by_uri[SHA].values[0]:')
+                    show.info(f'{line_number()} {function_name} SHA DIFFERS [{new_file.file_sha[0:SHA_SIZE]}] [{gotten_by_uri[SHA].values[0][0:SHA_SIZE]}]')
                     # TODO: MUST CHECK IF NEW SHA ALREADY EXIST ON DATABASE
                     # IF NOT EXIST, GO AHEAD
                     # IF EXIST, MANAGE DUPE
-                    show.info(f'{line_number()} SHA CHANGED FROM {gotten_by_uri[SHA].values[0][0:SHA_SIZE]}')
-                    show.info(f'{line_number()} SHA CHANGED TO   {new_file.file_sha[0:SHA_SIZE]}')
-                    show.info(f'{line_number()} self._file_allocation_table.loc[(self._file_allocation_table[SHA] == \
-                                                                                    gotten_by_uri[SHA].values[0]), SHA] = new_file.file_sha')
+                    show.info(f'{line_number()} {function_name} CHANGING SHA FROM [{gotten_by_uri[SHA].values[0][0:SHA_SIZE]}]')
+                    show.info(f'{line_number()} {function_name} CHANGING SHA TO   [{new_file.file_sha[0:SHA_SIZE]}]')
                     self._file_database.move_hash_location(gotten_by_uri[SHA].values[0], new_file.file_sha)
 
-            show.info(f'{line_number()} gotten_by_sha = self.get_files(new_file.file_sha, FILE, SHA)')
+            show.info(f'{line_number()} {function_name} GET FILES [SHA] [FILE] [{new_file.file_sha}]')
             gotten_by_sha = self.get_files(new_file.file_sha, FILE, SHA)
             if gotten_by_sha is not None:
-                show.info(f'{line_number()} if gotten_by_sha is not None:')
+                show.info(f'{line_number()} {function_name} GET FILES - NOT FOUND')
                 if new_file.file_uri != gotten_by_sha[0]:
-                    show.info(f'{line_number()} if if new_file.file_uri != gotten_by_sha[0]:')
-                    show.info(f'{line_number()} URI CHANGED FROM {gotten_by_sha[0]}')
-                    show.info(f'{line_number()} URI CHANGED TO   {new_file.file_uri}')
-                    show.info(f'{line_number()} CHANGING MAIN FILE ADDRESS BEFORE')
-                    show.debug(f'{line_number()} {DEBUG_MARKER} {NEW_LINE}{self.print_table()}')
+                    show.info(f'{line_number()} {function_name} URI DIFFERS:')
+                    show.info(f'{line_number()} {function_name} URI CHANGED FROM [{gotten_by_sha[0]}]')
+                    show.info(f'{line_number()} {function_name} URI CHANGED TO   [{new_file.file_uri}]')
+                    show.info(f'{line_number()} {function_name} CHANGING MAIN FILE ADDRESS BEFORE')
+                    show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} {NEW_LINE}{self.print_table()}')
                     self._file_database.update_file_location(gotten_by_sha[0], new_file.file_uri)
-                    show.info(f'{line_number()} CHANGING MAIN FILE ADDRESS AFTER')
-                    show.debug(f'{line_number()} {DEBUG_MARKER} {NEW_LINE}{self.print_table()}')
+                    show.info(f'{line_number()} {function_name} CHANGING MAIN FILE ADDRESS AFTER')
+                    show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} {NEW_LINE}{self.print_table()}')
                     self._file_database.change_from_link_to_moved(new_file.file_sha)
-                    show.info(f'{line_number()} CHANGING LINK FILE ADDRESS')
-                    show.debug(f'{line_number()} {DEBUG_MARKER} {NEW_LINE}{self.print_table()}')
+                    show.info(f'{line_number()} {function_name} CHANGING LINK FILE ADDRESS')
+                    show.debug(f'{line_number()} {DEBUG_MARKER} {function_name} {NEW_LINE}{self.print_table()}')
+
+                    show.info(f'{line_number()} {function_name} GET FILES [SHA] [MOVED_FILE] [{new_file.file_sha[0:SHA_SIZE]}]')
                     line = self.get_files(new_file.file_sha, MOVED_FILE, SHA)
                     if line is not None:
-                        show.info(f'{line_number()} if line is not None:')
+                        show.info(f'{line_number()} {function_name} GET FILES - NOT FOUND')
                         for row in line:
-                            show.info(f'{line_number()} self.delete_row({row})')
+                            show.info(f'{line_number()} {function_name} DELETE ROW [{row}]')
                             self.delete_row(row)
-                            show.info(f'{line_number()} self.execute({row}, {new_file.file_uri})')
+                            show.info(f'{line_number()} {function_name} CREATE LINK [{row}] [{new_file.file_uri}]')
                             self.execute(row, new_file.file_uri)
-        show.info(f'{line_number()} self.save_data()')
+
+        show.info(f'{line_number()} {function_name} SAVE DATA')
         self.save_data()
-        show.info(f'{line_number()} return')
+        show.info(f'{line_number()} {function_name} ENDED')
         self.pause_thread()
 
     def del_file(self, del_uri):
+        function_name = 'DELETE FILE:'
         del_uri = del_uri.replace(DOS_SLASH, UNIX_SLASH)
         self.update_thread_started_time()
         section_message = section_line(SYMBOL_EQ, LINE_LEN)
         show.warning(f'{line_number()} {section_message}')
-        show.warning(f'{line_number()} def del_file(self, {del_uri}):')
+        show.warning(f'{line_number()} {function_name} DELETE FILE [{del_uri})]')
 
-        show.info(f'{line_number()} delete_index = self.get_file_index(uri, REMOVED)')
+        show.info(f'{line_number()} {function_name} GET FILE INDEX [REMOVED] [{uri}]')
         delete_index = self.get_file_index(del_uri, REMOVED)
-        show.info(f'{line_number()} if delete_index is not None: {delete_index is not None}')
         if delete_index is not None:
-            show.info(f'{line_number()} self._file_allocation_table.drop(delete_index.index, inplace=True)')
+            show.info(f'{line_number()} {function_name} DELETE INDEX - NOT FOUND')
+            show.info(f'{line_number()} {function_name} DROP [{delete_index.index}]')
             self._file_database.delete_file_from_database(delete_index)
-            show.info(f'{line_number()} self.save_data()')
+            show.info(f'{line_number()} {function_name} SAVE DATA')
             self.save_data()
-            show.info(f'{line_number()} return')
+            show.info(f'{line_number()} {function_name} ENDED')
             return
 
-        show.info(f'{line_number()} delete_index = self.get_file_index(uri, SYMLINK)')
+        show.info(f'{line_number()} {function_name} DELETE INDEX - FOUND')
+        show.info(f'{line_number()} {function_name} GET FILE INDEX [SYMLINK] [{uri}]')
         delete_index = self.get_file_index(del_uri, SYMLINK)
-        show.info(f'{line_number()} if delete_index is not None: {delete_index is not None}')
         if delete_index is not None:
-            show.info(f'{line_number()} self._file_allocation_table.drop(delete_index.index, inplace=True)')
+            show.info(f'{line_number()} {function_name} DELETE INDEX FOUND')
+            show.info(f'{line_number()} {function_name} DROP [{delete_index.index}]')
             self._file_database.delete_file_from_database(delete_index)
-            show.info(f'{line_number()} self.save_data()')
+            show.info(f'{line_number()} {function_name} SAVE DATA')
             self.save_data()
-            show.info(f'{line_number()} return')
+            show.info(f'{line_number()} {function_name} ENDED')
             return
 
-        show.info(f'{line_number()} delete_index = self.get_file_index(uri, FILE)')
+        show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] [{uri}]')
         delete_index = self.get_file_index(del_uri, FILE)
-        show.info(f'{line_number()} if delete_index is not None: {delete_index is not None}')
         if delete_index is not None:
-            show.info(f'{line_number()} self._file_allocation_table.drop(delete_index.index, inplace=True)')
+            show.info(f'{line_number()} {function_name} GET FILE INDEX - FOUND')
+            show.info(f'{line_number()} {function_name} DROP [{delete_index.index}]')
             self._file_database.delete_file_from_database(delete_index)
             sha = delete_index[SHA].values[0]
-            show.info(f'{line_number()} delete_index = self.get_files(sha, SYMLINK, SHA)')
+            show.info(f'{line_number()} {function_name} GET FILES [SHA] [SYMLINK] [{sha[0:SHA_SIZE]}]')
             delete_index = self.get_files(sha, SYMLINK, SHA)
-            show.info(f'{line_number()} if delete_index is not None: {delete_index is not None}')
             if delete_index is not None:
+                show.info(f'{line_number()} {function_name} GET FILES [SHA] [SYMLINK] - FOUND')
                 for row in delete_index:
-                    show.warning(f'{line_number()} self.delete_row({row})')
+                    show.warning(f'{line_number()} {function_name} DELETE ROW [{row}]')
                     self.delete_row(row)
                 self._file_database.change_from_link_to_deleted(sha)
 
-        show.info(f'{line_number()} self.save_data()')
+        show.info(f'{line_number()} {function_name} SAVE DATA')
         self.save_data()
-        show.info(f'{line_number()} return')
+        show.info(f'{line_number()} {function_name} ENDED')
         self.pause_thread()
 
 
