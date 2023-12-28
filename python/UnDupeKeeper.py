@@ -53,6 +53,7 @@ system_tray_icon = None
 
 MAX_SECONDS = 7
 
+DOS_DRIVE = "c:"
 OS_X = 'OS X'
 LINUX = 'Linux'
 WINDOWS = 'Windows'
@@ -605,8 +606,10 @@ class FileList:
                 logger.info(f'{line_number()} - make_dirs({dir_name_path})')
                 make_dirs(dir_name_path)
 
+            target_dos = DOS_DRIVE + target_link.replace('/', "\\")
+            source_dos = DOS_DRIVE + source_file.replace('/', "\\")
             link_command = {LINUX: f'{LINUX_LINK} "{source_file}" "{target_link}"',
-                            WINDOWS: f'{WINDOWS_LINK} "{target_link}" "{source_file}"'}
+                            WINDOWS: f'{WINDOWS_LINK} "{target_dos}" "{source_dos}"'}
             command = link_command[get_platform()]
 
             try:

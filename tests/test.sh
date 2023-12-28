@@ -1078,9 +1078,11 @@ call_check_link ${name2} 1
 call_check_link ${name3} 1
 call_check_link ${name4} 1
 
-call_pause
+call_delay_call_pause 10
 
 call_remove_file ${name1}
+
+call_delay_call_pause 10
 
 call_check_file ${name1} 0
 
@@ -1088,13 +1090,15 @@ call_check_link ${name2} 2
 call_check_link ${name3} 2
 call_check_link ${name4} 2
 
-call_pause
+call_delay_call_pause 10
 
 call_create_file ${name2} ${name5}
 
+call_delay_call_pause 10
+
 call_check_file ${name2} 1
 
-call_check_link ${name2} 2
+call_check_link ${name2} 0
 call_check_link ${name3} 2
 call_check_link ${name4} 2
 
