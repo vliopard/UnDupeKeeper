@@ -940,7 +940,7 @@ class FileList:
             show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] [{new_file.file_uri}]')
             gotten_by_uri = self.get_file_index(new_file.file_uri, FILE)
             if gotten_by_uri is not None:
-                show.info(f'{line_number()} {function_name} if gotten_by_uri is not None:')
+                show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] - FOUND')
                 if new_file.file_sha != gotten_by_uri[SHA].values[0]:
                     show.info(f'{line_number()} COMPARISON IS DIFFERENT [{new_file.file_sha[0:SHA_SIZE]}] [{gotten_by_uri[SHA].values[0][0:SHA_SIZE]}]')
                     show.info(f'{line_number()} CONTENT CHANGED - MUST UPDATE LINKS WHEN APPLICABLE')
@@ -1028,7 +1028,7 @@ class FileList:
         show.warning(f'{line_number()} {section_message}')
         show.warning(f'{line_number()} {function_name} DELETE FILE [{del_uri})]')
 
-        show.info(f'{line_number()} {function_name} GET FILE INDEX [REMOVED] [{uri}]')
+        show.info(f'{line_number()} {function_name} GET FILE INDEX [REMOVED] [{del_uri}]')
         delete_index = self.get_file_index(del_uri, REMOVED)
         if delete_index is not None:
             show.info(f'{line_number()} {function_name} DELETE INDEX - NOT FOUND')
@@ -1040,7 +1040,7 @@ class FileList:
             return
 
         show.info(f'{line_number()} {function_name} DELETE INDEX - FOUND')
-        show.info(f'{line_number()} {function_name} GET FILE INDEX [SYMLINK] [{uri}]')
+        show.info(f'{line_number()} {function_name} GET FILE INDEX [SYMLINK] [{del_uri}]')
         delete_index = self.get_file_index(del_uri, SYMLINK)
         if delete_index is not None:
             show.info(f'{line_number()} {function_name} DELETE INDEX FOUND')
@@ -1051,7 +1051,7 @@ class FileList:
             show.info(f'{line_number()} {function_name} ENDED')
             return
 
-        show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] [{uri}]')
+        show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] [{del_uri}]')
         delete_index = self.get_file_index(del_uri, FILE)
         if delete_index is not None:
             show.info(f'{line_number()} {function_name} GET FILE INDEX - FOUND')
