@@ -161,8 +161,10 @@ FILE = 'file'
 MOVED_FILE = 'move'
 DATA_TABLE = f'{LABEL_MAIN}.pkl'
 
+SETTINGS_FILE = 'UnDupeKeeper.ini'
+
 config = configparser.ConfigParser()
-config.read('UnDupeKeeper.ini')
+config.read(SETTINGS_FILE)
 
 UI = config.get('VALUES', 'UI')
 MAX_FILES = config.getint('VALUES', 'MAX_FILES')
