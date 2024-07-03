@@ -132,8 +132,12 @@ class GuidedUserInterface(QtWidgets.QDialog):
         model.setHorizontalHeaderLabels(['HASH/FILES'])
         self.ui_items.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
 
-        with open(self.json_file, 'r') as hdd_hl:
-            data = json.load(hdd_hl)
+        data = {}
+        try:
+            with open(self.json_file, 'r') as hdd_hl:
+                data = json.load(hdd_hl)
+        except FileNotFoundError as fnfe:
+            print('[NO DATA FOUND]')
 
         for k, v in data.items():
             if len(v) > 1:
