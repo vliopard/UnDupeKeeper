@@ -262,14 +262,16 @@ class GuidedUserInterface(QtWidgets.QDialog):
     @timed
     def hash_directory_files(self):
         print(f"SCANNING FILES: [{self.current_directory}]")
-        self.gui_status_bar.showMessage(f"[SCANNING FILES: {self.current_directory}]")
-        self.gui_progress_bar.setValue(0)
-        self.gui_progress_bar.show()
+        if not self.cli:
+            self.gui_status_bar.showMessage(f"[SCANNING FILES: {self.current_directory}]")
+            self.gui_progress_bar.setValue(0)
+            self.gui_progress_bar.show()
 
         status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
 
         self.count_files(self.current_directory)
-        self.gui_progress_bar.setMaximum(self.total_files)
+        if not self.cli:
+            self.gui_progress_bar.setMaximum(self.total_files)
         with tqdm(total=self.total_files, bar_format=status_bar_format) as tqdm_progress_bar:
             self.database_file_count = 0
             self.hash_count = 0
@@ -277,8 +279,9 @@ class GuidedUserInterface(QtWidgets.QDialog):
                 for file in files:
                     self.database_file_count += 1
                     tqdm_progress_bar.update(1)
-                    self.gui_progress_bar.setValue(self.database_file_count)
-                    QtWidgets.QApplication.processEvents()
+                    if not self.cli:
+                        self.gui_progress_bar.setValue(self.database_file_count)
+                        QtWidgets.QApplication.processEvents()
                     file_name = os.path.join(root, file)
                     file_name = os.path.normpath(file_name)
                     file_hash = UnDupeKeeper.get_hash(file_name, UnDupeKeeper.HASH_MD5)
@@ -288,8 +291,9 @@ class GuidedUserInterface(QtWidgets.QDialog):
                         self.hash_count += 1
                         self.hard_disk_drive_hash_list[file_hash] = [file_name]
 
-        self.gui_progress_bar.hide()
-        self.gui_status_bar.showMessage("[FILE SCANNING COMPLETE]")
+        if not self.cli:
+            self.gui_progress_bar.hide()
+            self.gui_status_bar.showMessage("[FILE SCANNING COMPLETE]")
 
     def save_database(self):
         print(f'SAVING DATABASE...')
