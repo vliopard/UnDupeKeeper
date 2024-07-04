@@ -243,7 +243,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
     def count_files(self, target_directory):
         self.total_size = 0
         self.total_files = 0
-        for root, dirs, files in os.walk(target_directory):
+        for root, dirs, files in tqdm(os.walk(target_directory), desc="SCANNING"):
             self.total_files += len(files)
             for file in files:
                 file_path = os.path.join(root, file)
