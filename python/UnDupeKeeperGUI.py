@@ -33,11 +33,12 @@ def timed(func):
 
 
 class GuidedUserInterface(QtWidgets.QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, cli=False, parent=None):
         super(GuidedUserInterface, self).__init__(parent)
         self.resize(1024, 768)
         self.setWindowTitle('DedupeGUI')
-        
+
+        self.cli = cli
         self.json_file = 'UnDupeKeeper.json'
 
         self.hard_disk_drive_hash_list = {}
@@ -102,7 +103,9 @@ class GuidedUserInterface(QtWidgets.QDialog):
         self.hash_sort_order = QtCore.Qt.SortOrder.AscendingOrder
         self.file_sort_order = QtCore.Qt.SortOrder.AscendingOrder
         self.expanded = True
-        self.create_model()
+
+        if not cli:
+            self.create_model()
 
         self.gui_status_bar.showMessage("[SYSTEM FUNCTIONAL]")
 
@@ -306,13 +309,17 @@ class GuidedUserInterface(QtWidgets.QDialog):
 
 def main(search_directory):
     application = QtWidgets.QApplication(sys.argv)
-    user_interface = GuidedUserInterface()
+
     if search_directory:
+        user_interface = GuidedUserInterface(False)
         user_interface.current_directory = search_directory
         user_interface.hash_directory_files()
         user_interface.save_database()
-    user_interface.show()
-    sys.exit(application.exec())
+
+    else:
+        user_interface = GuidedUserInterface()
+        user_interface.show()
+        sys.exit(application.exec())
 
 
 if __name__ == '__main__':
