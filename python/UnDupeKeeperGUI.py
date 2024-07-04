@@ -49,7 +49,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
         self.total_files = 0
 
         self.current_directory = UnDupeKeeper.config.get('PATHS', 'LOAD_PATH')
-        if not cli:
+        if not self.cli:
             print(f'LOADING [{self.current_directory}]')
 
         self.ui_items = QtWidgets.QTreeView()
@@ -105,7 +105,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
         self.file_sort_order = QtCore.Qt.SortOrder.AscendingOrder
         self.expanded = True
 
-        if not cli:
+        if not self.cli:
             self.create_model()
 
         self.gui_status_bar.showMessage("[SYSTEM FUNCTIONAL]")
@@ -313,7 +313,7 @@ def main(search_directory):
     application = QtWidgets.QApplication(sys.argv)
 
     if search_directory:
-        user_interface = GuidedUserInterface(False)
+        user_interface = GuidedUserInterface(True)
         user_interface.current_directory = search_directory
         user_interface.hash_directory_files()
         user_interface.save_database()
