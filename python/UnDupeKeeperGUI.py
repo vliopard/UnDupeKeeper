@@ -238,6 +238,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
             model.appendRow(item)
         self.ui_items.expandAll()
 
+    @timed
     def count_files(self, target_directory):
         self.total_files = 0
         for root, dirs, files in os.walk(target_directory):
