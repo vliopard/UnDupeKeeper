@@ -136,7 +136,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
         try:
             with open(self.json_file, 'r') as hdd_hl:
                 data = json.load(hdd_hl)
-        except FileNotFoundError as fnfe:
+        except FileNotFoundError:
             print('[NO DATA FOUND]')
 
         for k, v in data.items():
