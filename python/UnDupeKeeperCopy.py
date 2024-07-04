@@ -6,7 +6,18 @@ from tqdm import tqdm
 
 
 def copy_files(target_location):
+    summary_file = 'UnDupeKeeperSummary.json'
     json_file = 'UnDupeKeeper.json'
+
+    with open(summary_file, 'r') as hdd_hl_summary:
+        summary = json.load(hdd_hl_summary)
+        need_space = summary['size']
+        free_space = shutil.disk_usage(summary['directory']).free
+        print(f'FREE: [{free_space:,}]')
+        print(f'NEED: [{need_space:,}]')
+        if need_space >= free_space:
+            print('Free Space Unavailable')
+            return
 
     with open(json_file, 'r') as hdd_hl:
         data = json.load(hdd_hl)
@@ -32,4 +43,3 @@ if __name__ == "__main__":
     parser.add_argument('target_location', type=str, help='The target location to copy files to')
     args = parser.parse_args()
     copy_files(args.target_location)
-
