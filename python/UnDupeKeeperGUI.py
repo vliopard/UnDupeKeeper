@@ -49,7 +49,8 @@ class GuidedUserInterface(QtWidgets.QDialog):
         self.total_files = 0
 
         self.current_directory = UnDupeKeeper.config.get('PATHS', 'LOAD_PATH')
-        print(f'LOADING [{self.current_directory}]')
+        if not cli:
+            print(f'LOADING [{self.current_directory}]')
 
         self.ui_items = QtWidgets.QTreeView()
         self.ui_items.sortByColumn(1, QtCore.Qt.SortOrder.AscendingOrder)
@@ -244,6 +245,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
 
     @timed
     def hash_directory_files(self):
+        print(f"SCANNING FILES: [{self.current_directory}]")
         self.gui_status_bar.showMessage(f"[SCANNING FILES: {self.current_directory}]")
         self.gui_progress_bar.setValue(0)
         self.gui_progress_bar.show()
