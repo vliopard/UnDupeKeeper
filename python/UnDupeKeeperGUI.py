@@ -245,10 +245,14 @@ class GuidedUserInterface(QtWidgets.QDialog):
         self.total_files = 0
         for root, dirs, files in tqdm(os.walk(target_directory), desc="SCANNING"):
             self.total_files += len(files)
+        '''
             for file in files:
                 file_path = os.path.join(root, file)
                 if not os.path.islink(file_path):
-                    self.total_size += os.path.getsize(file_path)
+                    try:
+                        self.total_size += os.path.getsize(file_path)
+                    except FileNotFoundError as file_not_found_error:
+                        print(f'FILE NOT FOUND: [{file_path}]\n{file_not_found_error}')
         print(f'SIZE: [{self.total_size:,}]')
         print(f'FILE: [{self.total_files:,}]')
 
@@ -258,6 +262,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
 
         with open('UnDupeKeeperSummary.json', 'w') as summary_file:
             json.dump(summary, summary_file)
+        '''
 
     @timed
     def hash_directory_files(self):
