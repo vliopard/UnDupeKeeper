@@ -350,7 +350,10 @@ def get_hash(uri_file, digest):
             show.info(f'{line_number()} {function_name} HASH OBTAINED [{sha_file[0:SHA_SIZE]}] [{uri_file}]')
         except PermissionError as permission_error:
             show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - PermissionError [{permission_error}]')
-            time.sleep(1)
+        except FileNotFoundError as file_not_found_error:
+            show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - FileNotFoundError [{file_not_found_error}]')
+        except Exception as exception:
+            show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - Exception [{exception}]')
     return sha_file
 
 

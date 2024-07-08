@@ -143,6 +143,8 @@ class GuidedUserInterface(QtWidgets.QDialog):
                 data = json.load(hdd_hl)
         except FileNotFoundError:
             print('[NO DATA FOUND]')
+        except Exception as e:
+            print(f'[EXCEPTION {e}]')
 
         for k, v in data.items():
             if len(v) > 1:
