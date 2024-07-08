@@ -40,6 +40,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
 
         self.cli = cli
         self.json_file = 'UnDupeKeeper.json'
+        self.file_counter = 'UnDupeKeeperCount.json'
 
         self.hard_disk_drive_hash_list = {}
 
@@ -243,28 +244,21 @@ class GuidedUserInterface(QtWidgets.QDialog):
 
     @timed
     def count_files(self, target_directory):
-        self.total_size = 0
         self.total_files = 0
+        if os.path.isfile(self.file_counter):
+            with open(self.file_counter, 'r') as file_count:
+                count_data = json.load(file_count)
+                if self.current_directory == count_data['current_dir']:
+                    self.total_files = count_data['file_count']
+                    return
+
         for root, dirs, files in tqdm(os.walk(target_directory), desc="SCANNING"):
             self.total_files += len(files)
-        '''
-            for file in files:
-                file_path = os.path.join(root, file)
-                if not os.path.islink(file_path):
-                    try:
-                        self.total_size += os.path.getsize(file_path)
-                    except FileNotFoundError as file_not_found_error:
-                        print(f'FILE NOT FOUND: [{file_path}]\n{file_not_found_error}')
-        print(f'SIZE: [{self.total_size:,}]')
-        print(f'FILE: [{self.total_files:,}]')
 
-        summary = {'directory': self.current_directory,
-                   'size': self.total_size,
-                   'files': self.total_files}
-
-        with open('UnDupeKeeperSummary.json', 'w') as summary_file:
-            json.dump(summary, summary_file)
-        '''
+        with open(self.file_counter, 'w') as file_count:
+            count_data = {'current_dir': self.current_directory,
+                          'file_count': self.total_files}
+            json.dump(count_data, file_count)
 
     @timed
     def hash_directory_files(self):
