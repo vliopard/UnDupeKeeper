@@ -9,7 +9,7 @@ def get_size():
     total_size = 0
     total_files = 0
     json_file = 'UnDupeKeeper.json'
-    with open(json_file, 'r') as hdd_hl:
+    with open(json_file, 'r', encoding='UTF-8') as hdd_hl:
         data = json.load(hdd_hl)
         status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
         with tqdm(total=len(data), bar_format=status_bar_format) as tqdm_progress_bar:
@@ -37,7 +37,7 @@ def copy_files(target_location):
         print('Free Space Unavailable')
         return
 
-    with open(json_file, 'r') as hdd_hl:
+    with open(json_file, 'r', encoding='UTF-8') as hdd_hl:
         data = json.load(hdd_hl)
 
         status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"

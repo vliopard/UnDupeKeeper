@@ -123,7 +123,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
             self.current_directory = selected
 
             UnDupeKeeper.config.set('PATHS', 'LOAD_PATH', self.current_directory)
-            with open(UnDupeKeeper.SETTINGS_FILE, 'w') as configfile:  # save
+            with open(UnDupeKeeper.SETTINGS_FILE, 'w', encoding='UTF-8') as configfile:  # save
                 UnDupeKeeper.config.write(configfile)
 
             self.hash_directory_files()
@@ -140,7 +140,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
 
         data = {}
         try:
-            with open(self.json_file, 'r') as hdd_hl:
+            with open(self.json_file, 'r', encoding='UTF-8') as hdd_hl:
                 data = json.load(hdd_hl)
         except FileNotFoundError:
             print('[NO DATA FOUND]')
@@ -246,7 +246,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
     def count_files(self, target_directory):
         self.total_files = 0
         if os.path.isfile(self.file_counter):
-            with open(self.file_counter, 'r') as file_count:
+            with open(self.file_counter, 'r', encoding='UTF-8') as file_count:
                 count_data = json.load(file_count)
                 if self.current_directory == count_data['current_dir']:
                     self.total_files = count_data['file_count']
@@ -255,7 +255,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
         for root, dirs, files in tqdm(os.walk(target_directory), desc="SCANNING"):
             self.total_files += len(files)
 
-        with open(self.file_counter, 'w') as file_count:
+        with open(self.file_counter, 'w', encoding='UTF-8') as file_count:
             count_data = {'current_dir': self.current_directory,
                           'file_count': self.total_files}
             json.dump(count_data, file_count)
@@ -323,7 +323,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
         print(f'DIFF [{(self.file_count - self.hash_count):,}]')
 
         print('SAVING...')
-        with open(self.json_file, 'w') as save_file:
+        with open(self.json_file, 'w', encoding='UTF-8') as save_file:
             json.dump(self.hard_disk_drive_hash_list, save_file)
         print('DONE.')
 
