@@ -123,7 +123,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
             self.current_directory = selected
 
             UnDupeKeeper.config.set('PATHS', 'LOAD_PATH', self.current_directory)
-            with open(UnDupeKeeper.SETTINGS_FILE, 'w', encoding='UTF-8') as configfile:  # save
+            with open(UnDupeKeeper.SETTINGS_FILE, 'w', encoding='UTF-8') as configfile:
                 UnDupeKeeper.config.write(configfile)
 
             self.hash_directory_files()
