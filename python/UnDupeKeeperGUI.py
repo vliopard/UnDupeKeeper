@@ -1,35 +1,17 @@
 import os
 import sys
-import time
 import json
-import logging
 import argparse
 
-import UnDupeKeeper
+import constants
+from methods import timed
+from methods import get_hash
 
 from tqdm import tqdm
-from functools import wraps
-from datetime import datetime, timedelta
 from PySide6 import QtGui, QtCore, QtWidgets
 
-show = logging.getLogger('HDDHL')
-
-
-def timed(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        start_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        time_start = time.time()
-        result = func(*args, **kwargs)
-        time_end = time.time()
-        end_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        time_report = [f'Start time: {start_time}', f'End time:   {end_time}', f"Function {func.__name__} ran in {timedelta(seconds=(time_end - time_start))}"]
-        print('=' * 100)
-        for time_detail in time_report:
-            print(time_detail)
-        print('=' * 100)
-        return result
-    return wrapper
+import logging
+show = logging.getLogger(constants.DEBUG_GUI)
 
 
 class GuidedUserInterface(QtWidgets.QDialog):
@@ -39,8 +21,8 @@ class GuidedUserInterface(QtWidgets.QDialog):
         self.setWindowTitle('DedupeGUI')
 
         self.cli = cli
-        self.json_file = 'UnDupeKeeper.json'
-        self.file_counter = 'UnDupeKeeperCount.json'
+        self.json_file = constants.STORAGE_FILE
+        self.file_counter = constants.COUNTER_FILE
 
         self.hard_disk_drive_hash_list = {}
 
@@ -50,7 +32,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
         self.total_size = 0
         self.total_files = 0
 
-        self.current_directory = UnDupeKeeper.config.get('PATHS', 'LOAD_PATH')
+        self.current_directory = constants.config.get('PATHS', 'LOAD_PATH')
         if not self.cli:
             print(f'LOADING [{self.current_directory}]')
 
@@ -122,9 +104,9 @@ class GuidedUserInterface(QtWidgets.QDialog):
         if selected:
             self.current_directory = selected
 
-            UnDupeKeeper.config.set('PATHS', 'LOAD_PATH', self.current_directory)
-            with open(UnDupeKeeper.SETTINGS_FILE, 'w', encoding='UTF-8') as configfile:
-                UnDupeKeeper.config.write(configfile)
+            constants.config.set('PATHS', 'LOAD_PATH', self.current_directory)
+            with open(constants.SETTINGS_FILE, constants.WRITE, encoding=constants.UTF8) as configfile:
+                constants.config.write(configfile)
 
             self.hash_directory_files()
             self.save_database()
@@ -140,21 +122,21 @@ class GuidedUserInterface(QtWidgets.QDialog):
 
         data = {}
         try:
-            with open(self.json_file, 'r', encoding='UTF-8') as hdd_hl:
+            with open(self.json_file, constants.READ, encoding=constants.UTF8) as hdd_hl:
                 data = json.load(hdd_hl)
         except FileNotFoundError:
             print('[NO DATA FOUND]')
         except Exception as e:
             print(f'[EXCEPTION {e}]')
 
-        for k, v in data.items():
-            if len(v) > 1:
-                root_node = QtGui.QStandardItem(k.upper())
-                for child in v:
+        for key, value in data.items():
+            if len(value) > 1:
+                root_node = QtGui.QStandardItem(key.upper())
+                for child in value:
                     child_node = QtGui.QStandardItem(child)
                     child_node.setCheckable(True)
                     root_node.appendRow(child_node)
-                root_node.setData(len(v), QtCore.Qt.UserRole + 1)
+                root_node.setData(len(value), QtCore.Qt.UserRole + 1)
                 model.appendRow(root_node)
 
         self.ui_items.expandAll()
@@ -206,9 +188,8 @@ class GuidedUserInterface(QtWidgets.QDialog):
 
     def handle_state_change(self, checked_item):
         state = checked_item.checkState()
-        indices = self.ui_items.selectedIndexes()
-        for idx in indices:
-            item = idx.model().itemFromIndex(idx)
+        for index in self.ui_items.selectedIndexes():
+            item = index.model().itemFromIndex(index)
             item.setCheckState(state)
 
     def toggle_hash_sort_order(self):
@@ -246,7 +227,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
     def count_files(self, target_directory):
         self.total_files = 0
         if os.path.isfile(self.file_counter):
-            with open(self.file_counter, 'r', encoding='UTF-8') as file_count:
+            with open(self.file_counter, constants.READ, encoding=constants.UTF8) as file_count:
                 count_data = json.load(file_count)
                 if self.current_directory == count_data['current_dir']:
                     self.total_files = count_data['file_count']
@@ -255,7 +236,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
         for root, dirs, files in tqdm(os.walk(target_directory), desc="SCANNING"):
             self.total_files += len(files)
 
-        with open(self.file_counter, 'w', encoding='UTF-8') as file_count:
+        with open(self.file_counter, constants.WRITE, encoding=constants.UTF8) as file_count:
             count_data = {'current_dir': self.current_directory,
                           'file_count': self.total_files}
             json.dump(count_data, file_count)
@@ -285,7 +266,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
                         QtWidgets.QApplication.processEvents()
                     file_name = os.path.join(root, file)
                     file_name = os.path.normpath(file_name)
-                    file_hash = UnDupeKeeper.get_hash(file_name, UnDupeKeeper.HASH_MD5)
+                    file_hash = get_hash(file_name, constants.HASH_MD5)
                     if file_hash in self.hard_disk_drive_hash_list:
                         self.hard_disk_drive_hash_list[file_hash].append(file_name)
                     else:
@@ -296,6 +277,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
             self.gui_progress_bar.hide()
             self.gui_status_bar.showMessage("[FILE SCANNING COMPLETE]")
 
+    @timed
     def save_database(self):
         print(f'SAVING DATABASE...')
         self.file_count = 0
@@ -323,7 +305,7 @@ class GuidedUserInterface(QtWidgets.QDialog):
         print(f'DIFF [{(self.file_count - self.hash_count):,}]')
 
         print('SAVING...')
-        with open(self.json_file, 'w', encoding='UTF-8') as save_file:
+        with open(self.json_file, constants.WRITE, encoding=constants.UTF8) as save_file:
             json.dump(self.hard_disk_drive_hash_list, save_file)
         print('DONE.')
 
