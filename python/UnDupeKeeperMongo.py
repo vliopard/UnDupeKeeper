@@ -249,7 +249,7 @@ class DataBase:
             for elem in document:
                 if elem in elements:
                     for item in document[elem]:
-                        return_list.append(f'[{document[constants.DOC_ID]}] [{elem}] [{item}]')
+                        return_list.append(f'[{document[constants.DOC_ID][0:constants.SHA_SIZE]}] [{elem}] [{item}]')
         return return_list
 
     def move_file(self, from_source, to_target):
@@ -283,7 +283,7 @@ class DataBase:
                 show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{file_id}] NOT FOUND')
 
     def get_total_files_count(self):
-        actions = [constants.REMOVED, constants.SYMLINK, constants.DELETED_PARENT, constants.FILE, constants.MOVED_FILE]
+        actions = [constants.SYMLINK, constants.FILE]
         pipeline = [{"$project": {action: {"$size": {"$ifNull": [f"${action}", []]}} for action in actions}},
                     {"$project": {"totalSize": {"$sum": [f"${action}" for action in actions]}}}, {"$group": {constants.DOC_ID: None, "totalCount": {"$sum": "$totalSize"}}}]
         documents = self.mongo_collection.aggregate(pipeline)
@@ -326,13 +326,13 @@ class DataBase:
                 if file_uri not in element[target]:
                     element[target].append(file_uri)
                 else:
-                    print(f'[{file_uri}] is already on links.')
+                    show.debug(f'{line_number()} {constants.DEBUG_MARKER} [{file_uri}] ALREADY ON LINKS')
             else:
                 element[target] = [file_uri]
             result = self.mongo_collection.update_one({constants.DOC_ID: element[constants.DOC_ID]}, {'$set': {target: element[target]}}, upsert=True)
             upsert(result, element[constants.DOC_ID])
         else:
-            print(f'[{file_uri}] not found.')
+            show.debug(f'{line_number()} {constants.DEBUG_MARKER} [{file_uri}] NOT FOUND')
 
     def change_sha_from_to(self, file_sha, source, target):
         element = self.mongo_collection.find_one({constants.DOC_ID: file_sha})
@@ -348,11 +348,11 @@ class DataBase:
                 element[target] = element[target] + element_move
             else:
                 element[target] = element_move
-                print(f'[{file_sha}] is already on links.')
+                show.debug(f'{line_number()} {constants.DEBUG_MARKER} [{file_sha}] ALREADY ON LINKS')
             result = self.mongo_collection.update_one({constants.DOC_ID: element[constants.DOC_ID]}, {'$set': {target: element[target]}}, upsert=True)
             upsert(result, element[constants.DOC_ID])
         else:
-            print(f'[{file_sha}] not found.')
+            show.debug(f'{line_number()} {constants.DEBUG_MARKER} [{file_sha}] NOT FOUND')
 
     def change_hash_file(self, old_id, new_id):
         result = self.mongo_collection.find({constants.DOC_ID: old_id})
