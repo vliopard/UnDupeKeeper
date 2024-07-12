@@ -66,12 +66,13 @@ else:
 
 
 def upsert(result, document_id):
+    function_name = "RESULT CHECK"
     if result.upserted_id is not None:
-        print(f'[{document_id}] INSERTED.')
+        show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{document_id}] INSERTED')
     elif result.modified_count > 0:
-        print(f'[{document_id}] UPDATED.')
+        show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{document_id}] UPDATED')
     else:
-        print(f'[{document_id}] ERROR.')
+        show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{document_id}] ERROR')
 
 
 class KBHit:
@@ -202,28 +203,33 @@ class DataBase:
         return element_list
 
     def add_file_to_database(self, new_row):
+        function_name = 'ADD TO DATABASE'
         for file_sha in new_row:
             element = self.mongo_collection.find_one({constants.DOC_ID: file_sha})
             if element:
+                element = dict(element)
                 for item in new_row[file_sha]:
+                    if item not in element:
+                        element[item] = []
                     if new_row[file_sha][item][0] not in element[item]:
                         element[item].append(new_row[file_sha][item][0])
                         result = self.mongo_collection.update_one({constants.DOC_ID: file_sha}, {'$set': {item: element[item]}}, upsert=True)
                         upsert(result, file_sha)
                     else:
-                        print(f'ERROR: [{file_sha}][{new_row[file_sha][item][0]}] already exists.')
+                        show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{file_sha}][{new_row[file_sha][item][0]}] already exists')
             else:
                 try:
                     for item in new_row[file_sha]:
                         self.mongo_collection.insert_one({constants.DOC_ID: file_sha, 'file_size': os.path.getsize(new_row[file_sha][item][0]), constants.FILE: new_row[file_sha][item]})
                 except DuplicateKeyError as duplicate_key_error:
-                    print(f'[{duplicate_key_error}]')
+                    show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{file_sha}][{duplicate_key_error}]')
                 break
 
     def insert(self, element):
         self.mongo_collection.insert_one({constants.DOC_ID: element[constants.DOC_ID], 'file_size': os.path.getsize(element[constants.FILE][0]), constants.FILE: element[constants.FILE]})
 
     def delete(self, file_uri, source):
+        function_name = 'DELETE'
         element = self.mongo_collection.find_one({source: {'$elemMatch': {'$eq': file_uri}}})
         if element:
             if file_uri in element[source]:
@@ -231,9 +237,9 @@ class DataBase:
                 result = self.mongo_collection.update_one({constants.DOC_ID: element[constants.DOC_ID]}, {'$set': {source: element[source]}}, upsert=True)
                 upsert(result, element[constants.DOC_ID])
             else:
-                print(f'ERROR: [{file_uri}] not in list.')
+                show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{file_uri}] not in list')
         else:
-            print(f'ERROR: [{file_uri}] not found.')
+            show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{file_uri}] not found')
 
     def get_all_files_rows(self):
         return_list = []
@@ -260,6 +266,7 @@ class DataBase:
                     break
 
     def delete_file_from_database(self, file_id):
+        function_name = 'DELETE FROM DATABASE'
         actions = [constants.REMOVED, constants.SYMLINK, constants.DELETED_PARENT, constants.FILE, constants.MOVED_FILE]
         query = {'$or': [{action: {'$elemMatch': {'$eq': file_id}}} for action in actions]}
         elements = self.mongo_collection.find(query)
@@ -273,18 +280,23 @@ class DataBase:
                 result = self.mongo_collection.update_one({constants.DOC_ID: elem[constants.DOC_ID]}, {'$set': {source: elem[source]}}, upsert=True)
                 upsert(result, elem[constants.DOC_ID])
             else:
-                print(f'ERROR [{file_id}] NOT FOUND')
+                show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{file_id}] NOT FOUND')
 
     def get_total_files_count(self):
         actions = [constants.REMOVED, constants.SYMLINK, constants.DELETED_PARENT, constants.FILE, constants.MOVED_FILE]
         pipeline = [{"$project": {action: {"$size": {"$ifNull": [f"${action}", []]}} for action in actions}},
                     {"$project": {"totalSize": {"$sum": [f"${action}" for action in actions]}}}, {"$group": {constants.DOC_ID: None, "totalCount": {"$sum": "$totalSize"}}}]
         documents = self.mongo_collection.aggregate(pipeline)
-        for return_value in documents:
-            return return_value['totalCount']
+        for result_value in documents:
+            if result_value['totalCount']:
+                return result_value['totalCount']
+        return 0
 
     def get_unique_files_count(self):
-        return self.mongo_collection.count_documents({})
+        result_value = self.mongo_collection.count_documents({})
+        if result_value:
+            return result_value
+        return 0
 
     def is_file_with_sha(self, sha):
         cursor = self.mongo_collection.find({constants.DOC_ID: sha, constants.FILE: {'$size': 1}})
