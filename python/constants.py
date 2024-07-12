@@ -44,6 +44,11 @@ WATCHDOG = 'watchdog'
 
 UTF8 = 'UTF-8'
 
+DOC_ID = '_id'
+FILE_LIST = 'file_list'
+FILE_SIZE = 'file_size'
+FILE_COUNT = 'file_list_count'
+
 NEW_LINE = '\n'
 DOS_SLASH = '\\'
 UNIX_SLASH = '/'

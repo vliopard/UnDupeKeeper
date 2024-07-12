@@ -52,10 +52,6 @@ show = logging.getLogger(constants.DEBUG_CORE)
 # ERROR=40
 # CRITICAL=50
 
-DOC_ID = '_id'
-FILE_LIST = 'file_list'
-FILE_SIZE = 'file_size'
-FILE_COUNT = 'file_list_count'
 
 thread_started = time.time()
 system_tray_icon = None
@@ -207,33 +203,33 @@ class DataBase:
 
     def add_file_to_database(self, new_row):
         for file_sha in new_row:
-            element = self.mongo_collection.find_one({'_id': file_sha})
+            element = self.mongo_collection.find_one({constants.DOC_ID: file_sha})
             if element:
                 for item in new_row[file_sha]:
                     if new_row[file_sha][item][0] not in element[item]:
                         element[item].append(new_row[file_sha][item][0])
-                        result = self.mongo_collection.update_one({'_id': file_sha}, {'$set': {item: element[item]}}, upsert=True)
+                        result = self.mongo_collection.update_one({constants.DOC_ID: file_sha}, {'$set': {item: element[item]}}, upsert=True)
                         upsert(result, file_sha)
                     else:
                         print(f'ERROR: [{file_sha}][{new_row[file_sha][item][0]}] already exists.')
             else:
                 try:
                     for item in new_row[file_sha]:
-                        self.mongo_collection.insert_one({'_id': file_sha, 'file_size': os.path.getsize(new_row[file_sha][item][0]), 'file': new_row[file_sha][item]})
+                        self.mongo_collection.insert_one({constants.DOC_ID: file_sha, 'file_size': os.path.getsize(new_row[file_sha][item][0]), constants.FILE: new_row[file_sha][item]})
                 except DuplicateKeyError as duplicate_key_error:
                     print(f'[{duplicate_key_error}]')
                 break
 
     def insert(self, element):
-        self.mongo_collection.insert_one({'_id': element['_id'], 'file_size': os.path.getsize(element['file'][0]), 'file': element['file']})
+        self.mongo_collection.insert_one({constants.DOC_ID: element[constants.DOC_ID], 'file_size': os.path.getsize(element[constants.FILE][0]), constants.FILE: element[constants.FILE]})
 
     def delete(self, file_uri, source):
         element = self.mongo_collection.find_one({source: {'$elemMatch': {'$eq': file_uri}}})
         if element:
             if file_uri in element[source]:
                 element[source].remove(file_uri)
-                result = self.mongo_collection.update_one({DOC_ID: element['_id']}, {'$set': {source: element[source]}}, upsert=True)
-                upsert(result, element['_id'])
+                result = self.mongo_collection.update_one({constants.DOC_ID: element[constants.DOC_ID]}, {'$set': {source: element[source]}}, upsert=True)
+                upsert(result, element[constants.DOC_ID])
             else:
                 print(f'ERROR: [{file_uri}] not in list.')
         else:
@@ -242,16 +238,16 @@ class DataBase:
     def get_all_files_rows(self):
         return_list = []
         cursor = self.mongo_collection.find({})
-        elements = ['remo', 'link', 'lynk', 'file', 'move']
+        elements = [constants.REMOVED, constants.SYMLINK, constants.DELETED_PARENT, constants.FILE, constants.MOVED_FILE]
         for document in cursor:
             for elem in document:
                 if elem in elements:
                     for item in document[elem]:
-                        return_list.append(f'[{document["_id"]}] [{elem}] [{item}]')
+                        return_list.append(f'[{document[constants.DOC_ID]}] [{elem}] [{item}]')
         return return_list
 
     def move_file(self, from_source, to_target):
-        actions = ['remo', 'link', 'lynk', 'file', 'move']
+        actions = [constants.REMOVED, constants.SYMLINK, constants.DELETED_PARENT, constants.FILE, constants.MOVED_FILE]
         query = {'$or': [{action: {'$elemMatch': {'$eq': from_source}}} for action in actions]}
         result = self.mongo_collection.find(query)
         for element in result:
@@ -259,12 +255,12 @@ class DataBase:
                 if isinstance(value, list) and from_source in value:
                     element[source].remove(from_source)
                     element[source].append(to_target)
-                    result = self.mongo_collection.update_one({'_id': element['_id']}, {'$set': {source: element[source]}}, upsert=True)
-                    upsert(result, element['_id'])
+                    result = self.mongo_collection.update_one({constants.DOC_ID: element[constants.DOC_ID]}, {'$set': {source: element[source]}}, upsert=True)
+                    upsert(result, element[constants.DOC_ID])
                     break
 
     def delete_file_from_database(self, file_id):
-        actions = ['remo', 'link', 'lynk', 'file', 'move']
+        actions = [constants.REMOVED, constants.SYMLINK, constants.DELETED_PARENT, constants.FILE, constants.MOVED_FILE]
         query = {'$or': [{action: {'$elemMatch': {'$eq': file_id}}} for action in actions]}
         elements = self.mongo_collection.find(query)
         for elem in elements:
@@ -274,15 +270,15 @@ class DataBase:
                     source = key
             if source:
                 elem[source].remove(file_id)
-                result = self.mongo_collection.update_one({DOC_ID: elem['_id']}, {'$set': {source: elem[source]}}, upsert=True)
-                upsert(result, elem['_id'])
+                result = self.mongo_collection.update_one({constants.DOC_ID: elem[constants.DOC_ID]}, {'$set': {source: elem[source]}}, upsert=True)
+                upsert(result, elem[constants.DOC_ID])
             else:
                 print(f'ERROR [{file_id}] NOT FOUND')
 
     def get_total_files_count(self):
-        actions = ['remo', 'link', 'lynk', 'file', 'move']
+        actions = [constants.REMOVED, constants.SYMLINK, constants.DELETED_PARENT, constants.FILE, constants.MOVED_FILE]
         pipeline = [{"$project": {action: {"$size": {"$ifNull": [f"${action}", []]}} for action in actions}},
-                    {"$project": {"totalSize": {"$sum": [f"${action}" for action in actions]}}}, {"$group": {"_id": None, "totalCount": {"$sum": "$totalSize"}}}]
+                    {"$project": {"totalSize": {"$sum": [f"${action}" for action in actions]}}}, {"$group": {constants.DOC_ID: None, "totalCount": {"$sum": "$totalSize"}}}]
         documents = self.mongo_collection.aggregate(pipeline)
         for return_value in documents:
             return return_value['totalCount']
@@ -291,14 +287,14 @@ class DataBase:
         return self.mongo_collection.count_documents({})
 
     def is_file_with_sha(self, sha):
-        cursor = self.mongo_collection.find({'_id': sha, 'file': {'$size': 1}})
+        cursor = self.mongo_collection.find({constants.DOC_ID: sha, constants.FILE: {'$size': 1}})
         for x in cursor:
             return x
         return None
 
     def is_element_with_sha(self, sha, elem):
         elements = []
-        cursor = self.mongo_collection.find({'_id': sha, elem: {'$gt': 0}})
+        cursor = self.mongo_collection.find({constants.DOC_ID: sha, elem: {'$gt': 0}})
         for x in cursor:
             elements.append(x)
         return elements
@@ -312,8 +308,8 @@ class DataBase:
             element = dict(element)
             if file_uri in element[source]:
                 element[source].remove(file_uri)
-                result = self.mongo_collection.update_one({DOC_ID: element['_id']}, {'$set': {source: element[source]}}, upsert=True)
-                upsert(result, element['_id'])
+                result = self.mongo_collection.update_one({constants.DOC_ID: element[constants.DOC_ID]}, {'$set': {source: element[source]}}, upsert=True)
+                upsert(result, element[constants.DOC_ID])
             if target in element:
                 if file_uri not in element[target]:
                     element[target].append(file_uri)
@@ -321,38 +317,38 @@ class DataBase:
                     print(f'[{file_uri}] is already on links.')
             else:
                 element[target] = [file_uri]
-            result = self.mongo_collection.update_one({DOC_ID: element['_id']}, {'$set': {target: element[target]}}, upsert=True)
-            upsert(result, element['_id'])
+            result = self.mongo_collection.update_one({constants.DOC_ID: element[constants.DOC_ID]}, {'$set': {target: element[target]}}, upsert=True)
+            upsert(result, element[constants.DOC_ID])
         else:
             print(f'[{file_uri}] not found.')
 
     def change_sha_from_to(self, file_sha, source, target):
-        element = self.mongo_collection.find_one({'_id': file_sha})
+        element = self.mongo_collection.find_one({constants.DOC_ID: file_sha})
         if element:
             element = dict(element)
             element_move = []
             if source in element:
                 element_move = element[source]
                 element[source] = []
-                result = self.mongo_collection.update_one({DOC_ID: element['_id']}, {'$set': {source: element[source]}}, upsert=True)
-                upsert(result, element['_id'])
+                result = self.mongo_collection.update_one({constants.DOC_ID: element[constants.DOC_ID]}, {'$set': {source: element[source]}}, upsert=True)
+                upsert(result, element[constants.DOC_ID])
             if target in element:
                 element[target] = element[target] + element_move
             else:
                 element[target] = element_move
                 print(f'[{file_sha}] is already on links.')
-            result = self.mongo_collection.update_one({DOC_ID: element['_id']}, {'$set': {target: element[target]}}, upsert=True)
-            upsert(result, element['_id'])
+            result = self.mongo_collection.update_one({constants.DOC_ID: element[constants.DOC_ID]}, {'$set': {target: element[target]}}, upsert=True)
+            upsert(result, element[constants.DOC_ID])
         else:
             print(f'[{file_sha}] not found.')
 
     def change_hash_file(self, old_id, new_id):
-        result = self.mongo_collection.find({'_id': old_id})
+        result = self.mongo_collection.find({constants.DOC_ID: old_id})
         for element in result:
-            element['_id'] = new_id
+            element[constants.DOC_ID] = new_id
             self.mongo_collection.insert_one(element)
             break
-        self.mongo_collection.delete_one({'_id': old_id})
+        self.mongo_collection.delete_one({constants.DOC_ID: old_id})
 
 
 class FileList:
@@ -420,7 +416,7 @@ class FileList:
         if constants.DEBUG_TEST:
             show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} OPEN FILE TABLE')
             with open(constants.FILE_TABLE, constants.WRITE, encoding=constants.UTF8) as file_table_handler:
-                save_data_index = self._file_database.get_list('file')
+                save_data_index = self._file_database.get_list(constants.FILE)
                 for value in save_data_index:
                     if get_platform() == constants.WINDOWS:
                         value = value.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
@@ -430,7 +426,7 @@ class FileList:
 
             show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} OPEN LINK TABLE')
             with open(constants.LINK_TABLE, constants.WRITE, encoding=constants.UTF8) as link_table_handler:
-                save_data_index = self._file_database.get_list('link')
+                save_data_index = self._file_database.get_list(constants.SYMLINK)
                 for value in save_data_index:
                     if get_platform() == constants.WINDOWS:
                         value = value.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
@@ -438,7 +434,7 @@ class FileList:
                     link_table_handler.write(value + constants.NEW_LINE)
                 link_table_handler.flush()
 
-                save_data_index = self._file_database.get_list('lynk')
+                save_data_index = self._file_database.get_list(constants.DELETED_PARENT)
                 for value in save_data_index:
                     if get_platform() == constants.WINDOWS:
                         value = value.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
@@ -538,7 +534,7 @@ class FileList:
     def update_junk(self):
         function_name = 'UPDATE JUNK:'
         show.info(f'{line_number()} {function_name} STARTED')
-        index_file = self._file_database.get_list('remo')
+        index_file = self._file_database.get_list(constants.REMOVED)
         for uri_index in index_file:
             delete_index = self._file_database.is_file_with(uri_index, constants.REMOVED)
             if delete_index:
@@ -549,25 +545,25 @@ class FileList:
     def update_files(self):
         function_name = 'UPDATE FILES:'
         show.info(f'{line_number()} {function_name} STARTED')
-        index_file = self._file_database.get_list('file')
+        index_file = self._file_database.get_list(constants.FILE)
         for uri_index in index_file:
             if not uri_exists(uri_index):
                 delete_index = self._file_database.is_file_with(uri_index, constants.FILE)
                 if delete_index:
-                    delete_sha = delete_index['_id']
+                    delete_sha = delete_index[constants.DOC_ID]
                     show.warning(f'{line_number()} {function_name} DROP FILE [{uri_index}]')
                     self._file_database.delete_file_from_database(delete_index)
                     delete_index = self._file_database.is_element_with_sha(delete_sha, constants.SYMLINK)
                     for row in delete_index:
                         show.warning(f'{line_number()} {function_name} DELETE ROW [{row}]')
                         self.delete_row(row)
-                    self._file_database.change_sha_from_to(delete_sha, 'link', 'lynk')
+                    self._file_database.change_sha_from_to(delete_sha, constants.SYMLINK, constants.DELETED_PARENT)
         show.info(f'{line_number()} {function_name} END')
 
     def update_links(self):
         function_name = 'UPDATE LINKS:'
         show.info(f'{line_number()} {function_name} STARTED')
-        index_file = self._file_database.get_list('link')
+        index_file = self._file_database.get_list(constants.SYMLINK)
         for uri_index in index_file:
             if not is_link(uri_index) and not uri_exists(uri_index):
                 delete_index = self._file_database.is_file_with(uri_index, constants.SYMLINK)
@@ -591,12 +587,12 @@ class FileList:
             if line:
                 show.info(f'{line_number()} {function_name} FOUND')
                 show.info(f'{line_number()} {function_name} GET FILES [SYMLINK] [URI] [{new_file.file_uri}]')
-                line = self._file_database.is_file_with(new_file.file_uri, 'link')
+                line = self._file_database.is_file_with(new_file.file_uri, constants.SYMLINK)
                 if not line:
                     show.info(f'{line_number()} {function_name} FOUND')
                     show.info(f'{line_number()} {function_name} NEW ROW [SYMLINK] [{new_file}]')
                     self.new_row(new_file, constants.SYMLINK)
-            self._file_database.change_uri_from_to(add_uri, 'move', 'link')
+            self._file_database.change_uri_from_to(add_uri, constants.MOVED_FILE, constants.SYMLINK)
 
         elif is_dir(add_uri):
             show.warning(f'{line_number()} {function_name} IS DIRECTORY? [{add_uri}]')
@@ -613,7 +609,7 @@ class FileList:
                 show.info(f'{line_number()} {function_name} GET FILE INDEX - URI [{new_file.file_uri}] DELETED_PARENT <= [{file_without_parent}]')
                 if file_without_parent:
                     show.info(f'{line_number()} {function_name} CHANGE FROM DELETED TO FILE [{new_file.file_uri}]')
-                    self._file_database.delete(new_file.file_uri, 'lynk')
+                    self._file_database.delete(new_file.file_uri, constants.DELETED_PARENT)
                     show.info(f'{line_number()} {function_name} CHANGE HASH FILE [{constants.FILE}] [{new_file.file_sha[0:constants.SHA_SIZE]}] [{new_file.file_uri}]')
                     self._file_database.insert(file_without_parent)
                 else:
@@ -627,9 +623,9 @@ class FileList:
                     for row in line:
                         show.info(f'{line_number()} {function_name} GET FILES - FILE FOUND [{row}] [{new_file.file_uri}]')
                         self.execute(row, new_file.file_uri)
-                self._file_database.change_uri_from_to(new_file.file_uri, 'lynk', 'link')
+                self._file_database.change_uri_from_to(new_file.file_uri, constants.DELETED_PARENT, constants.SYMLINK)
             else:
-                line = line['file'][0]
+                line = line[constants.FILE][0]
                 show.info(f'{line_number()} {function_name} GET FILE [SYMLINK] [{new_file.file_uri}]')
                 line_uri = self._file_database.is_file_with(new_file.file_uri, constants.SYMLINK)
                 if not line_uri:
@@ -677,23 +673,23 @@ class FileList:
             gotten_by_sha = self._file_database.is_element_with_sha(new_file.file_sha, constants.FILE)
             if gotten_by_sha:
                 show.info(f'{line_number()} {function_name} GET FILES [SHA] FOUND')
-                if len(gotten_by_sha[0]['file']) == 1:
-                    if new_file.file_uri != gotten_by_sha[0]['file'][0]:
+                if len(gotten_by_sha[0][constants.FILE]) == 1:
+                    if new_file.file_uri != gotten_by_sha[0][constants.FILE][0]:
                         show.info(f'{line_number()} {function_name} FILE MOVED - NO HANDLING HERE')
                         show.info(f'{line_number()} {function_name} FILE UNCHANGED {new_file.file_uri}')
-                        show.info(f'{line_number()} {function_name} URI    CHANGED {gotten_by_sha[0]["file"][0]}')
+                        show.info(f'{line_number()} {function_name} URI    CHANGED {gotten_by_sha[0][constants.FILE][0]}')
                 else:
-                    show.error(f'{line_number()} {function_name} TO MANY FILES IN [{gotten_by_sha[0]["file"]}]')
+                    show.error(f'{line_number()} {function_name} TO MANY FILES IN [{gotten_by_sha[0][constants.FILE]}]')
             show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] [{new_file.file_uri}]')
             gotten_by_uri = self._file_database.is_file_with(new_file.file_uri, constants.FILE)
             if gotten_by_uri:
                 show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] - FOUND')
-                if new_file.file_sha != gotten_by_uri['_id']:
+                if new_file.file_sha != gotten_by_uri[constants.DOC_ID]:
                     show.info(f'{line_number()} COMPARISON IS DIFFERENT [{new_file.file_sha[0:constants.SHA_SIZE]}] [{gotten_by_uri[constants.SHA].values[0][0:constants.SHA_SIZE]}]')
                     show.info(f'{line_number()} CONTENT CHANGED - MUST UPDATE LINKS WHEN APPLICABLE')
                     show.info(f'{line_number()} OLD: {gotten_by_uri[constants.SHA].values[0][0:constants.SHA_SIZE]}')
                     show.info(f'{line_number()} NEW: {new_file.file_sha[0:constants.SHA_SIZE]}')
-                    self._file_database.change_hash_file(gotten_by_uri['_id'], new_file.file_sha)
+                    self._file_database.change_hash_file(gotten_by_uri[constants.DOC_ID], new_file.file_sha)
 
             if gotten_by_sha is None and gotten_by_uri is None:
                 show.info(f'{line_number()} {function_name} GET FILES AND GET FILE INDEX DID NOT FIND RESOURCES')
@@ -726,27 +722,27 @@ class FileList:
             gotten_by_uri = self._file_database.is_file_with(new_file.file_uri, constants.FILE)
             if gotten_by_uri:
                 show.info(f'{line_number()} {function_name} GET FILE INDEX - NOT FOUND')
-                if new_file.file_sha != gotten_by_uri['_id']:
-                    show.info(f'{line_number()} {function_name} SHA DIFFERS [{new_file.file_sha[0:constants.SHA_SIZE]}] [{gotten_by_uri["_id"][0:constants.SHA_SIZE]}]')
+                if new_file.file_sha != gotten_by_uri[constants.DOC_ID]:
+                    show.info(f'{line_number()} {function_name} SHA DIFFERS [{new_file.file_sha[0:constants.SHA_SIZE]}] [{gotten_by_uri[constants.DOC_ID][0:constants.SHA_SIZE]}]')
                     # TODO: MUST CHECK IF NEW SHA ALREADY EXIST ON DATABASE # IF NOT EXIST, GO AHEAD # IF EXIST, MANAGE DUPE
-                    show.info(f'{line_number()} {function_name} CHANGING SHA FROM [{gotten_by_uri["_id"][0:constants.SHA_SIZE]}]')
+                    show.info(f'{line_number()} {function_name} CHANGING SHA FROM [{gotten_by_uri[constants.DOC_ID][0:constants.SHA_SIZE]}]')
                     show.info(f'{line_number()} {function_name} CHANGING SHA TO   [{new_file.file_sha[0:constants.SHA_SIZE]}]')
-                    self._file_database.change_hash_file(gotten_by_uri["_id"], new_file.file_sha)
+                    self._file_database.change_hash_file(gotten_by_uri[constants.DOC_ID], new_file.file_sha)
 
             show.info(f'{line_number()} {function_name} GET FILES [SHA] [FILE] [{new_file.file_sha}]')
             gotten_by_sha = self._file_database.is_element_with_sha(new_file.file_sha, constants.FILE)
             if gotten_by_sha:
                 show.info(f'{line_number()} {function_name} GET FILES - NOT FOUND')
-                if new_file.file_uri != gotten_by_sha[0]['file'][0]:
+                if new_file.file_uri != gotten_by_sha[0][constants.FILE][0]:
                     show.info(f'{line_number()} {function_name} URI DIFFERS:')
-                    show.info(f'{line_number()} {function_name} URI CHANGED FROM [{gotten_by_sha[0]["file"][0]}]')
+                    show.info(f'{line_number()} {function_name} URI CHANGED FROM [{gotten_by_sha[0][constants.FILE][0]}]')
                     show.info(f'{line_number()} {function_name} URI CHANGED TO   [{new_file.file_uri}]')
                     show.info(f'{line_number()} {function_name} CHANGING MAIN FILE ADDRESS BEFORE')
                     show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} {constants.NEW_LINE}{self.print_table()}')
-                    self._file_database.move_file(gotten_by_sha[0]['file'][0], new_file.file_uri)
+                    self._file_database.move_file(gotten_by_sha[0][constants.FILE][0], new_file.file_uri)
                     show.info(f'{line_number()} {function_name} CHANGING MAIN FILE ADDRESS AFTER')
                     show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} {constants.NEW_LINE}{self.print_table()}')
-                    self._file_database.change_sha_from_to(new_file.file_sha, 'link', 'move')
+                    self._file_database.change_sha_from_to(new_file.file_sha, constants.SYMLINK, constants.MOVED_FILE)
                     show.info(f'{line_number()} {function_name} CHANGING LINK FILE ADDRESS')
                     show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} {constants.NEW_LINE}{self.print_table()}')
 
@@ -755,10 +751,10 @@ class FileList:
                     if line:
                         show.info(f'{line_number()} {function_name} GET FILES - NOT FOUND')
                         for row in line:
-                            show.info(f'{line_number()} {function_name} DELETE ROW [{row["file"]}]')
-                            self.delete_row(row['file'])
-                            show.info(f'{line_number()} {function_name} CREATE LINK [{row["file"]}] [{new_file.file_uri}]')
-                            self.execute(row['file'], new_file.file_uri)
+                            show.info(f'{line_number()} {function_name} DELETE ROW [{row[constants.FILE]}]')
+                            self.delete_row(row[constants.FILE])
+                            show.info(f'{line_number()} {function_name} CREATE LINK [{row[constants.FILE]}] [{new_file.file_uri}]')
+                            self.execute(row[constants.FILE], new_file.file_uri)
 
         show.info(f'{line_number()} {function_name} SAVE DATA')
         self.save_data()
@@ -777,7 +773,7 @@ class FileList:
         delete_index = self._file_database.is_file_with(del_uri, constants.REMOVED)
         if delete_index is not None:
             show.info(f'{line_number()} {function_name} DELETE INDEX - NOT FOUND')
-            show.info(f'{line_number()} {function_name} DROP [{delete_index["_id"]}]')
+            show.info(f'{line_number()} {function_name} DROP [{delete_index[constants.DOC_ID]}]')
             self._file_database.delete_file_from_database(delete_index)
             show.info(f'{line_number()} {function_name} SAVE DATA')
             self.save_data()
@@ -789,7 +785,7 @@ class FileList:
         delete_index = self._file_database.is_file_with(del_uri, constants.SYMLINK)
         if delete_index is not None:
             show.info(f'{line_number()} {function_name} DELETE INDEX FOUND')
-            show.info(f'{line_number()} {function_name} DROP [{delete_index["_id"]}]')
+            show.info(f'{line_number()} {function_name} DROP [{delete_index[constants.DOC_ID]}]')
             self._file_database.delete_file_from_database(delete_index)
             show.info(f'{line_number()} {function_name} SAVE DATA')
             self.save_data()
@@ -800,7 +796,7 @@ class FileList:
         delete_index = self._file_database.is_file_with(del_uri, constants.FILE)
         if delete_index is not None:
             show.info(f'{line_number()} {function_name} GET FILE INDEX - FOUND')
-            show.info(f'{line_number()} {function_name} DROP [{delete_index["_id"]}]')
+            show.info(f'{line_number()} {function_name} DROP [{delete_index[constants.DOC_ID]}]')
             self._file_database.delete_file_from_database(delete_index)
             sha = delete_index[constants.SHA].values[0]
             show.info(f'{line_number()} {function_name} GET FILES [SHA] [SYMLINK] [{sha[0:constants.SHA_SIZE]}]')
@@ -810,7 +806,7 @@ class FileList:
                 for row in delete_index:
                     show.warning(f'{line_number()} {function_name} DELETE ROW [{row}]')
                     self.delete_row(row)
-                self._file_database.change_sha_from_to(sha, 'link', 'lynk')
+                self._file_database.change_sha_from_to(sha, constants.SYMLINK, constants.DELETED_PARENT)
 
         show.info(f'{line_number()} {function_name} SAVE DATA')
         self.save_data()
