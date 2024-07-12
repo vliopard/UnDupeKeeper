@@ -85,7 +85,7 @@ def create_checksum_fixed_chunks(file_name):
 
 def get_hash(uri_file, digest):
     function_name = 'GET HASH:'
-    sha_file = None
+    sha_file = 'NO_HASH'
     if digest == constants.HASH_MD5_FAST:
         digest_method = constants.HASH_MD5_FAST
     elif digest == constants.HASH_MD5_CHUNK:
@@ -99,28 +99,25 @@ def get_hash(uri_file, digest):
     else:
         digest_method = hashlib.md5()
     memory_view = memoryview(bytearray(128 * 1024))
-    retry = True
-    while retry:
-        try:
-            if is_link(uri_file):
-                uri_file = os.readlink(uri_file)
-            if digest_method == constants.HASH_MD5_FAST:
-                sha_file = scan(uri_file)
-            elif digest_method == constants.HASH_MD5_CHUNK:
-                sha_file = create_checksum_fixed_chunks(uri_file)
-            else:
-                with open(uri_file, constants.READ_BINARY, buffering=0) as uri_locator:
-                    for element in iter(lambda: uri_locator.readinto(memory_view), 0):
-                        digest_method.update(memory_view[:element])
-                sha_file = digest_method.hexdigest()
-            retry = False
-            show.info(f'{line_number()} {function_name} HASH OBTAINED [{sha_file[0:constants.SHA_SIZE]}] [{uri_file}]')
-        except PermissionError as permission_error:
-            show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - PermissionError [{permission_error}]')
-        except FileNotFoundError as file_not_found_error:
-            show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - FileNotFoundError [{file_not_found_error}]')
-        except Exception as exception:
-            show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - Exception [{exception}]')
+    try:
+        if is_link(uri_file):
+            uri_file = os.readlink(uri_file)
+        if digest_method == constants.HASH_MD5_FAST:
+            sha_file = scan(uri_file)
+        elif digest_method == constants.HASH_MD5_CHUNK:
+            sha_file = create_checksum_fixed_chunks(uri_file)
+        else:
+            with open(uri_file, constants.READ_BINARY, buffering=0) as uri_locator:
+                for element in iter(lambda: uri_locator.readinto(memory_view), 0):
+                    digest_method.update(memory_view[:element])
+            sha_file = digest_method.hexdigest()
+        show.info(f'{line_number()} {function_name} HASH OBTAINED [{sha_file[0:constants.SHA_SIZE]}] [{uri_file}]')
+    except PermissionError as permission_error:
+        show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - PermissionError [{permission_error}]')
+    except FileNotFoundError as file_not_found_error:
+        show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - FileNotFoundError [{file_not_found_error}]')
+    except Exception as exception:
+        show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - Exception [{exception}]')
     return sha_file
 
 
