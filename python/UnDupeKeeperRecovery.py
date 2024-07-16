@@ -27,12 +27,12 @@ def setup():
     tot = len(hard_disk_drive_hash_list_local)
 
     print('Generating file list...')
-    file_list_local = []
+    file_list_local = set()
     bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
     with tqdm(total=tot, bar_format=bar_format) as tqdm_progress:
         for x in hard_disk_drive_hash_list_local:
             tqdm_progress.update(1)
-            file_list_local += hard_disk_drive_hash_list_local[x]
+            file_list_local.update(set(hard_disk_drive_hash_list_local[x]))
 
     # with open('filelist.txt', 'w', encoding='UTF8') as fl:
     #     fl.write(str(file_list_local))
