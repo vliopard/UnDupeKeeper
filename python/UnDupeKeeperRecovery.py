@@ -99,8 +99,8 @@ def hash_directory_files(current_directory):
                     else:
                         hash_count += 1
                         hard_disk_drive_hash_list[file_hash] = [file_name]
-                else:
-                    file_set.discard(file_name)
+                # else:
+                #     file_set.discard(file_name)
 
 
 @timed
