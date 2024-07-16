@@ -1,5 +1,6 @@
 import os
 import json
+import pickle
 import constants
 
 from tqdm import tqdm
@@ -75,7 +76,18 @@ def hash_directory_files(current_directory):
 
     # total_files = count_files(current_directory)
     print('Listing files...')
-    result_set = list_files(current_directory) - file_set
+
+    res_set = 'result_set.pkl'
+    if uri_exists(res_set):
+        print('Loading previous results...')
+        with open(res_set, 'rb') as file:
+            result_set = pickle.load(file)
+    else:
+        print('Generating new results...')
+        result_set = list_files(current_directory) - file_set
+        with open(res_set, 'wb') as file:
+            pickle.dump(result_set, file)
+
     total_files = len(result_set)
 
     status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
