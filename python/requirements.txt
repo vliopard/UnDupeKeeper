@@ -2,10 +2,10 @@ md5hash==0.0.6
 openpyxl==3.1.2
 pandas==2.2.2
 Pillow==10.4.0
-pymongo==4.6.1
+pymongo==4.6.3
 PySide6==6.7.2
 PySide6_Addons==6.7.2
 PySide6_Essentials==6.7.2
 pystray==0.19.5
-tqdm==4.66.2
+tqdm==4.66.3
 watchdog==3.0.0
