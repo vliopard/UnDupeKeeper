@@ -141,5 +141,5 @@ def save_database():
 
 
 hard_disk_drive_hash_list, file_list = setup()
-hash_directory_files('e:\\vliopard\\')
+hash_directory_files('e:/vliopard/')
 save_database()
