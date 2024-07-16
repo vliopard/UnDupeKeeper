@@ -7,7 +7,7 @@ from tqdm import tqdm
 from methods import timed
 from methods import get_hash
 from methods import get_level
-from methods import list_files
+from methods import walk_files
 
 from os.path import exists as uri_exists
 
@@ -56,7 +56,7 @@ def count_files(target_directory):
                 return count_data['file_count']
 
     print('Generating new results...')
-    total_files = len(list_files(target_directory))
+    total_files = len(scan_files(target_directory))
 
     print('Saving new results...')
     with open(file_counter, constants.WRITE, encoding=constants.UTF8) as file_count:
@@ -78,7 +78,7 @@ def reload(current_directory):
             result_set = pickle.load(file)
     else:
         print('Generating new results...')
-        file_tmp = list_files(current_directory)
+        file_tmp = walk_files(current_directory)
 
         print('Getting distinct...')
         result_set = file_tmp - file_set
@@ -164,5 +164,5 @@ def save_database():
 
 
 hard_disk_drive_hash_list, file_set = setup()
-hash_directory_files('c:/vliopard/')
+hash_directory_files('c:/vliopard/download/')
 save_database()

@@ -69,13 +69,23 @@ def get_platform():
     return platforms[sys_platform]
 
 
-def list_files(current_path):
+@timed
+def scan_files(current_path):
     set_of_files = set()
     for entry in os.scandir(current_path):
         if entry.is_file():
             set_of_files.add(os.path.normpath(entry.path))
         elif entry.is_dir():
-            set_of_files.update(list_files(entry.path))
+            set_of_files.update(scan_files(entry.path))
+    return set_of_files
+
+
+@timed
+def walk_files(current_path):
+    set_of_files = set()
+    for root, dirs, files in tqdm(os.walk(current_path), desc='SCANNING'):
+        for file in files:
+            set_of_files.add(os.path.normpath(os.path.join(root, file)))
     return set_of_files
 
 
