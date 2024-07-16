@@ -12,27 +12,32 @@ from os.path import exists as uri_exists
 hash_count = 0
 database_file_count = 0
 
-if uri_exists(constants.STORAGE_FILE):
-    print('Loading data...')
-    with open(constants.STORAGE_FILE, constants.READ, encoding=constants.UTF8) as fix:
-        hard_disk_drive_hash_list = json.load(fix)
-else:
-    print('Starting with empty data...')
-    hard_disk_drive_hash_list = {}
 
-print('Getting total hashes...')
-tot = len(hard_disk_drive_hash_list)
+@timed
+def setup():
+    if uri_exists(constants.STORAGE_FILE):
+        print('Loading data...')
+        with open(constants.STORAGE_FILE, constants.READ, encoding=constants.UTF8) as fix:
+            hard_disk_drive_hash_list_local = json.load(fix)
+    else:
+        print('Starting with empty data...')
+        hard_disk_drive_hash_list_local = {}
 
-print('Generating file list...')
-file_list = []
+    print('Getting total hashes...')
+    tot = len(hard_disk_drive_hash_list_local)
 
-bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-with tqdm(total=tot, bar_format=bar_format) as tqdm_progress:
-    for x in hard_disk_drive_hash_list:
-        file_list += hard_disk_drive_hash_list[x]
+    print('Generating file list...')
+    file_list_local = []
 
-# with open('filelist.txt', 'w', encoding='UTF8') as fl:
-#     fl.write(str(file_list))
+    bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+    with tqdm(total=tot, bar_format=bar_format) as tqdm_progress:
+        for x in hard_disk_drive_hash_list_local:
+            tqdm_progress.update(1)
+            file_list_local += hard_disk_drive_hash_list_local[x]
+
+    # with open('filelist.txt', 'w', encoding='UTF8') as fl:
+    #     fl.write(str(file_list_local))
+    return hard_disk_drive_hash_list_local, file_list_local
 
 
 @timed
@@ -43,6 +48,8 @@ def count_files(target_directory):
     if os.path.isfile(file_counter):
         with open(file_counter, constants.READ, encoding=constants.UTF8) as file_count:
             count_data = json.load(file_count)
+            print(f'Checking [{current_directory}]')
+            print(f"Checking [{count_data['current_dir']}]")
             if current_directory == count_data['current_dir']:
                 total_files = count_data['file_count']
                 print('Returning previous results...')
@@ -133,5 +140,6 @@ def save_database():
     print('DONE.')
 
 
+hard_disk_drive_hash_list, file_list = setup()
 hash_directory_files('e:\\vliopard\\')
 save_database()
