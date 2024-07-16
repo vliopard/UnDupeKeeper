@@ -13,14 +13,23 @@ hash_count = 0
 database_file_count = 0
 
 if uri_exists(constants.STORAGE_FILE):
+    print('Loading data...')
     with open(constants.STORAGE_FILE, constants.READ, encoding=constants.UTF8) as fix:
         hard_disk_drive_hash_list = json.load(fix)
 else:
+    print('Starting with empty data...')
     hard_disk_drive_hash_list = {}
 
+print('Getting total hashes...')
+tot = len(hard_disk_drive_hash_list)
+
+print('Generating file list...')
 file_list = []
-for x in hard_disk_drive_hash_list:
-    file_list += hard_disk_drive_hash_list[x]
+
+status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+with tqdm(total=tot, bar_format=status_bar_format) as tqdm_progress_bar:
+    for x in hard_disk_drive_hash_list:
+        file_list += hard_disk_drive_hash_list[x]
 
 # with open('filelist.txt', 'w', encoding='UTF8') as fl:
 #     fl.write(str(file_list))
@@ -121,5 +130,5 @@ def save_database():
     print('DONE.')
 
 
-hash_directory_files(r'c:\vliopard\download')
+hash_directory_files(r'e:\vliopard')
 save_database()
