@@ -68,7 +68,7 @@ def count_files(target_directory):
 
 @timed
 def hash_directory_files(current_directory):
-    global file_list
+    global file_set
     global hash_count
     global database_file_count
     global hard_disk_drive_hash_list
@@ -92,15 +92,15 @@ def hash_directory_files(current_directory):
                 file_name = os.path.join(root, file)
                 file_name = os.path.normpath(file_name)
 
-                if file_name not in file_list:
+                if file_name not in file_set:
                     file_hash = get_hash(file_name, constants.HASH_MD5)
                     if file_hash in hard_disk_drive_hash_list:
                         hard_disk_drive_hash_list[file_hash].append(file_name)
                     else:
                         hash_count += 1
                         hard_disk_drive_hash_list[file_hash] = [file_name]
-                # else:
-                #     file_list.remove(file_name)
+                else:
+                    file_set.discard(file_name)
 
 
 @timed
@@ -143,6 +143,6 @@ def save_database():
     print('DONE.')
 
 
-hard_disk_drive_hash_list, file_list = setup()
+hard_disk_drive_hash_list, file_set = setup()
 hash_directory_files('e:/vliopard/')
 save_database()
