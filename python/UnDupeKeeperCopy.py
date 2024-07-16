@@ -6,7 +6,7 @@ import constants
 from tqdm import tqdm
 
 import logging
-show = logging.getLogger(constants.DEBUG_CP)
+show = logging.getLogger(constants.DEBUG_COPY)
 
 
 def get_size():

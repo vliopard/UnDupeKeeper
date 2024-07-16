@@ -4,7 +4,7 @@ import constants
 import subprocess
 
 import logging
-show = logging.getLogger(constants.DEBUG_DASHBOARD)
+show = logging.getLogger(constants.DEBUG_DASH)
 
 
 get_job = 'Get-DedupJob'

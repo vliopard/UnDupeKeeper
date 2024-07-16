@@ -6,7 +6,7 @@ from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
 import logging
-show = logging.getLogger(constants.DEBUG_DB)
+show = logging.getLogger(constants.DEBUG_DATA)
 
 
 mongo_client = MongoClient('mongodb://localhost:27017/')

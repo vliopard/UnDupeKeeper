@@ -6,12 +6,13 @@ import argparse
 import constants
 from methods import timed
 from methods import get_hash
+from methods import get_level
 
 from tqdm import tqdm
 from PySide6 import QtGui, QtCore, QtWidgets
 
 import logging
-show = logging.getLogger(constants.DEBUG_GUI)
+show = logging.getLogger(constants.DEBUG_MAIN)
 
 
 class GuidedUserInterface(QtWidgets.QDialog):
@@ -257,9 +258,14 @@ class GuidedUserInterface(QtWidgets.QDialog):
         with tqdm(total=self.total_files, bar_format=status_bar_format) as tqdm_progress_bar:
             self.database_file_count = 0
             self.hash_count = 0
+            cdir = ''
             for root, dirs, files in os.walk(self.current_directory):
                 for file in files:
                     self.database_file_count += 1
+                    level = get_level(root, 3)
+                    if cdir != level:
+                        cdir = level
+                        tqdm_progress_bar.set_postfix({'DIR': cdir})
                     tqdm_progress_bar.update(1)
                     if not self.cli:
                         self.gui_progress_bar.setValue(self.database_file_count)

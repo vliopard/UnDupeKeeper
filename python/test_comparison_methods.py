@@ -15,7 +15,7 @@ from methods import comparison_test
 from methods import create_random_binary_file
 
 import logging
-show = logging.getLogger(constants.DEBUG_DIR)
+show = logging.getLogger(constants.DEBUG_COMP)
 
 TEST_HASH = ''
 

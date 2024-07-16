@@ -25,7 +25,7 @@ from subprocess import CalledProcessError
 from subprocess import run as run_command
 
 import logging
-show = logging.getLogger(constants.DEBUG_METHODS)
+show = logging.getLogger(constants.DEBUG_UTIL)
 
 
 def timed(func):
@@ -85,7 +85,7 @@ def create_checksum_fixed_chunks(file_name):
 
 def get_hash(uri_file, digest):
     function_name = 'GET HASH:'
-    sha_file = 'NO_HASH'
+    sha_file = None
     if digest == constants.HASH_MD5_FAST:
         digest_method = constants.HASH_MD5_FAST
     elif digest == constants.HASH_MD5_CHUNK:
@@ -99,25 +99,39 @@ def get_hash(uri_file, digest):
     else:
         digest_method = hashlib.md5()
     memory_view = memoryview(bytearray(128 * 1024))
-    try:
-        if is_link(uri_file):
-            uri_file = os.readlink(uri_file)
-        if digest_method == constants.HASH_MD5_FAST:
-            sha_file = scan(uri_file)
-        elif digest_method == constants.HASH_MD5_CHUNK:
-            sha_file = create_checksum_fixed_chunks(uri_file)
-        else:
-            with open(uri_file, constants.READ_BINARY, buffering=0) as uri_locator:
-                for element in iter(lambda: uri_locator.readinto(memory_view), 0):
-                    digest_method.update(memory_view[:element])
-            sha_file = digest_method.hexdigest()
-        show.info(f'{line_number()} {function_name} HASH OBTAINED [{sha_file[0:constants.SHA_SIZE]}] [{uri_file}]')
-    except PermissionError as permission_error:
-        show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - PermissionError [{permission_error}]')
-    except FileNotFoundError as file_not_found_error:
-        show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - FileNotFoundError [{file_not_found_error}]')
-    except Exception as exception:
-        show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - Exception [{exception}]')
+
+    trials = 0
+
+    while sha_file is None:
+        try:
+
+            trials += 1
+            if trials > 5:
+                return sha_file
+
+            if is_link(uri_file):
+                uri_file = os.readlink(uri_file)
+            if digest_method == constants.HASH_MD5_FAST:
+                sha_file = scan(uri_file)
+            elif digest_method == constants.HASH_MD5_CHUNK:
+                sha_file = create_checksum_fixed_chunks(uri_file)
+            else:
+                with open(uri_file, constants.READ_BINARY, buffering=0) as uri_locator:
+                    for element in iter(lambda: uri_locator.readinto(memory_view), 0):
+                        digest_method.update(memory_view[:element])
+                sha_file = digest_method.hexdigest()
+            show.info(f'{line_number()} {function_name} HASH OBTAINED [{sha_file[0:constants.SHA_SIZE]}] [{uri_file}]')
+        except PermissionError as permission_error:
+            show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - PermissionError [{permission_error}]')
+        except FileNotFoundError as file_not_found_error:
+            show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - FileNotFoundError [{file_not_found_error}]')
+        except Exception as exception:
+            show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - Exception [{exception}]')
+
+        finally:
+            if trials > 1:
+                time.sleep(0.25)
+
     return sha_file
 
 
@@ -260,3 +274,22 @@ def scan_directory_count(working_directory):
     for root, dirs, files in tqdm(os.walk(working_directory), desc="SCANNING"):
         total_files += len(files)
     print(f'TOTAL FILES: [{total_files:,}]')
+
+
+def get_level(path, n):
+    path, _ = os.path.split(path)
+    is_windows = constants.DOS_SLASH in path
+    normalized_path = os.path.normpath(path)
+    directories = normalized_path.split(os.sep)
+
+    if os.path.isabs(path):
+        result = os.sep + os.sep.join(directories[1:n + 1])
+    else:
+        result = os.sep.join(directories[:n])
+
+    if is_windows:
+        result = result.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
+    else:
+        result = result.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
+
+    return result
