@@ -26,8 +26,8 @@ tot = len(hard_disk_drive_hash_list)
 print('Generating file list...')
 file_list = []
 
-status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-with tqdm(total=tot, bar_format=status_bar_format) as tqdm_progress_bar:
+bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+with tqdm(total=tot, bar_format=bar_format) as tqdm_progress:
     for x in hard_disk_drive_hash_list:
         file_list += hard_disk_drive_hash_list[x]
 
@@ -45,11 +45,14 @@ def count_files(target_directory):
             count_data = json.load(file_count)
             if current_directory == count_data['current_dir']:
                 total_files = count_data['file_count']
+                print('Returning previous results...')
                 return total_files
 
+    print('Generating new results...')
     for root, dirs, files in tqdm(os.walk(target_directory), desc="SCANNING"):
         total_files += len(files)
 
+    print('Saving new results...')
     with open(file_counter, constants.WRITE, encoding=constants.UTF8) as file_count:
         count_data = {'current_dir': current_directory, 'file_count': total_files}
         json.dump(count_data, file_count)
@@ -130,5 +133,5 @@ def save_database():
     print('DONE.')
 
 
-hash_directory_files(r'e:\vliopard')
+hash_directory_files('e:\\vliopard\\')
 save_database()
