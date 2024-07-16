@@ -17,6 +17,8 @@ database_file_count = 0
 
 @timed
 def setup():
+    print('_'*100)
+    print('Setup starting...')
     if uri_exists(constants.STORAGE_FILE):
         print('Loading data...')
         with open(constants.STORAGE_FILE, constants.READ, encoding=constants.UTF8) as fix:
@@ -43,6 +45,8 @@ def setup():
 
 @timed
 def count_files(target_directory):
+    print('_'*100)
+    print('Count starting...')
     current_directory = constants.config.get('PATHS', 'LOAD_PATH')
     file_counter = constants.COUNTER_FILE
 
@@ -56,7 +60,7 @@ def count_files(target_directory):
                 return count_data['file_count']
 
     print('Generating new results...')
-    total_files = len(scan_files(target_directory))
+    total_files = len(walk_files(target_directory))
 
     print('Saving new results...')
     with open(file_counter, constants.WRITE, encoding=constants.UTF8) as file_count:
@@ -68,6 +72,8 @@ def count_files(target_directory):
 
 @timed
 def reload(current_directory):
+    print('_'*100)
+    print('Reload starting...')
     # total_files = count_files(current_directory)
     print('Listing files...')
 
@@ -94,6 +100,8 @@ def reload(current_directory):
 
 @timed
 def hash_directory_files(current_directory):
+    print('_'*100)
+    print('Hash starting...')
     global file_set
     global hash_count
     global database_file_count
@@ -125,6 +133,8 @@ def hash_directory_files(current_directory):
 
 @timed
 def save_database():
+    print('_'*100)
+    print('Save starting...')
     global hash_count
     global database_file_count
     global hard_disk_drive_hash_list
