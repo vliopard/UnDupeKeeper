@@ -6,6 +6,7 @@ from tqdm import tqdm
 from methods import timed
 from methods import get_hash
 from methods import get_level
+from methods import list_files
 
 from os.path import exists as uri_exists
 
@@ -43,20 +44,18 @@ def setup():
 def count_files(target_directory):
     current_directory = constants.config.get('PATHS', 'LOAD_PATH')
     file_counter = constants.COUNTER_FILE
-    total_files = 0
+
     if os.path.isfile(file_counter):
         with open(file_counter, constants.READ, encoding=constants.UTF8) as file_count:
             count_data = json.load(file_count)
             print(f'Checking [{current_directory}]')
             print(f"Checking [{count_data['current_dir']}]")
             if current_directory == count_data['current_dir']:
-                total_files = count_data['file_count']
                 print('Returning previous results...')
-                return total_files
+                return count_data['file_count']
 
     print('Generating new results...')
-    for root, dirs, files in tqdm(os.walk(target_directory), desc="SCANNING"):
-        total_files += len(files)
+    total_files = len(list_files(target_directory))
 
     print('Saving new results...')
     with open(file_counter, constants.WRITE, encoding=constants.UTF8) as file_count:
@@ -74,33 +73,30 @@ def hash_directory_files(current_directory):
     global hard_disk_drive_hash_list
     print(f"SCANNING FILES: [{current_directory}]")
 
-    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+    # total_files = count_files(current_directory)
+    print('Listing files...')
+    result_set = list_files(current_directory) - file_set
+    total_files = len(result_set)
 
-    total_files = count_files(current_directory)
+    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
     with tqdm(total=total_files, bar_format=status_bar_format) as tqdm_progress_bar:
         database_file_count = 0
         hash_count = 0
         cdir = ''
-        for root, dirs, files in os.walk(current_directory):
-            for file in files:
-                database_file_count += 1
-                level = get_level(root, 3)
-                if cdir != level:
-                    cdir = level
-                    tqdm_progress_bar.set_postfix({'DIR': cdir})
-                tqdm_progress_bar.update(1)
-                file_name = os.path.join(root, file)
-                file_name = os.path.normpath(file_name)
+        for file_name in result_set:
+            database_file_count += 1
+            level = get_level(file_name, 3)
+            if cdir != level:
+                cdir = level
+                tqdm_progress_bar.set_postfix({'DIR': cdir})
+            tqdm_progress_bar.update(1)
 
-                if file_name not in file_set:
-                    file_hash = get_hash(file_name, constants.HASH_MD5)
-                    if file_hash in hard_disk_drive_hash_list:
-                        hard_disk_drive_hash_list[file_hash].append(file_name)
-                    else:
-                        hash_count += 1
-                        hard_disk_drive_hash_list[file_hash] = [file_name]
-                # else:
-                #     file_set.discard(file_name)
+            file_hash = get_hash(file_name, constants.HASH_MD5)
+            if file_hash in hard_disk_drive_hash_list:
+                hard_disk_drive_hash_list[file_hash].append(file_name)
+            else:
+                hash_count += 1
+                hard_disk_drive_hash_list[file_hash] = [file_name]
 
 
 @timed
@@ -144,5 +140,5 @@ def save_database():
 
 
 hard_disk_drive_hash_list, file_set = setup()
-hash_directory_files('e:/vliopard/')
+hash_directory_files('c:/vliopard/download/')
 save_database()

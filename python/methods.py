@@ -69,6 +69,16 @@ def get_platform():
     return platforms[sys_platform]
 
 
+def list_files(current_path):
+    set_of_files = set()
+    for entry in os.scandir(current_path):
+        if entry.is_file():
+            set_of_files.add(os.path.normpath(entry.path))
+        elif entry.is_dir():
+            set_of_files.update(list_files(entry.path))
+    return set_of_files
+
+
 def create_random_binary_file(file_path, size):
     with open(file_path, constants.WRITE) as random_file:
         random_bytes = bytearray(os.urandom(size))

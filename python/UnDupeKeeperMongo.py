@@ -266,21 +266,23 @@ class DataBase:
                     break
 
     def delete_file_from_database(self, file_id):
-        function_name = 'DELETE FROM DATABASE'
+        function_name = 'DELETE FROM DATABASE:'
         actions = [constants.REMOVED, constants.SYMLINK, constants.DELETED_PARENT, constants.FILE, constants.MOVED_FILE]
         query = {'$or': [{action: {'$elemMatch': {'$eq': file_id}}} for action in actions]}
         elements = self.mongo_collection.find(query)
+        show.info(f'{line_number()} {function_name} LOOKING FOR [{file_id}]')
         for elem in elements:
             source = None
             for key, value in elem.items():
                 if isinstance(value, list) and file_id in value:
                     source = key
             if source:
+                show.info(f'{line_number()} {function_name} SOURCE FOUND [{source}]')
                 elem[source].remove(file_id)
                 result = self.mongo_collection.update_one({constants.DOC_ID: elem[constants.DOC_ID]}, {'$set': {source: elem[source]}}, upsert=True)
                 upsert(result, elem[constants.DOC_ID])
             else:
-                show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{file_id}] NOT FOUND')
+                show.info(f'{line_number()} {function_name} NO SOURCE FOUND')
 
     def get_total_files_count(self):
         actions = [constants.SYMLINK, constants.FILE]
@@ -298,6 +300,27 @@ class DataBase:
             return result_value
         return 0
 
+    def is_uri_on_db(self, file_uri):
+        function_name = 'GET URI FROM DATABASE:'
+        actions = [constants.REMOVED, constants.SYMLINK, constants.DELETED_PARENT, constants.FILE, constants.MOVED_FILE]
+        query = {'$or': [{action: {'$elemMatch': {'$eq': file_uri}}} for action in actions]}
+        elements = self.mongo_collection.find(query)
+        show.info(f'{line_number()} {function_name} LOOKING FOR [{file_uri}]')
+
+        sources = {}
+        for elem in elements:
+            source = None
+            for key, value in elem.items():
+                if isinstance(value, list) and file_uri in value:
+                    source = key
+            if source:
+                sources[constants.DOC_ID] = elem[constants.DOC_ID]
+                sources[source] = elem[source]
+                show.info(f'{line_number()} {function_name} SOURCE FOUND [{source}]')
+            else:
+                show.info(f'{line_number()} {function_name} NO SOURCE FOUND')
+        return sources
+
     def is_file_with_sha(self, sha):
         cursor = self.mongo_collection.find({constants.DOC_ID: sha, constants.FILE: {'$size': 1}})
         for x in cursor:
@@ -305,10 +328,14 @@ class DataBase:
         return None
 
     def is_element_with_sha(self, sha, elem):
+        function_name = 'GET WITH SHA:'
         elements = []
-        cursor = self.mongo_collection.find({constants.DOC_ID: sha, elem: {'$gt': 0}})
+        cursor = self.mongo_collection.find({constants.DOC_ID: sha, f'{elem}.0': {'$exists': True}})
+        show.info(f'{line_number()} {function_name} LOOKING FOR [{sha[0:constants.SHA_SIZE]}] on [{elem}]')
         for x in cursor:
-            elements.append(x)
+            elements = x[elem]
+
+        show.info(f'{line_number()} {function_name} FOUND [{len(elements)}]')
         return elements
 
     def is_file_with(self, file_uri, element):
@@ -355,12 +382,17 @@ class DataBase:
             show.debug(f'{line_number()} {constants.DEBUG_MARKER} [{file_sha}] NOT FOUND')
 
     def change_hash_file(self, old_id, new_id):
+        function_name = 'CHANGE HASH FILE'
         result = self.mongo_collection.find({constants.DOC_ID: old_id})
-        for element in result:
-            element[constants.DOC_ID] = new_id
-            self.mongo_collection.insert_one(element)
-            break
-        self.mongo_collection.delete_one({constants.DOC_ID: old_id})
+        if old_id != new_id:
+            for element in result:
+                element = dict(element)
+                element[constants.DOC_ID] = new_id
+                self.mongo_collection.insert_one(element)
+                break
+            self.mongo_collection.delete_one({constants.DOC_ID: old_id})
+        else:
+            show.info(f'{line_number()} {function_name} SAME ID [{new_id[0:constants.SHA_SIZE]}]')
 
 
 class FileList:
@@ -483,8 +515,8 @@ class FileList:
                 show.info(f'{line_number()} {function_name} MAKING DIRECTORY [{dir_name_path}]')
                 make_dirs(dir_name_path)
 
-            target_dos = constants.DOS_DRIVE + target_link.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
-            source_dos = constants.DOS_DRIVE + source_file.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
+            target_dos = target_link.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
+            source_dos = source_file.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
             link_command = {constants.LINUX: f'{constants.LINUX_LINK} "{source_file}" "{target_link}"',
                             constants.WINDOWS: f'{constants.WINDOWS_LINK} "{target_dos}" "{source_dos}"'}
             command = link_command[get_platform()]
@@ -635,6 +667,8 @@ class FileList:
                     for row in line:
                         show.info(f'{line_number()} {function_name} GET FILES - FILE FOUND [{row}] [{new_file.file_uri}]')
                         self.execute(row, new_file.file_uri)
+
+                show.info(f'{line_number()} {function_name} MOVING DELETED PARENT URI TO LINKS')
                 self._file_database.change_uri_from_to(new_file.file_uri, constants.DELETED_PARENT, constants.SYMLINK)
             else:
                 line = line[constants.FILE][0]
@@ -657,12 +691,12 @@ class FileList:
                         self.execute(new_file.file_uri, line)
                 else:
                     show.error(section_line(constants.SYMBOL_EQ, 100))
-                    show.error(f'{line_number()} {function_name} =====> ERROR: [{line_uri}] IT SHOULD NEVER HAPPENED! <=====')
+                    show.error(f'{line_number()} {function_name} =====> ERROR: [{line_uri}] HAS A LINK ON DATABASE, BUT IT SHOULD NEVER HAPPENED! <=====')
                     show.error(section_line(constants.SYMBOL_EQ, 100))
 
-        show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} SAVE DATA')
-        self.save_data()
         show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} END')
+
+        self.save_data()
         self.pause_thread()
 
     def mod_file(self, mod_uri):
@@ -672,40 +706,36 @@ class FileList:
         show.warning(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
         show.warning(f'{line_number()} {function_name} MODIFY FILE [{mod_uri}]')
         if is_link(mod_uri):
-            show.warning(f'{line_number()} {function_name} IS FILE LINK? [{mod_uri}]')
-            show.info(f'{line_number()} {function_name} DO NOTHING, YET')
+            show.warning(f'{line_number()} {function_name} [{mod_uri}] IS A LINK, NOTHING TO DO YET')
         elif is_dir(mod_uri):
-            show.warning(f'{line_number()} {function_name} IS FILE DIR? [{mod_uri}]')
-            show.warning(f'{line_number()} {function_name} DO NOTHING, YET')
+            show.warning(f'{line_number()} {function_name} [{mod_uri}] IS A DIRECTORY, NOTHING TO DO YET')
         elif is_file(mod_uri):
-            show.info(f'{line_number()} {function_name} IS FILE? [{mod_uri}]')
             new_file = FileHolder(mod_uri)
+            show.info(f'{line_number()} {function_name} [{mod_uri}] IS A FILE [{new_file.file_sha[0:constants.SHA_SIZE]}]')
 
-            show.info(f'{line_number()} {function_name} GET FILES [SHA] [FILE] [{new_file.file_sha[0:constants.SHA_SIZE]}]')
             gotten_by_sha = self._file_database.is_element_with_sha(new_file.file_sha, constants.FILE)
             if gotten_by_sha:
-                show.info(f'{line_number()} {function_name} GET FILES [SHA] FOUND')
-                if len(gotten_by_sha[0][constants.FILE]) == 1:
-                    if new_file.file_uri != gotten_by_sha[0][constants.FILE][0]:
-                        show.info(f'{line_number()} {function_name} FILE MOVED - NO HANDLING HERE')
+                show.info(f'{line_number()} {function_name} SHA FOUND ON DATABASE')
+                if len(gotten_by_sha) == 1:
+                    show.info(f'{line_number()} {function_name} THERE IS ONLY ONE FILE IN SHA REGISTRY')
+                    if new_file.file_uri != gotten_by_sha[0]:
                         show.info(f'{line_number()} {function_name} FILE UNCHANGED {new_file.file_uri}')
-                        show.info(f'{line_number()} {function_name} URI    CHANGED {gotten_by_sha[0][constants.FILE][0]}')
+                        show.info(f'{line_number()} {function_name} URI    CHANGED {gotten_by_sha[0]}')
                 else:
-                    show.error(f'{line_number()} {function_name} TO MANY FILES IN [{gotten_by_sha[0][constants.FILE]}]')
-            show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] [{new_file.file_uri}]')
+                    show.error(f'{line_number()} {function_name} THERE ARE TOO MANY FILES IN SHA REGISTRY [{gotten_by_sha}]')
+
             gotten_by_uri = self._file_database.is_file_with(new_file.file_uri, constants.FILE)
             if gotten_by_uri:
-                show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] - FOUND')
+                show.info(f'{line_number()} {function_name} FILE URI FOUND ON DATABASE')
                 if new_file.file_sha != gotten_by_uri[constants.DOC_ID]:
-                    show.info(f'{line_number()} COMPARISON IS DIFFERENT [{new_file.file_sha[0:constants.SHA_SIZE]}] [{gotten_by_uri[constants.SHA].values[0][0:constants.SHA_SIZE]}]')
-                    show.info(f'{line_number()} CONTENT CHANGED - MUST UPDATE LINKS WHEN APPLICABLE')
-                    show.info(f'{line_number()} OLD: {gotten_by_uri[constants.SHA].values[0][0:constants.SHA_SIZE]}')
+                    show.info(f'{line_number()} DIFFERENT [{new_file.file_sha[0:constants.SHA_SIZE]}] [{gotten_by_uri[constants.DOC_ID][0:constants.SHA_SIZE]}]')
+                    show.info(f'{line_number()} OLD: {gotten_by_uri[constants.DOC_ID][0:constants.SHA_SIZE]}')
                     show.info(f'{line_number()} NEW: {new_file.file_sha[0:constants.SHA_SIZE]}')
+                    show.info(f'{line_number()} CONTENT CHANGED - CHANGING URI TO THE CORRECT SHA REGISTRY')
                     self._file_database.change_hash_file(gotten_by_uri[constants.DOC_ID], new_file.file_sha)
 
             if gotten_by_sha is None and gotten_by_uri is None:
-                show.info(f'{line_number()} {function_name} GET FILES AND GET FILE INDEX DID NOT FIND RESOURCES')
-                show.info(f'{line_number()} {function_name} ADD FILE [{mod_uri}]')
+                show.info(f'{line_number()} {function_name} NEITHER SHA OR URI WERE FOUND ON DATABASE. ADDING NEW FILE [{mod_uri}]')
                 self.add_file(mod_uri)
 
         show.info(f'{line_number()} {function_name} SAVE DATA')
@@ -781,43 +811,38 @@ class FileList:
         show.warning(f'{line_number()} {section_message}')
         show.warning(f'{line_number()} {function_name} DELETE FILE [{del_uri})]')
 
-        show.info(f'{line_number()} {function_name} GET FILE INDEX [REMOVED] [{del_uri}]')
         delete_index = self._file_database.is_file_with(del_uri, constants.REMOVED)
-        if delete_index is not None:
-            show.info(f'{line_number()} {function_name} DELETE INDEX - NOT FOUND')
-            show.info(f'{line_number()} {function_name} DROP [{delete_index[constants.DOC_ID]}]')
-            self._file_database.delete_file_from_database(delete_index)
+        if delete_index:
+            show.info(f'{line_number()} {function_name} FOUND REMOVED REFERENCE ON DATABASE - DROPPING IT [{delete_index[constants.DOC_ID]}]')
+            self._file_database.delete_file_from_database(del_uri)
             show.info(f'{line_number()} {function_name} SAVE DATA')
             self.save_data()
             show.info(f'{line_number()} {function_name} ENDED')
             return
 
-        show.info(f'{line_number()} {function_name} DELETE INDEX - FOUND')
-        show.info(f'{line_number()} {function_name} GET FILE INDEX [SYMLINK] [{del_uri}]')
         delete_index = self._file_database.is_file_with(del_uri, constants.SYMLINK)
-        if delete_index is not None:
-            show.info(f'{line_number()} {function_name} DELETE INDEX FOUND')
-            show.info(f'{line_number()} {function_name} DROP [{delete_index[constants.DOC_ID]}]')
-            self._file_database.delete_file_from_database(delete_index)
+        if delete_index:
+            show.info(f'{line_number()} {function_name} FOUND LINK REFERENCE ON DATABASE - DROPPING IT [{delete_index[constants.DOC_ID]}]')
+            self._file_database.delete_file_from_database(del_uri)
             show.info(f'{line_number()} {function_name} SAVE DATA')
             self.save_data()
             show.info(f'{line_number()} {function_name} ENDED')
             return
 
-        show.info(f'{line_number()} {function_name} GET FILE INDEX [FILE] [{del_uri}]')
         delete_index = self._file_database.is_file_with(del_uri, constants.FILE)
-        if delete_index is not None:
-            show.info(f'{line_number()} {function_name} GET FILE INDEX - FOUND')
-            show.info(f'{line_number()} {function_name} DROP [{delete_index[constants.DOC_ID]}]')
-            self._file_database.delete_file_from_database(delete_index)
-            sha = delete_index[constants.SHA].values[0]
-            show.info(f'{line_number()} {function_name} GET FILES [SHA] [SYMLINK] [{sha[0:constants.SHA_SIZE]}]')
+        if delete_index:
+            show.info(f'{line_number()} {function_name} FOUND FILE REFERENCE ON DATABASE - DROPPING IT [{delete_index[constants.DOC_ID]}]')
+            self._file_database.delete_file_from_database(del_uri)
+            sha = delete_index[constants.DOC_ID]
+
             delete_index = self._file_database.is_element_with_sha(sha, constants.SYMLINK)
-            if delete_index is not None:
-                show.info(f'{line_number()} {function_name} GET FILES [SHA] [SYMLINK] - FOUND')
+            if delete_index:
+                show.info(f'{line_number()} {function_name} FOUND LINK-SHA REFERENCE ON DATABASE')
                 for row in delete_index:
-                    show.warning(f'{line_number()} {function_name} DELETE ROW [{row}]')
+                    show.info(f'{line_number()} {function_name} DELETING LINK-SHA ROW [{row}]')
                     self.delete_row(row)
+
+                show.info(f'{line_number()} {function_name} MARKING LINK-SHA AS DELETED PARENT')
                 self._file_database.change_sha_from_to(sha, constants.SYMLINK, constants.DELETED_PARENT)
 
         show.info(f'{line_number()} {function_name} SAVE DATA')
@@ -852,7 +877,7 @@ class FileHolder:
     def set_sha(self):
         show.info(f'{line_number()} FILE HOLDER: CREATING SHA')
         if self._file_uri:
-            self._file_sha = get_hash(self._file_uri, constants.HASH_SHA512)
+            self._file_sha = get_hash(self._file_uri, constants.HASH_MD5)
 
     def __repr__(self):
         show.debug(f'{line_number()} {constants.DEBUG_MARKER} FILE HOLDER REPORT')
@@ -863,23 +888,23 @@ class MonitorFolder(FileSystemEventHandler):
 
     def on_created(self, event):
         show.info(f'{line_number()} ON_CREATED')
-        file_list.add_file(event.src_path)
-        show.debug(f'{line_number()} {constants.DEBUG_MARKER}  {file_list}')
+        file_set.add_file(event.src_path)
+        show.debug(f'{line_number()} {constants.DEBUG_MARKER}  {file_set}')
 
     def on_modified(self, event):
         show.info(f'{line_number()} ON_MODIFIED')
-        file_list.mod_file(event.src_path)
-        show.debug(f'{line_number()} {constants.DEBUG_MARKER}  {file_list}')
+        file_set.mod_file(event.src_path)
+        show.debug(f'{line_number()} {constants.DEBUG_MARKER}  {file_set}')
 
     def on_moved(self, event):
         show.info(f'{line_number()} ON_MOVED')
-        file_list.move_file(event.src_path, event.dest_path)
-        show.debug(f'{line_number()} {constants.DEBUG_MARKER}  {file_list}')
+        file_set.move_file(event.src_path, event.dest_path)
+        show.debug(f'{line_number()} {constants.DEBUG_MARKER}  {file_set}')
 
     def on_deleted(self, event):
         show.info(f'{line_number()} ON_DELETED')
-        file_list.del_file(event.src_path)
-        show.debug(f'{line_number()} {constants.DEBUG_MARKER}  {file_list}')
+        file_set.del_file(event.src_path)
+        show.debug(f'{line_number()} {constants.DEBUG_MARKER}  {file_set}')
 
 
 def tray_icon_click(_, selected_tray_item):
@@ -892,8 +917,8 @@ def tray_icon_click(_, selected_tray_item):
     if str(selected_tray_item) == constants.LABEL_PAUSE:
         system_tray_icon.icon = Image.open(constants.ICON_PAUSE)
     if str(selected_tray_item) == constants.LABEL_EXIT:
-        file_list.save_data()
-        file_list.terminate()
+        file_set.save_data()
+        file_set.terminate()
         show.warning(f'Terminating {constants.LABEL_MAIN} System...')
         system_tray_icon.stop()
     show.warning(f'Tray Icon Done...')
@@ -937,23 +962,23 @@ if __name__ == "__main__":
                                         pystray.MenuItem(constants.LABEL_EXIT, tray_icon_click, checked=lambda item: state)))
 
     show.warning(f'Starting {constants.LABEL_MAIN} System...')
-    file_list = FileList()
-    file_list.start_thread()
+    file_set = FileList()
+    file_set.start_thread()
 
     if event_source_scan:
-        file_list.update_links()
-        file_list.update_files()
+        file_set.update_links()
+        file_set.update_files()
         for root, dirs, files in os_walk(event_source_path, topdown=True):
             for name in files:
                 uri = str(os_path.join(root, name))
                 if uri_exists(uri):
                     show.info(f'{line_number()} SCAN: FILE LIST ADD FILE: [{uri}]')
-                    file_list.add_file(uri)
-        file_list.update_junk()
-        file_list.pause_thread()
+                    file_set.add_file(uri)
+        file_set.update_junk()
+        file_set.pause_thread()
 
     show.warning(f'{constants.LABEL_MAIN} Initialized...')
-    file_list.report_data()
+    file_set.report_data()
 
     event_handler = MonitorFolder()
     observer = Observer()
@@ -973,14 +998,14 @@ if __name__ == "__main__":
             while keyboard_listening:
                 time.sleep(1)
                 if keyboard.check():
-                    file_list.save_data()
+                    file_set.save_data()
                     show.warning(f'Terminating {constants.LABEL_MAIN} System...')
                     keyboard_listening = False
 
         except KeyboardInterrupt as keyboard_interrupt:
             show.debug(f'{line_number()} {constants.DEBUG_MARKER} KeyboardInterrupt: [{keyboard_interrupt}]')
 
-    file_list.terminate()
+    file_set.terminate()
     observer.stop()
     observer.join()
 
