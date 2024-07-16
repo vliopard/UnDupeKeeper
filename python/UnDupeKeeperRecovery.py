@@ -67,13 +67,7 @@ def count_files(target_directory):
 
 
 @timed
-def hash_directory_files(current_directory):
-    global file_set
-    global hash_count
-    global database_file_count
-    global hard_disk_drive_hash_list
-    print(f"SCANNING FILES: [{current_directory}]")
-
+def reload(current_directory):
     # total_files = count_files(current_directory)
     print('Listing files...')
 
@@ -84,11 +78,29 @@ def hash_directory_files(current_directory):
             result_set = pickle.load(file)
     else:
         print('Generating new results...')
-        result_set = list_files(current_directory) - file_set
+        file_tmp = list_files(current_directory)
+
+        print('Getting distinct...')
+        result_set = file_tmp - file_set
+
+        print('Saving results...')
         with open(res_set, 'wb') as file:
             pickle.dump(result_set, file)
 
+    print('Calculating length...')
     total_files = len(result_set)
+    return total_files, result_set
+
+
+@timed
+def hash_directory_files(current_directory):
+    global file_set
+    global hash_count
+    global database_file_count
+    global hard_disk_drive_hash_list
+    print(f"SCANNING FILES: [{current_directory}]")
+
+    total_files, result_set = reload(current_directory)
 
     status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
     with tqdm(total=total_files, bar_format=status_bar_format) as tqdm_progress_bar:
@@ -152,5 +164,5 @@ def save_database():
 
 
 hard_disk_drive_hash_list, file_set = setup()
-hash_directory_files('c:/vliopard/download/')
+hash_directory_files('c:/vliopard/')
 save_database()
