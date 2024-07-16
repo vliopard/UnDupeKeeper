@@ -28,7 +28,6 @@ def setup():
 
     print('Generating file list...')
     file_list_local = []
-
     bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
     with tqdm(total=tot, bar_format=bar_format) as tqdm_progress:
         for x in hard_disk_drive_hash_list_local:
@@ -64,6 +63,8 @@ def count_files(target_directory):
         count_data = {'current_dir': current_directory, 'file_count': total_files}
         json.dump(count_data, file_count)
 
+    return total_files
+
 
 @timed
 def hash_directory_files(current_directory):
@@ -98,6 +99,8 @@ def hash_directory_files(current_directory):
                     else:
                         hash_count += 1
                         hard_disk_drive_hash_list[file_hash] = [file_name]
+                # else:
+                #     file_list.remove(file_name)
 
 
 @timed
