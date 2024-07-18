@@ -10,6 +10,7 @@ show = logging.getLogger(constants.DEBUG_COPY)
 
 
 def get_size():
+    print('Getting total size...')
     total_size = 0
     total_files = 0
     json_file = constants.STORAGE_FILE
@@ -30,16 +31,21 @@ def get_size():
     return total_size, total_files
 
 
-def copy_files(target_location):
+def copy_files(args):
+    print('Copying files...')
+
+    check_size = args.calculate_size
+    target_location = args.target_location
     json_file = constants.STORAGE_FILE
 
-    need_space, total_files = get_size()
-    free_space = shutil.disk_usage(target_location).free
-    print(f'FREE: [{free_space:,}]')
-    print(f'NEED: [{need_space:,}]')
-    if need_space >= free_space:
-        print('Free Space Unavailable')
-        return
+    if check_size:
+        need_space, total_files = get_size()
+        free_space = shutil.disk_usage(target_location).free
+        print(f'FREE: [{free_space:,}]')
+        print(f'NEED: [{need_space:,}]')
+        if need_space >= free_space:
+            print('Free Space Unavailable')
+            return
 
     with open(json_file, constants.READ, encoding=constants.UTF8) as hdd_hl:
         data = json.load(hdd_hl)
@@ -62,6 +68,6 @@ def copy_files(target_location):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Copy files to a target location.')
-    parser.add_argument('target_location', type=str, help='The target location to copy files to')
-    args = parser.parse_args()
-    copy_files(args.target_location)
+    parser.add_argument('-t', '--target_location', type=str, help='The target location to copy files to')
+    parser.add_argument('-c', '--calculate_size', type=bool, default=True, help='Calculate the size needed to copy files to')
+    copy_files(parser.parse_args())
