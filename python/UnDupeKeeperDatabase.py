@@ -1,6 +1,7 @@
 import os
 import json
 import constants
+from tqdm import tqdm
 from methods import timed
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
@@ -55,11 +56,14 @@ def update_database():
 def import_database():
     with open(constants.STORAGE_FILE, constants.READ, encoding=constants.UTF8) as md5:
         file_data = json.load(md5)
-        for document_id in file_data:
-            try:
-                mongo_collection.insert_one({DOC_ID: document_id, FILE_SIZE: os.path.getsize(file_data[document_id][0]), FILE_LIST: file_data[document_id]})
-            except DuplicateKeyError as duplicate_key_error:
-                print(f'[{duplicate_key_error}]')
+        total_files = len(file_data)
+        status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+        with tqdm(total=total_files, bar_format=status_bar_format) as tqdm_progress_bar:
+            for document_id in file_data:
+                try:
+                    mongo_collection.insert_one({DOC_ID: document_id, FILE_SIZE: os.path.getsize(file_data[document_id][0]), FILE_LIST: file_data[document_id]})
+                except DuplicateKeyError as duplicate_key_error:
+                    print(f'[{duplicate_key_error}]')
 
 
 def insert_item(document):
@@ -105,8 +109,10 @@ def get_item_by_content(file_id):
 
 
 if __name__ == "__main__":
-    item = get_item_by_content(r'c:\teste')
-    print(item)
+    import_database()
+
+    # item = get_item_by_content(r'c:\teste')
+    # print(item)
 
     # update_item('8660dc65359955df67ebedc640fc3d82', r'c:\teste')
 
