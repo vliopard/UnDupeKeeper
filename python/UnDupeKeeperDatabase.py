@@ -54,6 +54,7 @@ def update_database():
 
 @timed
 def load_json():
+    print('Loading JSON...')
     with open(constants.STORAGE_FILE, constants.READ, encoding=constants.UTF8) as md5:
         file_data = json.load(md5)
     return file_data
@@ -61,6 +62,7 @@ def load_json():
 
 @timed
 def generate_list(file_data):
+    print('Generating List...')
     bulk_insert_list = []
     total_files = len(file_data)
     status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
@@ -81,6 +83,7 @@ def generate_list(file_data):
 
 @timed
 def insert_bulk_list(bulk_insert_list):
+    print('Inserting List...')
     if bulk_insert_list:
         try:
             mongo_collection.insert_many(bulk_insert_list, ordered=False)
@@ -90,6 +93,7 @@ def insert_bulk_list(bulk_insert_list):
 
 @timed
 def import_bulk_database():
+    print('Bulk import started.')
     json_data = load_json()
     bulk_list = generate_list(json_data)
     insert_bulk_list(bulk_list)
