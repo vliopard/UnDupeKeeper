@@ -4,7 +4,7 @@ import constants
 from tqdm import tqdm
 from methods import timed
 from pymongo import MongoClient
-from pymongo.errors import DuplicateKeyError
+from pymongo.errors import DuplicateKeyError, BulkWriteError
 
 import logging
 show = logging.getLogger(constants.DEBUG_DATA)
@@ -53,6 +53,49 @@ def update_database():
 
 
 @timed
+def load_json():
+    with open(constants.STORAGE_FILE, constants.READ, encoding=constants.UTF8) as md5:
+        file_data = json.load(md5)
+    return file_data
+
+
+@timed
+def generate_list(file_data):
+    bulk_insert_list = []
+    total_files = len(file_data)
+    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+    with tqdm(total=total_files, bar_format=status_bar_format) as tqdm_progress_bar:
+        for document_id in file_data:
+            try:
+                document = {
+                    DOC_ID: document_id,
+                    FILE_SIZE: os.path.getsize(file_data[document_id][0]),
+                    FILE_LIST: file_data[document_id]
+                }
+                bulk_insert_list.append(document)
+                tqdm_progress_bar.update(1)
+            except Exception as e:
+                print(f'Error processing {document_id}: {e}')
+    return bulk_insert_list
+
+
+@timed
+def insert_bulk_list(bulk_insert_list):
+    if bulk_insert_list:
+        try:
+            mongo_collection.insert_many(bulk_insert_list, ordered=False)
+        except BulkWriteError as bulk_write_error:
+            print(f'Bulk write error: {bulk_write_error.details}')
+
+
+@timed
+def import_bulk_database():
+    json_data = load_json()
+    bulk_list = generate_list(json_data)
+    insert_bulk_list(bulk_list)
+
+
+@timed
 def import_database():
     with open(constants.STORAGE_FILE, constants.READ, encoding=constants.UTF8) as md5:
         file_data = json.load(md5)
@@ -62,6 +105,7 @@ def import_database():
             for document_id in file_data:
                 try:
                     mongo_collection.insert_one({DOC_ID: document_id, FILE_SIZE: os.path.getsize(file_data[document_id][0]), FILE_LIST: file_data[document_id]})
+                    tqdm_progress_bar.update(1)
                 except DuplicateKeyError as duplicate_key_error:
                     print(f'[{duplicate_key_error}]')
 
@@ -109,7 +153,9 @@ def get_item_by_content(file_id):
 
 
 if __name__ == "__main__":
-    import_database()
+    # import_database()
+
+    import_bulk_database()
 
     # item = get_item_by_content(r'c:\teste')
     # print(item)
