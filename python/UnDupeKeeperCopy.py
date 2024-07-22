@@ -58,19 +58,20 @@ def copy_files(args):
             print('Free Space Unavailable')
             return
 
-    print('Opening Json database...')
+    print('Opening JSON Database...')
     with open(json_file, constants.READ, encoding=constants.UTF8) as hdd_hl:
         data = json.load(hdd_hl)
 
         status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-
         with tqdm(total=len(data), bar_format=status_bar_format) as tqdm_progress_bar:
             for hash_file in data:
                 source_file = sorted(data[hash_file], key=lambda x: x.replace('\\', '/'))[0]
                 try:
-                    _, drive_tail = os.path.splitdrive(os.path.relpath(source_file, '/'))
+                    # _, drive_tail = os.path.splitdrive(os.path.relpath(source_file, '/'))
+                    _, drive_tail = os.path.splitdrive(source_file)
+                    drive_tail = drive_tail.lstrip(os.path.sep)
                     target_file = os.path.join(target_location, drive_tail)
-                    os.makedirs(os.path.dirname(target_file), exist_ok=True)
+                    os.makedirs(os.path.dirname(target_file), exist_ok=True)                    
                     shutil.copyfile(source_file, target_file)
                     tqdm_progress_bar.update(1)
                 except Exception as exception:
