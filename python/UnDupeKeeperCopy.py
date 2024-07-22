@@ -9,6 +9,17 @@ import logging
 show = logging.getLogger(constants.DEBUG_COPY)
 
 
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 def get_size():
     print('Getting total size...')
     total_size = 0
@@ -47,6 +58,7 @@ def copy_files(args):
             print('Free Space Unavailable')
             return
 
+    print('Opening Json database...')
     with open(json_file, constants.READ, encoding=constants.UTF8) as hdd_hl:
         data = json.load(hdd_hl)
 
@@ -69,5 +81,5 @@ def copy_files(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Copy files to a target location.')
     parser.add_argument('-t', '--target_location', type=str, help='The target location to copy files to')
-    parser.add_argument('-c', '--calculate_size', type=bool, default=True, help='Calculate the size needed to copy files to')
+    parser.add_argument('-c', '--calculate_size', type=str2bool, nargs='?', const=True, default=True, help='Calculate the size needed to copy files to')
     copy_files(parser.parse_args())
