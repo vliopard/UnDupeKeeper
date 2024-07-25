@@ -771,17 +771,17 @@ class FileList:
                     show.info(f'{line_number()} {function_name} CHANGING SHA TO   [{new_file.file_sha[0:constants.SHA_SIZE]}]')
                     self._file_database.change_hash_file(gotten_by_uri[constants.DOC_ID], new_file.file_sha)
 
-            show.info(f'{line_number()} {function_name} GET FILES [SHA] [FILE] [{new_file.file_sha}]')
+            show.info(f'{line_number()} {function_name} GET FILES [SHA] [FILE] [{new_file.file_sha[0:constants.SHA_SIZE]}]')
             gotten_by_sha = self._file_database.is_element_with_sha(new_file.file_sha, constants.FILE)
             if gotten_by_sha:
                 show.info(f'{line_number()} {function_name} GET FILES - NOT FOUND')
-                if new_file.file_uri != gotten_by_sha[0][constants.FILE][0]:
+                if new_file.file_uri != gotten_by_sha[0]:
                     show.info(f'{line_number()} {function_name} URI DIFFERS:')
-                    show.info(f'{line_number()} {function_name} URI CHANGED FROM [{gotten_by_sha[0][constants.FILE][0]}]')
+                    show.info(f'{line_number()} {function_name} URI CHANGED FROM [{gotten_by_sha[0]}]')
                     show.info(f'{line_number()} {function_name} URI CHANGED TO   [{new_file.file_uri}]')
                     show.info(f'{line_number()} {function_name} CHANGING MAIN FILE ADDRESS BEFORE')
                     show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} {constants.NEW_LINE}{self.print_table()}')
-                    self._file_database.move_file(gotten_by_sha[0][constants.FILE][0], new_file.file_uri)
+                    self._file_database.move_file(gotten_by_sha[0], new_file.file_uri)
                     show.info(f'{line_number()} {function_name} CHANGING MAIN FILE ADDRESS AFTER')
                     show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} {constants.NEW_LINE}{self.print_table()}')
                     self._file_database.change_sha_from_to(new_file.file_sha, constants.SYMLINK, constants.MOVED_FILE)
@@ -793,10 +793,10 @@ class FileList:
                     if line:
                         show.info(f'{line_number()} {function_name} GET FILES - NOT FOUND')
                         for row in line:
-                            show.info(f'{line_number()} {function_name} DELETE ROW [{row[constants.FILE]}]')
-                            self.delete_row(row[constants.FILE])
-                            show.info(f'{line_number()} {function_name} CREATE LINK [{row[constants.FILE]}] [{new_file.file_uri}]')
-                            self.execute(row[constants.FILE], new_file.file_uri)
+                            show.info(f'{line_number()} {function_name} DELETE ROW [{row}]')
+                            self.delete_row(row)
+                            show.info(f'{line_number()} {function_name} CREATE LINK [{row}] [{new_file.file_uri}]')
+                            self.execute(row, new_file.file_uri)
 
         show.info(f'{line_number()} {function_name} SAVE DATA')
         self.save_data()

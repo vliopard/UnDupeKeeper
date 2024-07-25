@@ -1813,7 +1813,7 @@ REM ##############################################################
 set inifile=%~1
 set section=%~2
 set key=%~3
-for /F "delims== tokens=2* usebackq" %%i in (`type %inifile% ^| find "MAIN_PATH ="`) do (set basedir=%%i)
+for /F "delims== tokens=2* usebackq" %%i in (`type %inifile% ^| find "main_path ="`) do (set basedir=%%i)
 for /f "tokens=* delims= " %%a in ("%basedir%") do set "basedir=%%a"
 set "basedir=!basedir:/=\!"
 EXIT /B 0
