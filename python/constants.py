@@ -136,6 +136,7 @@ BUFFER_SIZE = config.getint('VALUES', 'BUFFER_SIZE')
 COMPARISON_METHOD = config.get('VALUES', 'COMPARISON_METHOD')
 
 MAIN_PATH = config.get('PATHS', 'MAIN_PATH')
+TARGET_PATH = config.get('PATHS', 'TARGET_PATH')
 LOG_FILE = config.get('PATHS', 'LOG_FILE')
 LINK_TABLE = config.get('PATHS', 'LINK_TABLE')
 FILE_TABLE = config.get('PATHS', 'FILE_TABLE')

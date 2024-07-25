@@ -67,12 +67,11 @@ def copy_files(args):
             for hash_file in data:
                 source_file = sorted(data[hash_file], key=lambda x: x.replace('\\', '/'))[0]
                 try:
-                    # _, drive_tail = os.path.splitdrive(os.path.relpath(source_file, '/'))
                     _, drive_tail = os.path.splitdrive(source_file)
                     drive_tail = drive_tail.lstrip(os.path.sep)
                     target_file = os.path.join(target_location, drive_tail)
-                    os.makedirs(os.path.dirname(target_file), exist_ok=True)                    
-                    shutil.copyfile(source_file, target_file)
+                    os.makedirs(os.path.dirname(target_file), exist_ok=True)
+                    shutil.copy2(source_file, target_file)
                     tqdm_progress_bar.update(1)
                 except Exception as exception:
                     print('_'*100)
