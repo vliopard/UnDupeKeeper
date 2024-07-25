@@ -48,6 +48,7 @@ DOC_ID = '_id'
 FILE_LIST = 'file_list'
 FILE_SIZE = 'file_size'
 FILE_COUNT = 'file_list_count'
+TOTAL_COUNT = 'total_count'
 
 NEW_LINE = '\n'
 DOS_SLASH = '\\'
@@ -115,8 +116,10 @@ FILE = 'file'
 MOVED_FILE = 'move'
 DATA_TABLE = f'{LABEL_MAIN}.pkl'
 
+DATABASE_URL = 'mongodb://localhost:27017/'
 DATABASE_NAME = 'UnDupeKeeperDatabase'
 DATABASE_COLLECTION = 'UnDupeKeeperFiles'
+DATABASE_UNDUPE = 'UnDupyKeeperFiles'
 
 SETTINGS_FILE = 'UnDupeKeeper.ini'
 STORAGE_FILE = 'UnDupeKeeper.json'

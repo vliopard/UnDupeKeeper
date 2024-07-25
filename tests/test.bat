@@ -8,6 +8,8 @@ set file_links=link_table.txt
 set file_table=file_table.txt
 set delaycount=1
 set delaytm=1
+set ptests=0
+set ftests=0
 set testnro=0
 set last_test=042
 set label=
@@ -1716,10 +1718,12 @@ EXIT /B 0
 REM ##############################################################
 :assert
 if %~1==%~2 (
+    set /A ptests=ptests+1
     echo -------------------------------------------
         %Windir%\System32\WindowsPowerShell\v1.0\Powershell.exe write-host -foregroundcolor Black -backgroundcolor Green =============== [ PASSED ] ================
         echo -------------------------------------------
 ) else (
+    set /A ftests=ftests+1
         echo -------------------------------------------
         %Windir%\System32\WindowsPowerShell\v1.0\Powershell.exe write-host -foregroundcolor Black -backgroundcolor Red =============== [ FAILED ] ================
     echo -------------------------------------------
@@ -1820,3 +1824,20 @@ EXIT /B 0
 
 REM ##############################################################
 :EOF
+set /A ttests=%ptests%+%ftests%
+echo -------------------------------------------
+%Windir%\System32\WindowsPowerShell\v1.0\Powershell.exe write-host -foregroundcolor White -backgroundcolor Blue ______________[TEST RESULTS]_______________
+%Windir%\System32\WindowsPowerShell\v1.0\Powershell.exe write-host -foregroundcolor Black -backgroundcolor Green =============== [ PASSED ] ================
+for /L %%i in (1, 1, %ptests%) do (
+     set "formattedValue=000000%%i"
+     set apass=!formattedValue:~-3!
+)
+echo TOTAL PASSED TESTS: [%apass%/%ttests%]
+%Windir%\System32\WindowsPowerShell\v1.0\Powershell.exe write-host -foregroundcolor Black -backgroundcolor Red =============== [ FAILED ] ================
+for /L %%i in (1, 1, %ftests%) do (
+     set "formattedValue=000000%%i"
+     set afail=!formattedValue:~-3!
+)
+echo TOTAL FAILED TESTS: [%afail%/%ttests%]
+%Windir%\System32\WindowsPowerShell\v1.0\Powershell.exe write-host -foregroundcolor White -backgroundcolor Blue ______________[TEST RESULTS]_______________
+echo -------------------------------------------

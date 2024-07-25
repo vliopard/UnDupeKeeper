@@ -46,12 +46,11 @@ from logging.handlers import RotatingFileHandler
 import logging
 show = logging.getLogger(constants.DEBUG_CORE)
 
-# DEBUG=10
-# INFO=20
-# WARN=30
-# ERROR=40
-# CRITICAL=50
-
+'''DEBUG=10
+   INFO=20
+   WARN=30
+   ERROR=40
+   CRITICAL=50'''
 
 thread_started = time.time()
 system_tray_icon = None
@@ -191,9 +190,9 @@ class DataBase:
     def __init__(self):
         show.debug(f'{line_number()} {constants.DEBUG_MARKER} DATABASE: STARTED')
 
-        self.mongo_client = MongoClient('mongodb://localhost:27017/')
+        self.mongo_client = MongoClient(constants.DATABASE_URL)
         self.mongo_database = self.mongo_client[constants.DATABASE_NAME]
-        self.mongo_collection = self.mongo_database['UnDupyKeeperFiles']
+        self.mongo_collection = self.mongo_database[constants.DATABASE_UNDUPE]
 
     def get_list(self, list_type):
         element_list = []
@@ -220,7 +219,7 @@ class DataBase:
             else:
                 try:
                     for item in new_row[file_sha]:
-                        self.mongo_collection.insert_one({constants.DOC_ID: file_sha, 'file_size': os.path.getsize(new_row[file_sha][item][0]), constants.FILE: new_row[file_sha][item]})
+                        self.mongo_collection.insert_one({constants.DOC_ID: file_sha, constants.FILE_SIZE: os.path.getsize(new_row[file_sha][item][0]), constants.FILE: new_row[file_sha][item]})
                 except DuplicateKeyError as duplicate_key_error:
                     show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} [{file_sha}][{duplicate_key_error}]')
                 break
@@ -308,11 +307,11 @@ class DataBase:
     def get_total_files_count(self):
         actions = [constants.SYMLINK, constants.FILE]
         pipeline = [{"$project": {action: {"$size": {"$ifNull": [f"${action}", []]}} for action in actions}},
-                    {"$project": {"totalSize": {"$sum": [f"${action}" for action in actions]}}}, {"$group": {constants.DOC_ID: None, "totalCount": {"$sum": "$totalSize"}}}]
+                    {"$project": {"totalSize": {"$sum": [f"${action}" for action in actions]}}}, {"$group": {constants.DOC_ID: None, constants.TOTAL_COUNT: {"$sum": "$totalSize"}}}]
         documents = self.mongo_collection.aggregate(pipeline)
         for result_value in documents:
-            if result_value['totalCount']:
-                return result_value['totalCount']
+            if result_value[constants.TOTAL_COUNT]:
+                return result_value[constants.TOTAL_COUNT]
         return 0
 
     def get_unique_files_count(self):
@@ -403,7 +402,7 @@ class DataBase:
             show.debug(f'{line_number()} {constants.DEBUG_MARKER} [{file_sha}] NOT FOUND')
 
     def change_hash_file(self, old_id, new_id):
-        function_name = 'CHANGE HASH FILE'
+        function_name = 'CHANGE HASH FILE:'
         result = self.mongo_collection.find({constants.DOC_ID: old_id})
         if old_id != new_id:
             for element in result:
