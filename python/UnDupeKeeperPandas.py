@@ -552,12 +552,12 @@ class FileList:
             show.info(f'{line_number()} {function_name} IS LINK? [{add_uri}]')
             new_file = FileHolder(add_uri)
             show.info(f'{line_number()} {function_name} GET FILES [FILE] [SHA] [{new_file.file_sha[0:constants.SHA_SIZE]}]')
-            line = self.get_files(new_file.file_sha, constants.FILE, constants.SHA)
-            if line is not None:
+            file_with_sha = self.get_files(new_file.file_sha, constants.FILE, constants.SHA)
+            if file_with_sha is not None:
                 show.info(f'{line_number()} {function_name} FOUND')
                 show.info(f'{line_number()} {function_name} GET FILES [SYMLINK] [URI] [{new_file.file_uri}]')
-                line = self.get_files(new_file.file_uri, constants.SYMLINK, constants.URI)
-                if line is None:
+                file_with_sha = self.get_files(new_file.file_uri, constants.SYMLINK, constants.URI)
+                if file_with_sha is None:
                     show.info(f'{line_number()} {function_name} FOUND')
                     show.info(f'{line_number()} {function_name} NEW ROW [SYMLINK] [{new_file}]')
                     self.new_row(new_file, constants.SYMLINK)
@@ -571,10 +571,9 @@ class FileList:
             show.info(f'{line_number()} {function_name} IS FILE? [{add_uri}]')
             new_file = FileHolder(add_uri)
             show.info(f'{line_number()} {function_name} GET FILES [FILE] [SHA] [{new_file.file_sha[0:constants.SHA_SIZE]}]')
-            line = self.get_files(new_file.file_sha, constants.FILE, constants.SHA)
-            if line is None:
+            file_with_sha = self.get_files(new_file.file_sha, constants.FILE, constants.SHA)
+            if file_with_sha is None:
                 show.info(f'{line_number()} {function_name} NOT FOUND')
-
                 file_without_parent = self.get_file(new_file.file_uri, constants.DELETED_PARENT)
                 show.info(f'{line_number()} {function_name} GET FILE INDEX - URI [{new_file.file_uri}] DELETED_PARENT <= [{file_without_parent}]')
                 if file_without_parent:
@@ -587,23 +586,23 @@ class FileList:
                     self.new_row(new_file, constants.FILE)
 
                 show.info(f'{line_number()} {function_name} GET FILES [SHA] [DELETED_PARENT] [{new_file.file_sha[0:constants.SHA_SIZE]}]')
-                line = self.get_files(new_file.file_sha, constants.DELETED_PARENT, constants.SHA)
-                if line is not None:
+                file_with_sha = self.get_files(new_file.file_sha, constants.DELETED_PARENT, constants.SHA)
+                if file_with_sha is not None:
                     show.info(f'{line_number()} {function_name} GET FILES - NO FILE FOUND')
-                    for row in line:
+                    for row in file_with_sha:
                         show.info(f'{line_number()} {function_name} GET FILES - FILE FOUND [{row}] [{new_file.file_uri}]')
                         self.execute(row, new_file.file_uri)
                 self._file_database.changed_from_deleted_to_link(new_file.file_sha)
             else:
-                line = line[0]
+                file_with_sha = file_with_sha[0]
                 show.info(f'{line_number()} {function_name} GET FILE [SYMLINK] [{new_file.file_uri}]')
                 line_uri = self.get_file(new_file.file_uri, constants.SYMLINK)
                 if line_uri is None:
                     show.info(f'{line_number()} {function_name} GET FILE - SYMLINK NOT FOUND')
-                    show.info(f'{line_number()} {function_name} FILE COMPARISON [{constants.COMPARISON_METHOD}] [{new_file.file_uri}] [{line}]')
-                    if new_file.file_uri != line and file_equals(new_file.file_uri, line, constants.COMPARISON_METHOD):
-                        show.info(f'{line_number()} if {new_file.file_uri} != {line}')
-                        show.info(f'{line_number()} {function_name} FILE COMPARISON [{constants.COMPARISON_METHOD}] [{new_file.file_uri}] [{line}]')
+                    show.info(f'{line_number()} {function_name} FILE COMPARISON [{constants.COMPARISON_METHOD}] [{new_file.file_uri}] [{file_with_sha}]')
+                    if new_file.file_uri != file_with_sha and file_equals(new_file.file_uri, file_with_sha, constants.COMPARISON_METHOD):
+                        show.info(f'{line_number()} if {new_file.file_uri} != {file_with_sha}')
+                        show.info(f'{line_number()} {function_name} FILE COMPARISON [{constants.COMPARISON_METHOD}] [{new_file.file_uri}] [{file_with_sha}]')
                         show.info(f'{line_number()} {function_name} NEW ROW [SYMLINK] [{new_file}]')
                         self.new_row(new_file, kind=constants.SYMLINK)
                         show.info(f'{line_number()} {function_name} NEW ROW [REMOVED] [{new_file}]')
@@ -611,8 +610,8 @@ class FileList:
 
                         show.info(f'{line_number()} {function_name} DELETE ROW [{new_file.file_uri}]')
                         self.delete_row(new_file.file_uri)
-                        show.info(f'{line_number()} {function_name} CREATE LINK [{new_file.file_uri}] [{line}]')
-                        self.execute(new_file.file_uri, line)
+                        show.info(f'{line_number()} {function_name} CREATE LINK [{new_file.file_uri}] [{file_with_sha}]')
+                        self.execute(new_file.file_uri, file_with_sha)
                 else:
                     show.error(section_line(constants.SYMBOL_EQ, 100))
                     show.error(f'{line_number()} {function_name} =====> ERROR: [{line_uri}] IT SHOULD NEVER HAPPENED! <=====')

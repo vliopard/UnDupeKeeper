@@ -1552,7 +1552,7 @@ call:check_link %name4% 1
 call:end_test
 
 REM ############################################################## TEST_NO_42_TITLE
-call:start_test "Delete parent. Replace second file with different SHA. Create second childen. Delete second file. Create parent."
+call:start_test "Delete parent. Replace second file with different SHA. Create second child. Delete second file. Create parent."
 
 set name1=test%label%-file1
 set name2=test%label%-file2
