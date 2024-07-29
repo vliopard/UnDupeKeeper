@@ -237,7 +237,7 @@ class FileList:
         new_file = FileHolder(add_uri)
         show.info(f'{line_number()} {function_name} [{add_uri}]')
         file_with_sha = self._file_database.database_get_item(new_file.file_sha)
-        if file_with_sha and file_equals(add_uri, file_with_sha[constants.FILE][0], constants.COMPARISON_METHOD):
+        if file_with_sha and file_equals(add_uri, file_with_sha[constants.FILE_LIST][0], constants.COMPARISON_METHOD):
             show.info(f'{line_number()} {function_name} DELETE [{add_uri}]')
             # delete_file(add_uri)
         else:
