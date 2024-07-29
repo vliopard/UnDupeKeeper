@@ -231,24 +231,29 @@ class FileList:
 
     def add_file(self, add_uri):
         function_name = 'ADD FILE:'
-        add_uri = add_uri.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
         self.update_thread_started_time()
-        show.info(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
+        add_uri = add_uri.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
         new_file = FileHolder(add_uri)
         show.info(f'{line_number()} {function_name} [{add_uri}]')
         file_with_sha = self._file_database.database_get_item(new_file.file_sha)
         if file_with_sha and file_equals(add_uri, file_with_sha[constants.FILE_LIST][0], constants.COMPARISON_METHOD):
-            show.info(f'{line_number()} {function_name} DELETE [{add_uri}]')
-            # delete_file(add_uri)
+            show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+            show.info(f'{line_number()} {function_name} ==> DELETE [{add_uri}] <==')
+            show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+            delete_file(add_uri)
         else:
             if is_link(add_uri):
                 uri_file = os.readlink(add_uri)
+                show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
                 show.info(f'{line_number()} {function_name} COPY [{uri_file}] TO [{constants.TARGET_PATH}]')
-                # self.file_operation('copy', uri_file, constants.TARGET_PATH)
-                # delete_link(add_uri)
+                show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+                self.file_operation('copy', uri_file, constants.TARGET_PATH)
+                delete_link(add_uri)
             elif is_file(add_uri):
+                show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
                 show.info(f'{line_number()} {function_name} COPY [{add_uri}] TO [{constants.TARGET_PATH}]')
-                # self.file_operation('move', add_uri, constants.TARGET_PATH)
+                show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+                self.file_operation('move', add_uri, constants.TARGET_PATH)
             else:
                 show.info(f'{line_number()} {function_name} NO [{add_uri}] VALID ACTION')
 
@@ -371,8 +376,10 @@ if __name__ == "__main__":
             for name in files:
                 uri = str(os_path.join(root, name))
                 if uri_exists(uri):
+                    show.info(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
                     show.info(f'{line_number()} SCAN: FILE LIST ADD FILE: [{uri}]')
                     file_set.add_file(uri)
+                    show.info(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
         file_set.pause_thread()
 
     show.warning(f'{constants.LABEL_MAIN} Initialized...')
