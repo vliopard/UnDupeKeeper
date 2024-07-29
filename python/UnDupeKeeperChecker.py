@@ -221,7 +221,7 @@ class FileList:
 
     @staticmethod
     def file_operation(mode, source_file, target_file):
-        function_name = 'FILE OPERATION:'
+        function_name = 'OPERATION:'
         _, drive_tail = os.path.splitdrive(source_file)
         drive_tail = drive_tail.lstrip(constants.DOS_SLASH)
         drive_tail = drive_tail.lstrip(constants.UNIX_SLASH)
@@ -235,7 +235,7 @@ class FileList:
             shutil.move(source_file, target_file)
 
     def add_file(self, add_uri):
-        function_name = 'ADD FILE:'
+        function_name = 'FILE:'
         self.update_thread_started_time()
         add_uri = add_uri.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
         new_file = FileHolder(add_uri)
@@ -243,12 +243,12 @@ class FileList:
         file_with_sha = self._file_database.database_get_item(new_file.file_sha)
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
         if file_with_sha and file_equals(add_uri, file_with_sha[constants.FILE_LIST][0], constants.COMPARISON_METHOD):
-            show.info(f'{line_number()} {function_name} ==> DELETE [{add_uri}] <==')
+            show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{add_uri}]')
             try:
                 delete_file(add_uri)
             except PermissionError as permission_error:
                 os.chmod(add_uri, stat.S_IWRITE)
-                show.error(f'{line_number()} {function_name} DELETE [{add_uri}] [{permission_error}]')
+                show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{add_uri}] [{permission_error}]')
                 delete_file(add_uri)
         else:
             if is_link(add_uri):
@@ -258,41 +258,35 @@ class FileList:
             elif is_file(add_uri):
                 self.file_operation('move', add_uri, constants.TARGET_PATH)
             else:
-                show.info(f'{line_number()} {function_name} NO [{add_uri}] VALID ACTION')
+                show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE]}] [{add_uri}]')
         show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
         self.pause_thread()
 
 
 class FileHolder:
     def __init__(self, file_path):
-        show.info(f'{line_number()} FILE HOLDER: [{file_path}]')
         self._file_uri = file_path
         self._file_sha = None
         self.set_sha()
 
     @property
     def file_uri(self):
-        show.info(f'{line_number()} FILE HOLDER: GET URI [{self._file_uri}]')
         return self._file_uri
 
     @file_uri.setter
     def file_uri(self, universal_resource_indicator):
         self._file_uri = universal_resource_indicator
         self.set_sha()
-        show.info(f'{line_number()} FILE HOLDER: CREATE URI [{self._file_sha[0:constants.SHA_SIZE]}] [{self._file_uri}]')
 
     @property
     def file_sha(self):
-        show.info(f'{line_number()} FILE HOLDER: GET SHA [{self._file_sha[0:constants.SHA_SIZE]}]')
         return self._file_sha
 
     def set_sha(self):
-        show.info(f'{line_number()} FILE HOLDER: CREATING SHA')
         if self._file_uri:
             self._file_sha = get_hash(self._file_uri, constants.HASH_MD5)
 
     def __repr__(self):
-        show.debug(f'{line_number()} {constants.DEBUG_MARKER} FILE HOLDER REPORT')
         return self._file_uri
 
 

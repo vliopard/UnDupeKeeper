@@ -140,7 +140,6 @@ def get_hash(uri_file, digest):
                     for element in iter(lambda: uri_locator.readinto(memory_view), 0):
                         digest_method.update(memory_view[:element])
                 sha_file = digest_method.hexdigest()
-            show.info(f'{line_number()} {function_name} HASH OBTAINED [{sha_file[0:constants.SHA_SIZE]}] [{uri_file}]')
         except PermissionError as permission_error:
             show.error(f'{line_number()} {function_name} HASH GENERATION ERROR - PermissionError [{permission_error}]')
         except FileNotFoundError as file_not_found_error:
