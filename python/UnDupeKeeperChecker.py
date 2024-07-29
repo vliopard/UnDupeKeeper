@@ -37,12 +37,6 @@ from logging.handlers import RotatingFileHandler
 import logging
 show = logging.getLogger(constants.DEBUG_CORE)
 
-'''DEBUG=10
-   INFO=20
-   WARN=30
-   ERROR=40
-   CRITICAL=50'''
-
 thread_started = time.time()
 system_tray_icon = None
 
@@ -239,26 +233,26 @@ class FileList:
         function_name = 'ADD FILE:'
         add_uri = add_uri.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
         self.update_thread_started_time()
-        show.warning(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
+        show.info(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
         new_file = FileHolder(add_uri)
         show.info(f'{line_number()} {function_name} [{add_uri}]')
         file_with_sha = self._file_database.database_get_item(new_file.file_sha)
         if file_with_sha and file_equals(add_uri, file_with_sha[constants.FILE][0], constants.COMPARISON_METHOD):
             show.info(f'{line_number()} {function_name} DELETE [{add_uri}]')
-            delete_file(add_uri)
+            # delete_file(add_uri)
         else:
             if is_link(add_uri):
                 uri_file = os.readlink(add_uri)
                 show.info(f'{line_number()} {function_name} COPY [{uri_file}] TO [{constants.TARGET_PATH}]')
-                self.file_operation('copy', uri_file, constants.TARGET_PATH)
-                delete_link(add_uri)
+                # self.file_operation('copy', uri_file, constants.TARGET_PATH)
+                # delete_link(add_uri)
             elif is_file(add_uri):
                 show.info(f'{line_number()} {function_name} COPY [{add_uri}] TO [{constants.TARGET_PATH}]')
-                self.file_operation('move', add_uri, constants.TARGET_PATH)
+                # self.file_operation('move', add_uri, constants.TARGET_PATH)
             else:
                 show.info(f'{line_number()} {function_name} NO [{add_uri}] VALID ACTION')
 
-        show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} END')
+        show.info(f'{line_number()} {constants.DEBUG_MARKER} {function_name} END')
         self.pause_thread()
 
 
