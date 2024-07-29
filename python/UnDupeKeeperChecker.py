@@ -239,6 +239,7 @@ class FileList:
         self.update_thread_started_time()
         add_uri = add_uri.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
         new_file = FileHolder(add_uri)
+        show.info(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
         show.info(f'{line_number()} {function_name} [{add_uri}]')
         file_with_sha = self._file_database.database_get_item(new_file.file_sha)
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
@@ -372,9 +373,7 @@ if __name__ == "__main__":
             for name in files:
                 uri = str(os_path.join(root, name))
                 if uri_exists(uri):
-                    show.info(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
                     file_set.add_file(uri)
-                    show.info(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
         file_set.pause_thread()
 
     show.warning(f'{constants.LABEL_MAIN} Initialized...')
