@@ -223,7 +223,8 @@ class FileList:
     def file_operation(mode, source_file, target_file):
         function_name = 'FILE OPERATION:'
         _, drive_tail = os.path.splitdrive(source_file)
-        drive_tail = drive_tail.lstrip(os.path.sep)
+        drive_tail = drive_tail.lstrip(constants.DOS_SLASH)
+        drive_tail = drive_tail.lstrip(constants.UNIX_SLASH)
         target_file = os.path.join(target_file, drive_tail)
         os.makedirs(os.path.dirname(target_file), exist_ok=True)
         if mode == 'copy':
