@@ -239,8 +239,6 @@ class FileList:
         self.update_thread_started_time()
         add_uri = add_uri.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
         new_file = FileHolder(add_uri)
-        show.info(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
-        show.info(f'{line_number()} {function_name} [{add_uri}]')
         file_with_sha = self._file_database.database_get_item(new_file.file_sha)
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
         if file_with_sha and file_equals(add_uri, file_with_sha[constants.FILE_LIST][0], constants.COMPARISON_METHOD):
