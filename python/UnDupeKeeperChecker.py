@@ -250,18 +250,18 @@ class FileList:
                 os.chmod(add_uri, stat.S_IWRITE)
                 show.error(f'{line_number()} {function_name} DELETE [{add_uri}] [{permission_error}]')
                 delete_file(add_uri)
-                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE2, constants.LINE_LEN)}')
+                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
         else:
             if is_link(add_uri):
                 uri_file = os.readlink(add_uri)
                 show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
                 self.file_operation('copy', uri_file, constants.TARGET_PATH)
-                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE1, constants.LINE_LEN)}')
+                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
                 delete_link(add_uri)
             elif is_file(add_uri):
                 show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
                 self.file_operation('move', add_uri, constants.TARGET_PATH)
-                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE1, constants.LINE_LEN)}')
+                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
             else:
                 show.info(f'{line_number()} {function_name} NO [{add_uri}] VALID ACTION')
 
