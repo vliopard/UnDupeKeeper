@@ -240,7 +240,10 @@ class FileList:
             show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
             show.info(f'{line_number()} {function_name} ==> DELETE [{add_uri}] <==')
             show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE2, constants.LINE_LEN)}')
-            delete_file(add_uri)
+            try:
+                delete_file(add_uri)
+            except PermissionError as permission_error:
+                show.error(f'{line_number()} {function_name} DELETE [{add_uri}] [{permission_error}]')
         else:
             if is_link(add_uri):
                 uri_file = os.readlink(add_uri)

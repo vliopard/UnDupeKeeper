@@ -1,3 +1,4 @@
+import screen
 import configparser
 
 GUI = 'GUI'
@@ -104,7 +105,7 @@ WINDOWS_COMP = 'comp /m'
 
 SLASH = 92
 SHA_SIZE = 10
-LINE_LEN = 30
+LINE_LEN = screen.get_terminal_width() - 35
 MAX_SECONDS = 7
 
 SHA = 'SHA'
