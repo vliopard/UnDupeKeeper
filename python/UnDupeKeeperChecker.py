@@ -1,5 +1,6 @@
 import os
 import time
+import stat
 import shutil
 import pystray
 import threading
@@ -239,11 +240,13 @@ class FileList:
         if file_with_sha and file_equals(add_uri, file_with_sha[constants.FILE_LIST][0], constants.COMPARISON_METHOD):
             show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
             show.info(f'{line_number()} {function_name} ==> DELETE [{add_uri}] <==')
-            show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE2, constants.LINE_LEN)}')
             try:
                 delete_file(add_uri)
             except PermissionError as permission_error:
+                os.chmod(add_uri, stat.S_IWRITE)
                 show.error(f'{line_number()} {function_name} DELETE [{add_uri}] [{permission_error}]')
+                delete_file(add_uri)
+                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE2, constants.LINE_LEN)}')
         else:
             if is_link(add_uri):
                 uri_file = os.readlink(add_uri)
