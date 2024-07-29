@@ -221,13 +221,16 @@ class FileList:
 
     @staticmethod
     def file_operation(mode, source_file, target_file):
+        function_name = 'FILE OPERATION:'
         _, drive_tail = os.path.splitdrive(source_file)
         drive_tail = drive_tail.lstrip(os.path.sep)
         target_file = os.path.join(target_file, drive_tail)
         os.makedirs(os.path.dirname(target_file), exist_ok=True)
         if mode == 'copy':
+            show.info(f'{line_number()} {function_name} COPY [{source_file}] TO [{target_file}]')
             shutil.copy2(source_file, target_file)
         elif mode == 'move':
+            show.info(f'{line_number()} {function_name} MOVE [{source_file}] TO [{target_file}]')
             shutil.move(source_file, target_file)
 
     def add_file(self, add_uri):
@@ -251,15 +254,13 @@ class FileList:
             if is_link(add_uri):
                 uri_file = os.readlink(add_uri)
                 show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
-                show.info(f'{line_number()} {function_name} COPY [{uri_file}] TO [{constants.TARGET_PATH}]')
-                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE1, constants.LINE_LEN)}')
                 self.file_operation('copy', uri_file, constants.TARGET_PATH)
+                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE1, constants.LINE_LEN)}')
                 delete_link(add_uri)
             elif is_file(add_uri):
                 show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
-                show.info(f'{line_number()} {function_name} COPY [{add_uri}] TO [{constants.TARGET_PATH}]')
-                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE1, constants.LINE_LEN)}')
                 self.file_operation('move', add_uri, constants.TARGET_PATH)
+                show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE1, constants.LINE_LEN)}')
             else:
                 show.info(f'{line_number()} {function_name} NO [{add_uri}] VALID ACTION')
 
