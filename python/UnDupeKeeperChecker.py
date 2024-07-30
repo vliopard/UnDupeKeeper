@@ -242,8 +242,8 @@ class FileList:
         file_with_sha = self._file_database.database_get_item(new_file.file_sha)
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
         if file_with_sha and file_equals(add_uri, file_with_sha[constants.FILE_LIST][0], constants.COMPARISON_METHOD):
-            show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{add_uri}]')
             try:
+                show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{add_uri}]')
                 delete_file(add_uri)
             except PermissionError as permission_error:
                 os.chmod(add_uri, stat.S_IWRITE)
