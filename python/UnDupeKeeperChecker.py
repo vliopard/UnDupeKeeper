@@ -241,31 +241,33 @@ class FileList:
         new_file = FileHolder(add_uri)
         file_with_sha = self._file_database.database_get_item(new_file.file_sha)
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+        old_uri = file_with_sha[constants.FILE_LIST][0].replace(constants.DOS_SLASH, constants.UNIX_SLASH)
         check1 = True if file_with_sha else False
-        check2 = add_uri != file_with_sha[constants.FILE_LIST][0]
-        check3 = file_equals(add_uri, file_with_sha[constants.FILE_LIST][0], constants.COMPARISON_METHOD)
+        check2 = add_uri != old_uri
+        check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
         if not check2:
             show.error(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
             show.error(f'{line_number()} {function_name} [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}] CHECK2 CANNOT BE FALSE!')
             show.error(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
-        show.info(f'{line_number()} {function_name} SOURCE [{file_with_sha[constants.FILE_LIST][0]}]')
-        if check1 and check2 and check3:
-            try:
-                show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}]')
-                delete_file(add_uri)
-            except PermissionError as permission_error:
-                os.chmod(add_uri, stat.S_IWRITE)
-                show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}] [{permission_error}]')
-                delete_file(add_uri)
         else:
-            if is_link(add_uri):
-                uri_file = os.readlink(add_uri)
-                self.file_operation('copy', uri_file, constants.TARGET_PATH)
-                delete_link(add_uri)
-            elif is_file(add_uri):
-                self.file_operation('move', add_uri, constants.TARGET_PATH)
+            show.info(f'{line_number()} {function_name} SOURCE [{old_uri}]')
+            if check1 and check2 and check3:
+                try:
+                    show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}]')
+                    delete_file(add_uri)
+                except PermissionError as permission_error:
+                    os.chmod(add_uri, stat.S_IWRITE)
+                    show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}] [{permission_error}]')
+                    delete_file(add_uri)
             else:
-                show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE]}] [{add_uri}]')
+                if is_link(add_uri):
+                    uri_file = os.readlink(add_uri)
+                    self.file_operation('copy', uri_file, constants.TARGET_PATH)
+                    delete_link(add_uri)
+                elif is_file(add_uri):
+                    self.file_operation('move', add_uri, constants.TARGET_PATH)
+                else:
+                    show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE]}] [{add_uri}]')
         show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
         self.pause_thread()
 
