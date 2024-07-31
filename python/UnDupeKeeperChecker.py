@@ -248,6 +248,7 @@ class FileList:
             show.error(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
             show.error(f'{line_number()} {function_name} [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}] CHECK2 CANNOT BE FALSE!')
             show.error(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
+        show.info(f'{line_number()} {function_name} SOURCE [{file_with_sha[constants.FILE_LIST][0]}]')
         if check1 and check2 and check3:
             try:
                 show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}]')
