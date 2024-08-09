@@ -5,6 +5,9 @@ from tqdm import tqdm
 from methods import timed
 from methods import get_hash
 from methods import get_level
+
+from methods import section_line
+
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
@@ -16,6 +19,17 @@ mongo_client = MongoClient(constants.DATABASE_URL)
 mongo_database = mongo_client[constants.DATABASE_NAME]
 # mongo_collection = mongo_database[constants.DATABASE_COLLECTION]
 mongo_collection = mongo_database['sandbox']
+
+
+def status():
+    print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+    document_count = mongo_collection.count_documents({})
+    print(f'DOCUMENT COUNT [{document_count:,}]')
+    total_length = mongo_collection.aggregate([{"$project": {"file_list_length": {"$size": "$file_list"}}}, {"$group": {"_id": None, "total_length": {"$sum": "$file_list_length"}}}])
+    result = list(total_length)
+    if result:
+        print(f"FILE COUNT     [{result[0]['total_length']:,}]")
+    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
 
 @timed
@@ -65,12 +79,17 @@ def hash_directory_files(current_directory):
                         hash_count += 1
                     except DuplicateKeyError as duplicate_key_error:
                         print(f'!!! [{duplicate_key_error}] already exists.')
-    print(f'TOTAL FILES   [{total_files:,}]')
-    print(f'TOTAL COUNT   [{database_file_count:,}]')
-    print(f'INSERT COUNT  [{hash_count:,}]')
-    print(f'UPDATE COUNT  [{new_count:,}]')
-    print(f'NOFILE COUNT  [{old_count:,}]')
-    print(f'INSERT UPDATE [{new_count+hash_count+old_count:,}]')
+    print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+    print(f'TOTAL FILES    [{total_files:,}]')
+    print(f'TOTAL COUNT    [{database_file_count:,}]')
+    print(f'INSERT COUNT   [{hash_count:,}]')
+    print(f'UPDATE COUNT   [{new_count:,}]')
+    print(f'NOFILE COUNT   [{old_count:,}]')
+    print(f'INSERT UPDATE  [{new_count+hash_count+old_count:,}]')
+    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
+    status()
+
+    # mongo_collection.delete_many({})
 
 
 if __name__ == '__main__':
