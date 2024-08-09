@@ -329,6 +329,7 @@ def get_oldest_file(target_directory):
 
 def change_dir_time(target_directory):
     original = get_oldest_file(target_directory)
-    creation_time = os.path.getctime(original)
-    modification_time = os.path.getmtime(original)
-    os.utime(target_directory, (creation_time, modification_time))
+    if original:
+        creation_time = os.path.getctime(original)
+        modification_time = os.path.getmtime(original)
+        os.utime(target_directory, (creation_time, modification_time))
