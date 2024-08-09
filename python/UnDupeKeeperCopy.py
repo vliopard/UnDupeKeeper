@@ -1,5 +1,6 @@
 import os
 import json
+import stat
 import shutil
 import argparse
 import constants
@@ -72,10 +73,15 @@ def copy_files(args):
                     target_file = os.path.join(target_location, drive_tail)
                     os.makedirs(os.path.dirname(target_file), exist_ok=True)
                     shutil.copy2(source_file, target_file)
+                except PermissionError:
+                    os.chmod(target_file, stat.S_IWRITE)
+                    shutil.copy2(source_file, target_file)
                     tqdm_progress_bar.update(1)
                 except Exception as exception:
                     print('_'*100)
                     print(f"Error copying:\n   [{source_file}]\nto [{target_file}]\n[{exception}]")
+                finally:
+                    tqdm_progress_bar.update(1)
 
 
 if __name__ == "__main__":
