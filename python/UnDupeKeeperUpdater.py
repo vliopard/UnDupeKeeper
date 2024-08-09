@@ -21,15 +21,18 @@ mongo_database = mongo_client[constants.DATABASE_NAME]
 mongo_collection = mongo_database['sandbox']
 
 
-def status():
-    print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+@timed
+def get_hash_count():
     document_count = mongo_collection.count_documents({})
     print(f'DOCUMENT COUNT [{document_count:,}]')
+
+
+@timed
+def get_file_count():
     total_length = mongo_collection.aggregate([{"$project": {"file_list_length": {"$size": "$file_list"}}}, {"$group": {"_id": None, "total_length": {"$sum": "$file_list_length"}}}])
     result = list(total_length)
     if result:
         print(f"FILE COUNT     [{result[0]['total_length']:,}]")
-    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
 
 @timed
@@ -87,9 +90,6 @@ def hash_directory_files(current_directory):
     print(f'NOFILE COUNT   [{old_count:,}]')
     print(f'INSERT UPDATE  [{new_count+hash_count+old_count:,}]')
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
-    status()
-
-    # mongo_collection.delete_many({})
 
 
 if __name__ == '__main__':
@@ -97,3 +97,6 @@ if __name__ == '__main__':
     argument_parser.add_argument('-d', '--directory', type=str, default=None, help='Directory to scan for files')
     arguments = argument_parser.parse_args()
     hash_directory_files(arguments.directory)
+    get_hash_count()
+    get_file_count()
+    # mongo_collection.delete_many({})
