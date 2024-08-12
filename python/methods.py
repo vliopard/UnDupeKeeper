@@ -314,22 +314,13 @@ def get_level(path, n):
     return result
 
 
-def get_oldest_file(target_directory):
-    oldest_file = None
-    oldest_time = float('inf')
-    for file in os.listdir(target_directory):
-        file_path = os.path.join(target_directory, file)
-        if os.path.isfile(file_path):
-            file_time = os.path.getmtime(file_path)
-            if file_time < oldest_time:
-                oldest_file = file_path
-                oldest_time = file_time
-    return oldest_file
-
-
 def change_dir_time(target_directory):
-    original = get_oldest_file(target_directory)
-    if original:
-        creation_time = os.path.getctime(original)
-        modification_time = os.path.getmtime(original)
-        os.utime(target_directory, (creation_time, modification_time))
+    try:
+        created = os.path.getctime(min((os.path.join(target_directory, file) for file in os.listdir(target_directory)), key=os.path.getctime))
+        modified = os.path.getmtime(min((os.path.join(target_directory, file) for file in os.listdir(target_directory)), key=os.path.getmtime))
+        if created < modified:
+            os.utime(target_directory, (created, created))
+        else:
+            os.utime(target_directory, (modified, modified))
+    except ValueError:
+        pass
