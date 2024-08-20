@@ -51,7 +51,7 @@ def copy_files(args):
     print('Check length...')
     data_length = UnDupeKeeperDatabase.count_files(source_location_query)
 
-    print('getting files...')
+    print('Getting files...')
     data = UnDupeKeeperDatabase.get_item_by_file(source_location_query)
     if check_size:
         need_space, total_files = get_size(data)
@@ -67,20 +67,11 @@ def copy_files(args):
     with tqdm(total=data_length, bar_format=status_bar_format) as tqdm_progress_bar:
         for hash_file in data:
             source_file = sorted(hash_file[constants.FILE_LIST], key=lambda x: x.replace(constants.DOS_SLASH, constants.UNIX_SLASH))[0]
+            tqdm_progress_bar.update(1)
             if source_file.startswith(source_location):
-                print('\n')
-                print(f'source_file[{source_file}]')
-                print(f'source_loca[{source_location}]')
-                print(hash_file)
-                print('\n')
-
                 _, drive_tail = os.path.splitdrive(source_file)
                 drive_tail = drive_tail.lstrip(os.path.sep)
-
                 target_file = os.path.join(target_location, drive_tail)
-
-                print(f'[{source_file}] [{target_file}]')
-                '''
                 os.makedirs(os.path.dirname(target_file), exist_ok=True)
                 try:
                     shutil.copy2(source_file, target_file)
@@ -90,9 +81,6 @@ def copy_files(args):
                 except Exception as exception:
                     print('_'*100)
                     print(f"Error copying:\n   [{source_file}]\nto [{target_file}]\n[{exception}]")
-                finally:
-                    tqdm_progress_bar.update(1)
-                '''
 
 
 if __name__ == "__main__":
