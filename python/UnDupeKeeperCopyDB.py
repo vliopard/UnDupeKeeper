@@ -42,7 +42,7 @@ def get_size(data):
 
 
 def copy_files(args):
-    print('Copying files...')
+    print('Getting parameters...')
     check_size = args.calculate_size
     target_location = args.target_location if args.target_location.endswith(os.sep) else f'{args.target_location}{os.sep}'
     source_location = args.source_location
@@ -62,7 +62,7 @@ def copy_files(args):
             print('Free Space Unavailable')
             return
 
-    print('Opening Database...')
+    print('Copying files...')
     status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
     with tqdm(total=data_length, bar_format=status_bar_format) as tqdm_progress_bar:
         for hash_file in data:

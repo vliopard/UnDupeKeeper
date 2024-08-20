@@ -10,7 +10,7 @@ show = logging.getLogger(constants.DEBUG_COPY)
 
 
 def count_files(target_directory):
-    total_files = 1
+    total_files = 0
     for root, dirs, files in tqdm(os.walk(target_directory), desc="SCANNING"):
         total_files += len(dirs)
     return total_files
