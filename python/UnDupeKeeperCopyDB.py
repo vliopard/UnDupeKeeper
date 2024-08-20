@@ -1,9 +1,9 @@
 import os
-import json
 import stat
 import shutil
 import argparse
 import constants
+import UnDupeKeeperDatabase
 from tqdm import tqdm
 
 import logging
@@ -21,37 +21,40 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-def get_size():
+def get_size(data):
     print('Getting total size...')
     total_size = 0
     total_files = 0
-    json_file = constants.STORAGE_FILE
-    with open(json_file, constants.READ, encoding=constants.UTF8) as hdd_hl:
-        data = json.load(hdd_hl)
-        status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-        with tqdm(total=len(data), bar_format=status_bar_format) as tqdm_progress_bar:
-            for hash_file in data:
-                source_file = sorted(data[hash_file])[0]
-                try:
-                    if not os.path.islink(source_file):
-                        total_size += os.path.getsize(source_file)
-                    total_files += 1
-                    tqdm_progress_bar.update(1)
-                except Exception as e:
-                    print('_'*100)
-                    print(f"Error counting: [{source_file}]\n[{e}]")
+
+    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+    with tqdm(total=len(data), bar_format=status_bar_format) as tqdm_progress_bar:
+        for hash_file in data:
+            source_file = sorted(data[hash_file])[0]
+            try:
+                if not os.path.islink(source_file):
+                    total_size += os.path.getsize(source_file)
+                total_files += 1
+                tqdm_progress_bar.update(1)
+            except Exception as e:
+                print('_'*100)
+                print(f"Error counting: [{source_file}]\n[{e}]")
     return total_size, total_files
 
 
 def copy_files(args):
     print('Copying files...')
-
     check_size = args.calculate_size
-    target_location = args.target_location
-    json_file = constants.STORAGE_FILE
+    target_location = args.target_location if args.target_location.endswith(os.sep) else f'{args.target_location}{os.sep}'
+    source_location = args.source_location
+    source_location_query = r"{}".format(args.source_location.replace("\\", "\\\\"))
 
+    print('Check length...')
+    data_length = UnDupeKeeperDatabase.count_files(source_location_query)
+
+    print('getting files...')
+    data = UnDupeKeeperDatabase.get_item_by_file(source_location_query)
     if check_size:
-        need_space, total_files = get_size()
+        need_space, total_files = get_size(data)
         free_space = shutil.disk_usage(target_location).free
         print(f'FREE: [{free_space:,}]')
         print(f'NEED: [{need_space:,}]')
@@ -59,17 +62,25 @@ def copy_files(args):
             print('Free Space Unavailable')
             return
 
-    print('Opening JSON Database...')
-    with open(json_file, constants.READ, encoding=constants.UTF8) as hdd_hl:
-        data = json.load(hdd_hl)
+    print('Opening Database...')
+    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+    with tqdm(total=data_length, bar_format=status_bar_format) as tqdm_progress_bar:
+        for hash_file in data:
+            source_file = sorted(hash_file[constants.FILE_LIST], key=lambda x: x.replace(constants.DOS_SLASH, constants.UNIX_SLASH))[0]
+            if source_file.startswith(source_location):
+                print('\n')
+                print(f'source_file[{source_file}]')
+                print(f'source_loca[{source_location}]')
+                print(hash_file)
+                print('\n')
 
-        status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-        with tqdm(total=len(data), bar_format=status_bar_format) as tqdm_progress_bar:
-            for hash_file in data:
-                source_file = sorted(data[hash_file], key=lambda x: x.replace(constants.DOS_SLASH, constants.UNIX_SLASH))[0]
                 _, drive_tail = os.path.splitdrive(source_file)
                 drive_tail = drive_tail.lstrip(os.path.sep)
+
                 target_file = os.path.join(target_location, drive_tail)
+
+                print(f'[{source_file}] [{target_file}]')
+                '''
                 os.makedirs(os.path.dirname(target_file), exist_ok=True)
                 try:
                     shutil.copy2(source_file, target_file)
@@ -81,10 +92,12 @@ def copy_files(args):
                     print(f"Error copying:\n   [{source_file}]\nto [{target_file}]\n[{exception}]")
                 finally:
                     tqdm_progress_bar.update(1)
+                '''
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Copy files to a target location.')
+    parser.add_argument('-s', '--source_location', type=str, help='The source location to copy files from')
     parser.add_argument('-t', '--target_location', type=str, help='The target location to copy files to')
     parser.add_argument('-c', '--calculate_size', type=str2bool, nargs='?', const=True, default=True, help='Calculate the size needed to copy files to')
     copy_files(parser.parse_args())

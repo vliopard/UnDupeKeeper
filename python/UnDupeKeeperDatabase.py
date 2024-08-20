@@ -151,6 +151,14 @@ def get_item_by_content(file_id):
     return mongo_collection.find_one({constants.FILE_LIST: {'$elemMatch': {'$eq': file_id}}})
 
 
+def get_item_by_file(file_piece):
+    return mongo_collection.find({constants.FILE_LIST: {'$regex': file_piece}})
+
+
+def count_files(file_piece):
+    return mongo_collection.count_documents({constants.FILE_LIST: {'$regex': file_piece}})
+
+
 if __name__ == "__main__":
     # import_database()
 
