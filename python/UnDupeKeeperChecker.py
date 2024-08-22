@@ -249,29 +249,29 @@ class FileList:
             old_uri = file_with_sha[constants.FILE_LIST][0].replace(constants.DOS_SLASH, constants.UNIX_SLASH)
             check2 = add_uri != old_uri
             check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
-            old_uri_sha = f'{file_with_sha[constants.DOC_ID][0:constants.SHA_SIZE]}'
+            old_uri_sha = f'{file_with_sha[constants.DOC_ID][0:constants.SHA_SIZE].upper()}'
 
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
         show.info(f'{line_number()} {function_name} SOURCE [{old_uri_sha}] [{old_uri}]')
         if check1 and check2 and check3:
             try:
-                show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}]')
+                show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}]')
                 delete_file(add_uri)
             except PermissionError as permission_error:
                 os.chmod(add_uri, stat.S_IWRITE)
-                show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}] [{permission_error}]')
+                show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{permission_error}]')
                 delete_file(add_uri)
         else:
             if is_link(add_uri):
-                show.info(f'{line_number()} {function_name} MOVE LINK [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
+                show.info(f'{line_number()} {function_name} MOVE LINK [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
                 uri_file = os.readlink(add_uri)
                 self.file_operation('copy', uri_file, constants.TARGET_PATH)
                 delete_link(add_uri)
             elif is_file(add_uri):
-                show.info(f'{line_number()} {function_name} MOVE FILE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
+                show.info(f'{line_number()} {function_name} MOVE FILE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
                 self.file_operation('move', add_uri, constants.TARGET_PATH)
             else:
-                show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE]}] [{add_uri}]')
+                show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{add_uri}]')
         show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
         self.pause_thread()
 
