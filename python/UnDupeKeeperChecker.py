@@ -239,12 +239,17 @@ class FileList:
         self.update_thread_started_time()
         add_uri = add_uri.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
         new_file = FileHolder(add_uri)
+
         file_with_sha = self._file_database.database_get_item(new_file.file_sha)
-        show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
-        old_uri = file_with_sha[constants.FILE_LIST][0].replace(constants.DOS_SLASH, constants.UNIX_SLASH)
         check1 = True if file_with_sha else False
-        check2 = add_uri != old_uri
-        check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
+        check2 = False
+        check3 = False
+        if check1:
+            old_uri = file_with_sha[constants.FILE_LIST][0].replace(constants.DOS_SLASH, constants.UNIX_SLASH)
+            check2 = add_uri != old_uri
+            check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
+
+        show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
         if not check2:
             show.error(f'{line_number()} {section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
             show.error(f'{line_number()} {function_name} [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}] CHECK2 CANNOT BE FALSE!')
