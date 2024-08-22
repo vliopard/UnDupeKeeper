@@ -244,7 +244,7 @@ class FileList:
         check2 = False
         check3 = False
         old_uri = ''
-        old_uri_sha = ''
+        old_uri_sha = '          '
         if check1:
             old_uri = file_with_sha[constants.FILE_LIST][0].replace(constants.DOS_SLASH, constants.UNIX_SLASH)
             check2 = add_uri != old_uri
