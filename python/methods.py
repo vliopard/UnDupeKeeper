@@ -324,3 +324,7 @@ def change_dir_time(target_directory):
             os.utime(target_directory, (modified, modified))
     except ValueError:
         pass
+
+
+def count_files(directory):
+    return sum(len(files) for _, _, files in os.walk(directory))
