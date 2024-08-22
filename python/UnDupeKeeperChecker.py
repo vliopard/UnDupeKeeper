@@ -244,13 +244,15 @@ class FileList:
         check2 = False
         check3 = False
         old_uri = ''
+        old_uri_sha = ''
         if check1:
             old_uri = file_with_sha[constants.FILE_LIST][0].replace(constants.DOS_SLASH, constants.UNIX_SLASH)
             check2 = add_uri != old_uri
             check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
+            old_uri_sha = f'{file_with_sha[constants.DOC_ID][0:constants.SHA_SIZE]}'
 
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
-        show.info(f'{line_number()} {function_name} SOURCE [{file_with_sha[constants.DOC_ID][0:constants.SHA_SIZE]}] [{old_uri}]')
+        show.info(f'{line_number()} {function_name} SOURCE [{old_uri_sha}] [{old_uri}]')
         if check1 and check2 and check3:
             try:
                 show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE]}] [{check1}][{check2}][{check3}] [{add_uri}]')
