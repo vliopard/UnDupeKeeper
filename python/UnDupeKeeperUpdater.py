@@ -14,7 +14,7 @@ from pymongo.errors import DuplicateKeyError
 import logging
 show = logging.getLogger(constants.DEBUG_MAIN)
 
-test = True
+test = False
 reset = False
 
 mongo_client = MongoClient(constants.DATABASE_URL)
@@ -104,5 +104,5 @@ if __name__ == '__main__':
     hash_directory_files(arguments.directory)
     get_hash_count()
     get_file_count()
-    if reset:
-        mongo_collection.delete_many({})
+    # if reset:
+    #     mongo_collection.delete_many({})
