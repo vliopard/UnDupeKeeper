@@ -341,7 +341,14 @@ def change_time(target_name, time_created, time_accessed, time_modified):
     iiga = 116444736000000000
 
     set_file_time = ctypes.windll.kernel32.SetFileTime
-    handle = ctypes.windll.kernel32.CreateFileW(target_name, 256, 0, None, 3, 128, None)
+    handle = ctypes.windll.kernel32.CreateFileW(
+        target_name,
+        256,
+        0,
+        None,
+        3,
+        0x02000000,  # 128,
+        None)
 
     creation_time = ctypes.c_int64(int(time_created * iet + iiga))
     access_time = ctypes.c_int64(int(time_accessed * iet + iiga))
