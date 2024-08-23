@@ -328,6 +328,7 @@ def change_dir_time(target_directory):
         pass
 
 
+@timed
 def count_directories(target_directory):
     total_files = 0
     for root, dirs, files in tqdm(os.walk(target_directory), desc="SCANNING"):
@@ -335,6 +336,7 @@ def count_directories(target_directory):
     return total_files
 
 
+@timed
 def count_files(directory):
     return sum(len(files) for _, _, files in os.walk(directory))
 
