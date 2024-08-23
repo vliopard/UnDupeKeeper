@@ -10,13 +10,14 @@ show = logging.getLogger(constants.DEBUG_COPY)
 
 
 def copy_files(args):
-    print('Copying files...')
-    source_location = args.to_target
+    source_location = args.from_source
+    print(f'Copying files from [{source_location}]...')
     target_location = args.to_target
+    print(f'to [{target_location}]...')
 
     data = methods.count_files(source_location)
     status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-    with tqdm(total=len(data), bar_format=status_bar_format) as tqdm_progress_bar:
+    with tqdm(total=data, bar_format=status_bar_format) as tqdm_progress_bar:
         for root, dirs, files in os.walk(source_location):
             for file in files:
                 tqdm_progress_bar.update(1)

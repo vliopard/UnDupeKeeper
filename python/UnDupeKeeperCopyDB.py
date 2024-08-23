@@ -48,7 +48,7 @@ def copy_files(args):
     source_location = args.source_location
     source_location_query = r"{}".format(args.source_location.replace("\\", "\\\\"))
 
-    print('Check length...')
+    print('Checking length...')
     data_length = UnDupeKeeperDatabase.count_files(source_location_query)
 
     print('Getting files...')
