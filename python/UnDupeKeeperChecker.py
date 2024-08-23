@@ -263,12 +263,12 @@ class FileList:
                 delete_file(add_uri)
         else:
             if is_link(add_uri):
-                show.info(f'{line_number()} {function_name} MOVE LINK [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
+                show.info(f'{line_number()} {function_name} MOVLNK [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
                 uri_file = os.readlink(add_uri)
                 self.file_operation('copy', uri_file, constants.TARGET_PATH)
                 delete_link(add_uri)
             elif is_file(add_uri):
-                show.info(f'{line_number()} {function_name} MOVE FILE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
+                show.info(f'{line_number()} {function_name} MOVARQ [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
                 self.file_operation('move', add_uri, constants.TARGET_PATH)
             else:
                 show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{add_uri}]')
