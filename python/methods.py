@@ -1,5 +1,6 @@
 import os
 import time
+import ctypes
 import hashlib
 import inspect
 import constants
@@ -316,15 +317,35 @@ def get_level(path, n):
 
 def change_dir_time(target_directory):
     try:
-        created = os.path.getctime(min((os.path.join(target_directory, file) for file in os.listdir(target_directory)), key=os.path.getctime))
-        modified = os.path.getmtime(min((os.path.join(target_directory, file) for file in os.listdir(target_directory)), key=os.path.getmtime))
-        if created < modified:
-            os.utime(target_directory, (created, created))
-        else:
-            os.utime(target_directory, (modified, modified))
+        time_accessed = os.path.getatime(min((os.path.join(target_directory, file) for file in os.listdir(target_directory)), key=os.path.getatime))
+        time_modified = os.path.getmtime(min((os.path.join(target_directory, file) for file in os.listdir(target_directory)), key=os.path.getmtime))
+        time_created = os.path.getctime(min((os.path.join(target_directory, file) for file in os.listdir(target_directory)), key=os.path.getctime))
+        min_time = min(time_accessed, time_modified, time_created)
+
+        # os.utime(target_directory, (min_time, min_time))
+        change_time(target_directory, min_time, min_time, min_time)
     except ValueError:
         pass
 
 
 def count_files(directory):
     return sum(len(files) for _, _, files in os.walk(directory))
+
+
+def copy_time(source_name, target_name):
+    change_time(target_name, os.path.getctime(source_name), os.path.getatime(source_name), os.path.getmtime(source_name))
+
+
+def change_time(target_name, time_created, time_accessed, time_modified):
+    iet = 1e7
+    iiga = 116444736000000000
+
+    set_file_time = ctypes.windll.kernel32.SetFileTime
+    handle = ctypes.windll.kernel32.CreateFileW(target_name, 256, 0, None, 3, 128, None)
+
+    creation_time = ctypes.c_int64(int(time_created * iet + iiga))
+    access_time = ctypes.c_int64(int(time_accessed * iet + iiga))
+    modify_time = ctypes.c_int64(int(time_modified * iet + iiga))
+
+    set_file_time(handle, ctypes.byref(creation_time), ctypes.byref(access_time), ctypes.byref(modify_time))
+    ctypes.windll.kernel32.CloseHandle(handle)
