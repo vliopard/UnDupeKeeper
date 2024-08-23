@@ -9,19 +9,12 @@ import logging
 show = logging.getLogger(constants.DEBUG_COPY)
 
 
-def count_files(target_directory):
-    total_files = 0
-    for root, dirs, files in tqdm(os.walk(target_directory), desc="SCANNING"):
-        total_files += len(dirs)
-    return total_files
-
-
 def change_files(args):
     print('Changing files...')
 
     target_location = args.target_location
 
-    data = count_files(target_location)
+    data = methods.count_directories(target_location)
     status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
     with tqdm(total=data, bar_format=status_bar_format) as tqdm_progress_bar:
         for root, dirs, files in os.walk(target_location):
