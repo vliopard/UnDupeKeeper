@@ -38,10 +38,10 @@ def timed(func):
         time_end = time.time()
         end_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         time_report = [f'Start time: {start_time}', f'End time:   {end_time}', f"Function {func.__name__} ran in {timedelta(seconds=(time_end - time_start))}"]
-        print('=' * 100)
+        print(f'{section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
         for time_detail in time_report:
             print(time_detail)
-        print('=' * 100)
+        print(f'{section_line(constants.SYMBOL_EQ, constants.LINE_LEN)}')
         return result
     return wrapper
 
