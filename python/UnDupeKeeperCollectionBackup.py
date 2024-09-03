@@ -19,9 +19,16 @@ def list_collections():
     collection_list = mongo_database.list_collection_names()
     print('LIST OF COLLECTIONS:')
     print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
-    for item in collection_list:
-        print(f'{constants.DATABASE_NAME}:[ {item} ]')
+    for item in sorted(collection_list):
+        collection = mongo_database[item]
+        stats = mongo_database.command("collstats", item)
+        size_bytes = stats['size']
+        size_bytes_str = f'{size_bytes:,}'
+        count = collection.count_documents({})
+        count_str = f'{count:,}'
+        print(f'{constants.DATABASE_NAME}:[ {item.rjust(30)} ] [{count_str.rjust(9)}] [{size_bytes_str.rjust(13)}]')
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
+
 
 def delete_collection(collection_name):
     print(f'DELETING [{collection_name}]')
