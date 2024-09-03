@@ -1,3 +1,4 @@
+import json
 import argparse
 import constants
 from methods import timed
@@ -40,11 +41,18 @@ def delete_collection(collection_name):
     mongo_database[collection_name].drop()
 
 
+@timed
+def export_collection_to_json():
+    with open('MongoDB_UnDupeKeeperCollection_backup.json', 'w') as file:
+        json.dump(list(mongo_collection.find({})), file, default=str, indent=4)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Create a collection backup')
     parser.add_argument('-n', '--collection_name', type=str, help='New backup name')
     parser.add_argument('-l', '--collection_list', action='store_true', help='List collections')
     parser.add_argument('-s', '--collection_size', action='store_true', help='List collections')
+    parser.add_argument('-e', '--collection_export', action='store_true', help='List collections')
     parser.add_argument('-d', '--collection_delete', type=str, help='Delete collection')
     args = parser.parse_args()
     if args.collection_list:
@@ -53,5 +61,7 @@ if __name__ == "__main__":
         duplicate_collection(args.collection_name)
     elif args.collection_delete:
         delete_collection(args.collection_delete)
+    elif args.collection_export:
+        export_collection_to_json()
     else:
         print('No valid option.')
