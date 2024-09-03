@@ -4,6 +4,7 @@ import methods
 import argparse
 import constants
 from tqdm import tqdm
+from methods import section_line
 
 import logging
 show = logging.getLogger(constants.DEBUG_COPY)
@@ -11,9 +12,11 @@ show = logging.getLogger(constants.DEBUG_COPY)
 
 def copy_files(args):
     source_location = args.from_source
-    print(f'Copying files from [{source_location}]...')
     target_location = args.to_target
-    print(f'to [{target_location}]...')
+    print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+    print(f'Copying files from [{source_location}]...')
+    print(f'                to [{target_location}]...')
+    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
     status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
 

@@ -4,15 +4,17 @@ import methods
 import argparse
 import constants
 from tqdm import tqdm
+from methods import section_line
 
 import logging
 show = logging.getLogger(constants.DEBUG_COPY)
 
 
 def change_files(args):
-    print('Changing files...')
-
     target_location = args.target_location
+    print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+    print(f'Changing files on [{target_location}]')
+    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
     data = methods.count_directories(target_location)
     status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"

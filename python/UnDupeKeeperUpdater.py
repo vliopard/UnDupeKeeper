@@ -50,7 +50,9 @@ def count_files(target_directory):
 
 @timed
 def hash_directory_files(current_directory):
+    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
     print(f"SCANNING FILES: [{current_directory}]")
+    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
     status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
     total_files = count_files(current_directory)
     with tqdm(total=total_files, bar_format=status_bar_format) as tqdm_progress_bar:

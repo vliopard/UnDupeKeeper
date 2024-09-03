@@ -4,7 +4,9 @@ import shutil
 import argparse
 import constants
 import UnDupeKeeperDatabase
+
 from tqdm import tqdm
+from methods import section_line
 
 import logging
 show = logging.getLogger(constants.DEBUG_COPY)
@@ -47,6 +49,12 @@ def copy_files(args):
     target_location = args.target_location if args.target_location.endswith(os.sep) else f'{args.target_location}{os.sep}'
     source_location = args.source_location
     source_location_query = r"{}".format(args.source_location.replace("\\", "\\\\"))
+
+    print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+    print(f'COPY FROM SOURCE [{source_location}]')
+    print(f'       TO TARGET [{target_location}]')
+    print(f'      WITH QUERY [{source_location_query}]')
+    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
     print('Checking length...')
     data_length = UnDupeKeeperDatabase.count_files(source_location_query)
