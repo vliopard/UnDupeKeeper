@@ -15,6 +15,7 @@ def duplicate_collection(collection_name):
     new_collection.insert_many(mongo_collection.find())
 
 
+@timed
 def list_collections(size):
     collection_list = mongo_database.list_collection_names()
     print('LIST OF COLLECTIONS:')
@@ -33,6 +34,7 @@ def list_collections(size):
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
 
+@timed
 def delete_collection(collection_name):
     print(f'DELETING [{collection_name}]')
     mongo_database[collection_name].drop()
