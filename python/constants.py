@@ -121,6 +121,7 @@ DATA_TABLE = f'{LABEL_MAIN}.pkl'
 DATABASE_URL = 'mongodb://localhost:27017/'
 DATABASE_NAME = 'UnDupeKeeperDatabase'
 DATABASE_COLLECTION = 'UnDupeKeeperFiles'
+DATABASE_STATUS = 'UnDupeKeeperStatus'
 DATABASE_UNDUPE = 'UnDupyKeeperFiles'
 
 SETTINGS_FILE = 'UnDupeKeeper.ini'
