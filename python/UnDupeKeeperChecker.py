@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import stat
 import shutil
@@ -345,10 +346,7 @@ if __name__ == "__main__":
     log_formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
     date_format = constants.DATE_FORMAT
 
-    logging.basicConfig(format=log_format,
-                        datefmt=date_format,
-                        level=constants.DEBUG_LEVEL,
-                        handlers=log_handler)
+    logging.basicConfig(format=log_format, datefmt=date_format, level=constants.DEBUG_LEVEL, handlers=log_handler)
 
     console = logging.StreamHandler()
     console.setLevel(constants.DEBUG_LEVEL)
@@ -369,20 +367,8 @@ if __name__ == "__main__":
     print(f'WATCH OBSERVER: [{event_source_path}]')
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
-    state = False
-    system_tray_image = Image.open(constants.ICON_DONE)
-    system_tray_icon = pystray.Icon(f'{constants.LABEL_MAIN} 1',
-                                    system_tray_image,
-                                    constants.LABEL_MAIN,
-                                    menu=pystray.Menu(
-                                        pystray.MenuItem(constants.LABEL_DONE, tray_icon_click, checked=lambda item: state),
-                                        pystray.MenuItem(constants.LABEL_PAUSE, tray_icon_click, checked=lambda item: state),
-                                        pystray.MenuItem(constants.LABEL_ERROR, tray_icon_click, checked=lambda item: state),
-                                        pystray.MenuItem(constants.LABEL_EXIT, tray_icon_click, checked=lambda item: state)))
-
     show.warning(f'Starting {constants.LABEL_MAIN} System...')
     file_set = FileList()
-    file_set.start_thread()
 
     if event_source_scan:
         for root, dirs, files in os_walk(event_source_path, topdown=True):
@@ -390,36 +376,5 @@ if __name__ == "__main__":
                 uri = str(os_path.join(root, name))
                 if uri_exists(uri):
                     file_set.add_file(uri)
-        file_set.pause_thread()
-
-    show.warning(f'{constants.LABEL_MAIN} Initialized...')
-
-    event_handler = MonitorFolder()
-    observer = Observer()
-    observer.schedule(event_handler, path=event_source_path, recursive=True)
-
-    observer.start()
-
-    if constants.UI == constants.GUI:
-        show.warning(f'{constants.LABEL_MAIN} Tray Initialized...')
-        system_tray_icon.run()
-
-    if constants.UI == constants.CLI:
-        show.warning(f'{section_line(constants.SYMBOL_EQ, 20)} Keyboard Initialized... {section_line(constants.SYMBOL_EQ, 20)}')
-        keyboard_listening = True
-        try:
-            keyboard = KBHit()
-            while keyboard_listening:
-                time.sleep(1)
-                if keyboard.check():
-                    show.warning(f'Terminating {constants.LABEL_MAIN} System...')
-                    keyboard_listening = False
-
-        except KeyboardInterrupt as keyboard_interrupt:
-            show.debug(f'{line_number()} {constants.DEBUG_MARKER} KeyboardInterrupt: [{keyboard_interrupt}]')
-
-    file_set.terminate()
-    observer.stop()
-    observer.join()
 
     show.warning(f'Bye...')
