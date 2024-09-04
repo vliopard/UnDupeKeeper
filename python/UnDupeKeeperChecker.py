@@ -362,7 +362,7 @@ if __name__ == "__main__":
     argument_parser.add_argument(constants.PARAMETER_SCAN, required=False, default=False)
     arguments = argument_parser.parse_args()
 
-    event_source_path = arguments.path
+    event_source_path = arguments.path.replace('\\', '\\\\')
     event_source_scan = arguments.scan
 
     state = False
@@ -392,6 +392,9 @@ if __name__ == "__main__":
 
     event_handler = MonitorFolder()
     observer = Observer()
+    print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+    print(f'WATCH OBSERVER: [{event_source_path}]')
+    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
     observer.schedule(event_handler, path=event_source_path, recursive=True)
 
     observer.start()
