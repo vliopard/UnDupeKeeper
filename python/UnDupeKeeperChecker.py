@@ -274,7 +274,6 @@ class FileList:
             else:
                 show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{add_uri}]')
         show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
-        self.pause_thread()
 
 
 class FileHolder:
