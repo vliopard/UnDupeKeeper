@@ -1,9 +1,7 @@
 import os
-import sys
 import time
 import stat
 import shutil
-import pystray
 import threading
 import constants
 
@@ -31,7 +29,6 @@ from os.path import islink as is_link
 from os.path import isfile as is_file
 from os.path import exists as uri_exists
 
-from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 from logging.handlers import RotatingFileHandler
@@ -335,7 +332,6 @@ def tray_icon_click(_, selected_tray_item):
     if str(selected_tray_item) == constants.LABEL_EXIT:
         file_set.terminate()
         show.warning(f'Terminating {constants.LABEL_MAIN} System...')
-        system_tray_icon.stop()
     show.warning(f'Tray Icon Done...')
 
 
@@ -355,22 +351,30 @@ if __name__ == "__main__":
     logging.getLogger(constants.WATCHDOG).setLevel(logging.CRITICAL)
 
     argument_parser = arg_parse.ArgumentParser()
-    argument_parser.add_argument(constants.PARAMETER_PATH, required=False, default=constants.MAIN_PATH)
-    argument_parser.add_argument(constants.PARAMETER_SCAN, required=False, default=False)
+    argument_parser.add_argument(constants.PARAMETER_PATH, required=False)
     arguments = argument_parser.parse_args()
 
-    event_source_path = arguments.path.strip().replace('"', '')
-    event_source_scan = arguments.scan
-
-    print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
-    print(f'WATCH OBSERVER: [{event_source_path}]')
-    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
+    flist = None
+    if arguments.path:
+        flist = [arguments.path.strip().replace('"', '')]
+        print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+        print(f'WATCH OBSERVER: [{flist[0]}]')
+        print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
+    else:
+        print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+        print(f'WATCH OBSERVER: [DIRECTORY LIST]')
+        print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
+        with open('UnDupeKeeperChecker.txt', 'r', encoding="utf8") as sl:
+            flist = [line.strip() for line in sl]
 
     show.warning(f'Starting {constants.LABEL_MAIN} System...')
     file_set = FileList()
 
-    if event_source_scan:
-        for root, dirs, files in os_walk(event_source_path, topdown=True):
+    for esp in flist:
+        print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+        print(f'WORKING ON [{esp}]')
+        print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
+        for root, dirs, files in os_walk(esp, topdown=True):
             for name in files:
                 uri = str(os_path.join(root, name))
                 if uri_exists(uri):
