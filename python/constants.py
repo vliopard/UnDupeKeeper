@@ -1,5 +1,6 @@
 import screen
 import configparser
+from getpass import getpass
 
 GUI = 'GUI'
 CLI = 'CLI'
@@ -118,7 +119,6 @@ FILE = 'file'
 MOVED_FILE = 'move'
 DATA_TABLE = f'{LABEL_MAIN}.pkl'
 
-DATABASE_URL = 'mongodb://localhost:27017/'
 DATABASE_NAME = 'UnDupeKeeperDatabase'
 DATABASE_COLLECTION = 'UnDupeKeeperFiles'
 DATABASE_STATUS = 'UnDupeKeeperStatus'
@@ -146,6 +146,15 @@ FILE_TABLE = config.get('PATHS', 'FILE_TABLE')
 
 DEBUG_LEVEL = config.get('DEBUG', 'DEBUG_LEVEL')
 DEBUG_TEST = config.getboolean('DEBUG', 'DEBUG_TEST')
+
+MONGO_USERNAME = config.get('SECURITY', 'USERNAME')
+MONGO_PASSWORD = config.get('SECURITY', 'PASSWORD')
+if not MONGO_PASSWORD:
+    # MONGO_PASSWORD = getpass('Enter database password: ')
+    MONGO_PASSWORD = input('Enter database password: ')
+MONGO_HOST = config.get('DATABASE', 'HOST')
+MONGO_PORT = config.get('DATABASE', 'PORT')
+DATABASE_URL = f'mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/'
 
 DEBUG_BASE = 'UnDupyKeeper'
 DEBUG_MAIN = f'{DEBUG_BASE}_MAIN'
