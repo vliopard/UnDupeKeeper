@@ -1,6 +1,7 @@
 import json
 import argparse
 import constants
+from tqdm import tqdm
 from methods import timed
 from pymongo import MongoClient
 from methods import section_line
@@ -21,7 +22,11 @@ def duplicate_collection(collection_name):
 @timed
 def list_collections(size):
     collection_list = mongo_database.list_collection_names()
-    print('LIST OF COLLECTIONS:')
+
+    si = mongo_client.server_info()
+    operating_system = si['targetMinOS']
+
+    print(f'LIST OF COLLECTIONS: [{operating_system}]')
     print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
     for item in sorted(collection_list):
         if item == constants.DATABASE_STATUS:
@@ -46,9 +51,9 @@ def list_collections(size):
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
 
-def add_status(document):
+def add_status(add_doc):
     try:
-        mongo_stats.insert_one({constants.DOC_ID: document[constants.DOC_ID], 'size': document['size'], 'count': document['count']})
+        mongo_stats.insert_one({constants.DOC_ID: add_doc[constants.DOC_ID], 'size': add_doc['size'], 'count': add_doc['count']})
     except DuplicateKeyError as duplicate_key_error:
         print(f'[{duplicate_key_error}]')
 
@@ -75,12 +80,29 @@ def export_collection_to_json():
         json.dump(list(mongo_collection.find({})), file, default=str, indent=4)
 
 
+@timed
+def export_collection_to_json_progress():
+    print(f'GENERATING JSON BACKUP... [{constants.DATABASE_COLLECTION}]')
+    with open('MongoDB_UnDupeKeeperCollection_backup.json', 'w') as file:
+        stats_db = get_status(constants.DATABASE_COLLECTION)
+        if not stats_db:
+            count = mongo_collection.count_documents({})
+        else:
+            count = stats_db['count']
+        with tqdm(total=int(count), bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
+            for item in mongo_collection.find({}):
+                json.dump(item, file, default=str, indent=4)
+                tqdm_progress_bar.update(1)
+    print('DONE.')
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Create a collection backup')
     parser.add_argument('-n', '--collection_name', type=str, help='New backup name')
     parser.add_argument('-l', '--collection_list', action='store_true', help='List collections')
-    parser.add_argument('-s', '--collection_size', action='store_true', help='List collections')
-    parser.add_argument('-e', '--collection_export', action='store_true', help='List collections')
+    parser.add_argument('-s', '--collection_size', action='store_true', help='List collections with size')
+    parser.add_argument('-e', '--collection_export', action='store_true', help='Export collection')
+    parser.add_argument('-p', '--collection_progress', action='store_true', help='Export collection with progress')
     parser.add_argument('-d', '--collection_delete', type=str, help='Delete collection')
     args = parser.parse_args()
     if args.collection_list:
@@ -91,5 +113,7 @@ if __name__ == "__main__":
         delete_collection(args.collection_delete)
     elif args.collection_export:
         export_collection_to_json()
+    elif args.collection_progress:
+        export_collection_to_json_progress()
     else:
         print('No valid option.')

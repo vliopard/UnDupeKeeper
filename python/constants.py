@@ -183,3 +183,5 @@ test_files = [f'{test_directory}/file0000005.bin',
               f'{test_directory}/file0150000.bin',
               f'{test_directory}/file0300000.bin',
               f'{test_directory}/file1000000.bin']
+
+STATUS_BAR_FORMAT = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
