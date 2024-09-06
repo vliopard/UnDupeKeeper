@@ -19,6 +19,12 @@ def duplicate_collection(collection_name):
     new_collection.insert_many(mongo_collection.find())
 
 
+def get_db_size(collection_name):
+    collection_cursor = mongo_database[collection_name]
+    stats = mongo_database.command("collstats", collection_name)
+    return {constants.DOC_ID: collection_name, 'size': stats['size'], 'count': collection_cursor.count_documents({})}
+
+
 @timed
 def list_collections(size):
     collection_list = mongo_database.list_collection_names()
@@ -28,27 +34,30 @@ def list_collections(size):
 
     print(f'LIST OF COLLECTIONS: [{operating_system}]')
     print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
-    for item in sorted(collection_list):
-        if item == constants.DATABASE_STATUS:
+    for collection_name in sorted(collection_list):
+        if collection_name == constants.DATABASE_STATUS:
             continue
-        collection = mongo_database[item]
         if size:
-            stats_db = get_status(item)
+            stats_db = get_status(collection_name)
             if not stats_db:
-                stats = mongo_database.command("collstats", item)
-                size_bytes = stats['size']
-                count = collection.count_documents({})
-                add_status({constants.DOC_ID: item, 'size': size_bytes, 'count': count})
+                add_status_item = get_db_size(collection_name)
+                size_bytes = add_status_item['size']
+                count = add_status_item['count']
+                add_status(add_status_item)
             else:
                 size_bytes = stats_db['size']
                 count = stats_db['count']
             size_bytes_str = f'{size_bytes:,}'
             count_str = f'{count:,}'
 
-            print(f'{constants.DATABASE_NAME}:[ {item.rjust(30)} ] [{count_str.rjust(9)}] [{size_bytes_str.rjust(13)}]')
+            print(f'{constants.DATABASE_NAME}:[ {collection_name.rjust(30)} ] [{count_str.rjust(9)}] [{size_bytes_str.rjust(13)}]')
         else:
-            print(f'{constants.DATABASE_NAME}:[ {item.rjust(30)} ]')
+            print(f'{constants.DATABASE_NAME}:[ {collection_name.rjust(30)} ]')
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
+
+
+def get_status(document_id):
+    return mongo_stats.find_one({constants.DOC_ID: document_id})
 
 
 def add_status(add_doc):
@@ -58,13 +67,14 @@ def add_status(add_doc):
         print(f'[{duplicate_key_error}]')
 
 
-def get_status(document_id):
-    return mongo_stats.find_one({constants.DOC_ID: document_id})
-
-
 def del_status(item_id):
     result = mongo_stats.delete_one({constants.DOC_ID: item_id})
     return result.deleted_count == 1
+
+
+def update_status(collection_id):
+    collection_info = get_db_size(collection_id)
+    mongo_stats.update_one({'_id': collection_id}, {'$set': {'count': collection_info['count'], 'size': collection_info['size']}})
 
 
 @timed

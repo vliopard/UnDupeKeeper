@@ -11,6 +11,8 @@ from methods import section_line
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
+from UnDupeKeeperCollectionBackup import update_status
+
 import logging
 show = logging.getLogger(constants.DEBUG_MAIN)
 
@@ -106,5 +108,10 @@ if __name__ == '__main__':
     hash_directory_files(arguments.directory)
     get_hash_count()
     get_file_count()
+    update_status(constants.DATABASE_COLLECTION)
+    print('DONE.')
+
+    # TODO: AFTER EXPORTING, WRITE LOG TO A FILE WITH STATS (NUMBERS BEFORE AND AFTER PROCESS)
+
     # if reset:
     #     mongo_collection.delete_many({})
