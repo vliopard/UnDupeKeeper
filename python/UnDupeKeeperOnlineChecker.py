@@ -264,9 +264,9 @@ class FileList:
 
 class FileHolder:
     def __init__(self, file_path):
-        self._file_uri = file_path
+        self._file_uri = None
         self._file_sha = None
-        self.set_sha()
+        self.set_sha(file_path)
 
     @property
     def file_uri(self):
@@ -281,9 +281,9 @@ class FileHolder:
     def file_sha(self):
         return self._file_sha
 
-    def set_sha(self):
-        if self._file_uri:
-            self._file_sha = get_hash(self._file_uri, constants.HASH_MD5)
+    def set_sha(self, file_path):
+        self._file_uri = file_path
+        self._file_sha = get_hash(file_path, constants.HASH_MD5)
 
     def __repr__(self):
         return self._file_uri
@@ -371,5 +371,6 @@ if __name__ == "__main__":
                         file_set.add_file(uri)
                     except Exception as exception:
                         print(f'ERROR: [{uri}] [{exception}]')
+                uri = 'none'
 
     show.warning(f'Bye...')
