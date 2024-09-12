@@ -131,12 +131,20 @@ def get_hash(uri_file, digest):
                 return sha_file
 
             if is_link(uri_file):
+                if trials > 3:
+                    print(f'ISLINK: [{uri_file}]')
                 uri_file = os.readlink(uri_file)
             if digest_method == constants.HASH_MD5_FAST:
+                if trials > 3:
+                    print(f'DGSCAN: [{uri_file}]')
                 sha_file = scan(uri_file)
             elif digest_method == constants.HASH_MD5_CHUNK:
+                if trials > 3:
+                    print(f'CHECKS: [{uri_file}]')
                 sha_file = create_checksum_fixed_chunks(uri_file)
             else:
+                if trials > 3:
+                    print(f'WOPENF: [{uri_file}]')
                 with open(uri_file, constants.READ_BINARY, buffering=0) as uri_locator:
                     for element in iter(lambda: uri_locator.readinto(memory_view), 0):
                         digest_method.update(memory_view[:element])
