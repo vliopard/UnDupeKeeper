@@ -367,6 +367,9 @@ if __name__ == "__main__":
             for name in files:
                 uri = str(os_path.join(root, name))
                 if uri_exists(uri):
-                    file_set.add_file(uri)
+                    try:
+                        file_set.add_file(uri)
+                    except Exception as exception:
+                        print(f'ERROR: [{uri}] [{exception}]')
 
     show.warning(f'Bye...')
