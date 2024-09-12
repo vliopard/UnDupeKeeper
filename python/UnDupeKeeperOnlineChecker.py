@@ -274,8 +274,7 @@ class FileHolder:
 
     @file_uri.setter
     def file_uri(self, universal_resource_indicator):
-        self._file_uri = universal_resource_indicator
-        self.set_sha()
+        self.set_sha(universal_resource_indicator)
 
     @property
     def file_sha(self):
@@ -359,6 +358,8 @@ if __name__ == "__main__":
     show.warning(f'Starting {constants.LABEL_MAIN} System...')
     file_set = FileList()
 
+    buri = None
+
     for esp in flist:
         print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
         print(f'WORKING ON [{esp}]')
@@ -366,11 +367,13 @@ if __name__ == "__main__":
         for root, dirs, files in os_walk(esp, topdown=True):
             for name in files:
                 uri = str(os_path.join(root, name))
+                buri = uri
                 if uri_exists(uri):
                     try:
                         file_set.add_file(uri)
                     except Exception as exception:
                         print(f'ERROR: [{uri}] [{exception}]')
-                uri = 'none'
+                if buri == uri:
+                    uri = 'none'
 
     show.warning(f'Bye...')
