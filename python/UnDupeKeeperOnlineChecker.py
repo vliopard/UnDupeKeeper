@@ -21,6 +21,7 @@ from os import path as os_path
 from os import walk as os_walk
 
 from os import unlink as delete_link
+from os import remove as delete_file
 
 from os.path import islink as is_link
 from os.path import isfile as is_file
@@ -247,7 +248,13 @@ class FileList:
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
         show.info(f'{line_number()} {function_name} SOURCE [{old_uri_sha}] [{old_uri}]')
         if check1 and check2:
-            show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}] [{add_uri}]')
+            try:
+                show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}]')
+                delete_file(add_uri)
+            except PermissionError as permission_error:
+                os.chmod(add_uri, stat.S_IWRITE)
+                show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{permission_error}]')
+                delete_file(add_uri)
         else:
             if is_link(add_uri):
                 show.info(f'{line_number()} {function_name} MOVLNK [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}] [{add_uri}] [{constants.TARGET_PATH}]')
