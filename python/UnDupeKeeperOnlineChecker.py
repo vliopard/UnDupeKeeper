@@ -249,11 +249,11 @@ class FileList:
         show.info(f'{line_number()} {function_name} SOURCE [{old_uri_sha}] [{old_uri}]')
         if check1 and check2:
             try:
-                show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}]')
+                show.info(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}] [{add_uri}]')
                 delete_file(add_uri)
             except PermissionError as permission_error:
                 os.chmod(add_uri, stat.S_IWRITE)
-                show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{permission_error}]')
+                show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}] [{add_uri}] [{permission_error}]')
                 delete_file(add_uri)
         else:
             if is_link(add_uri):
