@@ -232,7 +232,7 @@ class FileList:
             show.info(f'{line_number()} {function_name} MOVE [{source_file}] TO [{target_file}]')
             shutil.move(source_file, target_file)
 
-    def add_file(self, add_uri, move_file=True):
+    def add_file(self, add_uri, argz):
         function_name = 'FILE:'
         self.update_thread_started_time()
         add_uri = add_uri.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
@@ -246,7 +246,10 @@ class FileList:
         if check1:
             old_uri = file_with_sha[constants.FILE_LIST][0].replace(constants.DOS_SLASH, constants.UNIX_SLASH)
             check2 = add_uri != old_uri
-            check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
+            if argz['no_comp']:
+                check3 = True
+            else:
+                check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
             old_uri_sha = f'{file_with_sha[constants.DOC_ID][0:constants.SHA_SIZE].upper()}'
 
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
@@ -260,7 +263,7 @@ class FileList:
                 show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{permission_error}]')
                 delete_file(add_uri)
         else:
-            if move_file:
+            if not argz['no_move']:
                 if is_link(add_uri):
                     show.info(f'{line_number()} {function_name} MOVLNK [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
                     uri_file = os.readlink(add_uri)
@@ -271,6 +274,9 @@ class FileList:
                     self.file_operation('move', add_uri, constants.TARGET_PATH)
                 else:
                     show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{add_uri}]')
+            else:
+                show.info(f'{line_number()} {function_name} NOMOVE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
+
         show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
 
@@ -305,7 +311,7 @@ class MonitorFolder(FileSystemEventHandler):
 
     def on_created(self, event):
         show.info(f'{line_number()} ON_CREATED')
-        file_set.add_file(event.src_path)
+        file_set.add_file(event.src_path, {'no_move': True, 'no_comp': True})
         show.debug(f'{line_number()} {constants.DEBUG_MARKER}  {file_set}')
 
     def on_modified(self, event):
@@ -354,7 +360,11 @@ if __name__ == "__main__":
     argument_parser = arg_parse.ArgumentParser()
     argument_parser.add_argument(constants.PARAMETER_PATH, required=False)
     argument_parser.add_argument(constants.PARAMETER_NO_MOVE, required=False, action='store_true', help='List collections')
+    argument_parser.add_argument(constants.PARAMETER_NO_COMP, required=False, action='store_true', help='List collections')
     arguments = argument_parser.parse_args()
+
+    print(f'MOVE [{arguments.no_move}]')
+    print(f'COMP [{arguments.no_comp}]')
 
     flist = None
     if arguments.path:
@@ -380,6 +390,8 @@ if __name__ == "__main__":
             for name in files:
                 uri = str(os_path.join(root, name))
                 if uri_exists(uri):
-                    file_set.add_file(uri, True if arguments.no_move else False)
+                    mov = True if arguments.no_move else False
+                    cmp = True if arguments.no_comp else False
+                    file_set.add_file(uri, {'no_move': mov, 'no_comp': cmp})
 
     show.warning(f'Bye...')
