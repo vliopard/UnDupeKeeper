@@ -30,6 +30,7 @@ DEBUG_MARKER = 'DEBUG:'
 
 PARAMETER_PATH = '--path'
 PARAMETER_SCAN = '--scan'
+PARAMETER_NO_MOVE = '--no_move'
 
 PLATFORM_LINUX0 = 'linux'
 PLATFORM_LINUX1 = 'linux1'

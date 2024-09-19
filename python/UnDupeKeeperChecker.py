@@ -232,7 +232,7 @@ class FileList:
             show.info(f'{line_number()} {function_name} MOVE [{source_file}] TO [{target_file}]')
             shutil.move(source_file, target_file)
 
-    def add_file(self, add_uri):
+    def add_file(self, add_uri, move_file=True):
         function_name = 'FILE:'
         self.update_thread_started_time()
         add_uri = add_uri.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
@@ -260,16 +260,17 @@ class FileList:
                 show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{permission_error}]')
                 delete_file(add_uri)
         else:
-            if is_link(add_uri):
-                show.info(f'{line_number()} {function_name} MOVLNK [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
-                uri_file = os.readlink(add_uri)
-                self.file_operation('copy', uri_file, constants.TARGET_PATH)
-                delete_link(add_uri)
-            elif is_file(add_uri):
-                show.info(f'{line_number()} {function_name} MOVARQ [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
-                self.file_operation('move', add_uri, constants.TARGET_PATH)
-            else:
-                show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{add_uri}]')
+            if move_file:
+                if is_link(add_uri):
+                    show.info(f'{line_number()} {function_name} MOVLNK [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
+                    uri_file = os.readlink(add_uri)
+                    self.file_operation('copy', uri_file, constants.TARGET_PATH)
+                    delete_link(add_uri)
+                elif is_file(add_uri):
+                    show.info(f'{line_number()} {function_name} MOVARQ [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
+                    self.file_operation('move', add_uri, constants.TARGET_PATH)
+                else:
+                    show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{add_uri}]')
         show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
 
@@ -352,6 +353,7 @@ if __name__ == "__main__":
 
     argument_parser = arg_parse.ArgumentParser()
     argument_parser.add_argument(constants.PARAMETER_PATH, required=False)
+    argument_parser.add_argument(constants.PARAMETER_NO_MOVE, required=False, action='store_true', help='List collections')
     arguments = argument_parser.parse_args()
 
     flist = None
@@ -378,6 +380,6 @@ if __name__ == "__main__":
             for name in files:
                 uri = str(os_path.join(root, name))
                 if uri_exists(uri):
-                    file_set.add_file(uri)
+                    file_set.add_file(uri, True if arguments.no_move else False)
 
     show.warning(f'Bye...')
