@@ -282,9 +282,9 @@ class FileList:
 
 class FileHolder:
     def __init__(self, file_path):
-        self._file_uri = file_path
+        self._file_uri = None
         self._file_sha = None
-        self.set_sha()
+        self.set_sha(file_path)
 
     @property
     def file_uri(self):
@@ -292,16 +292,15 @@ class FileHolder:
 
     @file_uri.setter
     def file_uri(self, universal_resource_indicator):
-        self._file_uri = universal_resource_indicator
-        self.set_sha()
+        self.set_sha(universal_resource_indicator)
 
     @property
     def file_sha(self):
         return self._file_sha
 
-    def set_sha(self):
-        if self._file_uri:
-            self._file_sha = get_hash(self._file_uri, constants.HASH_MD5)
+    def set_sha(self, file_path):
+        self._file_uri = file_path
+        self._file_sha = get_hash(file_path, constants.HASH_MD5)
 
     def __repr__(self):
         return self._file_uri
@@ -382,6 +381,8 @@ if __name__ == "__main__":
     show.warning(f'Starting {constants.LABEL_MAIN} System...')
     file_set = FileList()
 
+    buri = None
+
     for esp in flist:
         print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
         print(f'WORKING ON [{esp}]')
@@ -389,9 +390,15 @@ if __name__ == "__main__":
         for root, dirs, files in os_walk(esp, topdown=True):
             for name in files:
                 uri = str(os_path.join(root, name))
+                buri = uri
                 if uri_exists(uri):
                     mov = True if arguments.no_move else False
                     cmp = True if arguments.no_comp else False
-                    file_set.add_file(uri, {'no_move': mov, 'no_comp': cmp})
+                    try:
+                        file_set.add_file(uri, {'no_move': mov, 'no_comp': cmp})
+                    except Exception as exception:
+                        print(f'ERROR: [{uri}] [{exception}]')
+                if buri == uri:
+                    uri = 'none'
 
     show.warning(f'Bye...')
