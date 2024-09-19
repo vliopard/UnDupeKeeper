@@ -361,9 +361,10 @@ if __name__ == "__main__":
     argument_parser.add_argument(constants.PARAMETER_NO_MOVE, required=False, action='store_true', help='List collections')
     argument_parser.add_argument(constants.PARAMETER_NO_COMP, required=False, action='store_true', help='List collections')
     arguments = argument_parser.parse_args()
-
-    print(f'MOVE [{arguments.no_move}]')
-    print(f'COMP [{arguments.no_comp}]')
+    mvs = str(not arguments.no_move)
+    cps = str(not arguments.no_comp)
+    print(f'MOVE [{mvs.upper()}]')
+    print(f'COMP [{cps.upper()}]')
 
     flist = None
     if arguments.path:
