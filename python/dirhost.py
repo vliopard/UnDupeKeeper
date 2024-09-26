@@ -152,7 +152,7 @@ if __name__ == '__main__':
     print('_' * horizontal_line)
     counter = 0
     count_online = 0
-    print('| [QTT] HOST IP       - HOST MAC ADDRESS  - SRC [STATUS ] HOST NAME')
+    print('| [QTT] HOST IP       - HOST MAC ADDRESS  - SRC [STATUS ] HOST NAME       |')
     for item in sorted_list:
         counter += 1
         counter_val = str(counter).rjust(3)
