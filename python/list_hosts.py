@@ -1,18 +1,15 @@
-import os
 import json
 import socket
 import psutil
+import methods
 import paramiko
 import threading
+import constants
 import subprocess
 from queue import Queue
 
-with open('known_hosts.json', 'r', encoding='utf-8') as known_hosts_file:
+with open(constants.KNOWN_HOSTS, constants.READ, encoding=constants.UTF8) as known_hosts_file:
     known_hosts = json.load(known_hosts_file)
-
-
-def clear_screen():
-    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def scan_network(network_base_ip):
@@ -43,7 +40,7 @@ def get_host_mac():
 
 
 def get_network_macs():
-    arp_result = subprocess.check_output(['arp', '-a']).decode('utf-8').splitlines()
+    arp_result = subprocess.check_output(['arp', '-a']).decode(constants.UTF8).splitlines()
     mac_list = {}
     for arp_line in arp_result[3:-1]:
         mac_address = arp_line.split()[1].upper()
@@ -105,7 +102,7 @@ def deep_scan(computer_ip, result_queue):
 
 
 if __name__ == '__main__':
-    clear_screen()
+    methods.clear_screen()
     print('Scanning...')
     network_ip = '192.168.0'
     print('- Host IP...')

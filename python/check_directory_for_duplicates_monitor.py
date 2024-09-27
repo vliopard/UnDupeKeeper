@@ -2,23 +2,22 @@ import os
 import time
 import stat
 import shutil
+import pystray
 import threading
 import constants
+import argparse as arg_parse
 
 from methods import get_hash
+from methods import is_windows
 from methods import line_number
 from methods import file_equals
 from methods import section_line
 
-import argparse as arg_parse
 from pymongo import MongoClient
 
 from PIL import Image
 from queue import Queue
 
-from sys import stdin as sys_standard_in
-
-from os import name as os_name
 from os import path as os_path
 from os import walk as os_walk
 
@@ -29,6 +28,9 @@ from os.path import islink as is_link
 from os.path import isfile as is_file
 from os.path import exists as uri_exists
 
+from sys import stdin as sys_standard_in
+
+from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 from logging.handlers import RotatingFileHandler
@@ -40,7 +42,7 @@ thread_started = time.time()
 system_tray_icon = None
 
 
-if os_name == constants.WINDOWS_NT:
+if is_windows():
     import msvcrt
 else:
     import termios
@@ -51,7 +53,7 @@ else:
 class KBHit:
 
     def __init__(self):
-        if os_name == constants.WINDOWS_NT:
+        if is_windows():
             pass
         else:
             self.fd = sys_standard_in.fileno()
@@ -62,21 +64,21 @@ class KBHit:
             atexit.register(self.set_normal_term)
 
     def set_normal_term(self):
-        if os_name == constants.WINDOWS_NT:
+        if is_windows():
             pass
         else:
             termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.old_term)
 
     @staticmethod
     def get_character():
-        if os_name == constants.WINDOWS_NT:
+        if is_windows():
             return msvcrt.getch().decode(constants.UTF8)
         else:
             return sys_standard_in.read(1)
 
     @staticmethod
     def get_arrow_key():
-        if os_name == constants.WINDOWS_NT:
+        if is_windows():
             msvcrt.getch()
             c = msvcrt.getch()
             arrows = [72, 77, 80, 75]
@@ -87,7 +89,7 @@ class KBHit:
 
     @staticmethod
     def keyboard_hit():
-        if os_name == constants.WINDOWS_NT:
+        if is_windows():
             return msvcrt.kbhit()
         else:
             dr, dw, de = select([sys_standard_in], [], [], 0)
@@ -225,14 +227,14 @@ class FileList:
         drive_tail = drive_tail.lstrip(constants.UNIX_SLASH)
         target_file = os.path.join(target_file, drive_tail)
         os.makedirs(os.path.dirname(target_file), exist_ok=True)
-        if mode == 'copy':
+        if mode == constants.COMMAND_COPY:
             show.info(f'{line_number()} {function_name} COPY [{source_file}] TO [{target_file}]')
             shutil.copy2(source_file, target_file)
-        elif mode == 'move':
+        elif mode == constants.COMMAND_MOVE:
             show.info(f'{line_number()} {function_name} MOVE [{source_file}] TO [{target_file}]')
             shutil.move(source_file, target_file)
 
-    def add_file(self, add_uri, argz):
+    def add_file(self, add_uri):
         function_name = 'FILE:'
         self.update_thread_started_time()
         add_uri = add_uri.replace(constants.DOS_SLASH, constants.UNIX_SLASH)
@@ -241,15 +243,12 @@ class FileList:
         check1 = True if file_with_sha else False
         check2 = False
         check3 = False
-        old_uri = ''
-        old_uri_sha = '          '
+        old_uri = constants.EMPTY
+        old_uri_sha = constants.BLANK * constants.SHA_SIZE
         if check1:
             old_uri = file_with_sha[constants.FILE_LIST][0].replace(constants.DOS_SLASH, constants.UNIX_SLASH)
             check2 = add_uri != old_uri
-            if argz['no_comp']:
-                check3 = True
-            else:
-                check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
+            check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
             old_uri_sha = f'{file_with_sha[constants.DOC_ID][0:constants.SHA_SIZE].upper()}'
 
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
@@ -263,28 +262,25 @@ class FileList:
                 show.error(f'{line_number()} {function_name} DELETE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{permission_error}]')
                 delete_file(add_uri)
         else:
-            if not argz['no_move']:
-                if is_link(add_uri):
-                    show.info(f'{line_number()} {function_name} MOVLNK [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
-                    uri_file = os.readlink(add_uri)
-                    self.file_operation('copy', uri_file, constants.TARGET_PATH)
-                    delete_link(add_uri)
-                elif is_file(add_uri):
-                    show.info(f'{line_number()} {function_name} MOVARQ [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
-                    self.file_operation('move', add_uri, constants.TARGET_PATH)
-                else:
-                    show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{add_uri}]')
+            if is_link(add_uri):
+                show.info(f'{line_number()} {function_name} MOVLNK [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
+                uri_file = os.readlink(add_uri)
+                self.file_operation(constants.COMMAND_COPY, uri_file, constants.TARGET_PATH)
+                delete_link(add_uri)
+            elif is_file(add_uri):
+                show.info(f'{line_number()} {function_name} MOVARQ [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
+                self.file_operation(constants.COMMAND_MOVE, add_uri, constants.TARGET_PATH)
             else:
-                show.info(f'{line_number()} {function_name} NOMOVE [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{check1}][{check2}][{check3}] [{add_uri}] [{constants.TARGET_PATH}]')
-
+                show.info(f'{line_number()} {function_name} NO VALID ACTION FOR [{new_file.file_sha[0:constants.SHA_SIZE].upper()}] [{add_uri}]')
         show.info(f'{line_number()} {section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
+        self.pause_thread()
 
 
 class FileHolder:
     def __init__(self, file_path):
-        self._file_uri = None
+        self._file_uri = file_path
         self._file_sha = None
-        self.set_sha(file_path)
+        self.set_sha()
 
     @property
     def file_uri(self):
@@ -292,15 +288,16 @@ class FileHolder:
 
     @file_uri.setter
     def file_uri(self, universal_resource_indicator):
-        self.set_sha(universal_resource_indicator)
+        self._file_uri = universal_resource_indicator
+        self.set_sha()
 
     @property
     def file_sha(self):
         return self._file_sha
 
-    def set_sha(self, file_path):
-        self._file_uri = file_path
-        self._file_sha = get_hash(file_path, constants.HASH_MD5)
+    def set_sha(self):
+        if self._file_uri:
+            self._file_sha = get_hash(self._file_uri, constants.HASH_MD5)
 
     def __repr__(self):
         return self._file_uri
@@ -310,7 +307,7 @@ class MonitorFolder(FileSystemEventHandler):
 
     def on_created(self, event):
         show.info(f'{line_number()} ON_CREATED')
-        file_set.add_file(event.src_path, {'no_move': True, 'no_comp': True})
+        file_set.add_file(event.src_path)
         show.debug(f'{line_number()} {constants.DEBUG_MARKER}  {file_set}')
 
     def on_modified(self, event):
@@ -338,10 +335,11 @@ def tray_icon_click(_, selected_tray_item):
     if str(selected_tray_item) == constants.LABEL_EXIT:
         file_set.terminate()
         show.warning(f'Terminating {constants.LABEL_MAIN} System...')
+        system_tray_icon.stop()
     show.warning(f'Tray Icon Done...')
 
 
-if __name__ == "__main__":
+if __name__ == constants.MAIN:
     log_handler = [RotatingFileHandler(constants.LOG_FILE, maxBytes=10000000, backupCount=20000, encoding=constants.UTF8)]
     log_format = '%(asctime)s,%(msecs)03d %(name)s\t %(levelname)s %(message)s'
     log_formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
@@ -357,49 +355,68 @@ if __name__ == "__main__":
     logging.getLogger(constants.WATCHDOG).setLevel(logging.CRITICAL)
 
     argument_parser = arg_parse.ArgumentParser()
-    argument_parser.add_argument(constants.PARAMETER_PATH, required=False)
-    argument_parser.add_argument(constants.PARAMETER_NO_MOVE, required=False, action='store_true', help='List collections')
-    argument_parser.add_argument(constants.PARAMETER_NO_COMP, required=False, action='store_true', help='List collections')
+    argument_parser.add_argument(constants.PARAMETER_PATH, required=False, default=constants.MAIN_PATH)
+    argument_parser.add_argument(constants.PARAMETER_SCAN, required=False, default=False)
     arguments = argument_parser.parse_args()
-    mvs = str(not arguments.no_move)
-    cps = str(not arguments.no_comp)
-    print(f'MOVE [{mvs.upper()}]')
-    print(f'COMP [{cps.upper()}]')
 
-    flist = None
-    if arguments.path:
-        flist = [arguments.path.strip().replace('"', '')]
-        print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
-        print(f'WATCH OBSERVER: [{flist[0]}]')
-        print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
-    else:
-        print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
-        print(f'WATCH OBSERVER: [DIRECTORY LIST]')
-        print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
-        with open('UnDupeKeeperChecker.txt', 'r', encoding="utf8") as sl:
-            flist = [line.strip() for line in sl]
+    event_source_path = arguments.path.strip().replace('"', '')
+    event_source_scan = arguments.scan
+
+    print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
+    print(f'WATCH OBSERVER: [{event_source_path}]')
+    print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
+
+    state = False
+    system_tray_image = Image.open(constants.ICON_DONE)
+    system_tray_icon = pystray.Icon(f'{constants.LABEL_MAIN} 1',
+                                    system_tray_image,
+                                    constants.LABEL_MAIN,
+                                    menu=pystray.Menu(
+                                        pystray.MenuItem(constants.LABEL_DONE, tray_icon_click, checked=lambda item: state),
+                                        pystray.MenuItem(constants.LABEL_PAUSE, tray_icon_click, checked=lambda item: state),
+                                        pystray.MenuItem(constants.LABEL_ERROR, tray_icon_click, checked=lambda item: state),
+                                        pystray.MenuItem(constants.LABEL_EXIT, tray_icon_click, checked=lambda item: state)))
 
     show.warning(f'Starting {constants.LABEL_MAIN} System...')
     file_set = FileList()
+    file_set.start_thread()
 
-    buri = None
-
-    for esp in flist:
-        print(f'{section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
-        print(f'WORKING ON [{esp}]')
-        print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
-        for root, dirs, files in os_walk(esp, topdown=True):
+    if event_source_scan:
+        for root, dirs, files in os_walk(event_source_path, topdown=True):
             for name in files:
                 uri = str(os_path.join(root, name))
-                buri = uri
                 if uri_exists(uri):
-                    mov = True if arguments.no_move else False
-                    cmp = True if arguments.no_comp else False
-                    try:
-                        file_set.add_file(uri, {'no_move': mov, 'no_comp': cmp})
-                    except Exception as exception:
-                        print(f'ERROR: [{uri}] [{exception}]')
-                if buri == uri:
-                    uri = 'none'
+                    file_set.add_file(uri)
+        file_set.pause_thread()
 
-    show.warning(f'Bye...')
+    show.warning(f'{constants.LABEL_MAIN} Initialized...')
+
+    event_handler = MonitorFolder()
+    observer = Observer()
+    observer.schedule(event_handler, path=event_source_path, recursive=True)
+
+    observer.start()
+
+    if constants.UI == constants.GUI:
+        show.warning(f'{constants.LABEL_MAIN} Tray Initialized...')
+        system_tray_icon.run()
+
+    if constants.UI == constants.CLI:
+        show.warning(f'{section_line(constants.SYMBOL_EQ, 20)} Keyboard Initialized... {section_line(constants.SYMBOL_EQ, 20)}')
+        keyboard_listening = True
+        try:
+            keyboard = KBHit()
+            while keyboard_listening:
+                time.sleep(1)
+                if keyboard.check():
+                    show.warning(f'Terminating {constants.LABEL_MAIN} System...')
+                    keyboard_listening = False
+
+        except KeyboardInterrupt as keyboard_interrupt:
+            show.debug(f'{line_number()} {constants.DEBUG_MARKER} KeyboardInterrupt: [{keyboard_interrupt}]')
+
+    file_set.terminate()
+    observer.stop()
+    observer.join()
+
+    show.warning('Bye...')

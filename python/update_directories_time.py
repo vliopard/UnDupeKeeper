@@ -17,8 +17,8 @@ def change_files(args):
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
     data = methods.count_directories(target_location)
-    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-    with tqdm(total=data, bar_format=status_bar_format) as tqdm_progress_bar:
+
+    with tqdm(total=data, bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
         for root, dirs, files in os.walk(target_location):
             for target_dir in dirs:
                 file_name = os.path.join(root, target_dir)
@@ -35,7 +35,7 @@ def change_files(args):
                     tqdm_progress_bar.update(1)
 
 
-if __name__ == "__main__":
+if __name__ == constants.MAIN:
     parser = argparse.ArgumentParser(description='Change files on a target location.')
     parser.add_argument('-t', '--target_location', type=str, help='The target location to change files')
     change_files(parser.parse_args())

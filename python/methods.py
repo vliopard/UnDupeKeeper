@@ -21,7 +21,10 @@ from itertools import zip_longest
 from os.path import islink as is_link
 from filecmp import cmp as file_compare
 from os.path import exists as uri_exists
+
+from os import name as os_name
 from sys import platform as sys_platform
+
 from subprocess import CalledProcessError
 from subprocess import run as run_command
 
@@ -57,17 +60,23 @@ def line_number():
 def get_platform():
     function_name = 'GET PLATFORM:'
     show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} STARTED')
-    platforms = {constants.PLATFORM_LINUX0: constants.LINUX,
-                 constants.PLATFORM_LINUX1: constants.LINUX,
-                 constants.PLATFORM_LINUX2: constants.LINUX,
+    platforms = {constants.PLATFORM_LINUX0: constants.OS_LINUX,
+                 constants.PLATFORM_LINUX1: constants.OS_LINUX,
+                 constants.PLATFORM_LINUX2: constants.OS_LINUX,
                  constants.PLATFORM_DARWIN: constants.OS_X,
-                 constants.PLATFORM_WIN32: constants.WINDOWS}
+                 constants.PLATFORM_WIN32: constants.OS_WINDOWS}
     if sys_platform not in platforms:
         show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} UNDESIRED END')
         show.info(f'{line_number()} {function_name} RETURN [{sys_platform}]')
         return sys_platform
     show.debug(f'{line_number()} {constants.DEBUG_MARKER} {function_name} NORMAL END')
     return platforms[sys_platform]
+
+
+def is_windows():
+    if os_name == constants.OS_WINDOWS_NT:
+        return True
+    return False
 
 
 @timed
@@ -211,17 +220,17 @@ def file_equals(first_file, second_file, comparison_method):
     if os_stat(first_file).st_size != os_stat(second_file).st_size:
         return False
 
-    if comparison_method == constants.NATIVE:
-        validation_string = {constants.LINUX: constants.EMPTY,
-                             constants.WINDOWS: constants.FCB_EQUAL}
-        comparison_command = {constants.LINUX: f'{constants.LINUX_CMP} "{second_file}" "{first_file}"',
-                              constants.WINDOWS: f'{constants.WINDOWS_FC} "{first_file}" "{second_file}"'}
+    if comparison_method == constants.OS_NATIVE:
+        validation_string = {constants.OS_LINUX: constants.EMPTY,
+                             constants.OS_WINDOWS: constants.FCB_EQUAL}
+        comparison_command = {constants.OS_LINUX: f'{constants.LINUX_COMP} "{second_file}" "{first_file}"',
+                              constants.OS_WINDOWS: f'{constants.WINDOWS_FC} "{first_file}" "{second_file}"'}
 
-    elif comparison_method == constants.EXECUTABLE:
-        validation_string = {constants.LINUX: constants.EMPTY,
-                             constants.WINDOWS: constants.EXE_EQUAL}
-        comparison_command = {constants.LINUX: f'{constants.LINUX_DIFF} "{second_file}" "{first_file}"',
-                              constants.WINDOWS: f'{constants.WINDOWS_COMP} "{first_file}" "{second_file}"'}
+    elif comparison_method == constants.OS_EXECUTABLE:
+        validation_string = {constants.OS_LINUX: constants.EMPTY,
+                             constants.OS_WINDOWS: constants.EXE_EQUAL}
+        comparison_command = {constants.OS_LINUX: f'{constants.LINUX_DIFF} "{second_file}" "{first_file}"',
+                              constants.OS_WINDOWS: f'{constants.WINDOWS_COMP} "{first_file}" "{second_file}"'}
 
     elif comparison_method == constants.ZIP_LONGEST:
         return compare_binaries(first_file, second_file)
@@ -373,3 +382,7 @@ def change_time(target_name, time_created, time_accessed, time_modified):
 
     set_file_time(handle, ctypes.byref(creation_time), ctypes.byref(access_time), ctypes.byref(modify_time))
     ctypes.windll.kernel32.CloseHandle(handle)
+
+
+def clear_screen():
+    os.system('cls' if get_platform() == constants.OS_WINDOWS else 'clear')

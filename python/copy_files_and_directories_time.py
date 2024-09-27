@@ -18,12 +18,10 @@ def copy_files(args):
     print(f'                to [{target_location}]...')
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
-    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-
     print('COUNTING FILES...')
     data = methods.count_files(source_location)
     print('MODIFYING FILES...')
-    with tqdm(total=data, bar_format=status_bar_format) as tqdm_progress_bar:
+    with tqdm(total=data, bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
         for root, dirs, files in os.walk(source_location):
             for file in files:
                 tqdm_progress_bar.update(1)
@@ -45,7 +43,7 @@ def copy_files(args):
     print('COUNTING DIRECTORIES...')
     data = methods.count_directories(source_location)
     print('MODIFYING DIRECTORIES...')
-    with tqdm(total=data, bar_format=status_bar_format) as tqdm_progress_bar:
+    with tqdm(total=data, bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
         for root, dirs, files in os.walk(source_location):
             for directory in dirs:
                 tqdm_progress_bar.update(1)
@@ -65,7 +63,7 @@ def copy_files(args):
                     print(f"Error changing:\n   [{target_file}]\n[{exception}]")
 
 
-if __name__ == "__main__":
+if __name__ == constants.MAIN:
     parser = argparse.ArgumentParser(description='Copy files to a target location.')
     parser.add_argument('-f', '--from_source', type=str, help='The source location to copy metadata from')
     parser.add_argument('-t', '--to_target', type=str, help='The target location to copy metadata to')

@@ -74,7 +74,7 @@ def del_status(item_id):
 
 def update_status(collection_id):
     collection_info = get_db_size(collection_id)
-    mongo_stats.update_one({'_id': collection_id}, {'$set': {'count': collection_info['count'], 'size': collection_info['size']}})
+    mongo_stats.update_one({constants.DOC_ID: collection_id}, {'$set': {'count': collection_info['count'], 'size': collection_info['size']}})
 
 
 @timed
@@ -86,14 +86,14 @@ def delete_collection(collection_name):
 
 @timed
 def export_collection_to_json():
-    with open('MongoDB_UnDupeKeeperCollection_backup.json', 'w') as file:
+    with open('MongoDB_UnDupeKeeperCollection_backup.json', constants.WRITE) as file:
         json.dump(list(mongo_collection.find({})), file, default=str, indent=4)
 
 
 @timed
 def export_collection_to_json_progress():
     print(f'GENERATING JSON BACKUP... [{constants.DATABASE_COLLECTION}]')
-    with open('MongoDB_UnDupeKeeperCollection_backup.json', 'w') as file:
+    with open('MongoDB_UnDupeKeeperCollection_backup.json', constants.WRITE) as file:
         stats_db = get_status(constants.DATABASE_COLLECTION)
         if not stats_db:
             count = mongo_collection.count_documents({})
@@ -106,13 +106,13 @@ def export_collection_to_json_progress():
     print('DONE.')
 
 
-if __name__ == "__main__":
+if __name__ == constants.MAIN:
     parser = argparse.ArgumentParser(description='Create a collection backup')
     parser.add_argument('-n', '--collection_name', type=str, help='New backup name')
-    parser.add_argument('-l', '--collection_list', action='store_true', help='List collections')
-    parser.add_argument('-s', '--collection_size', action='store_true', help='List collections with size')
-    parser.add_argument('-e', '--collection_export', action='store_true', help='Export collection')
-    parser.add_argument('-p', '--collection_progress', action='store_true', help='Export collection with progress')
+    parser.add_argument('-l', '--collection_list', action=constants.STORE_TRUE, help='List collections')
+    parser.add_argument('-s', '--collection_size', action=constants.STORE_TRUE, help='List collections with size')
+    parser.add_argument('-e', '--collection_export', action=constants.STORE_TRUE, help='Export collection')
+    parser.add_argument('-p', '--collection_progress', action=constants.STORE_TRUE, help='Export collection with progress')
     parser.add_argument('-d', '--collection_delete', type=str, help='Delete collection')
     args = parser.parse_args()
     if args.collection_list:

@@ -11,6 +11,8 @@ ICON_DONE = 'icons/done.png'
 ICON_ERROR = 'icons/error.png'
 ICON_PAUSE = 'icons/pause.png'
 
+MAIN = '__main__'
+
 LABEL_MAIN = 'UnDupyKeeper'
 LABEL_DONE = 'Done'
 LABEL_PAUSE = 'Pause'
@@ -33,12 +35,6 @@ PARAMETER_SCAN = '--scan'
 PARAMETER_NO_MOVE = '--no_move'
 PARAMETER_NO_COMP = '--no_comp'
 
-PLATFORM_LINUX0 = 'linux'
-PLATFORM_LINUX1 = 'linux1'
-PLATFORM_LINUX2 = 'linux2'
-PLATFORM_DARWIN = 'darwin'
-PLATFORM_WIN32 = 'win32'
-
 THREAD_NAME = f'{LABEL_MAIN}Thread'
 
 FCB_EQUAL = 'FC: no differences encountered'
@@ -59,26 +55,44 @@ NEW_LINE = '\n'
 DOS_SLASH = '\\'
 UNIX_SLASH = '/'
 
+NONE = 'none'
+
+NO_COMP = 'no_comp'
+NO_MOVE = 'no_move'
+
+STORE_TRUE = 'store_true'
+
 DOT = '.'
 EMPTY = ''
+BLANK = ' '
+DOUBLE_QUOTES = '"'
 READ = 'r'
 WRITE = 'w'
 READ_BINARY = 'rb'
 READ_WRITE_BINARY = 'r+b'
+ALL_ARGUMENTS = '+'
 
-DOS_DRIVE = 'c:'
+DOS_C_DRIVE = 'c:'
 OS_X = 'OS X'
-LINUX = 'Linux'
-WINDOWS = 'Windows'
-WINDOWS_NT = 'nt'
+
+OS_LINUX = 'Linux'
+PLATFORM_LINUX0 = 'linux'
+PLATFORM_LINUX1 = 'linux1'
+PLATFORM_LINUX2 = 'linux2'
+PLATFORM_DARWIN = 'darwin'
+
+OS_WINDOWS_NT = 'nt'
+PLATFORM_WIN32 = 'win32'
+OS_WIN32 = 'Win32'
+OS_WINDOWS = 'Windows'
 
 PAUSE = 'pause'
 CONTINUE = 'continue'
 TERMINATE = 'terminate'
 RECHECK = 'recheck'
 
-NATIVE = 'Operating_SystemNative'
-EXECUTABLE = 'OperatingSystem_Executable'
+OS_NATIVE = 'Operating_SystemNative'
+OS_EXECUTABLE = 'OperatingSystem_Executable'
 
 BUFFER = 'Python_Buffer'
 ZIP_LONGEST = 'Python_Zip'
@@ -99,7 +113,7 @@ MOVE_ICO4 = 'icons/UnDupyKeeper04.png'
 
 LINUX_LINK = 'ln -s'
 LINUX_DIFF = 'diff --brief'
-LINUX_CMP = 'cmp -b'
+LINUX_COMP = 'cmp -b'
 
 WINDOWS_LINK = 'mklink'
 WINDOWS_FC = 'fc /B'
@@ -129,6 +143,8 @@ DATABASE_UNDUPE = 'UnDupyKeeperFiles'
 SETTINGS_FILE = 'UnDupeKeeper.ini'
 STORAGE_FILE = 'UnDupeKeeper.json'
 COUNTER_FILE = 'UnDupeKeeperCount.json'
+KNOWN_HOSTS = 'known_hosts.json'
+directory_list = 'UnDupeKeeperChecker.txt'
 
 COMPARISON_REPORT = 'comparison_test.xlsx'
 
@@ -152,6 +168,7 @@ DEBUG_TEST = config.getboolean('DEBUG', 'DEBUG_TEST')
 MONGO_USERNAME = config.get('SECURITY', 'USERNAME')
 MONGO_PASSWORD = config.get('SECURITY', 'PASSWORD')
 if not MONGO_PASSWORD:
+    # TODO: use getpass below
     # MONGO_PASSWORD = getpass('Enter database password: ')
     MONGO_PASSWORD = input('Enter database password: ')
 MONGO_HOST = config.get('DATABASE', 'HOST')
@@ -168,6 +185,9 @@ DEBUG_COMP = f'{DEBUG_BASE}_DIR'
 DEBUG_DASH = f'{DEBUG_BASE}_DASH'
 DEBUG_UTIL = f'{DEBUG_BASE}_UTIL'
 DEBUG_DIFF = f'{DEBUG_BASE}_DIFF'
+
+COMMAND_COPY = 'copy'
+COMMAND_MOVE = 'move'
 
 CLEAR_CACHE = False
 
@@ -186,4 +206,4 @@ test_files = [f'{test_directory}/file0000005.bin',
               f'{test_directory}/file0300000.bin',
               f'{test_directory}/file1000000.bin']
 
-STATUS_BAR_FORMAT = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+STATUS_BAR_FORMAT = '{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]'

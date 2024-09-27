@@ -15,21 +15,23 @@ def search_file(words, extension):
     print(f'Searching for [ {search_pattern} ]')
     results = mongo_collection.find({'file_list': {'$regex': search_pattern, '$options': 'i'}})
 
-    ct = 0
-    with open('dirfile.txt', 'w', encoding='utf-8') as df:
+    file_counter = 0
+    with open('search_result.txt', constants.WRITE, encoding=constants.UTF8) as directory_file:
         for result in results:
             for file_path in result['file_list']:
-                fp = file_path.split('\\')
-                ct += 1
-                saved = f'[{ct}]\t{fp[-1]}\t{"\\".join(fp[:-1])}\\'
-                print(saved)
-                df.write(f'{saved}\n')
+                split_file_path = file_path.split('\\')
+                file_counter += 1
+                joined_txt = '\\'.join(split_file_path[:-1])
+                search_result = f'[{file_counter}]\t{split_file_path[-1]}\t{joined_txt}\\'
+                print(search_result)
+                directory_file.write(f'{search_result}\n')
     print('[Done.]')
 
-if __name__ == "__main__":
+
+if __name__ == constants.MAIN:
     argument_parser = argparse.ArgumentParser()
-    argument_parser.add_argument('--words', nargs='+', required=True, help='List of words')
-    argument_parser.add_argument('--extension', required=False, help='Extension name')    
+    argument_parser.add_argument('--words', nargs=constants.ALL_ARGUMENTS, required=True, help='List of words to search')
+    argument_parser.add_argument('--extension', required=False, help='File extension')
     arguments = argument_parser.parse_args()
     list_of_words = arguments.words
     file_extension = arguments.extension

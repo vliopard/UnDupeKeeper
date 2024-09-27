@@ -60,8 +60,7 @@ def generate_list(file_data):
     print('Generating List...')
     bulk_insert_list = []
     total_files = len(file_data)
-    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-    with tqdm(total=total_files, bar_format=status_bar_format) as tqdm_progress_bar:
+    with tqdm(total=total_files, bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
         for document_id in file_data:
             try:
                 document = {
@@ -159,7 +158,7 @@ def count_files(file_piece):
     return mongo_collection.count_documents({constants.FILE_LIST: {'$regex': file_piece}})
 
 
-if __name__ == "__main__":
+if __name__ == constants.MAIN:
     # import_database()
 
     import_bulk_database()

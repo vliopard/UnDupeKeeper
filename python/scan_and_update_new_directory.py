@@ -11,7 +11,7 @@ from methods import section_line
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
-from UnDupeKeeperCollectionBackup import update_status
+from database_maintenance import update_status
 
 import logging
 show = logging.getLogger(constants.DEBUG_MAIN)
@@ -53,11 +53,10 @@ def count_files(target_directory):
 @timed
 def hash_directory_files(current_directory):
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
-    print(f"SCANNING FILES: [{current_directory}]")
+    print(f'SCANNING FILES: [{current_directory}]')
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
-    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
     total_files = count_files(current_directory)
-    with tqdm(total=total_files, bar_format=status_bar_format) as tqdm_progress_bar:
+    with tqdm(total=total_files, bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
         cdir = ''
         old_count = 0
         new_count = 0
@@ -101,7 +100,7 @@ def hash_directory_files(current_directory):
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
 
-if __name__ == '__main__':
+if __name__ == constants.MAIN:
     argument_parser = argparse.ArgumentParser(description='Hash files in a directory and identify duplicates.')
     argument_parser.add_argument('-d', '--directory', type=str, default=None, help='Directory to scan for files')
     arguments = argument_parser.parse_args()
@@ -109,7 +108,7 @@ if __name__ == '__main__':
     get_hash_count()
     get_file_count()
     update_status(constants.DATABASE_COLLECTION)
-    print('DONE.')
+    print('DONE')
 
     # TODO: AFTER EXPORTING, WRITE LOG TO A FILE WITH STATS (NUMBERS BEFORE AND AFTER PROCESS)
 

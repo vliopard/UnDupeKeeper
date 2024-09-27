@@ -250,12 +250,10 @@ class GuidedUserInterface(QtWidgets.QDialog):
             self.gui_progress_bar.setValue(0)
             self.gui_progress_bar.show()
 
-        status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-
         self.count_files(self.current_directory)
         if not self.cli:
             self.gui_progress_bar.setMaximum(self.total_files)
-        with tqdm(total=self.total_files, bar_format=status_bar_format) as tqdm_progress_bar:
+        with tqdm(total=self.total_files, bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
             self.database_file_count = 0
             self.hash_count = 0
             cdir = ''
@@ -333,7 +331,7 @@ def main(search_directory):
         sys.exit(application.exec())
 
 
-if __name__ == '__main__':
+if __name__ == constants.MAIN:
     argument_parser = argparse.ArgumentParser(description='Hash files in a directory and identify duplicates.')
     argument_parser.add_argument('-d', '--directory', type=str, default=None, help='Directory to scan for files')
     arguments = argument_parser.parse_args()

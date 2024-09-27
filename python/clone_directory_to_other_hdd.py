@@ -3,7 +3,7 @@ import stat
 import shutil
 import argparse
 import constants
-import UnDupeKeeperDatabase
+import database
 
 from tqdm import tqdm
 from methods import section_line
@@ -28,8 +28,7 @@ def get_size(data):
     total_size = 0
     total_files = 0
 
-    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-    with tqdm(total=len(data), bar_format=status_bar_format) as tqdm_progress_bar:
+    with tqdm(total=len(data), bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
         for hash_file in data:
             source_file = sorted(data[hash_file])[0]
             try:
@@ -71,8 +70,7 @@ def copy_files(args):
             return
 
     print('Copying files...')
-    status_bar_format = "{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
-    with tqdm(total=data_length, bar_format=status_bar_format) as tqdm_progress_bar:
+    with tqdm(total=data_length, bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
         for hash_file in data:
             source_file = sorted(hash_file[constants.FILE_LIST], key=lambda x: x.replace(constants.DOS_SLASH, constants.UNIX_SLASH))[0]
             tqdm_progress_bar.update(1)
@@ -91,7 +89,7 @@ def copy_files(args):
                     print(f"Error copying:\n   [{source_file}]\nto [{target_file}]\n[{exception}]")
 
 
-if __name__ == "__main__":
+if __name__ == constants.MAIN:
     parser = argparse.ArgumentParser(description='Copy files to a target location.')
     parser.add_argument('-s', '--source_location', type=str, help='The source location to copy files from')
     parser.add_argument('-t', '--target_location', type=str, help='The target location to copy files to')

@@ -56,7 +56,7 @@ thread_started = time.time()
 system_tray_icon = None
 
 
-if os_name == constants.WINDOWS_NT:
+if constants.OS_WINDOWS == get_platform():
     import msvcrt
 else:
     import termios
@@ -77,7 +77,7 @@ def upsert(result, document_id):
 class KBHit:
 
     def __init__(self):
-        if os_name == constants.WINDOWS_NT:
+        if constants.OS_WINDOWS == get_platform():
             pass
         else:
             self.fd = sys_standard_in.fileno()
@@ -88,21 +88,21 @@ class KBHit:
             atexit.register(self.set_normal_term)
 
     def set_normal_term(self):
-        if os_name == constants.WINDOWS_NT:
+        if constants.OS_WINDOWS == get_platform():
             pass
         else:
             termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.old_term)
 
     @staticmethod
     def get_character():
-        if os_name == constants.WINDOWS_NT:
+        if constants.OS_WINDOWS == get_platform():
             return msvcrt.getch().decode(constants.UTF8)
         else:
             return sys_standard_in.read(1)
 
     @staticmethod
     def get_arrow_key():
-        if os_name == constants.WINDOWS_NT:
+        if constants.OS_WINDOWS == get_platform():
             msvcrt.getch()
             c = msvcrt.getch()
             arrows = [72, 77, 80, 75]
@@ -113,7 +113,7 @@ class KBHit:
 
     @staticmethod
     def keyboard_hit():
-        if os_name == constants.WINDOWS_NT:
+        if constants.OS_WINDOWS == get_platform():
             return msvcrt.kbhit()
         else:
             dr, dw, de = select([sys_standard_in], [], [], 0)
@@ -482,7 +482,7 @@ class FileList:
             with open(constants.FILE_TABLE, constants.WRITE, encoding=constants.UTF8) as file_table_handler:
                 save_data_index = self._file_database.get_list(constants.FILE)
                 for value in save_data_index:
-                    if get_platform() == constants.WINDOWS:
+                    if get_platform() == constants.OS_WINDOWS:
                         value = value.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
                     show.info(f'{line_number()} ===> FILE_TABLE: [{value}]')
                     file_table_handler.write(value + constants.NEW_LINE)
@@ -492,7 +492,7 @@ class FileList:
             with open(constants.LINK_TABLE, constants.WRITE, encoding=constants.UTF8) as link_table_handler:
                 save_data_index = self._file_database.get_list(constants.SYMLINK)
                 for value in save_data_index:
-                    if get_platform() == constants.WINDOWS:
+                    if get_platform() == constants.OS_WINDOWS:
                         value = value.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
                     show.info(f'{line_number()} ===> LINK_TABLE LINKED: [{value}]')
                     link_table_handler.write(value + constants.NEW_LINE)
@@ -500,7 +500,7 @@ class FileList:
 
                 save_data_index = self._file_database.get_list(constants.DELETED_PARENT)
                 for value in save_data_index:
-                    if get_platform() == constants.WINDOWS:
+                    if get_platform() == constants.OS_WINDOWS:
                         value = value.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
                     show.info(f'{line_number()} ===> FILE_TABLE DELETED: [{value}]')
                     link_table_handler.write(value + constants.NEW_LINE)
@@ -537,8 +537,8 @@ class FileList:
 
             target_dos = target_link.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
             source_dos = source_file.replace(constants.UNIX_SLASH, constants.DOS_SLASH)
-            link_command = {constants.LINUX: f'{constants.LINUX_LINK} "{source_file}" "{target_link}"',
-                            constants.WINDOWS: f'{constants.WINDOWS_LINK} "{target_dos}" "{source_dos}"'}
+            link_command = {constants.OS_LINUX: f'{constants.LINUX_LINK} "{source_file}" "{target_link}"',
+                            constants.OS_WINDOWS: f'{constants.WINDOWS_LINK} "{target_dos}" "{source_dos}"'}
             command = link_command[get_platform()]
 
             try:
@@ -948,7 +948,7 @@ def tray_icon_click(_, selected_tray_item):
     show.warning(f'Tray Icon Done...')
 
 
-if __name__ == "__main__":
+if __name__ == constants.MAIN:
     log_handler = [RotatingFileHandler(constants.LOG_FILE, maxBytes=10000000, backupCount=20000, encoding=constants.UTF8)]
     log_format = '%(asctime)s,%(msecs)03d %(name)s\t %(levelname)s %(message)s'
     log_formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
