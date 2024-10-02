@@ -3,10 +3,30 @@ import socket
 import psutil
 import methods
 import paramiko
+import colorama
 import threading
 import constants
 import subprocess
 from queue import Queue
+# from colorama import Fore
+
+HOST_STATUS = 8
+HOST_JUSTIFY = 13
+COUNTER_JUSTIFY = 3
+HORIZONTAL_LINE = 75
+WORD_ALIGNMENT = 16
+
+RED = '\033[0;91m'
+GREEN = '\033[0;92m'
+YELLOW = '\033[0;93m'
+BLUE = '\033[0;94m'
+RESET = '\033[0;0m'
+
+ONLINE = f'{GREEN}Online*{RESET}'
+INLINE = f'{YELLOW}Online?{RESET}'
+ATLINE = f'{BLUE}Online {RESET}'
+OFFLINE = f'{RED}Offline{RESET}'
+
 
 with open(constants.KNOWN_HOSTS, constants.READ, encoding=constants.UTF8) as known_hosts_file:
     known_hosts = json.load(known_hosts_file)
@@ -103,6 +123,7 @@ def deep_scan(computer_ip, result_queue):
 
 if __name__ == '__main__':
     methods.clear_screen()
+    colorama.init()
     print('Scanning...')
     network_ip = '192.168.0'
     print('- Host IP...')
@@ -115,18 +136,18 @@ if __name__ == '__main__':
     host_table = []
     for mac in known_hosts:
         host_ip = '---.---.-.0'
-        status = 'Offline'
+        status = OFFLINE
         if mac in network_macs:
             host_ip = network_macs[mac]['host_ip']
-            status = 'Online'
+            status = ATLINE
         elif mac == running_host_mac:
             host_ip = running_host_ip
-            status = 'Online'
+            status = ATLINE
             
-        if host_ip.startswith('192') and not host_ip.endswith('252') and not host_ip.endswith('.1') and status == 'Online':
-            status = 'Online*'
+        if host_ip.startswith('192') and not host_ip.endswith('252') and not host_ip.endswith('.1') and status == ATLINE:
+            status = ONLINE
             
-        host_table.append({'host_ip': host_ip, 'host_mac': mac, 'host_name': known_hosts[mac], 'host_status': status, 'host_source': 'arp' if status.startswith('Online') else 'knh'})
+        host_table.append({'host_ip': host_ip, 'host_mac': mac, 'host_name': known_hosts[mac], 'host_status': status, 'host_source': 'arp' if status.startswith(ATLINE) else 'knh'})
 
     print('- Network IPs...')
     network_ips = scan_network(network_ip)
@@ -139,22 +160,20 @@ if __name__ == '__main__':
 
     for network_ip_item in network_ips:
         if network_ips[network_ip_item] != 'done':
-            host_table.append({'host_ip': network_ip_item, 'host_mac': '00-00-00-00-00-00', 'host_name': '-={(?)}=-', 'host_status': 'Online?', 'host_source': network_ips[network_ip_item]})
+            host_table.append({'host_ip': network_ip_item, 'host_mac': '00-00-00-00-00-00', 'host_name': '-={(?)}=-', 'host_status': INLINE, 'host_source': network_ips[network_ip_item]})
 
     sorted_list = sorted(host_table, key=lambda element: int(element['host_ip'].split('.')[-1]))
 
-    horizontal_line = 75
-    word_alignment = 16
-
-    print('_' * horizontal_line)
+    print('_' * HORIZONTAL_LINE)
     counter = 0
     count_online = 0
     print('| [QTT] HOST IP       - HOST MAC ADDRESS  - SRC [STATUS ] HOST NAME       |')
     for item in sorted_list:
         counter += 1
-        counter_val = str(counter).rjust(3)
-        if item["host_status"] == 'Online*':
+        counter_val = str(counter).rjust(COUNTER_JUSTIFY)
+        if item["host_status"] == ONLINE:
             count_online += 1
-        print(f'| [{counter_val}] {item["host_ip"].ljust(13)} - {item["host_mac"]} - {item["host_source"]} [{item["host_status"].ljust(7)}] {item["host_name"].ljust(word_alignment)}|')
-    print('‾' * horizontal_line)
+        print(f'| [{counter_val}] {item["host_ip"].ljust(HOST_JUSTIFY)} - {item["host_mac"]} - {item["host_source"]} [{item["host_status"].ljust(HOST_STATUS)}] {item["host_name"].ljust(WORD_ALIGNMENT)}|')
+    print('‾' * HORIZONTAL_LINE)
     print(f'ONLINE [{count_online}]')
+
