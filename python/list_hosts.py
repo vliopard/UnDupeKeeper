@@ -8,7 +8,7 @@ import threading
 import constants
 import subprocess
 from queue import Queue
-# from colorama import Fore
+from colorama import Fore
 
 HOST_STATUS = 8
 HOST_JUSTIFY = 13
@@ -21,6 +21,7 @@ GREEN = '\033[0;92m'
 YELLOW = '\033[0;93m'
 BLUE = '\033[0;94m'
 RESET = '\033[0;0m'
+DARK_RED = Fore.RED
 
 ONLINE = f'{GREEN}Online*{RESET}'
 INLINE = f'{YELLOW}Online?{RESET}'
@@ -112,13 +113,20 @@ def ping_host(computer_ip):
 
 def deep_scan(computer_ip, result_queue):
     if scan_ssh(computer_ip):
-        result_queue.put({'computer_ip': computer_ip, 'source': 'SSH'})
+        result_queue.put({'computer_ip': computer_ip, 'source': f'{DARK_RED}SSH{RESET}'})
     elif ping_host(computer_ip):
         result_queue.put({'computer_ip': computer_ip, 'source': 'png'})
     elif scan_ip(computer_ip):
         result_queue.put({'computer_ip': computer_ip, 'source': 'sck'})
     elif scan_ssh_host(computer_ip):
         result_queue.put({'computer_ip': computer_ip, 'source': 'sh2'})
+
+
+def find_mac_by_ip(dictionary, mac_ip):
+    for mac_value, details in dictionary.items():
+        if details['host_ip'] == mac_ip:
+            return mac_value
+    return None
 
 
 if __name__ == '__main__':
@@ -160,7 +168,13 @@ if __name__ == '__main__':
 
     for network_ip_item in network_ips:
         if network_ips[network_ip_item] != 'done':
-            host_table.append({'host_ip': network_ip_item, 'host_mac': '00-00-00-00-00-00', 'host_name': '-={(?)}=-', 'host_status': INLINE, 'host_source': network_ips[network_ip_item]})
+            mac_addr = find_mac_by_ip(network_macs, network_ip_item)
+            if not mac_addr:
+                mac_addr = '00-00-00-00-00-00'
+            hostname = '-={(?)}=-'
+            if network_ip_item == '192.168.0.1':
+                hostname = 'Router'
+            host_table.append({'host_ip': network_ip_item, 'host_mac': mac_addr, 'host_name': hostname, 'host_status': INLINE, 'host_source': network_ips[network_ip_item]})
 
     sorted_list = sorted(host_table, key=lambda element: int(element['host_ip'].split('.')[-1]))
 
