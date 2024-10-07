@@ -13,8 +13,8 @@ from colorama import Fore
 HOST_STATUS = 8
 HOST_JUSTIFY = 13
 COUNTER_JUSTIFY = 3
-HORIZONTAL_LINE = 75
-WORD_ALIGNMENT = 16
+HORIZONTAL_LINE = 85
+WORD_ALIGNMENT = 26
 
 RED = '\033[0;91m'
 GREEN = '\033[0;92m'
@@ -171,7 +171,7 @@ if __name__ == '__main__':
             mac_addr = find_mac_by_ip(network_macs, network_ip_item)
             if not mac_addr:
                 mac_addr = '00-00-00-00-00-00'
-            hostname = '-={(?)}=-'
+            hostname = '-={(?)}=- -'
             if network_ip_item == '192.168.0.1':
                 hostname = 'Router'
             host_table.append({'host_ip': network_ip_item, 'host_mac': mac_addr, 'host_name': hostname, 'host_status': INLINE, 'host_source': network_ips[network_ip_item]})
@@ -181,7 +181,7 @@ if __name__ == '__main__':
     print('_' * HORIZONTAL_LINE)
     counter = 0
     count_online = 0
-    print('| [QTT] HOST IP       - HOST MAC ADDRESS  - SRC [STATUS ] HOST NAME       |')
+    print('| [QTT] HOST IP       - HOST MAC ADDRESS  - SRC [STATUS ] HOST TYPE HOST NAME       |')
     for item in sorted_list:
         counter += 1
         counter_val = str(counter).rjust(COUNTER_JUSTIFY)
