@@ -285,7 +285,9 @@ if __name__ == '__main__':
     host_table = []
     for host_ip in network_ips_and_macs:
         host_mac = network_ips_and_macs[host_ip][HOST_MAC]
+        discovery_source = ARP
         host_status = INLINE
+        host_name = NO_NAME
         if host_mac in known_hosts:
             host_name = known_hosts[host_mac]
             discovery_source = KNOWN_HOST
@@ -293,13 +295,12 @@ if __name__ == '__main__':
             if host_name.startswith('[Device'):
                 host_status = ON_LINE
         else:
-            host_name = NO_NAME
-            discovery_source = NO_DISCOVERY
             for i in running_host_mac_addresses:
                 if HOST_DHCP in running_host_mac_addresses[i] and host_ip == running_host_mac_addresses[i][HOST_DHCP]:
                     host_name = '[Device ] OTDS-VPN-Co.'
                     discovery_source = IPC
                     host_status = ON_LINE
+                    
         host_table.append({HOST_IP: host_ip, HOST_MAC: host_mac, HOST_NAME: host_name, ONLINE_STATUS: host_status, DISCOVERY_SOURCE: discovery_source})
 
     for host_mac in known_hosts:
