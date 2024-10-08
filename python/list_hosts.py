@@ -105,9 +105,11 @@ def scan_ssh_host(computer_ip, port=22, timeout=1):
 
 
 def ping_host(computer_ip):
-    result = subprocess.run(['ping', '-n', '1', '-w', '1000', computer_ip], stdout=subprocess.PIPE)
+    result = subprocess.run(['ping', '-n', '1', '-w', '250', computer_ip], stdout=subprocess.PIPE)
     if result.returncode == 0:
-        return True
+        result = subprocess.run(['ping', '-n', '1', '-w', '250', computer_ip], stdout=subprocess.PIPE)
+        if result.returncode == 0:
+            return True         
     return False
 
 
@@ -152,7 +154,7 @@ if __name__ == '__main__':
             host_ip = running_host_ip
             status = ATLINE
             
-        if host_ip.startswith('192') and not host_ip.endswith('252') and not host_ip.endswith('.1') and status == ATLINE:
+        if host_ip.startswith('192') and not (host_ip.endswith('252') or host_ip.endswith('255') or host_ip.endswith('.1')) and status == ATLINE:
             status = ONLINE
             
         host_table.append({'host_ip': host_ip, 'host_mac': mac, 'host_name': known_hosts[mac], 'host_status': status, 'host_source': 'arp' if status.startswith(ATLINE) else 'knh'})
@@ -170,8 +172,8 @@ if __name__ == '__main__':
         if network_ips[network_ip_item] != 'done':
             mac_addr = find_mac_by_ip(network_macs, network_ip_item)
             if not mac_addr:
-                mac_addr = '00-00-00-00-00-00'
-            hostname = '-={(?)}=- -'
+                mac_addr = f'{RED}00-00-00-00-00-00{RESET}'
+            hostname = '[={(?)}=] -'
             if network_ip_item == '192.168.0.1':
                 hostname = 'Router'
             host_table.append({'host_ip': network_ip_item, 'host_mac': mac_addr, 'host_name': hostname, 'host_status': INLINE, 'host_source': network_ips[network_ip_item]})
