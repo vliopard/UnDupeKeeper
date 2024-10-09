@@ -362,3 +362,4 @@ if __name__ == '__main__':
         print(f'| [{counter_val}] {item[HOST_IP].ljust(HOST_JUSTIFY)} - {item[HOST_MAC]} - {item[DISCOVERY_SOURCE]} [{item[ONLINE_STATUS].ljust(HOST_STATUS)}] {item[HOST_NAME].ljust(WORD_ALIGNMENT)}|')
     print('‾' * HORIZONTAL_LINE)
     print(f'ONLINE [{count_online}]')
+    input("Press Enter to continue...")
