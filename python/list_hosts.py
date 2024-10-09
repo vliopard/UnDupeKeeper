@@ -261,6 +261,13 @@ def ipconfig_to_dict():
     return known
 
 
+def get_host_position(table, mac):
+    for index, host in enumerate(table):
+        if host[HOST_MAC] == mac:
+            return index
+    return None
+
+
 if __name__ == '__main__':
     methods.clear_screen()
     colorama.init()
@@ -334,7 +341,12 @@ if __name__ == '__main__':
                     hostname = 'This Host.'
             if network_ip_item == ONE:
                 hostname = 'Router'
-            host_table.append({HOST_IP: network_ip_item, HOST_MAC: mac_addr, HOST_NAME: hostname, ONLINE_STATUS: online_status, DISCOVERY_SOURCE: dis_source})
+
+            host_position = get_host_position(host_table, mac_addr)
+            if host_position and host_table[host_position][HOST_IP] == MASK and host_table[host_position][HOST_MAC] == mac_addr:
+                host_table[host_position] = {HOST_IP: network_ip_item, HOST_MAC: mac_addr, HOST_NAME: hostname, ONLINE_STATUS: online_status, DISCOVERY_SOURCE: dis_source}
+            else:
+                host_table.append({HOST_IP: network_ip_item, HOST_MAC: mac_addr, HOST_NAME: hostname, ONLINE_STATUS: online_status, DISCOVERY_SOURCE: dis_source})
 
     sorted_list = sorted(host_table, key=lambda element: int(element[HOST_IP].split('.')[-1]))
 
