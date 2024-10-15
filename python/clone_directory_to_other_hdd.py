@@ -56,10 +56,10 @@ def copy_files(args):
     print(f'{section_line(constants.SYMBOL_OVERLINE, constants.LINE_LEN)}')
 
     print('Checking length...')
-    data_length = UnDupeKeeperDatabase.count_files(source_location_query)
+    data_length = database.count_files(source_location_query)
 
     print('Getting files...')
-    data = UnDupeKeeperDatabase.get_item_by_file(source_location_query)
+    data = database.get_item_by_file(source_location_query)
     if check_size:
         need_space, total_files = get_size(data)
         free_space = shutil.disk_usage(target_location).free
