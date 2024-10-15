@@ -28,7 +28,7 @@ def get_size(data):
     total_size = 0
     total_files = 0
 
-    with tqdm(total=data.count(), bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
+    with tqdm(total=len(list(data)), bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
         for hash_file in data:
             source_file = sorted(data[hash_file])[0]
             try:
