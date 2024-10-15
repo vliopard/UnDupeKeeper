@@ -23,14 +23,13 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-def get_size(data):
+def get_size(data_list):
     print('Getting total size...')
     total_size = 0
     total_files = 0
-    data_list = list(data)
     with tqdm(total=len(data_list), bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
-        for hash_file in data_list:
-            source_file = sorted(data_list[hash_file])[0]
+        for file_list in data_list:
+            source_file = sorted(file_list[constants.FILE_LIST])[0]
             try:
                 if not os.path.islink(source_file):
                     total_size += os.path.getsize(source_file)
@@ -60,8 +59,9 @@ def copy_files(args):
 
     print('Getting files...')
     data = database.get_item_by_file(source_location_query)
+    data_list = list(data)
     if check_size:
-        need_space, total_files = get_size(data)
+        need_space, total_files = get_size(data_list)
         free_space = shutil.disk_usage(target_location).free
         print(f'FREE: [{free_space:,}]')
         print(f'NEED: [{need_space:,}]')
@@ -71,22 +71,22 @@ def copy_files(args):
 
     print('Copying files...')
     with tqdm(total=data_length, bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
-        for hash_file in data:
-            source_file = sorted(hash_file[constants.FILE_LIST], key=lambda x: x.replace(constants.DOS_SLASH, constants.UNIX_SLASH))[0]
+        for hash_file in data_list:
+            file_list = sorted(hash_file[constants.FILE_LIST], key=lambda x: x.replace(constants.DOS_SLASH, constants.UNIX_SLASH))[0]
             tqdm_progress_bar.update(1)
-            if source_file.startswith(source_location):
-                _, drive_tail = os.path.splitdrive(source_file)
+            if file_list.startswith(source_location):
+                _, drive_tail = os.path.splitdrive(file_list)
                 drive_tail = drive_tail.lstrip(os.path.sep)
                 target_file = os.path.join(target_location, drive_tail)
                 os.makedirs(os.path.dirname(target_file), exist_ok=True)
                 try:
-                    shutil.copy2(source_file, target_file)
+                    shutil.copy2(file_list, target_file)
                 except PermissionError:
                     os.chmod(target_file, stat.S_IWRITE)
-                    shutil.copy2(source_file, target_file)
+                    shutil.copy2(file_list, target_file)
                 except Exception as exception:
                     print('_'*100)
-                    print(f"Error copying:\n   [{source_file}]\nto [{target_file}]\n[{exception}]")
+                    print(f"Error copying:\n   [{file_list}]\nto [{target_file}]\n[{exception}]")
 
 
 if __name__ == constants.MAIN:
