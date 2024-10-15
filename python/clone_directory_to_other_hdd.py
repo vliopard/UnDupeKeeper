@@ -30,7 +30,7 @@ def get_size(data):
     data_list = list(data)
     with tqdm(total=len(data_list), bar_format=constants.STATUS_BAR_FORMAT) as tqdm_progress_bar:
         for hash_file in data_list:
-            source_file = sorted(data[hash_file])[0]
+            source_file = sorted(data_list[hash_file])[0]
             try:
                 if not os.path.islink(source_file):
                     total_size += os.path.getsize(source_file)
