@@ -20,7 +20,7 @@ def search_file(extension):
             split_file_path = constants.DOS_SLASH.join(source_file.split(constants.DOS_SLASH))
             file_counter += 1
             print(split_file_path)
-            directory_file.write(f'{split_file_path.split(".")[-1]}\t{result[constants.FILE_SIZE]}\t{split_file_path}\n')
+            directory_file.write(f'{split_file_path.split(".")[-1].lower()}\t{result[constants.FILE_SIZE]}\t{split_file_path}\n')
     print(f'TOTAL: [{file_counter}:,]')
     print('[Done]')
 
