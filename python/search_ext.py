@@ -21,7 +21,7 @@ def search_file(extension):
             file_counter += 1
             print(split_file_path)
             directory_file.write(f'{split_file_path.split(constants.DOS_SLASH)[-1].lower()}\t{split_file_path.split(constants.DOT)[-1].lower()}\t{result[constants.FILE_SIZE]}\t{split_file_path}\n')
-    print(f'TOTAL: [{file_counter}:,]')
+    print(f'TOTAL: [{file_counter:,}]')
     print('[Done]')
 
 
