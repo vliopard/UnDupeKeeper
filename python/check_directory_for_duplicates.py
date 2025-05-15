@@ -87,7 +87,12 @@ class FileList:
             if restrictions[constants.NO_COMP]:
                 check3 = True
             else:
-                check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
+                try:
+                    check3 = file_equals(add_uri, old_uri, constants.COMPARISON_METHOD)
+                except PermissionError as permission_error:
+                    print(f'ERROR: CANNOT ACCESS FILE [{add_uri}]')
+                    print(f'ERROR: CANNOT ACCESS FILE [{old_uri}]')
+                    check3 = False
             old_uri_sha = f'{file_with_sha[constants.DOC_ID][0:constants.SHA_SIZE].upper()}'
 
         show.info(f'{line_number()} {section_line(constants.SYMBOL_UNDERLINE, constants.LINE_LEN)}')
