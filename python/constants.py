@@ -185,6 +185,7 @@ DEBUG_COMP = f'{DEBUG_BASE}_DIR'
 DEBUG_DASH = f'{DEBUG_BASE}_DASH'
 DEBUG_UTIL = f'{DEBUG_BASE}_UTIL'
 DEBUG_DIFF = f'{DEBUG_BASE}_DIFF'
+DEBUG_EVAL = f'{DEBUG_BASE}_EVAL'
 
 COMMAND_COPY = 'copy'
 COMMAND_MOVE = 'move'
@@ -207,3 +208,17 @@ test_files = [f'{test_directory}/file0000005.bin',
               f'{test_directory}/file1000000.bin']
 
 STATUS_BAR_FORMAT = '{desc}: {percentage:.2f}%|{bar}| {n:,}/{total:,} [{elapsed}<{remaining}, {rate_fmt}{postfix}]'
+
+SYSTEM_CYGWIN = 'CYGWIN'
+SYSTEM_DARWIN = 'Darwin'
+SYSTEM_LINUX = 'Linux'
+SYSTEM_WINDOWS = 'Windows'
+LINES = 'LINES'
+COLUMNS = 'COLUMNS'
+DEFAULT_L = 'default'
+DEBUG_MODE = False
+TEXT_DEBUG_MESSAGE_END = 'DEBUG MESSAGE END'
+TEXT_DEBUG_MESSAGE_START = 'DEBUG MESSAGE START'
+RUN_GUI = False
+SYMBOL_EMPTY = ''
+SYMBOL_BLANK = ' '
